@@ -26,6 +26,7 @@ výstup.
 	PERFORMANCE_TEST_2	|	60		|		80		|	+33
 	PERFORMANCE_TEST_3	|	20		|		21		|	+5 !!! (Insufficient data)
 
+Samozřejmě je také možné použít příkaz, který vyrobí grafičtější formu zpracování výsledků testů než je výpis do konzolové řádky.
 
 ```
 performance-evaluate --graphical
@@ -35,7 +36,7 @@ znázorněné postupné změny ve výkonu (v rychlosti běhu jednotlivých metod
 testovacími výsledky. K vyhodnocení budou použity základní statistické metody (které prozatím neumím blíže specifikovat).
 
 
-## větší projekt
+## Větší projekt
 Při práci ve větší skupině se obvykle využívá jeden způsob testování výkonu, tudíž jen jeden testovací framework. Za předpokladu, že data 
 z tohoto frameworku umí evaluator vyhodnocovat, pak bude evaluator schopen zpracovávat i data pro větší projekt obdobným způsobem jako u malého.
 Pravděpodobně budou moct být zdrojová data pro evaluator ve více souborech, a tedy bude nutné ještě vymyslet způsob jak od uživatele přijmout
