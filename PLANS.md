@@ -41,13 +41,13 @@ z tohoto frameworku umí evaluator vyhodnocovat, pak bude evaluator schopen zpra
 Pravděpodobně budou moct být zdrojová data pro evaluator ve více souborech, a tedy bude nutné ještě vymyslet způsob jak od uživatele přijmout
 zdrojová data ve více vstupních souborech. Výsledky testů po zadání příkazu ```performance-evaluate``` by pak vypadaly nějak takhle:
 
-	TEST_NAME				|	NEW_TIME (ms)	|	LAST_MEASURED_TIME (ms)	|	CHANGE (%)
-SET_1-PERFORMANCE_TEST_1	|	50		|	20			|	-60
-SET_1-PERFORMANCE_TEST_2	|	60		|	80			|	+33
-SET_1-PERFORMANCE_TEST_3	|	20		|	21			|	+5 !!! (Insufficient data)
-SET_2-PERFORMANCE_TEST_1	|	50		|	20			|	-60
-SET_2-PERFORMANCE_TEST_2	|	60		|	80			|	+33
-SET_2-PERFORMANCE_TEST_3	|	20		|	21			|	+5 !!! (Insufficient data)
+	TEST_NAME	|	NEW_TIME (ms)	|	LAST_MEASURED_TIME (ms)	|	CHANGE (%)
+	SET_1-PERFORMANCE_TEST_1	|	50		|	20			|	-60
+	SET_1-PERFORMANCE_TEST_2	|	60		|	80			|	+33
+	SET_1-PERFORMANCE_TEST_3	|	20		|	21			|	+5 !!! (Insufficient data)
+	SET_2-PERFORMANCE_TEST_1	|	50		|	20			|	-60
+	SET_2-PERFORMANCE_TEST_2	|	60		|	80			|	+33
+	SET_2-PERFORMANCE_TEST_3	|	20		|	21			|	+5 !!! (Insufficient data)
 
 Samozřejmě pro lepší výsledky, by bylo možné použít příkaz ```performance-evaluate --graphical ```, který by vygeneroval jeden soubor 
 evaluation-result.html, který by bylo opět možné otevřít v běžných webových prohlížečích. Na stránce by byly lépe graficky znázorněny
