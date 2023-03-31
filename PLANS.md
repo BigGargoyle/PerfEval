@@ -10,8 +10,7 @@ Uživatel se rozhodne naprogramovat si své vlastní SW dílo.
 Rozhodne se, že pro testování bude používat framework, který nepodporuje verzování testů do té míry v jaké by mu vyhovovalo,
 a tak bude se rozhodne používat můj SW.
 Stáhne si tedy instalační balíček a SW nainstaluje (např. příkaz ```make```)
-Během instalace může být požádán o zadání složky ve které se nacházejí soubory s výsledky proběhlých benchmarků a o formát těchto
-souborů (použitý testovací framework). Možná by tyto údaje bylo možné zadávat i formou nějakých přepínačů při spouštění skriptu.
+Během instalace může být požádán o zadání složky ve které se nacházejí soubory s výsledky proběhlých benchmarků a o formát těchto souborů (použitý testovací framework). Možná by tyto údaje bylo možné zadávat i formou nějakých přepínačů při spouštění skriptu.
 
 Uživatel tedy naprogramuje část aplikace s testy ve svém oblíbeném frameworku a rozhodne se, že chce vidět jak s postupem času vylepšoval
 své funkce a zefektivňoval svůj kód:
@@ -37,10 +36,10 @@ testovacími výsledky. K vyhodnocení budou použity základní statistické me
 
 
 ## Větší projekt
-Při práci ve větší skupině se obvykle využívá jeden způsob testování výkonu, tudíž jen jeden testovací framework. Za předpokladu, že data 
-z tohoto frameworku umí evaluator vyhodnocovat, pak bude evaluator schopen zpracovávat i data pro větší projekt obdobným způsobem jako u malého.
-Pravděpodobně budou moct být zdrojová data pro evaluator ve více souborech, a tedy bude nutné ještě vymyslet způsob jak od uživatele přijmout
-zdrojová data ve více vstupních souborech. Výsledky testů po zadání příkazu ```performance-evaluate``` by pak vypadaly nějak takhle:
+Při práci ve větší skupině se obvykle využívá jeden způsob testování výkonu, tudíž jen jeden testovací framework. Za předpokladu, že data z tohoto frameworku umí evaluator vyhodnocovat, pak bude evaluator schopen zpracovávat i data pro větší projekt obdobným způsobem jako u malého.
+Instalace a nastavení bude pravděpodobně stejné jako u malého projektu. Možná bude nějaký rozdíl v případě, že bude uživatel chtít zpracovávat výsledky z více souborů najednou.
+
+Pravděpodobně budou moct být zdrojová data pro evaluator ve více souborech, a tedy bude nutné ještě vymyslet způsob jak od uživatele přijmout zdrojová data ve více vstupních souborech. Výsledky testů po zadání příkazu ```performance-evaluate``` by pak vypadaly nějak takhle:
 
 	TEST_NAME			|	NEW_TIME (ms)	|	LAST_MEASURED_TIME (ms)	|	CHANGE (%)
 	SET_1-PERFORMANCE_TEST_1	|	50		|	20			|	-60
