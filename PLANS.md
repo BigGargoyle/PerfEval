@@ -21,8 +21,8 @@ performance-evaluate
 Skript se podívá do složky ve které jsou výsledky testů. Začne je procházet a vyhodnocovat. Výsledek vyhodnocení vypíše na standardní
 výstup.
 
-		TEST_NAME		|	NEW_TIME (ms)	|	LAST_MEASURED_TIME (ms)	|	CHANGE (%)
-	PERFORMANCE_TEST_1	|		50			|	20	|	-60
+	TEST_NAME			|	NEW_TIME (ms)	|	LAST_MEASURED_TIME (ms)	|	CHANGE (%)
+	PERFORMANCE_TEST_1	|		50			|			20				|	-60
 	PERFORMANCE_TEST_2	|		60			|			80				|	+33
 	PERFORMANCE_TEST_3	|		20			|			21				|	+5 !!! (Insufficient data)
 
