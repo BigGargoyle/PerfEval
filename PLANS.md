@@ -54,3 +54,8 @@ evaluation-result.html, který by bylo opět možné otevřít v běžných webo
 (pravděpodobně v podobě grafu) změny ve výkonu u jednotlivých testů i vzhledem k několika starším testům. Opět za použití základních 
 statistických metod. 
 
+## Požadavky na kompatibilitu
+Každý z testovacích frameworků uvedený v GOALS.md má svůj specifický formát zpracování výstupů měření bude tedy zapotřebí pro každý formát mít specifický způsob zpracovávání dat. Minimálně co se parsování týče. Na data ale bude možné aplikovat stejné statistické metody.
+
+Zpracování dat tedy bude pravděpodobně probíhat tak, že pro každý formát výstupu frameworku bude implementovaná metoda, která data předzpracuje a na data poskytované frameworkem bude aplikováno, co nejvíce statistických metod a různých vyhodnocovacích funkcí. Bude tedy implementovaná, nebo použitá nějaká statistická knihovna z níž se budou na dostupná data volat metody, které budou data vyhodnocovat.
+
