@@ -59,3 +59,36 @@ Každý z testovacích frameworků uvedený v GOALS.md má svůj specifický for
 
 Zpracování dat tedy bude pravděpodobně probíhat tak, že pro každý formát výstupu frameworku bude implementovaná metoda, která data předzpracuje a na data poskytované frameworkem bude aplikováno, co nejvíce statistických metod a různých vyhodnocovacích funkcí. Bude tedy implementovaná, nebo použitá nějaká statistická knihovna z níž se budou na dostupná data volat metody, které budou data vyhodnocovat.
 
+## Způsob ukládání dat
+V případě, že v adresáři, ve kterém je skript zavolán (příkaz `performance-evaluate`), nebude konfigurační soubor, tak bude vyhledána složka `benchmarks`. Ve složce se předpokládá existence výstupních souborů jednotlivých benchmarků, které již proběhly. Do konzole se vypíše výsledek vyhodnocení.
+V konfiguračním souboru, který bude umístěn v adresáři, ze kterého bude evaluator spouštěný může být umístěn také konfigurační soubor `.performance-evaluator-config.json`, který může vypadat následovně:
+```json
+{
+  "testerName": "tester1",
+  "machineName": "testingMachine1",
+  "srcDir": "./benchmarks"
+  "destDir": "./eval-result",
+  "inputFilePattern": [
+    "SET1*",
+	"SET2*"
+  ]
+}
+```
+Předpokládá se, že kód vytvoří z tohoto souboru instanci nějaké konfigurační třídy. Aby nedocházelo v cílové složce k přepisování výsledného souboru bude jeho název generovaný z aktuálního času (je to nutné?, spíš ne -> stačí mi jen jeden výstupní soubor, vždy generovat čerstvý výstup -> mohu defaultně použít destDir = ".").
+Do výsledného souboru bude zaznamenán název stroje, jméno testera, výsledky statistického vyhodnocení testů.
+```json
+{
+  "testName": "test1",
+  // ... statistická data ...
+}
+```
+
+## Formát dat
+Nejjednodušší způsob pro ukládání dat bude pravděpodobně JSON formát, protože jak JS tak Java mají knihovny umožňující ze stringu v JSON formátu vytvářet objekty. Bude se tedy jednoduše programově zpracovávat jak v Javovském skriptu, který bude vykonávat statistické výpočty a zpracování výstupu benchmarku, tak pomocí JavaScriptu, který bude pomáhat s generováním grafického výstupu aplikace.
+Skript v Javě bude generovat z JSON souboru výstup do konzole a ze stejného souboru bude JavaScript generovat webovou stránku, jakožto grafický výstup aplikace. Zároveň s JSON soubory umí pracovat i tooly jiných programátorů, protože se jedná o bežný souborový formát.
+
+## Problémy s formátováním 
+Jaká data budu ukládat? (jaké statistické hodnoty)
+
+
+
