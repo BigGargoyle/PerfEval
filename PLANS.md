@@ -60,6 +60,7 @@ Každý z testovacích frameworků uvedený v GOALS.md má svůj specifický for
 Zpracování dat tedy bude pravděpodobně probíhat tak, že pro každý formát výstupu frameworku bude implementovaná metoda, která data předzpracuje a na data poskytované frameworkem bude aplikováno, co nejvíce statistických metod a různých vyhodnocovacích funkcí. Bude tedy implementovaná, nebo použitá nějaká statistická knihovna z níž se budou na dostupná data volat metody, které budou data vyhodnocovat.
 
 ## Způsob ukládání dat
+### Umístění
 V případě, že v adresáři, ve kterém je skript zavolán (příkaz `performance-evaluate`), nebude konfigurační soubor, tak bude vyhledána složka `benchmarks`. Ve složce se předpokládá existence výstupních souborů jednotlivých benchmarků, které již proběhly. Do konzole se vypíše výsledek vyhodnocení.
 V konfiguračním souboru, který bude umístěn v adresáři, ze kterého bude evaluator spouštěný může být umístěn také konfigurační soubor `.performance-evaluator-config.json`, který může vypadat následovně:
 ```json
@@ -82,6 +83,24 @@ Do výsledného souboru bude zaznamenán název stroje, jméno testera, výsledk
   // ... statistická data ...
 }
 ```
+
+### Názvy souborů (jak je nalezne skript?)
+Přímočará až tupá řešení:
+	- Více měření stejné verzí by se opět dalo vyřešit nějakým "počítadlem" v názvu souboru
+	- Je možné třídit skripty po složkách podle verzí, nebo podle testerů, nebo podle strojů.
+	- Je možné ukládat tato do data do názvů souborů, což povede k nezpřehlednění jmen souborů.
+
+Další možnost je strukturovat složku benchmark podle těchto údajů. 
+Idea: 
+Ve složce benchmarks by byla složka pro každý stroj na kterém se beanchmarky provádějí. Ve složkách pro stroje by byla složka pro každého testera a v nich složka pro každou verzi. Ve složkách pro výslednou verzi by byly soubory s výsledky jendotlivých benchmarků. Tyto benchmarky by se vyhodnocovaly podle data poslední změny souboru (metadata souboru).
+
+Problém:
+Jak se soubor dostane do složky? Toto řešení vytváří novou složitost pro uživatele, pokud by se totiž do složky benchmarks vkládal nový soubor, tak by se musel nějak zatřídit (nepředpokládá se, že by to uživatel dělal sám).
+
+Řešení:
+Vytvořit skript, který by správně zatřizoval výsledky měření. Tento skript by se musel spouštět před vyhodnocováním a podle  konfiguračního souboru by uměl sám zatřídit výsledky měření. Protože soubory ve složce benchmarks by neměly být (možná konfigurační soubor), tak by vyhodnocovač tyto soubory ignoroval. Pokud by uživatel například commitoval (na Git) složku s uloženými daty, musel by commitovat složku, kterou předtím nechal setřídit (toto není problém u jednoho uživatele (a jednoho stroje), kde by nezáleželo na tom, pod kterým konfiguračním souborem se toto třídí).
+
+
 
 ## Formát dat
 Nejjednodušší způsob pro ukládání dat bude pravděpodobně JSON formát, protože jak JS tak Java mají knihovny umožňující ze stringu v JSON formátu vytvářet objekty. Bude se tedy jednoduše programově zpracovávat jak v Javovském skriptu, který bude vykonávat statistické výpočty a zpracování výstupu benchmarku, tak pomocí JavaScriptu, který bude pomáhat s generováním grafického výstupu aplikace.
