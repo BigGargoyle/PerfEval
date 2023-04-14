@@ -91,8 +91,4 @@ Skript v Javě bude generovat z JSON souboru výstup do konzole a ze stejného s
 Jaká data budu ukládat? (jaké statistické hodnoty)
 
 
-## Osobní poznámky
-	-	kromě JSON formátu jsem uvažoval také XML
-
-
 
