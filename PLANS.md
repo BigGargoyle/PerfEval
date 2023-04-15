@@ -124,6 +124,12 @@ Vytvořit skript, který při spuštění benchmark testu zatřídí na základ�
 ./muj_benchmark | ./sort_result
 ```
 
+Problém:
+Kde vzít verzi (číslo verze)?
+
+Řešení:
+??? (Git ?, ??)
+
 ## Formát dat
 Nejjednodušší způsob pro ukládání dat bude pravděpodobně JSON formát, protože jak JS tak Java mají knihovny umožňující ze stringu v JSON formátu vytvářet objekty. Bude se tedy jednoduše programově zpracovávat jak v Javovském skriptu, který bude vykonávat statistické výpočty a zpracování výstupu benchmarku, tak pomocí JavaScriptu, který bude pomáhat s generováním grafického výstupu aplikace.
 Skript v Javě bude generovat z JSON souboru výstup do konzole a ze stejného souboru bude JavaScript generovat webovou stránku, jakožto grafický výstup aplikace. Zároveň s JSON soubory umí pracovat i tooly jiných programátorů, protože se jedná o bežný souborový formát.
