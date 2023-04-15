@@ -9,7 +9,7 @@ The first activities should focus on completing project specification:
 Uživatel se rozhodne naprogramovat si své vlastní SW dílo.
 Rozhodne se, že pro testování bude používat framework, který nepodporuje verzování testů do té míry v jaké by mu vyhovovalo,
 a tak bude se rozhodne používat můj SW.
-Stáhne si tedy instalační balíček a SW nainstaluje (např. příkaz ~~`make`~~ `./performance-eval-test-installator.sh`)
+Stáhne si tedy instalační balíček a SW nainstaluje (např. příkaz ~~`make`~~ `./performance-eval-test-installator.sh`). Instalační program bude shellovský skrip, který zařídí instalaci programu do systému (adresáře?).
 
 
 ~~Během instalace může být požádán o zadání složky ve které se nacházejí soubory s výsledky proběhlých benchmarků a o formát těchto souborů (použitý testovací framework). Možná by tyto údaje bylo možné zadávat i formou nějakých přepínačů při spouštění skriptu.~~
