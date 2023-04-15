@@ -79,6 +79,20 @@ V konfiguračním souboru, který bude umístěn v adresáři, ze kterého bude 
   ]
 }
 ```
+
+Defaultně však bude vypadat takto:
+```json
+{
+  "testerName": "tester",
+  "machineName": "machine",
+  "srcDir": "./benchmarks"
+  "destDir": "./eval-result",
+  "inputFilePattern": [  ]
+}
+```
+
+
+
 Předpokládá se, že kód vytvoří z tohoto souboru instanci nějaké konfigurační třídy. Aby nedocházelo v cílové složce k přepisování výsledného souboru bude jeho název generovaný z aktuálního času (je to nutné?, spíš ne -> stačí mi jen jeden výstupní soubor, vždy generovat čerstvý výstup -> mohu defaultně použít destDir = ".").
 Do výsledného souboru bude zaznamenán název stroje, jméno testera, výsledky statistického vyhodnocení testů.
 ```json
