@@ -10,7 +10,11 @@ Uživatel se rozhodne naprogramovat si své vlastní SW dílo.
 Rozhodne se, že pro testování bude používat framework, který nepodporuje verzování testů do té míry v jaké by mu vyhovovalo,
 a tak bude se rozhodne používat můj SW.
 Stáhne si tedy instalační balíček a SW nainstaluje (např. příkaz ```make```)
-Během instalace může být požádán o zadání složky ve které se nacházejí soubory s výsledky proběhlých benchmarků a o formát těchto souborů (použitý testovací framework). Možná by tyto údaje bylo možné zadávat i formou nějakých přepínačů při spouštění skriptu.
+
+
+~~Během instalace může být požádán o zadání složky ve které se nacházejí soubory s výsledky proběhlých benchmarků a o formát těchto souborů (použitý testovací framework). Možná by tyto údaje bylo možné zadávat i formou nějakých přepínačů při spouštění skriptu.~~
+
+Uživatel si po instalaci bude moci nastavit konfifurační soubor tj. změnit defaultní nastavení pospané dále. Při instalaci bude vtyvořena složka benchmarks s konfiguračním souborem. Úprava bude probíhat tak, že jej bude moct otevřít v běžném textovém editoru a upravit obsah jednotlivých proměnných.
 
 Uživatel tedy naprogramuje část aplikace s testy ve svém oblíbeném frameworku a rozhodne se, že chce vidět jak s postupem času vylepšoval
 své funkce a zefektivňoval svůj kód:
@@ -102,12 +106,10 @@ Vytvořit skript, který by správně zatřizoval výsledky měření. Tento skr
 
 Řešení 2:
 Vytvořit skript, který při spuštění benchmark testu zatřídí na základě konfiguračního souboru výstupní soubor testu do příslušné složky ve složce benchmarks. (Jednoduchý bash skript spouštěný pomocí pipy) -> 
-run_tests.sh
+`run_tests.sh "./muj_benchmark"`:
 ```
-./muj_benchmark | ./sort_result.sh
+./muj_benchmark | ./sort_result
 ```
-
-
 
 ## Formát dat
 Nejjednodušší způsob pro ukládání dat bude pravděpodobně JSON formát, protože jak JS tak Java mají knihovny umožňující ze stringu v JSON formátu vytvářet objekty. Bude se tedy jednoduše programově zpracovávat jak v Javovském skriptu, který bude vykonávat statistické výpočty a zpracování výstupu benchmarku, tak pomocí JavaScriptu, který bude pomáhat s generováním grafického výstupu aplikace.
