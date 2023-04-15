@@ -9,7 +9,7 @@ The first activities should focus on completing project specification:
 Uživatel se rozhodne naprogramovat si své vlastní SW dílo.
 Rozhodne se, že pro testování bude používat framework, který nepodporuje verzování testů do té míry v jaké by mu vyhovovalo,
 a tak bude se rozhodne používat můj SW.
-Stáhne si tedy instalační balíček a SW nainstaluje (např. příkaz ```make```)
+Stáhne si tedy instalační balíček a SW nainstaluje (např. příkaz ~~`make`~~ `./performance-eval-test-installator.sh`)
 
 
 ~~Během instalace může být požádán o zadání složky ve které se nacházejí soubory s výsledky proběhlých benchmarků a o formát těchto souborů (použitý testovací framework). Možná by tyto údaje bylo možné zadávat i formou nějakých přepínačů při spouštění skriptu.~~
@@ -79,6 +79,7 @@ V konfiguračním souboru, který bude umístěn v adresáři, ze kterého bude 
   ]
 }
 ```
+Ve složce se zdorjovými soubory začne skript prohledávat strukturu a jako jeden celý test bude považovat dva soubory od jednoho stroje uživatele a od jedné verze. Bude vybírat vždy dva po sobě jdoucí soubory (podle času poslední změny), jejichž názvy budou odpovídat formátům "SET1\*" a "SET2\*". Pokud nebudou nalezeny dva soubory které k sobě patří, tak dojde k vyhodnocení celých testů, ale uživatel bude zpraven o této chybě na chybovém výstupu. Výstupní soubor bude uložen ve složce destDir.
 
 Defaultně však bude vypadat takto:
 ```json
@@ -90,8 +91,6 @@ Defaultně však bude vypadat takto:
   "inputFilePattern": [  ]
 }
 ```
-
-
 
 Předpokládá se, že kód vytvoří z tohoto souboru instanci nějaké konfigurační třídy. Aby nedocházelo v cílové složce k přepisování výsledného souboru bude jeho název generovaný z aktuálního času (je to nutné?, spíš ne -> stačí mi jen jeden výstupní soubor, vždy generovat čerstvý výstup -> mohu defaultně použít destDir = ".").
 Do výsledného souboru bude zaznamenán název stroje, jméno testera, výsledky statistického vyhodnocení testů.
