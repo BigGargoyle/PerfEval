@@ -100,6 +100,13 @@ Jak se soubor dostane do složky? Toto řešení vytváří novou složitost pro
 Řešení:
 Vytvořit skript, který by správně zatřizoval výsledky měření. Tento skript by se musel spouštět před vyhodnocováním a podle  konfiguračního souboru by uměl sám zatřídit výsledky měření. Protože soubory ve složce benchmarks by neměly být (možná konfigurační soubor), tak by vyhodnocovač tyto soubory ignoroval. Pokud by uživatel například commitoval (na Git) složku s uloženými daty, musel by commitovat složku, kterou předtím nechal setřídit (toto není problém u jednoho uživatele (a jednoho stroje), kde by nezáleželo na tom, pod kterým konfiguračním souborem se toto třídí).
 
+Řešení 2:
+Vytvořit skript, který při spuštění benchmark testu zatřídí na základě konfiguračního souboru výstupní soubor testu do příslušné složky ve složce benchmarks. (Jednoduchý bash skript spouštěný pomocí pipy) -> 
+run_tests.sh
+```
+./muj_benchmark | ./sort_result.sh
+```
+
 
 
 ## Formát dat
