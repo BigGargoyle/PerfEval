@@ -73,13 +73,14 @@ V konfiguračním souboru, který bude umístěn v adresáři, ze kterého bude 
   "machineName": "testingMachine1",
   "srcDir": "./benchmarks"
   "destDir": "./eval-result",
+  "testCommand" : "run benchmark",
   "inputFilePattern": [
     "SET1*",
 	"SET2*"
   ]
 }
 ```
-Ve složce se zdorjovými soubory začne skript prohledávat strukturu a jako jeden celý test bude považovat dva soubory od jednoho stroje uživatele a od jedné verze. Bude vybírat vždy dva po sobě jdoucí soubory (podle času poslední změny), jejichž názvy budou odpovídat formátům "SET1\*" a "SET2\*". Pokud nebudou nalezeny dva soubory které k sobě patří, tak dojde k vyhodnocení celých testů, ale uživatel bude zpraven o této chybě na chybovém výstupu. Výstupní soubor bude uložen ve složce destDir.
+Ve složce se zdorjovými soubory začne skript prohledávat strukturu a jako jeden celý test bude považovat dva soubory od jednoho stroje uživatele a od jedné verze. Bude vybírat vždy dva po sobě jdoucí soubory (podle času poslední změny), jejichž názvy budou odpovídat formátům "SET1\*" a "SET2\*". Pokud nebudou nalezeny dva soubory které k sobě patří, tak dojde k vyhodnocení celých testů, ale uživatel bude zpraven o této chybě na chybovém výstupu. Výstupní soubor bude uložen ve složce destDir. testCommand bude obsahovat příkaz ke spuštění samotného benchmarku.
 
 Defaultně však bude vypadat takto:
 ```json
@@ -88,6 +89,7 @@ Defaultně však bude vypadat takto:
   "machineName": "machine",
   "srcDir": "./benchmarks"
   "destDir": "./eval-result",
+  "testCommand" : "",
   "inputFilePattern": [  ]
 }
 ```
@@ -108,7 +110,7 @@ Přímočará až tupá řešení:
 	- Je možné ukládat tato do data do názvů souborů, což povede k nezpřehlednění jmen souborů.
 
 Další možnost je strukturovat složku benchmark podle těchto údajů. 
-Idea: 
+~~Idea: 
 Ve složce benchmarks by byla složka pro každý stroj na kterém se beanchmarky provádějí. Ve složkách pro stroje by byla složka pro každého testera a v nich složka pro každou verzi. Ve složkách pro výslednou verzi by byly soubory s výsledky jendotlivých benchmarků. Tyto benchmarky by se vyhodnocovaly podle data poslední změny souboru (metadata souboru).
 
 Problém:
@@ -128,7 +130,7 @@ Problém:
 Kde vzít verzi (číslo verze)?
 
 Řešení:
-??? (Git ?, ??)
+??? (Git ?, ??)~~
 
 ## Formát dat
 Nejjednodušší způsob pro ukládání dat bude pravděpodobně JSON formát, protože jak JS tak Java mají knihovny umožňující ze stringu v JSON formátu vytvářet objekty. Bude se tedy jednoduše programově zpracovávat jak v Javovském skriptu, který bude vykonávat statistické výpočty a zpracování výstupu benchmarku, tak pomocí JavaScriptu, který bude pomáhat s generováním grafického výstupu aplikace.
