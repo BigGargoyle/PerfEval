@@ -9,7 +9,7 @@ The first activities should focus on completing project specification:
 Uživatel se rozhodne naprogramovat si své vlastní SW dílo.
 Rozhodne se, že pro testování bude používat framework, který nepodporuje verzování testů do té míry v jaké by mu vyhovovalo,
 a tak bude se rozhodne používat můj SW.
-Stáhne si tedy instalační balíček a SW nainstaluje (např. příkaz ~~`make`~~ `./performance-eval-test-installator.sh`). Instalační program bude shellovský skrip, který zařídí instalaci programu do systému (adresáře?).
+Stáhne si tedy instalační balíček a SW nainstaluje (např. příkaz ~~`make`~~ `./performance-eval-test-installater.sh`). Instalační program bude shellovský skrip, který zařídí instalaci programu do systému (adresáře?).
 
 
 ~~Během instalace může být požádán o zadání složky ve které se nacházejí soubory s výsledky proběhlých benchmarků a o formát těchto souborů (použitý testovací framework). Možná by tyto údaje bylo možné zadávat i formou nějakých přepínačů při spouštění skriptu.~~
@@ -110,7 +110,7 @@ Přímočará až tupá řešení:
 	- Je možné ukládat tato do data do názvů souborů, což povede k nezpřehlednění jmen souborů.
 
 Další možnost je strukturovat složku benchmark podle těchto údajů. 
-~~Idea: 
+Idea: 
 Ve složce benchmarks by byla složka pro každý stroj na kterém se beanchmarky provádějí. Ve složkách pro stroje by byla složka pro každého testera a v nich složka pro každou verzi. Ve složkách pro výslednou verzi by byly soubory s výsledky jendotlivých benchmarků. Tyto benchmarky by se vyhodnocovaly podle data poslední změny souboru (metadata souboru).
 
 Problém:
@@ -125,12 +125,15 @@ Vytvořit skript, který při spuštění benchmark testu zatřídí na základ�
 ```
 ./muj_benchmark | ./sort_result
 ```
+Řešení 3:
+Pomocí proměnné testCommand v konfiguračním souboru spouštět pomocí svého commandu benchmark sám a sám jej uložit do souboru jehož název bude strukturovaný podle mě. 
+Ve formátu `"m-machine-t-tester-v-version-d-ISODateTime"`
 
 Problém:
 Kde vzít verzi (číslo verze)?
 
 Řešení:
-??? (Git ?, ??)~~
+??? (Git ?, ??)
 
 ## Formát dat
 Nejjednodušší způsob pro ukládání dat bude pravděpodobně JSON formát, protože jak JS tak Java mají knihovny umožňující ze stringu v JSON formátu vytvářet objekty. Bude se tedy jednoduše programově zpracovávat jak v Javovském skriptu, který bude vykonávat statistické výpočty a zpracování výstupu benchmarku, tak pomocí JavaScriptu, který bude pomáhat s generováním grafického výstupu aplikace.
