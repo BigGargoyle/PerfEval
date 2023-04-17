@@ -16,11 +16,7 @@ Stáhne si tedy instalační balíček a SW nainstaluje (např. příkaz ~~`make
 
 Uživatel si po instalaci bude moci nastavit konfifurační soubor tj. změnit defaultní nastavení pospané dále. Při instalaci bude vtyvořena složka benchmarks s konfiguračním souborem. Úprava bude probíhat tak, že jej bude moct otevřít v běžném textovém editoru a upravit obsah jednotlivých proměnných.
 
-Uživatel tedy naprogramuje část aplikace s testy ve svém oblíbeném frameworku a rozhodne se, že chce vidět jak s postupem času vylepšoval
-své funkce a zefektivňoval svůj kód:
-```
-performance-evaluate
-```
+Uživatel tedy naprogramuje část aplikace s testy ve svém oblíbeném frameworku. Pak pomocí příkazu `performance-tests` spustí můj skript, který spustí uživatelské testy a jejich výstup uloží v podobě jakou vyžaduje knihovna vyhodnocovače (a klidně je mimo jiné může vypsat do konzole). Když se uživatel rozhodne, že chce vidět jak s postupem času vylepšoval své funkce a zefektivňoval svůj kód zavolá příkaz `performance-evaluate`.
 Skript se podívá do složky ve které jsou výsledky testů. Začne je procházet a vyhodnocovat. Výsledek vyhodnocení vypíše na standardní
 výstup.
 
