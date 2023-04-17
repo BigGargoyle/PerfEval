@@ -39,6 +39,8 @@ testovacími výsledky. K vyhodnocení budou použity základní statistické me
 Při práci ve větší skupině se obvykle využívá jeden způsob testování výkonu, tudíž jen jeden testovací framework. Za předpokladu, že data z tohoto frameworku umí evaluator vyhodnocovat, pak bude evaluator schopen zpracovávat i data pro větší projekt obdobným způsobem jako u malého.
 Instalace a nastavení bude pravděpodobně stejné jako u malého projektu. Možná bude nějaký rozdíl v případě, že bude uživatel chtít zpracovávat výsledky z více souborů najednou.
 
+Po instalaci evaluatoru bude nutné přepsat konfigurační soubor svými údaji. Testy se budou opět spouštět pomocí `performance-tests`
+
 Pravděpodobně budou moct být zdrojová data pro evaluator ve více souborech, a tedy bude nutné ještě vymyslet způsob jak od uživatele přijmout zdrojová data ve více vstupních souborech. Výsledky testů po zadání příkazu ```performance-evaluate``` by pak vypadaly nějak takhle:
 
 	TEST_NAME			|	NEW_TIME (ms)	|	LAST_MEASURED_TIME (ms)	|	CHANGE (%)
