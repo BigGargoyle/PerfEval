@@ -65,3 +65,11 @@ To avoid rescanning all directories and files, we include an option
 that limits the scan to recent directories:
 
 `my-best-importer .performance --get-version-hash-from-dir-name --get-version-date-from-git-log --max-path-age 1w`
+
+
+## Osobní poznámky
+	-   kromě JSON formátu jsem uvažoval také XML
+    -   ukládání dat
+        -   metadata souboru se při kopírování mění (není možné využít čas vytvoření souboru pro ukládání verzí)
+            datum změnění souboru se ovšem nemění? -> dalo by se využít ...
+

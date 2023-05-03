@@ -4,3 +4,141 @@ The first activities should focus on completing project specification:
 
 - Sketching usage scenarios in as much detail as possible
 - Investigating compatibility requirements
+
+## 1 programátor
+Uživatel se rozhodne naprogramovat si své vlastní SW dílo.
+Rozhodne se, že pro testování bude používat framework, který nepodporuje verzování testů do té míry v jaké by mu vyhovovalo,
+a tak bude se rozhodne používat můj SW.
+Stáhne si tedy instalační balíček a SW nainstaluje (např. příkaz ~~`make`~~ `./performance-eval-test-installater.sh`). Instalační program bude shellovský skrip, který zařídí instalaci programu do systému (adresáře?).
+
+
+~~Během instalace může být požádán o zadání složky ve které se nacházejí soubory s výsledky proběhlých benchmarků a o formát těchto souborů (použitý testovací framework). Možná by tyto údaje bylo možné zadávat i formou nějakých přepínačů při spouštění skriptu.~~
+
+Uživatel si po instalaci bude moci nastavit konfifurační soubor tj. změnit defaultní nastavení pospané dále. Při instalaci bude vtyvořena složka benchmarks s konfiguračním souborem. Úprava bude probíhat tak, že jej bude moct otevřít v běžném textovém editoru a upravit obsah jednotlivých proměnných.
+
+Uživatel tedy naprogramuje část aplikace s testy ve svém oblíbeném frameworku. Pak pomocí příkazu `performance-tests` spustí můj skript, který spustí uživatelské testy a jejich výstup uloží v podobě jakou vyžaduje knihovna vyhodnocovače (a klidně je mimo jiné může vypsat do konzole). Když se uživatel rozhodne, že chce vidět jak s postupem času vylepšoval své funkce a zefektivňoval svůj kód zavolá příkaz `performance-evaluate`.
+Skript se podívá do složky ve které jsou výsledky testů. Začne je procházet a vyhodnocovat. Výsledek vyhodnocení vypíše na standardní
+výstup.
+
+	TEST_NAME		|	NEW_TIME (ms)	|	LAST_MEASURED_TIME (ms)	|	CHANGE (%)
+	PERFORMANCE_TEST_1	|	50		|		20		|	-60
+	PERFORMANCE_TEST_2	|	60		|		80		|	+33
+	PERFORMANCE_TEST_3	|	20		|		21		|	+5 !!! (Insufficient data)
+
+Samozřejmě je také možné použít příkaz, který vyrobí grafičtější formu zpracování výsledků testů než je výpis do konzolové řádky.
+
+```
+performance-evaluate --graphical
+```
+Skript vyrobí soubor typu evaluation-result.html, což bude soubor, který bude umět otevřít každý webový prohlížeč a bude v něm graficky
+znázorněné postupné změny ve výkonu (v rychlosti běhu jednotlivých metod). Bude zobrazeno porovnání i se staršími než jen posledními
+testovacími výsledky. K vyhodnocení budou použity základní statistické metody (které prozatím neumím blíže specifikovat).
+
+
+## Větší projekt
+Při práci ve větší skupině se obvykle využívá jeden způsob testování výkonu, tudíž jen jeden testovací framework. Za předpokladu, že data z tohoto frameworku umí evaluator vyhodnocovat, pak bude evaluator schopen zpracovávat i data pro větší projekt obdobným způsobem jako u malého.
+Instalace a nastavení bude pravděpodobně stejné jako u malého projektu. Možná bude nějaký rozdíl v případě, že bude uživatel chtít zpracovávat výsledky z více souborů najednou.
+
+Po instalaci evaluatoru bude nutné přepsat konfigurační soubor svými údaji. Testy se budou opět spouštět pomocí `performance-tests`
+
+Pravděpodobně budou moct být zdrojová data pro evaluator ve více souborech, a tedy bude nutné ještě vymyslet způsob jak od uživatele přijmout zdrojová data ve více vstupních souborech. Výsledky testů po zadání příkazu ```performance-evaluate``` by pak vypadaly nějak takhle:
+
+	TEST_NAME			|	NEW_TIME (ms)	|	LAST_MEASURED_TIME (ms)	|	CHANGE (%)
+	SET_1-PERFORMANCE_TEST_1	|	50		|	20			|	-60
+	SET_1-PERFORMANCE_TEST_2	|	60		|	80			|	+33
+	SET_1-PERFORMANCE_TEST_3	|	20		|	21			|	+5 !!! (Insufficient data)
+	SET_2-PERFORMANCE_TEST_1	|	50		|	20			|	-60
+	SET_2-PERFORMANCE_TEST_2	|	60		|	80			|	+33
+	SET_2-PERFORMANCE_TEST_3	|	20		|	21			|	+5 !!! (Insufficient data)
+
+Samozřejmě pro lepší výsledky, by bylo možné použít příkaz ```performance-evaluate --graphical ```, který by vygeneroval jeden soubor 
+evaluation-result.html, který by bylo opět možné otevřít v běžných webových prohlížečích. Na stránce by byly lépe graficky znázorněny
+(pravděpodobně v podobě grafu) změny ve výkonu u jednotlivých testů i vzhledem k několika starším testům. Opět za použití základních 
+statistických metod. 
+
+## Požadavky na kompatibilitu
+Každý z testovacích frameworků uvedený v GOALS.md má svůj specifický formát zpracování výstupů měření bude tedy zapotřebí pro každý formát mít specifický způsob zpracovávání dat. Minimálně co se parsování týče. Na data ale bude možné aplikovat stejné statistické metody.
+
+Zpracování dat tedy bude pravděpodobně probíhat tak, že pro každý formát výstupu frameworku bude implementovaná metoda, která data předzpracuje a na data poskytované frameworkem bude aplikováno, co nejvíce statistických metod a různých vyhodnocovacích funkcí. Bude tedy implementovaná, nebo použitá nějaká statistická knihovna z níž se budou na dostupná data volat metody, které budou data vyhodnocovat.
+
+## Způsob ukládání dat
+### Umístění
+V případě, že v adresáři, ve kterém je skript zavolán (příkaz `performance-evaluate`), nebude konfigurační soubor, tak bude vyhledána složka `benchmarks`. Ve složce se předpokládá existence výstupních souborů jednotlivých benchmarků, které již proběhly. Do konzole se vypíše výsledek vyhodnocení.
+V konfiguračním souboru, který bude umístěn v adresáři, ze kterého bude evaluator spouštěný může být umístěn také konfigurační soubor `.performance-evaluator-config.json`, který může vypadat následovně:
+```json
+{
+  "testerName": "tester1",
+  "machineName": "testingMachine1",
+  "srcDir": "./benchmarks"
+  "destDir": "./eval-result",
+  "testCommand" : "run benchmark",
+  "inputFilePattern": [
+    "SET1*",
+	"SET2*"
+  ]
+}
+```
+Ve složce se zdorjovými soubory začne skript prohledávat strukturu a jako jeden celý test bude považovat dva soubory od jednoho stroje uživatele a od jedné verze. Bude vybírat vždy dva po sobě jdoucí soubory (podle času poslední změny), jejichž názvy budou odpovídat formátům "SET1\*" a "SET2\*". Pokud nebudou nalezeny dva soubory které k sobě patří, tak dojde k vyhodnocení celých testů, ale uživatel bude zpraven o této chybě na chybovém výstupu. Výstupní soubor bude uložen ve složce destDir. testCommand bude obsahovat příkaz ke spuštění samotného benchmarku.
+
+Defaultně však bude vypadat takto:
+```json
+{
+  "testerName": "tester",
+  "machineName": "machine",
+  "srcDir": "./benchmarks"
+  "destDir": "./eval-result",
+  "testCommand" : "",
+  "inputFilePattern": [  ]
+}
+```
+
+Předpokládá se, že kód vytvoří z tohoto souboru instanci nějaké konfigurační třídy. Aby nedocházelo v cílové složce k přepisování výsledného souboru bude jeho název generovaný z aktuálního času (je to nutné?, spíš ne -> stačí mi jen jeden výstupní soubor, vždy generovat čerstvý výstup -> mohu defaultně použít destDir = ".").
+Do výsledného souboru bude zaznamenán název stroje, jméno testera, výsledky statistického vyhodnocení testů.
+```json
+{
+  "testName": "test1",
+  // ... statistická data ...
+}
+```
+
+### Názvy souborů (jak je nalezne skript?)
+Přímočará až tupá řešení:
+	- Více měření stejné verzí by se opět dalo vyřešit nějakým "počítadlem" v názvu souboru
+	- Je možné třídit skripty po složkách podle verzí, nebo podle testerů, nebo podle strojů.
+	- Je možné ukládat tato do data do názvů souborů, což povede k nezpřehlednění jmen souborů.
+
+Další možnost je strukturovat složku benchmark podle těchto údajů. 
+Idea: 
+Ve složce benchmarks by byla složka pro každý stroj na kterém se beanchmarky provádějí. Ve složkách pro stroje by byla složka pro každého testera a v nich složka pro každou verzi. Ve složkách pro výslednou verzi by byly soubory s výsledky jendotlivých benchmarků. Tyto benchmarky by se vyhodnocovaly podle data poslední změny souboru (metadata souboru).
+
+Problém:
+Jak se soubor dostane do složky? Toto řešení vytváří novou složitost pro uživatele, pokud by se totiž do složky benchmarks vkládal nový soubor, tak by se musel nějak zatřídit (nepředpokládá se, že by to uživatel dělal sám).
+
+Řešení:
+Vytvořit skript, který by správně zatřizoval výsledky měření. Tento skript by se musel spouštět před vyhodnocováním a podle  konfiguračního souboru by uměl sám zatřídit výsledky měření. Protože soubory ve složce benchmarks by neměly být (možná konfigurační soubor), tak by vyhodnocovač tyto soubory ignoroval. Pokud by uživatel například commitoval (na Git) složku s uloženými daty, musel by commitovat složku, kterou předtím nechal setřídit (toto není problém u jednoho uživatele (a jednoho stroje), kde by nezáleželo na tom, pod kterým konfiguračním souborem se toto třídí).
+
+Řešení 2:
+Vytvořit skript, který při spuštění benchmark testu zatřídí na základě konfiguračního souboru výstupní soubor testu do příslušné složky ve složce benchmarks. (Jednoduchý bash skript spouštěný pomocí pipy) -> 
+`run_tests.sh "./muj_benchmark"`:
+```
+./muj_benchmark | ./sort_result
+```
+Řešení 3:
+Pomocí proměnné testCommand v konfiguračním souboru spouštět pomocí svého commandu benchmark sám a sám jej uložit do souboru jehož název bude strukturovaný podle mě. 
+Ve formátu `"m-machine-t-tester-v-version-d-ISODateTime"`
+
+Problém:
+Kde vzít verzi (číslo verze)?
+
+Řešení:
+??? (Git ?, ??)
+
+## Formát dat
+Nejjednodušší způsob pro ukládání dat bude pravděpodobně JSON formát, protože jak JS tak Java mají knihovny umožňující ze stringu v JSON formátu vytvářet objekty. Bude se tedy jednoduše programově zpracovávat jak v Javovském skriptu, který bude vykonávat statistické výpočty a zpracování výstupu benchmarku, tak pomocí JavaScriptu, který bude pomáhat s generováním grafického výstupu aplikace.
+Skript v Javě bude generovat z JSON souboru výstup do konzole a ze stejného souboru bude JavaScript generovat webovou stránku, jakožto grafický výstup aplikace. Zároveň s JSON soubory umí pracovat i tooly jiných programátorů, protože se jedná o bežný souborový formát.
+
+## Problémy s formátováním 
+Jaká data budu ukládat? (jaké statistické hodnoty)
+
+
+
