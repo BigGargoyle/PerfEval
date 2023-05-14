@@ -75,6 +75,11 @@ that limits the scan to recent directories:
 
     -   ukládání spoják vs. strom
     -   společná data 
-        -   bezrozměrná jednotka (naměřená hodnota)
-        -   jendotka
+        -   bezrozměrná jednotka (naměřené hodnoty)
+        -   jendotka vs. bezrozměrné číslo?
+        -   jmeno stroje
+        -   verze benchmarkovaciho SW
+        -   verze OS
+        -   jmeno benchmarku
+        -   percentily?
 
