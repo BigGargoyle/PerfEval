@@ -73,3 +73,13 @@ that limits the scan to recent directories:
         -   metadata souboru se při kopírování mění (není možné využít čas vytvoření souboru pro ukládání verzí)
             datum změnění souboru se ovšem nemění? -> dalo by se využít ...
 
+    -   ukládání spoják vs. strom
+    -   společná data 
+        -   bezrozměrná jednotka (naměřené hodnoty)
+        -   jendotka vs. bezrozměrné číslo?
+        -   jmeno stroje
+        -   verze benchmarkovaciho SW
+        -   verze OS
+        -   jmeno benchmarku
+        -   percentily?
+
