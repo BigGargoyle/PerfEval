@@ -8,13 +8,20 @@ Aplikace bude umět zpracovávat výsledky testů běžně užívaných benchmar
 
 ## Používání aplikace
 Vývojář softwaru se rozhodne vyvíjet nový software. Naprogramuje nějakou část svého programu a k němu pomocí benchmark frameworku, který je podporován PUTE, naprogramuje výkonnostní testy. Uživatel si stáhne instalační balíček a PUTE pomocí příkazu `./pute-installater.sh` nainstaluje. Bude se jednat o instalančí skript samotného PUTE. V průběhu instalance bude uživatel požádán o zadání příkazu, pomocí kterého spouští své performance testy. Nadále je uživatel bude spouštět příkazem `pute start-tests`. O výsledky testů se postarají skripty PUTE. Výsledek testu uloží do vnitřní adresářové struktury schované ve složce 
-`.performance`
+`.performance`. 
 
 ?? Uživatel si po instalaci bude moci dokonfigurovat konfigurační soubor `pute-config.json` (nějaká forma úpravy příkazu pro spouštění testů)
 
+Pokud se uživatel rozhodne, že chce sám vidět jak se změnil výkon mezi posledními dvěma verzemi, pak použije příkaz `pute evaluate`. Příkaz spustí porovnání posledních dvou verzí a vypíše výsledek na standardní výstup. Takový výstup může vypadat následovně:
 
+```
+TEST_NAME		|	NEW_TIME (ms)	|	LAST_MEASURED_TIME (ms)	|	CHANGE (%)
+PERFORMANCE_TEST_1	|	50		|		20		|	-60
+PERFORMANCE_TEST_2	|	60		|		80		|	+33
+PERFORMANCE_TEST_3	|	20		|		21		|	+5 !!! (Insufficient data)
+```
 
-### 1 programátor
+V případě, že se uživatel bude chtít podívat na porovnání více posledních verzí, pak požije příkaz `pute evaluate --graphical`. V kořenovém adresáři (na úrovni složky .performance) bude vyroben soubor `puteval-result.html`, který bude graficky zobrazovat výsledky porovnávání více starších verzí.
 
 ### Větší projekt
 
@@ -23,13 +30,14 @@ TODO: kde a jak ukládat data???, formát??
 
 ## Shrnutí
 Soubory
+-   .performace - složka
 -   pute-installer.sh
 -   pute-config.json
--   .performace - složka
+-   puteval-result.html
 
 Příkazy
 -   pute start-tests
--   
+-   pute evaluate (--graphical)
 
 Podporované benchmarky
 -   BenchmarkDotNET
