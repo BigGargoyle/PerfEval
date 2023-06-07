@@ -24,6 +24,7 @@ PERFORMANCE_TEST_3	|	20		|		21		|	+5 !!! (Insufficient data)
 V případě, že se uživatel bude chtít podívat na porovnání více posledních verzí, pak požije příkaz `pute evaluate --graphical`. V kořenovém adresáři (na úrovni složky .performance) bude vyroben soubor `puteval-result.html`, který bude graficky zobrazovat výsledky porovnávání více starších verzí.
 
 ### Větší projekt
+Při práci na větším projektu se obvykle používá jeden způsob testování výkonu, tudíž se předpokládá jeden testovací framework. Pokud se tedy při práci na větším projektu používá jeden z podporovaných frameworků, pak není problém PUTE použít. Instalace bude stejná jak byla výše uvedena. Bude ale možné nakonfigurovat uživatele (konkrétního testera) a stroj an kterém se testuje. K tomuto budou sloužit příkazy `pute set-user the_best_pute_tester_name` a `pute set-machine the_best_testing_machine`.
 
 ## Způsob ukládání dat
 TODO: kde a jak ukládat data???, formát??
