@@ -74,7 +74,9 @@ that limits the scan to recent directories:
             datum změnění souboru se ovšem nemění? -> dalo by se využít ...
 
 -   ukládání spoják vs. strom
-        Nakonec nechci ukládat data do stromu, protože se hůře implementuje a počet vnitřních uzlů je lineárně závislý na počtu koncových uzlů. Proto
+    
+    Nakonec nechci ukládat data do stromu, protože se hůře implementuje a počet vnitřních uzlů je lineárně závislý na počtu koncových uzlů. Proto
+
 -   společná data 
     -   bezrozměrná jednotka (naměřené hodnoty)
     -   jendotka vs. bezrozměrné číslo?
