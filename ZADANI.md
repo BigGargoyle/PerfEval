@@ -9,10 +9,7 @@ Aplikace bude umět zpracovávat výsledky testů běžně užívaných benchmar
 PUTE bude naprogramovaný v programovacím jazyce JAVA a bude doplněn o podpůrné skripty napsané v bashi. Předpokládám, že zpracování příkazové řádky přenechám bashovskému skriptu, který následně spustí vhodný podprogram napsaný v jazyce JAVA. Je ale možné, že celá implementace bude provedena v programovacím jazyce JAVA.
 
 ### Používání aplikace
-Vývojář softwaru se rozhodne vyvíjet nový software. Naprogramuje nějakou část svého programu a k němu pomocí benchmark frameworku, který je podporován PUTE, naprogramuje výkonnostní testy. Uživatel si stáhne instalační balíček a PUTE pomocí příkazu `./pute-installater.sh` nainstaluje. Bude se jednat o instalančí skript samotného PUTE. V průběhu instalance bude uživatel požádán o zadání příkazu, pomocí kterého spouští své performance testy. Nadále je uživatel bude spouštět příkazem `pute start-tests`. O výsledky testů se postarají skripty PUTE. Výsledek testu uloží do vnitřní adresářové struktury schované ve složce 
-`.performance`. 
-
-?? Uživatel si po instalaci bude moci dokonfigurovat konfigurační soubor `pute-config.json` (nějaká forma úpravy příkazu pro spouštění testů)
+Vývojář softwaru se rozhodne vyvíjet nový software. Naprogramuje nějakou část svého programu a k němu pomocí benchmark frameworku, který je podporován PUTE, naprogramuje výkonnostní testy. Uživatel si stáhne instalační balíček a PUTE pomocí příkazu `./pute-installater.sh` nainstaluje. Bude se jednat o instalančí skript samotného PUTE. V průběhu instalace bude uživatel požádán zda-li chce provést výchozí instalaci a nastavit pouze povinné parametry, nebo jestli chce provést detailní instalaci a nastavit všechny parametry. Povinným parametrem je pouze volba benchmarku.
 
 Pokud se uživatel rozhodne, že chce sám vidět jak se změnil výkon mezi posledními dvěma verzemi, pak použije příkaz `pute evaluate`. Příkaz spustí porovnání posledních dvou verzí a vypíše výsledek na standardní výstup. Takový výstup může vypadat následovně:
 
@@ -26,16 +23,19 @@ PERFORMANCE_TEST_3	|	20		|		21		|	+5 !!! (Insufficient data)
 V případě, že se uživatel bude chtít podívat na porovnání více posledních verzí, pak požije příkaz `pute evaluate --graphical`. V kořenovém adresáři (na úrovni složky .performance) bude vyroben soubor `puteval-result.html`, který bude graficky zobrazovat výsledky porovnávání více starších verzí.
 
 ### Větší projekt
-Při práci na větším projektu se obvykle používá jeden způsob testování výkonu, tudíž se předpokládá jeden testovací framework. Pokud se tedy při práci na větším projektu používá jeden z podporovaných frameworků, pak není problém PUTE použít. Instalace bude stejná jak byla výše uvedena. Bude ale možné nakonfigurovat uživatele (konkrétního testera) a stroj na kterém se testuje. K tomuto budou sloužit příkazy `pute config --set-user the_best_pute_tester_name` a `pute config --set-machine the_best_testing_machine`.
+Při práci na větším projektu se obvykle používá jeden způsob testování výkonu, tudíž se předpokládá jeden testovací framework. Pokud se tedy při práci na větším projektu používá jeden z podporovaných frameworků, pak není problém PUTE použít. Instalace bude stejná jak byla výše uvedena. Bude ale možné nakonfigurovat uživatele (konkrétního testera) a stroj na kterém se testuje. K tomuto budou sloužit příkazy `pute config --set-user the_best_pute_tester_name` a `pute config --set-machine the_best_testing_machine`. Dále bude možné nakonfigurovat verzi softwaru, která je testovaná, příkazem `pute config --set-version`. Pokud hodnota verze nebude nakonfigurovaná, její výchozí hodnota bude GIT. Hodnota GIT znamená, že se má program pokusit zjistit verzi pomocí statusu git repozitáře, ve kterém se nachází složka `.performance`. Pokud nebude verze nalezena, tak bude ignorována.
 
 TODO: Chci dovolit aby více testovacích souborů tvořili jeden výstup (resp. jeden celistvý výsledek jednoho benchmarku)?
 
 ### Způsob ukládání dat
-Výsledky jednotlivých testů budou ukládány na jednom místě, ideálně v jedné složce (`.performance/test-results`), a zároveň několik posledních testů bude uloženo ve složce `.performance/test-cache`, protože procházet při každém požádání o porovnání posledních 50 testů by při procházení všech výsledků testů bylo pomalé.
+Výsledky jednotlivých testů budou ukládány na jednom místě, ideálně v jedné složce (výchozí nastavení `.performance/test-results`), a zároveň několik posledních testů bude uloženo ve složce `.performance/test-cache`, protože procházet při každém požádání o porovnání posledních 50 testů by při procházení všech výsledků testů bylo pomalé. Pokud bude cache prázdná projde se celý adresář s testya naplní se cache. Poté se začne vyhodnocovat.
 
-Podporované benchmarky jsou schopné generovat svůj výstup ve formátu JSON souboru. Program se ale na základě **obsahu/konfigurace?** rozhodne, který benchmark a jaký jeho formát použít. Podle této konfigurace se bude určovat jak se budou parsovat výsledky testů.
+Podporované benchmarky jsou schopné generovat svůj výstup ve formátu JSON souboru. Program se ale na základě konfigurace rozhodne, který benchmark a jaký jeho formát použít. Podle této konfigurace se bude určovat jak se budou parsovat výsledky testů.
 
-### Shrnutí
+Pomocí příkazů na konfiguraci bude možné určit složku, kde se nachází všechny výsledky testů, a určit jaký benchmark byl použit. `pute config --benchmark` bude sloužit k určení benchmarku a zároveň při jeho použití bude ověřeno, zda-li je podporován. `pute config --test-directory` bude sloužit k nastavení složky ze které se budou brát výsledky testů.
+
+
+### Stručné shrnutí
 Soubory
 -   .performace - složka
 -   pute-installer.sh
@@ -47,6 +47,9 @@ Příkazy
 -   pute evaluate (--graphical)
 -   pute config --set-user string
 -   pute config --set-machine string
+-   pute config --benchmark string
+-   pute config --test-directory string
+-   pute config --set-version string
 
 Podporované benchmarky
 -   BenchmarkDotNET
