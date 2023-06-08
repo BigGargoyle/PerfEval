@@ -54,6 +54,6 @@ Příkazy
 -   pute config --test-directory string
 -   pute config --set-version string
 
-Podporované benchmarky
+Podporované benchmarky (prozatím)
 -   BenchmarkDotNET
 -   OpenJDK JMH
