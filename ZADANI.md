@@ -50,6 +50,7 @@ Příkazy
 -   pute config --set-machine string
 -   pute config --benchmark string
     -   TODO: zamyslet se jestli se bude rozpoznávat, nebo jestli bude zadáván?
+        -   pravděpodobně by nemělo být těžké rozeznávat to strojově, jen bych rád názor :-)
 -   pute config --test-directory string
 -   pute config --set-version string
 
