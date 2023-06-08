@@ -75,7 +75,7 @@ that limits the scan to recent directories:
 
 -   ukládání spoják vs. strom
     
-    Nakonec nechci ukládat data do stromu, protože se hůře implementuje a počet vnitřních uzlů je lineárně závislý na počtu koncových uzlů. Proto
+    Nakonec nechci ukládat data do stromu, protože se hůře implementuje a počet vnitřních uzlů je lineárně závislý na počtu koncových uzlů. Proto budu chtít použít jednu složku a cache. Implementaci bude možné kdykoli zlepšit, ale pro začátek vypadá dobře.
 
 -   společná data 
     -   bezrozměrná jednotka (naměřené hodnoty)
