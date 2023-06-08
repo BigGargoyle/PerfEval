@@ -48,6 +48,7 @@ Příkazy
 -   pute config --set-user string
 -   pute config --set-machine string
 -   pute config --benchmark string
+    -   TODO: zamyslet se jestli se bude rozpoznávat, nebo jestli bude zadáván?
 -   pute config --test-directory string
 -   pute config --set-version string
 
