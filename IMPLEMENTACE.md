@@ -18,8 +18,6 @@ TODO: Chci mít někde implementace třídy ITest na jednom místě, nebo chci a
 ## Rozhraní ITestParser
 Rozhraní má za úkol vytvářet z výsledků jednotlivých benchmarků a vytvářet z nich instance typu ITest. Tyto instance později poslouží k jednodušímu zpracování dalšími částmi programu. List<ITest>, který je výstupem jedné z metod, které musí ITestParser implementovat je reprezentací statistického souboru naměřených dat, které se budou dále nějakou zatím blíže nespecifikovanou statistickou metodou zpracovávat.
 
-TODO: (Dotaz ohledně objektového návrhu) ParseTest je metoda která parsuje string na instanci rozhraní ITest. Je v rámci objektového návrhu správně uvádět jako veřejnou metodu rozhraní i za předpokladu, že zvenku nemusí být viditelná? Myslím si totiž, že existence metody je nutná, ale zvenku být viditelná nemusí. Intuice říká, že by se mezi veřejné metody rozhraní uvádět neměla, protože tak trochu diktuje, jak se mají instance ITest vytvářet.
-
 ### Třída BenchmarkDotNetJSONParser
 Implementace rozhraní ITestParser, která má za úkol vytvářet z JSON souboru vytvořeného benachmark testem pomocí BenchmarkDotNet frameworku. Ve skutečnosti bude z JSON souboru vytvářet instance třídy BenchmarkDotNetTest, ale na venek je bude prezentovat jako ITest.
 
