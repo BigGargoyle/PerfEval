@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "HostEnvironmentInfo",
     "Benchmarks"
 })
-public class BenchmarkDotNetJSON {
+public class BenchmarkDotNetJSONBase {
 
     @JsonProperty("Title")
     private String title;

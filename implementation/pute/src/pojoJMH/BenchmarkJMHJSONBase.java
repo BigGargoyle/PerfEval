@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "primaryMetric",
     "secondaryMetrics"
 })
-public class BenchmarkJMHJSON {
+public class BenchmarkJMHJSONBase {
 
     @JsonProperty("jmhVersion")
     private String jmhVersion;
