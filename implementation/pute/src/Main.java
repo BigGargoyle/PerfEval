@@ -30,19 +30,26 @@ public class Main {
         * */
 
         var fileNames = GetFilesFromArg(args);
-        if(fileNames == null){
+        if(fileNames == null || fileNames.length!=2){
             System.out.println("Benchmark result files not found");
             return;
         }
+        /*
+        for(var fileName : fileNames)
+             System.out.println(fileName);
+        */
+
         ITestParser parser = ParserIndustry.RecognizeParserFactory(fileNames[0]);
+        assert parser!=null;
         var testSet1 = parser.GetTestsFromFile(fileNames[0]);
         var testSet2 = parser.GetTestsFromFile(fileNames[1]);
         if(testSet1.size() != testSet2.size()){
             System.out.println("Benchmark results are not made on the same set of tests");
             return;
         }
+
         for(int i =0;i<testSet1.size();i++){
-            if(testSet1.get(i).Name.compareTo(testSet2.get(i).Name) != 0){
+            if(testSet1.get(i).GetName().compareTo(testSet2.get(i).GetName()) != 0){
                 System.out.println("Benchmark results are not made on the same set of tests");
                 return;
             }
@@ -56,14 +63,14 @@ public class Main {
         System.out.println("\t PUTE evaluation result ");
     }
     static void PrintResultTableHeader(){
-        System.out.println("TEST_NAME\t\t|\tNEW_MEASURING\t|\tLAST_MEASURING\t|\tCHANGE (%)");
+        System.out.println("TEST_NAME\t\t\t\t|\tNEW_MEASURING\t|\tLAST_MEASURING\t\t|\tCHANGE (%)");
     }
     static void PrintOneTestResult(CompareTestResult testResult){
         String stringToPrint="";
-        stringToPrint+=testResult.getNewTest().Name+"\t\t|";
-        stringToPrint+="\t"+average(testResult.getNewTest().Values)+"\t|";
-        stringToPrint+="\t"+average(testResult.getOldTest().Values)+"\t|";
-        stringToPrint+="\t"+ (testResult.getDiffernce() / 100);
+        stringToPrint+=testResult.getNewTest().GetName()+"\t\t|";
+        stringToPrint+="\t"+average(testResult.getNewTest().GetValues())+"\t\t|";
+        stringToPrint+="\t"+average(testResult.getOldTest().GetValues())+"\t|";
+        stringToPrint+="\t"+ ((-1)*(testResult.getDiffernce() * 100 - 100));
         if(!testResult.getTestResult()){
             stringToPrint+="\t !!! SIGNIFICANT CHANGE !!!";
         }
@@ -89,7 +96,7 @@ public class Main {
         var result = new ArrayList<CompareTestResult>();
         for (int i= 0; i<testSet1.size();i++){
             double pValue = CompareTests(testSet1.get(i),testSet2.get(i));
-            double diff = average(testSet1.get(i).Values)/average(testSet2.get(i).Values);
+            double diff = average(testSet1.get(i).GetValues())/average(testSet2.get(i).GetValues());
             if(Math.abs(pValue)> criticalValue){
                 // test result has changed
                 result.add(new CompareTestResult(diff,true,testSet1.get(i),testSet2.get(i)));
@@ -103,11 +110,11 @@ public class Main {
     }
     static double CompareTests(ITest test1, ITest test2) {
         TTest tTestClass = new TTest();
-        double[] values1 = new double[test1.Values.size()];
-        double[] values2 = new double[test1.Values.size()];
+        double[] values1 = new double[test1.GetValues().size()];
+        double[] values2 = new double[test1.GetValues().size()];
         for (int i = 0; i<values1.length;i++){
-            values1[i] = test1.Values.get(i);
-            values2[i] = test2.Values.get(i);
+            values1[i] = test1.GetValues().get(i);
+            values2[i] = test2.GetValues().get(i);
         }
         return tTestClass.t(values1,values2);
         //return tTest(test1.Values, test2.Values);

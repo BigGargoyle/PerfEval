@@ -27,4 +27,19 @@ public class JMHTest implements ITest{
         for(Double d : list)sum+=d;
         return sum/list.size();
     }
+
+    @Override
+    public String GetName() {
+        return Name;
+    }
+
+    @Override
+    public int GetInternalID() {
+        return InternalTestID;
+    }
+
+    @Override
+    public List<Double> GetValues() {
+        return Values;
+    }
 }

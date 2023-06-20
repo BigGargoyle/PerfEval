@@ -26,4 +26,19 @@ public class BenchmarkDotNetTest implements ITest {
             }
         }
     }
+
+    @Override
+    public String GetName() {
+        return Name;
+    }
+
+    @Override
+    public int GetInternalID() {
+        return InternalTestID;
+    }
+
+    @Override
+    public List<Double> GetValues() {
+        return Values;
+    }
 }
