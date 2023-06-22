@@ -3,20 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 // math library import
-import org.apache.commons.math3.distribution.TDistribution;
-import org.apache.commons.math3.exception.DimensionMismatchException;
-import org.apache.commons.math3.exception.MathIllegalArgumentException;
-import org.apache.commons.math3.exception.MaxCountExceededException;
-import org.apache.commons.math3.exception.NoDataException;
-import org.apache.commons.math3.exception.NotStrictlyPositiveException;
-import org.apache.commons.math3.exception.NullArgumentException;
-import org.apache.commons.math3.exception.NumberIsTooSmallException;
-import org.apache.commons.math3.exception.OutOfRangeException;
-import org.apache.commons.math3.exception.util.LocalizedFormats;
-import org.apache.commons.math3.stat.StatUtils;
-import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
-import org.apache.commons.math3.stat.inference.TTest;
-import org.apache.commons.math3.util.FastMath;
 
 
 public class Main {
@@ -34,10 +20,6 @@ public class Main {
             System.out.println("Benchmark result files not found");
             return;
         }
-        /*
-        for(var fileName : fileNames)
-             System.out.println(fileName);
-        */
 
         ITestParser parser = ParserIndustry.RecognizeParserFactory(fileNames[0]);
         assert parser!=null;
@@ -66,14 +48,22 @@ public class Main {
         System.out.println("TEST_NAME\t\t\t\t|\tNEW_MEASURING\t|\tLAST_MEASURING\t\t|\tCHANGE (%)");
     }
     static void PrintOneTestResult(CompareTestResult testResult){
-        String stringToPrint="";
-        stringToPrint+=testResult.getNewTest().GetName()+"\t\t|";
-        stringToPrint+="\t"+average(testResult.getNewTest().GetValues())+"\t\t|";
-        stringToPrint+="\t"+average(testResult.getOldTest().GetValues())+"\t|";
-        stringToPrint+="\t"+ ((-1)*(testResult.getDiffernce() * 100 - 100));
+        String formatString = "%s\t\t|\t%.0f\t\t|\t%.0f\t\t\t|\t%+f%s";
+        String nameOfTest = testResult.getNewTest().GetName();
+        // double speedOfNewTest = average(testResult.getNewTest().GetValues());
+        double speedOfNewTest = testResult.getNewTestAvg();
+        double speedOfOldTest = testResult.getOldTestAvg();
+        double testDifference = testResult.getDifference();
+
+        // In case of change the change will be reported
+        String testResultChanged = "";
         if(!testResult.getTestResult()){
-            stringToPrint+="\t !!! SIGNIFICANT CHANGE !!!";
+            testResultChanged = "\t !!! SIGNIFICANT CHANGE !!!";
         }
+
+        String stringToPrint=String.format(formatString, nameOfTest, speedOfNewTest,
+                speedOfOldTest, testDifference, testResultChanged);
+
         System.out.println(stringToPrint);
     }
     static void PrintResult(List<CompareTestResult> compareResults){
@@ -92,41 +82,11 @@ public class Main {
         if(!(inputFiles[0].exists()&&inputFiles[1].exists())) return null;
         return args;
     }
-    static List<CompareTestResult>CompareSets(List<ITest> testSet1, List<ITest> testSet2){
+    static List<CompareTestResult>CompareSets(List<ITest> oldSet, List<ITest> newSet){
         var result = new ArrayList<CompareTestResult>();
-        for (int i= 0; i<testSet1.size();i++){
-            double pValue = CompareTests(testSet1.get(i),testSet2.get(i));
-            double diff = average(testSet1.get(i).GetValues())/average(testSet2.get(i).GetValues());
-            if(Math.abs(pValue)> criticalValue){
-                // test result has changed
-                result.add(new CompareTestResult(diff,true,testSet1.get(i),testSet2.get(i)));
-            }
-            else{
-                // test result OK
-                result.add(new CompareTestResult(diff,false,testSet1.get(i),testSet2.get(i)));
-            }
+        for (int i= 0; i<oldSet.size();i++){
+            result.add(new CompareTestResult(criticalValue,oldSet.get(i),newSet.get(i)));
         }
         return result;
-    }
-    static double CompareTests(ITest test1, ITest test2) {
-        TTest tTestClass = new TTest();
-        double[] values1 = new double[test1.GetValues().size()];
-        double[] values2 = new double[test1.GetValues().size()];
-        for (int i = 0; i<values1.length;i++){
-            values1[i] = test1.GetValues().get(i);
-            values2[i] = test2.GetValues().get(i);
-        }
-        return tTestClass.t(values1,values2);
-        //return tTest(test1.Values, test2.Values);
-    }
-    static double average(List<Double> values){
-        return listSum(values)/values.size();
-    }
-    static double listSum(List<Double> values){
-        double sum = 0;
-        for (Double value : values) {
-            sum += value;
-        }
-        return sum;
     }
 }

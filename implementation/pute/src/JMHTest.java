@@ -42,4 +42,10 @@ public class JMHTest implements ITest{
     public List<Double> GetValues() {
         return Values;
     }
+
+    @Override
+    public boolean HasAscendingPerformanceUnit() {
+        // by default ops/us -> more ops/us -> better performance
+        return true;
+    }
 }
