@@ -15,11 +15,11 @@ class CompareTestResult{
         double pValue = CompareTests(test_new, test_old);
         testOK = !(Math.abs(pValue) > criticalValue);
 
-        oldTestAvg = test_old.GetValues().stream()
+        oldTestAvg = test_old.getValues().stream()
                 .mapToDouble(Double::doubleValue)
                 .average()
                 .orElse(0.0);
-        newTestAvg = test_new.GetValues().stream()
+        newTestAvg = test_new.getValues().stream()
                 .mapToDouble(Double::doubleValue)
                 .average()
                 .orElse(0.0);
@@ -27,7 +27,7 @@ class CompareTestResult{
 
         difference = newTestAvg/oldTestAvg;
         difference = (1-difference)*100;
-        if(!test_new.HasAscendingPerformanceUnit()){
+        if(!test_new.hasAscendingPerformanceUnit()){
             difference *= -1;
         }
     }
@@ -39,11 +39,11 @@ class CompareTestResult{
     public double getNewTestAvg() { return newTestAvg; }
     static double CompareTests(ITest test1, ITest test2) {
         TTest tTestClass = new TTest();
-        double[] values1 = new double[test1.GetValues().size()];
-        double[] values2 = new double[test1.GetValues().size()];
+        double[] values1 = new double[test1.getValues().size()];
+        double[] values2 = new double[test1.getValues().size()];
         for (int i = 0; i<values1.length;i++){
-            values1[i] = test1.GetValues().get(i);
-            values2[i] = test2.GetValues().get(i);
+            values1[i] = test1.getValues().get(i);
+            values2[i] = test2.getValues().get(i);
         }
         return tTestClass.t(values1,values2);
     }

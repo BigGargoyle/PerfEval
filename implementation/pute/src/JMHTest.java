@@ -18,33 +18,30 @@ public class JMHTest implements ITest{
         PrimaryMetric primaryMetric = input.getPrimaryMetric();
         // !!! adding average of each measuredData, because rawData is a field of list of lists of Doubles
         for (List<Double> measuredData: primaryMetric.getRawData()){
-            Values.add(average(measuredData));
+            Values.add(
+                measuredData.stream().mapToDouble(Double::doubleValue)
+                        .average().orElse(0.0)
+            );
         }
     }
 
-    private double average(List<Double> list){
-        double sum = 0;
-        for(Double d : list)sum+=d;
-        return sum/list.size();
-    }
-
     @Override
-    public String GetName() {
+    public String getName() {
         return Name;
     }
 
     @Override
-    public int GetInternalID() {
+    public int getInternalID() {
         return InternalTestID;
     }
 
     @Override
-    public List<Double> GetValues() {
+    public List<Double> getValues() {
         return Values;
     }
 
     @Override
-    public boolean HasAscendingPerformanceUnit() {
+    public boolean hasAscendingPerformanceUnit() {
         // by default ops/us -> more ops/us -> better performance
         return true;
     }

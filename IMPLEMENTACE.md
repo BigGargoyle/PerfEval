@@ -24,7 +24,23 @@ Implementace rozhraní ITestParser, která má za úkol vytvářet z JSON soubor
 ### Třída JMHJSONParser
 Implementace rozhraní ITestParser, která má za úkol vytvářet z JSON souboru vytvořeného benachmark testem pomocí JMH frameworku. Ve skutečnosti bude z JSON souboru vytvářet instance třídy JMHTest, ale na venek je bude prezentovat jako ITest.
 
+## Třídy pojo
+Pomocí webového nástroje www.jsonschema2pojo.org byly vytvořeny dvě třídy pro parsování vstupního JSON souboru na instanci třídy, která jej bude v programu reprezentovat. Do programu tedy byly tímto způsobem přidány 2 adresáře se třídami (pojoBenchmarkDotNet a pojoJMH). V adresářích jsou soubory se třídami potřebné k parsování souboru s výslekem testu.
+
+### Použití nástroje jsonschema2pojo
+Do nástroje stačilo vložit obsah souboru a nástroj vygeneroval všechny potřebné třídy k naparsování. Tyto třídy pak stačilo přidat do adresáře projektu.
+
+### Implementace třídy BenchmarkDotNetTest
+Třída BenchmarkDotNetTest má jeden private konstruktor, který vytváří instanci třídy na základě tříd z adresáře pojoBenchmarkDotNet a to konkrétně ze třídy Benchmark. Třída BenchmarkDotNetTest slouží ke zjednodušení struktury vygenerovaných tříd a jejich zpřehlednění. Zatímco třídy z adresáře mají reprezentovat celý výstupní soubor, tak instance třídy BenchmarkDotNetTest mají reprezentovat jeden měřený test (daný rozhraním ITest).
+
+Z původní instance třídy Benchmark se tedy vezme název testu a naměřené hodnoty z nich se vyrobí instance třídy BenchmarkDotNetTest. Je kladen důraz na to, aby se uživatel této třídy (programátor) nepokoušel objekt konstruovat sám, nebo jinak, a proto je vytvořena public factory metoda ConstructTest, která má vracet zkonstruovaný objekt typu ITest. Není tedy možné bez konverze datového typu nijak sahat přímo na instanci třídy. K instanci je možné přistupovat pouze skrze rozhraní ITest.
+
+### Implementace třídy JMHTest
+Třída JMHTest má taktéž pouze jeden private kostruktor, který vytváří instanci třídy JMHTest. Uživatel této třídy by ji neměl kostruovat sám, a tak je k vytvoření instance této třídy vytvořena metoda ConstructTest, která jako má jako parametr instanci třídy BenchmarkJMHJSONBase. Třída BenchmarkJMHJSONBase reprezentuje výstup JMH Benchmarku ve formátu JSON. Třída JMHTest slouží ke zjednodušení a zpřehlednění vygenerované třídy BenchmarkJMHJSONBase.
+
+Z původní instance třídy BenchmarkJMHJSONBase bude tedy vytvořena instance JMHTest, která implementuje rozhraní ITest, a tedy reprezentuje výsledek jednoho testu v rámci celého benchmarku. Ke konstrukci se z původní třídy využije položka `benchmark` a hodnoty z položky `primaryMetric` respektive z její podpoložky `rawData`. Protože položka `rawData` instance `primaryMetric` je list listů objektů typu Double, tak se k vytvoření položky `Values` použije průměr jednotlivých objektů `List<Double>` uvnitř `rawData`. Jako měřená jednotka se předpokládá počet operací za jednotku času a metoda `hasAscendingPerformanceUnit` tedy vrací hodnotu `true`.
+
 # Implementace PUTE --graphical
-Při použití grafické verze aplikace bude použit nějaká šablona webové stránky. Do šablony se pouze dosadí odkazy na spočtená a naformátovaná data pro vykreslení. Pro vykreslení grafů se zlepšením bude použita nějaká knihovna v jazyce JavaScript (TODO: návrhy dodá kamarád, který má zaměřenou bakalářskou práci na porovnávání JavaScriptových pro vykreslování grafů). 
+Při použití grafické verze aplikace bude použit nějaká šablona webové stránky. Do šablony se pouze dosadí odkazy na spočtená a naformátovaná data pro vykreslení. Pro vykreslení grafů se zlepšením bude použita nějaká knihovna v jazyce JavaScript (TODO: návrhy dodá kamarád, který má zaměřenou bakalářskou práci na porovnávání JavaScriptových pro vykreslování grafů).
 
 TODO: Detaily ohledně implementace grafické verze budou doplněny po implementování "porovnávací" verze aplikace.

@@ -41,22 +41,22 @@ public class BenchmarkDotNetTest implements ITest {
     }
 
     @Override
-    public String GetName() {
+    public String getName() {
         return Name;
     }
 
     @Override
-    public int GetInternalID() {
+    public int getInternalID() {
         return InternalTestID;
     }
 
     @Override
-    public List<Double> GetValues() {
+    public List<Double> getValues() {
         return Values;
     }
 
     @Override
-    public boolean HasAscendingPerformanceUnit() {
+    public boolean hasAscendingPerformanceUnit() {
         // by default time -> more time -> worse performance
         return false;
     }

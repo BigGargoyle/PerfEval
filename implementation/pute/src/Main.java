@@ -31,7 +31,7 @@ public class Main {
         }
 
         for(int i =0;i<testSet1.size();i++){
-            if(testSet1.get(i).GetName().compareTo(testSet2.get(i).GetName()) != 0){
+            if(testSet1.get(i).getName().compareTo(testSet2.get(i).getName()) != 0){
                 System.out.println("Benchmark results are not made on the same set of tests");
                 return;
             }
@@ -49,7 +49,7 @@ public class Main {
     }
     static void PrintOneTestResult(CompareTestResult testResult){
         String formatString = "%s\t\t|\t%.0f\t\t|\t%.0f\t\t\t|\t%+f%s";
-        String nameOfTest = testResult.getNewTest().GetName();
+        String nameOfTest = testResult.getNewTest().getName();
         // double speedOfNewTest = average(testResult.getNewTest().GetValues());
         double speedOfNewTest = testResult.getNewTestAvg();
         double speedOfOldTest = testResult.getOldTestAvg();
