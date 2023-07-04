@@ -65,10 +65,14 @@ Při práci na větším projektu se obvykle používá jeden způsob testován�
 
 > Z textu není jasné, jakou roli hraje složka `.performance`.
 
+Předpokládá se, že složka `.performance` v kořenovém adresáři projektu bude sloužit k režii PUTE. Bude tedy obsahovat cache testů, konfigurační soubory atd.
+
 TODO: Chci dovolit aby více testovacích souborů tvořili jeden výstup (resp. jeden celistvý výsledek jednoho benchmarku)?
         -> případně pokud bych se rozhodl pozdějí, pravděpodobně by to nemělo být těžké doimplementovat.
 
 > Co přesně myslíte tím "více testovacích souborů" ? Napadá mě více výstupů z více spuštění stejného benchmarku ve stejném prostředí, více výstupů z různých benchmarků ve stejném prostředí, nebo více výstupů z různých prostředí. Obecně myslím, že bychom chtěli, aby všechny tyto možnosti byly podporovány.
+
+Je na mysli zda-li chci dovolit více výstupů stejného benchmarků, které ale dohromady budou tvořit jeden výsledek benchmarku nad celým software. Konkrétně jestli je praktické, aby uživatel mohl nějakým způsobem říci tyhle dva soubory tvoří 1 výsledek a při porovnání se tak mají chovat. Mně osobně to praktické nepřijde a myslím, že povolit výsledky v jednom testovacím benchmarku a skládající se pouze z jediného výstupního souboru jsou dostačující.
 
 ### Způsob ukládání dat
 Výsledky jednotlivých testů budou uloženy v libovolném formátu, který bude schopen PUTE rozpoznat a naformátovat. Jednotlivé testy budou do vyhodnocovače přidávány příkazem `pute index-new-result <file>`. Více testů je možné do vyhodnocovače přidat přidáním celé složky s výsledky pomocí příkazu `pute index-all-results <path>`.
@@ -91,7 +95,8 @@ Soubory
 
 Příkazy
 -   pute start-tests
--   pute evaluate (--graphical)
+-   pute evaluate (--graphical) <target-dir> 
+    -   <target-dir> je nepovinný parametr
 -   pute config --set-user string
 -   pute config --set-machine string
 -   pute config --benchmark string
@@ -99,6 +104,8 @@ Příkazy
         -   pravděpodobně by nemělo být těžké rozeznávat to strojově, jen bych rád názor :-)
 -   pute config --test-directory string
 -   pute config --set-version string
+-   pute index-new-result <file>
+-   pute index-all-results <path>
 
 Podporované benchmarky (prozatím)
 -   BenchmarkDotNET
