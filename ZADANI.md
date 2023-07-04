@@ -1,7 +1,8 @@
 # Performance Unit Test Evaluator (PUTE)
 
-> Já vím, že jsem si s názvem naběhl sám, ale nemohli bychom ho ještě změnit?
-> Ta zkratka prostě nepůsobí dobře...
+PUTE je nástroj, který vzniká v rámci předmětu Ročníkový projekt při studiu na MFF UK oboru Informatika se specializací Systémové programování.
+
+TODO: změnit název - zkratka je divná (s tím souhlasím, rád přijmu nápady)
 
 ## Cíl projektu
 Cílem práce je naprogramovat aplikaci, která by umožňovala vyhodnocovat výsledky výkonostních testů, které jsou spouštěny nad kódem uživatelů aplikace. Aplikace je tedy určena pro programátory a má za úkol pomáhat s vývojem jejich aplikací.
@@ -10,11 +11,11 @@ Cílem práce je naprogramovat aplikaci, která by umožňovala vyhodnocovat vý
 ### Hlavní úkol
 Aplikace bude umět zpracovávat výsledky testů běžně užívaných benchmarkovacíh frameworků. Základní podporované frameworky budou *OpenJDK JMH* a *BenchmarkDotNET*. Aplikace bude umět převzít výstupy těchto frameworků a porovnat je s předchozí verzí. PUTE bude možné mít zařazen v běžném GitLab CI/CD, takže po každém commitu bude možné, aby v důsledku toho selhala pipeline. Aplikaci bude možné spouštět i z konzole a nechat ji porovnat poslední verze. Dále bude možné spustit aplikaci tak, aby vygenerovala grafický výstup, kde by bylo porovnáno více posledních verzí.
 
-PUTE bude naprogramovaný v programovacím jazyce JAVA a bude doplněn o podpůrné skripty napsané v bashi. Předpokládám, že zpracování příkazové řádky přenechám bashovskému skriptu, který následně spustí vhodný podprogram napsaný v jazyce JAVA. Je ale možné, že celá implementace bude provedena v programovacím jazyce JAVA.
-
-> Ta část začínající "předpokládám" není striktně vzato zadání, ale implementační rozhodnutí.
+PUTE bude naprogramovaný v programovacím jazyce JAVA a bude doplněn o podpůrné skripty napsané v bashi.
 
 ### Používání aplikace
+
+TODO: seznamy kroků u jendnotlivých use cases
 
 > Tuto část by bylo vhodné rozšířit do podoby připomínající standardní use cases.
 > Nejde mi ani tak o obrázky (těm bych zatím moc času nevěnoval), jako o typický
@@ -22,9 +23,13 @@ PUTE bude naprogramovaný v programovacím jazyce JAVA a bude doplněn o podpůr
 > https://en.wikipedia.org/wiki/Use_case#Examples
 > https://www.usability.gov/how-to-and-tools/methods/use-cases.html
 
+#### Instalace PUTE
+
 Vývojář softwaru se rozhodne vyvíjet nový software. Naprogramuje nějakou část svého programu a k němu pomocí benchmark frameworku, který je podporován PUTE, naprogramuje výkonnostní testy. Uživatel si stáhne instalační balíček a PUTE pomocí příkazu `./pute-installater.sh` nainstaluje. Bude se jednat o instalančí skript samotného PUTE. V průběhu instalace bude uživatel požádán zda-li chce provést výchozí instalaci a nastavit pouze povinné parametry, nebo jestli chce provést detailní instalaci a nastavit všechny parametry. Povinným parametrem je pouze volba benchmarku.
 
 > Co přesně má instalátor dělat ? Já si to představuji podobně jako co dělá třeba `ng new` v Angular nebo `django-admin startproject` v Django ?
+
+#### Porovnání dvou výsledků mezi sebou
 
 Pokud se uživatel rozhodne, že chce sám vidět jak se změnil výkon mezi posledními dvěma verzemi, pak použije příkaz `pute evaluate`. Příkaz spustí porovnání posledních dvou verzí a vypíše výsledek na standardní výstup. Takový výstup může vypadat následovně:
 
@@ -34,6 +39,10 @@ PERFORMANCE_TEST_1	|	50		|		20		|	-60
 PERFORMANCE_TEST_2	|	60		|		80		|	+33
 PERFORMANCE_TEST_3	|	20		|		21		|	+5 !!! (Insufficient data)
 ```
+
+#### Porovnání více výsledků mezi sebou 
+
+TODO: doplnit
 
 > Ještě mi tu chybí (třeba jako další use case) příklad výpisu, který by byl vhodný pro integraci do CI/CD (asi něco jako co produkuje JUnit nebo podobné unit test frameworky ?). Také dobré by bylo popsat možnost integrace nástroje do nějakých automatizovaných skriptů, představoval bych si třeba možnost napsat si skript zhruba v tomto stylu:
 >
@@ -47,9 +56,9 @@ PERFORMANCE_TEST_3	|	20		|		21		|	+5 !!! (Insufficient data)
 > done
 > ```
 
-V případě, že se uživatel bude chtít podívat na porovnání více posledních verzí, pak požije příkaz `pute evaluate --graphical`. V kořenovém adresáři (na úrovni složky .performance) bude vyroben soubor `puteval-result.html`, který bude graficky zobrazovat výsledky porovnávání více starších verzí.
+#### Porovnání více výsledků s grafickým výstupem
 
-> Pokud uživatel vysloveně nechce report uložit, asi by bylo vhodnější, kdyby byl zobrazovaný dynamicky (váš nástroj by fungoval jako web server), jinak se bude špatně dělat jakákoliv dynamická funkce ?
+V případě, že se uživatel bude chtít podívat na porovnání více posledních verzí, pak požije příkaz `pute evaluate --graphical`. Na výpisu konzole bude zobrazena webová adresa, na které bude možné výstup zobrazit. V případě, že uživatel bude chtít uložit výsledný html soubor, pak zadá příkaz `pute evaluate --graphical <target-dir>`.
 
 ### Větší projekt
 Při práci na větším projektu se obvykle používá jeden způsob testování výkonu, tudíž se předpokládá jeden testovací framework. Pokud se tedy při práci na větším projektu používá jeden z podporovaných frameworků, pak není problém PUTE použít. Instalace bude stejná jak byla výše uvedena. Bude ale možné nakonfigurovat uživatele (konkrétního testera) a stroj na kterém se testuje. K tomuto budou sloužit příkazy `pute config --set-user` a `pute config --set-machine`. Dále bude možné nakonfigurovat verzi softwaru, která je testovaná, příkazem `pute config --set-version`. Pokud hodnota verze nebude nakonfigurovaná, její výchozí hodnota bude GIT. Hodnota GIT znamená, že se má program pokusit zjistit verzi pomocí statusu git repozitáře, ve kterém se nachází složka `.performance`. Pokud nebude verze nalezena, tak bude ignorována.
@@ -62,9 +71,11 @@ TODO: Chci dovolit aby více testovacích souborů tvořili jeden výstup (resp.
 > Co přesně myslíte tím "více testovacích souborů" ? Napadá mě více výstupů z více spuštění stejného benchmarku ve stejném prostředí, více výstupů z různých benchmarků ve stejném prostředí, nebo více výstupů z různých prostředí. Obecně myslím, že bychom chtěli, aby všechny tyto možnosti byly podporovány.
 
 ### Způsob ukládání dat
-Výsledky jednotlivých testů budou ukládány na jednom místě, ideálně v jedné složce (výchozí nastavení `.performance/test-results`), a zároveň několik posledních testů bude uloženo ve složce `.performance/test-cache`, protože procházet při každém požádání o porovnání posledních 50 testů by při procházení všech výsledků testů bylo pomalé. Pokud bude cache prázdná projde se celý adresář s testya naplní se cache. Poté se začne vyhodnocovat.
+Výsledky jednotlivých testů budou uloženy v libovolném formátu, který bude schopen PUTE rozpoznat a naformátovat. Jednotlivé testy budou do vyhodnocovače přidávány příkazem `pute index-new-result <file>`. Více testů je možné do vyhodnocovače přidat přidáním celé složky s výsledky pomocí příkazu `pute index-all-results <path>`.
 
-> Tohle je podle mě zase trochu moc specifické, spíš implementace než zadání. V zadání bych se asi omezil na konstatování, že nechceme omezovat formát, ve kterém budou uloženy výsledky testů, a že nástroj si může vytvářet nějakou vhodnou cache či index pro situace, kdy přímé procházení uložených výsledků by mohlo brzdit ? Klidně můžeme říct, že uživatel bude muset přidat každý nový výsledek nějakým `pute index-new-result <file>`, případně že na legacy import bude něco jako `pute index-all-results <path>` ?
+> Následující 3 odstavce se stanou součástí dokumentace
+
+Výsledky jednotlivých testů budou ukládány na jednom místě, ideálně v jedné složce (výchozí nastavení `.performance/test-results`), a zároveň několik posledních testů bude uloženo ve složce `.performance/test-cache`, protože procházet při každém požádání o porovnání posledních 50 testů by při procházení všech výsledků testů bylo pomalé. Pokud bude cache prázdná projde se celý adresář s testya naplní se cache. Poté se začne vyhodnocovat.
 
 Podporované benchmarky jsou schopné generovat svůj výstup ve formátu JSON souboru. Program se ale na základě konfigurace rozhodne, který benchmark a jaký jeho formát použít. Podle této konfigurace se bude určovat jak se budou parsovat výsledky testů.
 
