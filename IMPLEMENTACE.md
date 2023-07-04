@@ -1,11 +1,19 @@
 # Implementace PUTE
 
+> Tady mám vlastně jen jeden velký komentář, totiž zda by nebylo vhodnější psát většinu následujícího jako JavaDoc (viz třeba jak to dělá https://hg.openjdk.org/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/lang/String.java) ?
+
 ## Rozhraní ITest
 Rozhraní ITest má za úkol reprezentovat jedno měření jednoho konkrétního testu. Například pokud test testuje metodu foo a naměří 10 hodnot, pak bude mezi hodnotami `Values` 10 hodnot. ITest má také jméno a ID pod kterým se bude nadále prezentovat. Toto ID bude přidělovat ITestParser při jeho vytváření a bude sloužit pro rychlé porovnán, zda-li jsou dva testy stejné. Pokud vezmu dvě různé instance ITest, kde obě reprezuntují stejný test, ale hodnoty pocházejí v různých měření, pak mají stejná ID. Položka Name je zde potom určena pro výpis. Name se bude vypisovat do výsledné tabulky, kde bude sloužit jako identifikátor testu pro čtenáře výsledků hodnocení.
 
+> Pokud má rozhraní reprezentovat měření, proč se jmenuje `ITest` a ne `IMeasurement` ?
+
 Rozhraní ITest je vytvořeno k tomu, aby si každý ITestParser mohl vytvořit svůj ITest podle svého benchmarkovacího frameworku a do něj si mohl uložit příslušná metadata, která nemusejí mít všechny testy společné. Společná vlastnost všech testů je pouze to, že mají název a, že se mají prezentovat jako sada naměřených hodnot.
 
+> Možná se bude hodit, aby společná metadata zahrnovala nějakou identifikaci testu, prostředí a času měření (aby šlo nad kolekcí testů udělat třeba timeline všech porovnatelných výsledků) ?
+
 TODO: mají mít instance ITest definované ID nebo stačí operátor porovnání a metoda equals?
+
+> Zatím nevidím, k čemu by bylo ID potřeba. Objekty v Javě mají přirozenou identitu (reference lze porovnat prostým `==`), extra ID by sloužilo jakému účelu ?
 
 ### Třída BenchmarkDotNetTest
 Implementace rozhraní ITest, která reprezentuje výsledek měření jednoho testu pomocí BenchmarkDotNet benchmark frameworku.
@@ -14,6 +22,8 @@ Implementace rozhraní ITest, která reprezentuje výsledek měření jednoho te
 Implementace rozhraní ITest, která reprezentuje výsledek měření jednoho testu pomocí OpenJDK JMH benchmark frameworku.
 
 TODO: Chci mít někde implementace třídy ITest na jednom místě, nebo chci aby každá implementace ITestParseru implementovala i svůj vlástní ITest?
+
+> Já bych osobně asi preferoval variantu, kdy je všechen kód pro konkrétní benchmark tool nějak pohromadě (jeden source package), ale už bych se nesnažil vyrábět z takového kódu samostatny JAR. Zbytek klasický factory pattern.
 
 ## Rozhraní ITestParser
 Rozhraní má za úkol vytvářet z výsledků jednotlivých benchmarků a vytvářet z nich instance typu ITest. Tyto instance později poslouží k jednodušímu zpracování dalšími částmi programu. List<ITest>, který je výstupem jedné z metod, které musí ITestParser implementovat je reprezentací statistického souboru naměřených dat, které se budou dále nějakou zatím blíže nespecifikovanou statistickou metodou zpracovávat.
