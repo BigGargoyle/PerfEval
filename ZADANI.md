@@ -25,11 +25,75 @@ TODO: seznamy kroků u jendnotlivých use cases
 
 #### Instalace PUTE
 
+Use Case: Instalace
+
+Primary Actor: Uživatel nástroje
+
+Scope: projekt, kde se bude nástroj užívat
+
+Brief: 
+
+Uživatel bude schopen pomocí instalačního skriptu nainstalovat nástroj PUTE.
+
+Postconditions:
+
+Vývojářský nástroj bude úspěšně nainstalovaný a budou se moci používat příkazy s začínající `pute`
+
+Success Guarantees:
+Uživatel bude obeznámen s tím, že instalace proběhla úspěšně.
+
+Preconditions:
+Uživatel bude mít v adresáři přítomnou složku s instalačním souborem a celý její původníí obsah, který bude v tomto repozitáři
+
+Triggers:
+
+Pomocí příkazu `./pute-installator.sh` spustí instalační skript.
+
+Basic flow:
+
+Uživatel si někam stáhne, naklonuje, nebo okopíruje zdrojový adresář
+V kořenové složce tohoto adresáře bude instalační skript, který spustí
+O úspěšné instalaci bude obeznámen výpisem do konzole
+
+
 Vývojář softwaru se rozhodne vyvíjet nový software. Naprogramuje nějakou část svého programu a k němu pomocí benchmark frameworku, který je podporován PUTE, naprogramuje výkonnostní testy. Uživatel si stáhne instalační balíček a PUTE pomocí příkazu `./pute-installater.sh` nainstaluje. Bude se jednat o instalančí skript samotného PUTE. V průběhu instalace bude uživatel požádán zda-li chce provést výchozí instalaci a nastavit pouze povinné parametry, nebo jestli chce provést detailní instalaci a nastavit všechny parametry. Povinným parametrem je pouze volba benchmarku.
 
 > Co přesně má instalátor dělat ? Já si to představuji podobně jako co dělá třeba `ng new` v Angular nebo `django-admin startproject` v Django ?
 
+Ano výsledné chování instalátoru bude obdobné jako u django-admin startproject
+
 #### Porovnání dvou výsledků mezi sebou
+
+Use Case: Porovnání dvou výsledků mezi sebou
+
+Primary Actor: Uživatel nástroje, CI/CD
+
+Scope: projekt, kde se bude nástroj užívat
+
+Brief: 
+
+Uživatel, CI/CD bude porovnávat dva poslední výsledky benchmark testů, které PUTE eviduje
+
+Postconditions:
+
+Vývojářský nástroj bude úspěšně nainstalovaný a budou se moci používat příkazy s začínající `pute`
+
+Success Guarantees:
+Pokud nedošlo k významnému zhoršení výsledků v žádném z testů, pak bude návratový kód 0.
+
+Preconditions:
+PUTE eviduje alespoň dva výsledky benchmark testů
+
+Triggers:
+
+Pomocí příkazu `pute evaluate` se spustí porovnání posledních dvou testů.
+
+Basic flow:
+
+Uživatel spustí benchmark testy nad svým vyvíjeným SW.
+Uživatel zařadí tento příkaz do svého CI/CD.
+Pokud program vrátí nenulový exit kód, tak CI/CD může selhat
+
 
 Pokud se uživatel rozhodne, že chce sám vidět jak se změnil výkon mezi posledními dvěma verzemi, pak použije příkaz `pute evaluate`. Příkaz spustí porovnání posledních dvou verzí a vypíše výsledek na standardní výstup. Takový výstup může vypadat následovně:
 
