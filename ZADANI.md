@@ -31,36 +31,52 @@ Primary Actor: Uživatel nástroje
 
 Scope: projekt, kde se bude nástroj užívat
 
-Brief: 
+Stručný popis: Uživatel bude schopen pomocí instalačního skriptu nainstalovat nástroj PUTE.
 
-Uživatel bude schopen pomocí instalačního skriptu nainstalovat nástroj PUTE.
+Postconditions: Vývojářský nástroj bude úspěšně nainstalovaný a budou se moci používat příkazy s začínající `pute`
 
-Postconditions:
+Success Guarantees: Uživatel bude obeznámen s tím, že instalace proběhla úspěšně.
 
-Vývojářský nástroj bude úspěšně nainstalovaný a budou se moci používat příkazy s začínající `pute`
+Preconditions: Uživatel bude mít v adresáři přítomnou složku s instalačním souborem a celý její původníí obsah, který bude v tomto repozitáři
 
-Success Guarantees:
-Uživatel bude obeznámen s tím, že instalace proběhla úspěšně.
+Triggers: Pomocí příkazu `./pute-installator.sh` spustí instalační skript.
 
-Preconditions:
-Uživatel bude mít v adresáři přítomnou složku s instalačním souborem a celý její původníí obsah, který bude v tomto repozitáři
-
-Triggers:
-
-Pomocí příkazu `./pute-installator.sh` spustí instalační skript.
-
-Basic flow:
-
-Uživatel si někam stáhne, naklonuje, nebo okopíruje zdrojový adresář
-V kořenové složce tohoto adresáře bude instalační skript, který spustí
-O úspěšné instalaci bude obeznámen výpisem do konzole
+Basic flow:<br>
+1. Uživatel si někam stáhne, naklonuje, nebo okopíruje zdrojový adresář
+2. V kořenové složce tohoto adresáře bude instalační skript, který spustí
+3. O úspěšné instalaci bude obeznámen výpisem do konzole
 
 
 Vývojář softwaru se rozhodne vyvíjet nový software. Naprogramuje nějakou část svého programu a k němu pomocí benchmark frameworku, který je podporován PUTE, naprogramuje výkonnostní testy. Uživatel si stáhne instalační balíček a PUTE pomocí příkazu `./pute-installater.sh` nainstaluje. Bude se jednat o instalančí skript samotného PUTE. V průběhu instalace bude uživatel požádán zda-li chce provést výchozí instalaci a nastavit pouze povinné parametry, nebo jestli chce provést detailní instalaci a nastavit všechny parametry. Povinným parametrem je pouze volba benchmarku.
 
+Výstupem bude vytvoření složky `.performance` v adresáři, kde se vyskytuje instalační skript a v ní konfigurační soubory systému PUTE.
+
 > Co přesně má instalátor dělat ? Já si to představuji podobně jako co dělá třeba `ng new` v Angular nebo `django-admin startproject` v Django ?
 
 Ano výsledné chování instalátoru bude obdobné jako u django-admin startproject
+
+#### Přidávání testů do PUTE
+
+Use Case: Přidání informací o lokaci testů do PUTE
+
+Primary Actor: Uživatel nástroje
+
+Scope: projekt, kde se bude nástroj užívat
+
+Stručný popis: Uživatel oznámí systému PUTE, kde se nachází výsledky testů
+
+Postconditions: Vývojářský nástroj PUTE si přidá umístění, nebo test mezi adresy ve kterých bude hledat testy
+
+Success Guarantees: Uživatel bude obeznámen s tím, že adresa byla přidaná
+
+Preconditions: Uživatel zadá platnou adresu složky nebo souboru
+
+Triggers: Pomocí příkazu `pute index-new-result <file>`, nebo `pute index-all-results <target-dir>` spustí skript pro přidání adres
+
+Basic flow:
+
+1. Uživatel zadá příkaz s příslušným argumentem
+2. V případě nenalezení souboru, nebo složky bude uživatel obeznámen s její neexistencí a bude vrácen nenulový exit kód
 
 #### Porovnání dvou výsledků mezi sebou
 
@@ -70,29 +86,20 @@ Primary Actor: Uživatel nástroje, CI/CD
 
 Scope: projekt, kde se bude nástroj užívat
 
-Brief: 
+Stručný popis: Uživatel, nebo CI/CD bude porovnávat dva poslední výsledky benchmark testů, které PUTE eviduje. Umožní rozpoznat, pokud došlo k významnému zhoršení výkonu
 
-Uživatel, CI/CD bude porovnávat dva poslední výsledky benchmark testů, které PUTE eviduje
+Postconditions: Vývojářský nástroj bude úspěšně nainstalovaný a budou se moci používat příkazy s začínající `pute`
 
-Postconditions:
+Success Guarantees: Pokud nedošlo k významnému zhoršení výsledků v žádném z testů, pak bude návratový kód 0.
 
-Vývojářský nástroj bude úspěšně nainstalovaný a budou se moci používat příkazy s začínající `pute`
+Preconditions: PUTE eviduje alespoň dva výsledky benchmark testů
 
-Success Guarantees:
-Pokud nedošlo k významnému zhoršení výsledků v žádném z testů, pak bude návratový kód 0.
+Triggers: Pomocí příkazu `pute evaluate` se spustí porovnání posledních dvou testů.
 
-Preconditions:
-PUTE eviduje alespoň dva výsledky benchmark testů
-
-Triggers:
-
-Pomocí příkazu `pute evaluate` se spustí porovnání posledních dvou testů.
-
-Basic flow:
-
-Uživatel spustí benchmark testy nad svým vyvíjeným SW.
-Uživatel zařadí tento příkaz do svého CI/CD.
-Pokud program vrátí nenulový exit kód, tak CI/CD může selhat
+Basic flow:<br>
+1. Uživatel spustí benchmark testy nad svým vyvíjeným SW.
+2. Uživatel zařadí tento příkaz do svého CI/CD.
+3. Pokud program vrátí nenulový exit kód, tak CI/CD může selhat
 
 
 Pokud se uživatel rozhodne, že chce sám vidět jak se změnil výkon mezi posledními dvěma verzemi, pak použije příkaz `pute evaluate`. Příkaz spustí porovnání posledních dvou verzí a vypíše výsledek na standardní výstup. Takový výstup může vypadat následovně:
@@ -119,6 +126,30 @@ TODO: doplnit
 >     run-given-perf-tests ${UNDECIDED}
 > done
 > ```
+
+#### Strukturovaný výpis (formát JSON)
+
+Use Case: Porovnání dvou výsledků mezi sebou se strukturovaným výpisem
+
+Primary Actor: CI/CD
+
+Scope: projekt, kde se bude nástroj užívat
+
+Stručný popis: Možnost určená pro CI/CD, aby bylo možné provést strukturovaný výpis v rámci CI
+
+Postconditions: Vývojářský nástroj vypíše strukturovaný výpis na standardní výstup.
+
+Success Guarantees: Pokud nedošlo k významnému zhoršení výsledků v žádném z testů, pak bude návratový kód 0.
+
+Preconditions: PUTE eviduje alespoň dva výsledky benchmark testů
+
+Triggers: Pomocí příkazu `pute evaluate --json-output` se spustí porovnání posledních dvou testů.
+
+Basic flow:<br>
+1. Uživatel spustí benchmark testy nad svým vyvíjeným SW.
+2. Uživatel zařadí tento příkaz do svého CI/CD.
+3. Pokud program vrátí nenulový exit kód, tak CI/CD může selhat.
+4. Výstupem programu bude strukturovaný výpis ve formátu JSON na standardní výstup.
 
 #### Porovnání více výsledků s grafickým výstupem
 
@@ -159,17 +190,19 @@ Soubory
 
 Příkazy
 -   pute start-tests
--   pute evaluate (--graphical) <target-dir> 
-    -   <target-dir> je nepovinný parametr
--   pute config --set-user string
--   pute config --set-machine string
--   pute config --benchmark string
+-   pute config --set-user <username>
+-   pute config --set-machine <machine-name>
+-   pute config --benchmark <benchmark-name>
     -   TODO: zamyslet se jestli se bude rozpoznávat, nebo jestli bude zadáván?
         -   pravděpodobně by nemělo být těžké rozeznávat to strojově, jen bych rád názor :-)
--   pute config --test-directory string
--   pute config --set-version string
+-   pute config --test-directory <target-dir>
+-   pute config --set-version <version>
 -   pute index-new-result <file>
 -   pute index-all-results <path>
+-   pute evaluate
+-   pute evaluate --json-output
+-   pute evaluate --graphical
+-   pute evaluate --graphical <target-dir>
 
 Podporované benchmarky (prozatím)
 -   BenchmarkDotNET
