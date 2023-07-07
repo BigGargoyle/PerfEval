@@ -2,13 +2,13 @@
 import org.apache.commons.math3.stat.inference.TTest;
 
 class CompareTestResult{
-    private final ITest newTest;
-    private final ITest oldTest;
+    private final IMeasurement newTest;
+    private final IMeasurement oldTest;
     private final double oldTestAvg;
     private final double newTestAvg;
     private double difference;
     private final boolean testOK;
-    public CompareTestResult(double criticalValue, ITest test_new, ITest test_old){
+    public CompareTestResult(double criticalValue, IMeasurement test_new, IMeasurement test_old){
         newTest = test_new;
         oldTest = test_old;
 
@@ -31,13 +31,13 @@ class CompareTestResult{
             difference *= -1;
         }
     }
-    public double getDifference(){return difference;}
-    public boolean getTestResult() {return testOK;}
-    public ITest getNewTest() {return newTest;}
-    public ITest getOldTest() {return oldTest;}
+    public double getDifference() { return difference; }
+    public boolean getTestResult() { return testOK; }
+    public IMeasurement getNewTest() { return newTest; }
+    public IMeasurement getOldTest() { return oldTest; }
     public double getOldTestAvg() { return oldTestAvg; }
     public double getNewTestAvg() { return newTestAvg; }
-    static double CompareTests(ITest test1, ITest test2) {
+    static double CompareTests(IMeasurement test1, IMeasurement test2) {
         TTest tTestClass = new TTest();
         double[] values1 = new double[test1.getValues().size()];
         double[] values2 = new double[test1.getValues().size()];

@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pojoBenchmarkDotNet.*;
-public class BenchmarkDotNetJSONParser implements ITestParser{
-    public ITest ParseTest(String sourceString){
+public class BenchmarkDotNetJSONParser implements IMeasurementParser {
+    public IMeasurement ParseTest(String sourceString){
         return null;
     }
-    public List<ITest> GetTestsFromFile(String fileName){
-        List<ITest> result = new ArrayList<ITest>();
+    public List<IMeasurement> GetTestsFromFile(String fileName){
+        List<IMeasurement> result = new ArrayList<IMeasurement>();
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
         BenchmarkDotNetJSONBase base;
@@ -20,7 +20,7 @@ public class BenchmarkDotNetJSONParser implements ITestParser{
         }
 
         for(Benchmark benchmark: base.getBenchmarks()){
-            result.add(BenchmarkDotNetTest.ConstructTest(benchmark));
+            result.add(BenchmarkDotNetMeasurement.ConstructTest(benchmark));
         }
 
         return result;

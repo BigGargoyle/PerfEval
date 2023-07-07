@@ -4,7 +4,7 @@ import pojoBenchmarkDotNet.Measurement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BenchmarkDotNetTest implements ITest {
+public class BenchmarkDotNetMeasurement implements IMeasurement {
     /*
     * testedIterationMode and testedIterationStage Strings are used for recognizing correct type of measured values
     * it is needed because the BenchmarkDotNet framework is measuring also warmup, jitting, overhead etc. phases
@@ -16,8 +16,8 @@ public class BenchmarkDotNetTest implements ITest {
     // TODO: find out use of this ID, maybe it will not be used
     int InternalTestID;
     List<Double> Values;
-    public static ITest ConstructTest(Benchmark pattern){
-        return new BenchmarkDotNetTest(pattern);
+    public static IMeasurement ConstructTest(Benchmark pattern){
+        return new BenchmarkDotNetMeasurement(pattern);
     }
     /*
     * This constructor is creating an instance of BenchmarkDotNetTest class that is based on values from
@@ -26,9 +26,8 @@ public class BenchmarkDotNetTest implements ITest {
     * This class main usage is for simplifying and clarifying data package that is contained inside the
     * BenchmarkDotNetJSONBase class.
     * */
-    private BenchmarkDotNetTest(Benchmark pattern){
+    private BenchmarkDotNetMeasurement(Benchmark pattern){
         Name = pattern.getMethodTitle();
-        InternalTestID = Name.hashCode();
         List<Measurement> measurements = pattern.getMeasurements();
         Values = new ArrayList<Double>();
         for(Measurement measurement:measurements){
@@ -43,11 +42,6 @@ public class BenchmarkDotNetTest implements ITest {
     @Override
     public String getName() {
         return Name;
-    }
-
-    @Override
-    public int getInternalID() {
-        return InternalTestID;
     }
 
     @Override

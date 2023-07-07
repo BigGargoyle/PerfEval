@@ -1,7 +1,6 @@
 import java.util.List;
-public interface ITest {
+public interface IMeasurement {
     String getName();
-    int getInternalID();
     List<Double> getValues();
 
     // larger value implies better performance

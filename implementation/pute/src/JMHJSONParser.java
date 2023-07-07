@@ -5,12 +5,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JMHJSONParser implements ITestParser{
-    public ITest ParseTest(String sourceString){
+public class JMHJSONParser implements IMeasurementParser {
+    public IMeasurement ParseTest(String sourceString){
         return  null;
     }
-    public List<ITest> GetTestsFromFile(String fileName){
-        List<ITest> result = new ArrayList<ITest>();
+    public List<IMeasurement> GetTestsFromFile(String fileName){
+        List<IMeasurement> result = new ArrayList<IMeasurement>();
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
         BenchmarkJMHJSONBase[] base;
@@ -21,7 +21,7 @@ public class JMHJSONParser implements ITestParser{
         }
 
         for(BenchmarkJMHJSONBase benchmark: base){
-            result.add(JMHTest.ConstructTest(benchmark));
+            result.add(JMHMeasurement.ConstructTest(benchmark));
         }
 
         return result;

@@ -4,16 +4,14 @@ import pojoJMH.PrimaryMetric;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JMHTest implements ITest{
+public class JMHMeasurement implements IMeasurement {
     String Name;
-    int InternalTestID;
     List<Double> Values;
-    public static ITest ConstructTest(BenchmarkJMHJSONBase input){
-        return new JMHTest(input);
+    public static IMeasurement ConstructTest(BenchmarkJMHJSONBase input){
+        return new JMHMeasurement(input);
     }
-    private JMHTest(BenchmarkJMHJSONBase input){
+    private JMHMeasurement(BenchmarkJMHJSONBase input){
         Name = input.getBenchmark();
-        InternalTestID = Name.hashCode();
         Values = new ArrayList<Double>();
         PrimaryMetric primaryMetric = input.getPrimaryMetric();
         // !!! adding average of each measuredData, because rawData is a field of list of lists of Doubles
@@ -28,11 +26,6 @@ public class JMHTest implements ITest{
     @Override
     public String getName() {
         return Name;
-    }
-
-    @Override
-    public int getInternalID() {
-        return InternalTestID;
     }
 
     @Override
