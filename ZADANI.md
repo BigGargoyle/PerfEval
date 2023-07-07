@@ -101,6 +101,7 @@ Basic flow:<br>
 2. Uživatel zařadí tento příkaz do svého CI/CD.
 3. Pokud program vrátí nenulový exit kód, tak CI/CD může selhat
 
+TODO: Mají být následující odstavec a kód součástí zadání? 
 
 Pokud se uživatel rozhodne, že chce sám vidět jak se změnil výkon mezi posledními dvěma verzemi, pak použije příkaz `pute evaluate`. Příkaz spustí porovnání posledních dvou verzí a vypíše výsledek na standardní výstup. Takový výstup může vypadat následovně:
 
@@ -111,11 +112,10 @@ PERFORMANCE_TEST_2	|	60		|		80		|	+33
 PERFORMANCE_TEST_3	|	20		|		21		|	+5 !!! (Insufficient data)
 ```
 
-#### Porovnání více výsledků mezi sebou 
+#### Porovnání více výsledků s posledním výsledkem
 
 TODO: doplnit
-
-> Ještě mi tu chybí (třeba jako další use case) příklad výpisu, který by byl vhodný pro integraci do CI/CD (asi něco jako co produkuje JUnit nebo podobné unit test frameworky ?). Také dobré by bylo popsat možnost integrace nástroje do nějakých automatizovaných skriptů, představoval bych si třeba možnost napsat si skript zhruba v tomto stylu:
+Také dobré by bylo popsat možnost integrace nástroje do nějakých automatizovaných skriptů, představoval bych si třeba možnost napsat si skript zhruba v tomto stylu:
 >
 > ```
 > run-all-perf-tests
@@ -126,6 +126,14 @@ TODO: doplnit
 >     run-given-perf-tests ${UNDECIDED}
 > done
 > ```
+
+Use case doplním později, protože první se musím ujistit, že vím , co se očekávává
+
+Představuji si podle fragmentu kódu výše, že vyberu všechny testy, které jsou mladší než uvedený čas. Tyto testy potom porovnám s nejmladším testem a testy u kterých jsem se nebyl schopen rozhodnout vrátím (jako seznam názvů souborů, nebo absolutní cesty, ...)
+Jak ale poznám nerozhodnutelný výsledek?
+    -   Je blízko hranice kritického oboru hodnot? (p-hodnota je velká, ale dostatečně malá)
+    -   Nastavený uživatel a stroj se neshodují?
+    -   Pokud nastane alespoň jedna z výše uvedených možností?
 
 #### Strukturovaný výpis (formát JSON)
 
@@ -155,19 +163,30 @@ Basic flow:<br>
 
 V případě, že se uživatel bude chtít podívat na porovnání více posledních verzí, pak požije příkaz `pute evaluate --graphical`. Na výpisu konzole bude zobrazena webová adresa, na které bude možné výstup zobrazit. V případě, že uživatel bude chtít uložit výsledný html soubor, pak zadá příkaz `pute evaluate --graphical <target-dir>`.
 
-### Větší projekt
-Při práci na větším projektu se obvykle používá jeden způsob testování výkonu, tudíž se předpokládá jeden testovací framework. Pokud se tedy při práci na větším projektu používá jeden z podporovaných frameworků, pak není problém PUTE použít. Instalace bude stejná jak byla výše uvedena. Bude ale možné nakonfigurovat uživatele (konkrétního testera) a stroj na kterém se testuje. K tomuto budou sloužit příkazy `pute config --set-user` a `pute config --set-machine`. Dále bude možné nakonfigurovat verzi softwaru, která je testovaná, příkazem `pute config --set-version`. Pokud hodnota verze nebude nakonfigurovaná, její výchozí hodnota bude GIT. Hodnota GIT znamená, že se má program pokusit zjistit verzi pomocí statusu git repozitáře, ve kterém se nachází složka `.performance`. Pokud nebude verze nalezena, tak bude ignorována.
+### Větší projekt (možnosti vlastní konfigurace PUTE)
+
+Use Case: Nastavení testera a stroje pro případ práce na více strojích a při více testerech
+
+Primary Actor: uživatel
+
+Scope: projekt, kde se bude nástroj užívat
+
+Stručný popis: Možnost nastavit jméno testera a stroje
+
+Postconditions: Změna konfigurace nástroje podle uživatele
+
+Success Guarantees: Uživatel bude výpisem informován o úspěchu, pak bude návratový kód 0.
+
+Preconditions: Nainstalovaný nástroj PUTE
+
+Triggers: Pomocí příkazu `pute config --set-user <username>` se změní jméno testera v konfiguračním souboru na požadované. Pomocí příkazu `pute config --set-machine <machine-name>` se změní jméno stroje v konfiguračním souboru na požadované.
+
+Basic flow:<br>
+1. Uživatel zadá příkaz.
 
 > Z textu není jasné, jakou roli hraje složka `.performance`.
 
 Předpokládá se, že složka `.performance` v kořenovém adresáři projektu bude sloužit k režii PUTE. Bude tedy obsahovat cache testů, konfigurační soubory atd.
-
-TODO: Chci dovolit aby více testovacích souborů tvořili jeden výstup (resp. jeden celistvý výsledek jednoho benchmarku)?
-        -> případně pokud bych se rozhodl pozdějí, pravděpodobně by to nemělo být těžké doimplementovat.
-
-> Co přesně myslíte tím "více testovacích souborů" ? Napadá mě více výstupů z více spuštění stejného benchmarku ve stejném prostředí, více výstupů z různých benchmarků ve stejném prostředí, nebo více výstupů z různých prostředí. Obecně myslím, že bychom chtěli, aby všechny tyto možnosti byly podporovány.
-
-Je na mysli zda-li chci dovolit více výstupů stejného benchmarků, které ale dohromady budou tvořit jeden výsledek benchmarku nad celým software. Konkrétně jestli je praktické, aby uživatel mohl nějakým způsobem říci tyhle dva soubory tvoří 1 výsledek a při porovnání se tak mají chovat. Mně osobně to praktické nepřijde a myslím, že povolit výsledky v jednom testovacím benchmarku a skládající se pouze z jediného výstupního souboru jsou dostačující.
 
 ### Způsob ukládání dat
 Výsledky jednotlivých testů budou uloženy v libovolném formátu, který bude schopen PUTE rozpoznat a naformátovat. Jednotlivé testy budou do vyhodnocovače přidávány příkazem `pute index-new-result <file>`. Více testů je možné do vyhodnocovače přidat přidáním celé složky s výsledky pomocí příkazu `pute index-all-results <path>`.
@@ -192,9 +211,6 @@ Příkazy
 -   pute start-tests
 -   pute config --set-user <username>
 -   pute config --set-machine <machine-name>
--   pute config --benchmark <benchmark-name>
-    -   TODO: zamyslet se jestli se bude rozpoznávat, nebo jestli bude zadáván?
-        -   pravděpodobně by nemělo být těžké rozeznávat to strojově, jen bych rád názor :-)
 -   pute config --test-directory <target-dir>
 -   pute config --set-version <version>
 -   pute index-new-result <file>

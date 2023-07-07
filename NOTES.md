@@ -86,3 +86,11 @@ that limits the scan to recent directories:
     -   jmeno benchmarku
     -   percentily?
 
+Poznámky 7. 7. 2023
+
+TODO: Chci dovolit aby více testovacích souborů tvořili jeden výstup (resp. jeden celistvý výsledek jednoho benchmarku)?
+        -> případně pokud bych se rozhodl pozdějí, pravděpodobně by to nemělo být těžké doimplementovat.
+
+> Co přesně myslíte tím "více testovacích souborů" ? Napadá mě více výstupů z více spuštění stejného benchmarku ve stejném prostředí, více výstupů z různých benchmarků ve stejném prostředí, nebo více výstupů z různých prostředí. Obecně myslím, že bychom chtěli, aby všechny tyto možnosti byly podporovány.
+
+Je na mysli zda-li chci dovolit více výstupů stejného benchmarků, které ale dohromady budou tvořit jeden výsledek benchmarku nad celým software. Konkrétně jestli je praktické, aby uživatel mohl nějakým způsobem říci tyhle dva soubory tvoří 1 výsledek a při porovnání se tak mají chovat. Mně osobně to praktické nepřijde a myslím, že povolit výsledky v jednom testovacím benchmarku a skládající se pouze z jediného výstupního souboru jsou dostačující.
