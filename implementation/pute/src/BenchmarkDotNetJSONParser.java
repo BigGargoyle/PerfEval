@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pojoBenchmarkDotNet.*;
 public class BenchmarkDotNetJSONParser implements IMeasurementParser {
+    Long timestamp = null;
     public IMeasurement ParseTest(String sourceString){
         return null;
     }
@@ -23,9 +24,16 @@ public class BenchmarkDotNetJSONParser implements IMeasurementParser {
             result.add(BenchmarkDotNetMeasurement.ConstructTest(benchmark));
         }
 
+        timestamp = inputFile.lastModified();
+
         return result;
     }
     public String GetParserType(){
         return null;
+    }
+
+    @Override
+    public Long GetUniqueID() {
+        return timestamp;
     }
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JMHJSONParser implements IMeasurementParser {
+    Long timestamp = null;
     public IMeasurement ParseTest(String sourceString){
         return  null;
     }
@@ -24,9 +25,16 @@ public class JMHJSONParser implements IMeasurementParser {
             result.add(JMHMeasurement.ConstructTest(benchmark));
         }
 
+        timestamp = inputFile.lastModified();
+
         return result;
     }
     public String GetParserType(){
         return null;
+    }
+
+    @Override
+    public Long GetUniqueID() {
+        return timestamp;
     }
 }

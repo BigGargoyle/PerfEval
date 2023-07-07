@@ -21,6 +21,7 @@ public class JMHMeasurement implements IMeasurement {
                         .average().orElse(0.0)
             );
         }
+
     }
 
     @Override
