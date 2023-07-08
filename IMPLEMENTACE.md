@@ -13,6 +13,8 @@ Jednotlivé implementace tohoto rozhraní využívají factory pattern. To zname
 
 > Možná se bude hodit, aby společná metadata zahrnovala nějakou identifikaci testu, prostředí a času měření (aby šlo nad kolekcí testů udělat třeba timeline všech porovnatelných výsledků) ?
 
+Určitě, zatím mám metodu GetUniqueID, později bude vracet výsledek funkce nad časem, verzí, benchmarkem a testerem
+
 
 ### Třída BenchmarkDotNetTest
 Implementace rozhraní IMeasurement, která reprezentuje výsledek měření jednoho testu pomocí BenchmarkDotNet benchmark frameworku.
