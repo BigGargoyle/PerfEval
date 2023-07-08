@@ -62,7 +62,7 @@ public class Main {
 
         boolean worseBehaviour = false;
         for(CompareTestResult c : comparison){
-            if(!c.getTestResult() && ((c.getNewTest().hasAscendingPerformanceUnit() && c.getDifference()>0) ||
+            if(!c.getCompareResult() && ((c.getNewTest().hasAscendingPerformanceUnit() && c.getDifference()>0) ||
                     (!c.getNewTest().hasAscendingPerformanceUnit() && c.getDifference()>0))){
                 worseBehaviour = true;
             }
@@ -89,7 +89,7 @@ public class Main {
 
         // In case of change the change will be reported
         String testResultChanged = "";
-        if(!testResult.getTestResult()){
+        if(!testResult.getCompareResult()){
             testResultChanged = "\t !!! SIGNIFICANT CHANGE !!!";
         }
 

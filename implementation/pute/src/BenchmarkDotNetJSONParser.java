@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pojoBenchmarkDotNet.*;
+
+/**
+ * Implementation of IMeasurementParser for BenchmarkDotNet framework test results in the JSON format.
+ */
 public class BenchmarkDotNetJSONParser implements IMeasurementParser {
     Long timestamp = null;
-    public IMeasurement ParseTest(String sourceString){
-        return null;
-    }
     public List<IMeasurement> GetTestsFromFile(String fileName){
         List<IMeasurement> result = new ArrayList<IMeasurement>();
         File inputFile = new File(fileName);
@@ -29,7 +30,7 @@ public class BenchmarkDotNetJSONParser implements IMeasurementParser {
         return result;
     }
     public String GetParserType(){
-        return null;
+        return "framework: BenchmarkDotNet, format: JSON ";
     }
 
     @Override

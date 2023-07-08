@@ -3,7 +3,9 @@ import pojoBenchmarkDotNet.Measurement;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Implementation of IMeasurement interface for JMH benchmark test results
+ */
 public class BenchmarkDotNetMeasurement implements IMeasurement {
     /*
     * testedIterationMode and testedIterationStage Strings are used for recognizing correct type of measured values
@@ -13,7 +15,6 @@ public class BenchmarkDotNetMeasurement implements IMeasurement {
     static String testedIterationMode = "Workload";
     static String testedIterationStage = "Actual";
     String Name;
-    // TODO: find out use of this ID, maybe it will not be used
     int InternalTestID;
     List<Double> Values;
     public static IMeasurement ConstructTest(Benchmark pattern){

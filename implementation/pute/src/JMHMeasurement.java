@@ -4,6 +4,9 @@ import pojoJMH.PrimaryMetric;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of IMeasurement interface for JMH benchmark test results
+ */
 public class JMHMeasurement implements IMeasurement {
     String Name;
     List<Double> Values;
