@@ -222,7 +222,7 @@ Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webov
 
 Preconditions: Nutnost mít nainstalovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
 
-Triggers: Pomocí příkazu `pute evaluate --graphical max-time=xxdxxhxxm`, kde místo xx bude doplněn počet dní, hodin, nebo minut. Může být použit i příkaz `pute evaluate --graphical <target-dir> max-time=xxdxxhxxm`
+Triggers: Pomocí příkazu `pute evaluate --graphical --max-time-relative=xxdxxhxxm`, kde místo xx bude doplněn počet dní, hodin, nebo minut. Může být použit i příkaz `pute evaluate --graphical <target-dir> --max-time-relative=xxdxxhxxm`
 
 Basic flow:<br>
 1. Uživatel zadá příkaz.
@@ -244,7 +244,7 @@ Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webov
 
 Preconditions: Nutnost mít nainstalovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
 
-Triggers: Pomocí příkazu `pute evaluate --graphical max-time=DD-MM-YYYYTHH:mm:ss`, nebo příkazu `pute evaluate --graphical <target-dir> max-time=DD-MM-YYYYTHH:mm:ss`
+Triggers: Pomocí příkazu `pute evaluate --graphical --max-time-absolute=DD-MM-YYYYTHH:mm:ss`, nebo příkazu `pute evaluate --graphical <target-dir> --max-time-absolute=DD-MM-YYYYTHH:mm:ss`
 
 Basic flow:<br>
 1. Uživatel zadá příkaz.
@@ -306,6 +306,10 @@ Příkazy
 -   pute evaluate --json-output
 -   pute evaluate --graphical
 -   pute evaluate --graphical <target-dir>
+-   pute evaluate --graphical --max-time-relative=xxdxxhxxm
+-   pute evaluate --graphical <target-dir> --max-time-relative=xxdxxhxxm
+-   pute evaluate --graphical --max-time-absolute=DD-MM-YYYYTHH:mm:ss
+-   pute evaluate --graphical <target-dir> --max-time-absolute=DD-MM-YYYYTHH:mm:ss
 
 Podporované benchmarky (prozatím)
 -   BenchmarkDotNET
