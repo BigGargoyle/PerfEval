@@ -127,13 +127,13 @@ Také dobré by bylo popsat možnost integrace nástroje do nějakých automatiz
 > done
 > ```
 
-Use case doplním později, protože první se musím ujistit, že vím , co se očekávává
+>> Use case doplním později, protože první se musím ujistit, že vím , co se očekávává.
 
-Představuji si podle fragmentu kódu výše, že vyberu všechny testy, které jsou mladší než uvedený čas. Tyto testy potom porovnám s nejmladším testem a testy u kterých jsem se nebyl schopen rozhodnout vrátím (jako seznam názvů souborů, nebo absolutní cesty, ...)
+>> Představuji si podle fragmentu kódu výše, že vyberu všechny testy, které jsou mladší než uvedený čas. Tyto testy potom porovnám s nejmladším testem a testy u kterých jsem se nebyl schopen rozhodnout vrátím (jako seznam názvů souborů, nebo absolutní cesty, ...)
 Jak ale poznám nerozhodnutelný výsledek?
-    -   Je blízko hranice kritického oboru hodnot? (p-hodnota je velká, ale dostatečně malá)
-    -   Nastavený uživatel a stroj se neshodují?
-    -   Pokud nastane alespoň jedna z výše uvedených možností?
+>>    -   Je blízko hranice kritického oboru hodnot? (p-hodnota je velká, ale dostatečně malá)
+>>    -   Nastavený uživatel a stroj se neshodují?
+>>    -   Pokud nastane alespoň jedna z výše uvedených možností?
 
 #### Strukturovaný výpis (formát JSON)
 
@@ -159,11 +159,98 @@ Basic flow:<br>
 3. Pokud program vrátí nenulový exit kód, tak CI/CD může selhat.
 4. Výstupem programu bude strukturovaný výpis ve formátu JSON na standardní výstup.
 
-#### Porovnání více výsledků s grafickým výstupem
+#### Porovnání více výsledků s grafickým výstupem bez ukládání výstupu
 
-V případě, že se uživatel bude chtít podívat na porovnání více posledních verzí, pak požije příkaz `pute evaluate --graphical`. Na výpisu konzole bude zobrazena webová adresa, na které bude možné výstup zobrazit. V případě, že uživatel bude chtít uložit výsledný html soubor, pak zadá příkaz `pute evaluate --graphical <target-dir>`.
+Use Case: Zobrazení dlouhodobého testování výkonu
 
-### Větší projekt (možnosti vlastní konfigurace PUTE)
+Primary Actor: Uživatel nástroje
+
+Scope: projekt, kde se bude nástroj užívat
+
+Stručný popis: Program umožní zobrazit si změny výkonu za poslední týden ve webovém prohlížeči
+
+Postconditions: Výsledek běhu programu nijak neovlivní žádné soubory. V době běhu pouze dočasně vytvoří webovou stránku, kterou si uživatel bude moci zobrazit.
+
+Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webového prohlížeče bude možné zobrazit.
+
+Preconditions: Nutnost mít nainstalovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
+
+Triggers: Pomocí příkazu `pute evaluate --graphical` 
+
+Basic flow:<br>
+1. Uživatel zadá příkaz.
+2. Uživatel otevře webovou stránku, jejíž adresu vypíše program
+3. Uživatel si na webové stránce prohlédne vývoj výkonu své aplikace
+4. Uživatel dle instrukcí aplikace ukončí aplikaci
+
+#### Porovnání více výsledků s grafickým výstupem s ukládáním výstupu
+
+Use Case: Uložení dlouhodobého testování výkonu
+
+Primary Actor: Uživatel nástroje
+
+Scope: projekt, kde se bude nástroj užívat
+
+Stručný popis: Program umožní zobrazit si změny výkonu za poslední týden ve webovém prohlížeči
+
+Postconditions: Výsledek běhu programu nijak neovlivní žádné soubory. V době běhu pouze dočasně vytvoří webovou stránku, kterou si uživatel bude moci zobrazit.
+
+Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webového prohlížeče bude možné zobrazit.
+
+Preconditions: Nutnost mít nainstalovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
+
+Triggers: Pomocí příkazu `pute evaluate --graphical <target-dir>` 
+
+Basic flow:<br>
+1. Uživatel zadá příkaz.
+2. Program vypíše název a umístění webové stránky, kterou vytvořil, a poté skončí.
+3. Uživatel si ve svém prohlížeči může webovou stránku prohlédnout.
+
+#### Porovnání více výsledků s grafickým výstupem se zadáním vlastního relativního časového úseku
+
+Use Case: Uložení dlouhodobého testování výkonu
+
+Primary Actor: Uživatel nástroje
+
+Scope: projekt, kde se bude nástroj užívat
+
+Stručný popis: Program umožní zobrazit si změny výkonu za poslední uplynulý zadaný časový úsek ve webovém prohlížeči
+
+Postconditions: Výsledek běhu programu nijak neovlivní žádné soubory. V době běhu pouze dočasně vytvoří webovou stránku, kterou si uživatel bude moci zobrazit.
+
+Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webového prohlížeče bude možné zobrazit.
+
+Preconditions: Nutnost mít nainstalovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
+
+Triggers: Pomocí příkazu `pute evaluate --graphical max-time=xxdxxhxxm`, kde místo xx bude doplněn počet dní, hodin, nebo minut. Může být použit i příkaz `pute evaluate --graphical <target-dir> max-time=xxdxxhxxm`
+
+Basic flow:<br>
+1. Uživatel zadá příkaz.
+2. Program se bude chovat jako po spuštění příkazu `pute evaluate --graphical`, nebo `pute evaluate --graphical <target-dir>` jediný rozdíl od těchto chování bude počtu testů, které program na webové stránce vyobrazí
+
+#### Porovnání více výsledků s grafickým výstupem se zadáním vlastního absolutního časového úseku
+
+Use Case: Uložení dlouhodobého testování výkonu
+
+Primary Actor: Uživatel nástroje
+
+Scope: projekt, kde se bude nástroj užívat
+
+Stručný popis: Program umožní zobrazit si změny výkonu od zadaného datumu ve webovém prohlížeči
+
+Postconditions: Výsledek běhu programu nijak neovlivní žádné soubory. V době běhu pouze dočasně vytvoří webovou stránku, kterou si uživatel bude moci zobrazit.
+
+Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webového prohlížeče bude možné zobrazit.
+
+Preconditions: Nutnost mít nainstalovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
+
+Triggers: Pomocí příkazu `pute evaluate --graphical max-time=DD-MM-YYYYTHH:mm:ss`, nebo příkazu `pute evaluate --graphical <target-dir> max-time=DD-MM-YYYYTHH:mm:ss`
+
+Basic flow:<br>
+1. Uživatel zadá příkaz.
+2. Program se bude chovat jako po spuštění příkazu `pute evaluate --graphical`, nebo `pute evaluate --graphical <target-dir>` jediný rozdíl od těchto chování bude počtu testů, které program na webové stránce vyobrazí
+
+#### Větší projekt (možnosti vlastní konfigurace PUTE)
 
 Use Case: Nastavení testera a stroje pro případ práce na více strojích a při více testerech
 
