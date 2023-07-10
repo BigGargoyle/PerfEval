@@ -101,7 +101,7 @@ Basic flow:<br>
 2. Uživatel zařadí tento příkaz do svého CI/CD.
 3. Pokud program vrátí nenulový exit kód, tak CI/CD může selhat
 
-TODO: Mají být následující odstavec a kód součástí zadání? 
+TODO: Mají být následující odstavec a příklad výpisu součástí zadání? 
 
 Pokud se uživatel rozhodne, že chce sám vidět jak se změnil výkon mezi posledními dvěma verzemi, pak použije příkaz `pute evaluate`. Příkaz spustí porovnání posledních dvou verzí a vypíše výsledek na standardní výstup. Takový výstup může vypadat následovně:
 
