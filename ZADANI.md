@@ -51,9 +51,21 @@ Vývojář softwaru se rozhodne vyvíjet nový software. Naprogramuje nějakou �
 
 Výstupem bude vytvoření složky `.performance` v adresáři, kde se vyskytuje instalační skript a v ní konfigurační soubory systému PUTE.
 
-> Co přesně má instalátor dělat ? Já si to představuji podobně jako co dělá třeba `ng new` v Angular nebo `django-admin startproject` v Django ?
-
-Ano výsledné chování instalátoru bude obdobné jako u django-admin startproject
+**TODO** (PT) Několik komentářů k výše uvedenému use case:
+- Výraz "instalace" je dvojznačný, čtenář si pod ním může představit instalaci samotného nástroje, přitom vy máte na mysli inicializaci projektu. Toto by bylo dobré upřesnit.
+- Formulace v use case by měly být co nejpřesnější. Když se koukám na basic flow, čtenáři nemusí být jasné například:
+    - O jakém zdrojovém adresáři se mluví v bodě 1. Myslí se adresář projektu, nebo adresář se zdrojáky PUTE ? Proč bych ho měl kopírovat ?
+    - Podle bodu 2 se myslí nejspíše adresář se zdrojáky PUTE, protože jak jinak by se tam ocitnul ten instalační skript ? Jenže odkud se tedy vezme umístění projektu ?
+    - Bod 3 je celkem triviální, naopak mi chybí trochu jasnější popis toho, co vlastně instalace dělá, například:
+        1. Systém zkontroluje, že v projektu dosud neexistuje adresář `.performance`. Pokud ano, instalace oznámí chybu a skončí.
+        2. Systém vytvoří v projektu adresář `.performance` s konfigurací a databází měření.
+            - Konfigurace bude popisovat formát měření a parametry vyhodnocení.
+            - Systém bude co nejvíce prvků konfigurace autodetekovat.
+            - Zbývající prvky konfigurace budou mít default hodnoty.
+            - Konfigurace bude uložena v souboru formátu INI.
+            - Databáze měření bude prázdná.
+            - V adresáři bude také soubor `.gitignore` tak, aby se konfigurace verzovala, ale databáze ignorovala.
+- Jako detail, anglicky je "installer", nikoliv "installator".
 
 #### Přidávání testů do PUTE
 
@@ -78,6 +90,25 @@ Basic flow:
 1. Uživatel zadá příkaz s příslušným argumentem
 2. V případě nenalezení souboru, nebo složky bude uživatel obeznámen s její neexistencí a bude vrácen nenulový exit kód
 
+**TODO** (PT) Zase by bylo vhodné mít trochu přesnější popis, například:
+1. Uživatel zadá příkaz pro import měření
+    - `pute index-new-result <file>` pro soubor s měřením
+    - `pute index-all-results <dir>` pro adresář s více soubory měření
+2. Systém ověří, že příkaz byl zadán uvnitř inicializovaného projektu
+    - Ověření existence `.performance` adresáře s konfigurací
+    - Adresář bude hledán podobně jako například `.git`
+3. Systém najde v konfiguraci projektu informaci o očekávaném formátu vstupů
+    - Konfigurace bude obsahovat regular expressions (?) párující názvy souborů se jménem formátu
+    - Regular expressions mohou obsahovat match groups, které vyznačují metadata obsažená v názvu souboru
+4. Systém najde všechny vstupní soubory podle specifikace a pro každý:
+    1. Ověří, že soubor dosud nebyl importován. Pokud ano, soubor s varováním uživateli ignoruje.
+    2. Do databáze měření uloží informace o nalezeném souboru (metadata, nikoliv data)
+        - Verze projektu, ke které se měření vztahuje
+        - Umístění souboru měření
+        - ... ?
+
+**TODO** (PT) Možná by také stálo za to u use case stručně napsat motivaci, například u toho předchozího by to bylo něco jako "poskytnout uživateli jednoduchý způsob, jak nastavit použití nástroje v projektu, pokud možno blízký operacím jako `git init` nebo `django-admin startproject`", u tohoto něco jako "udržovat si informaci o dostupných měřeních tak, aby další operace (vyhledání sousedních měření téhož testu pro porovnání, vyhledání sady měření pro zobrazení, ...) nevyžadovaly procházení potenciálně velkých adresářových struktur (v extremním případě se očekává zvládnutí projektu s měřením několika tisíc verzí několika set testů v několika desítkách běhů, každý v samostatném souboru)".
+
 #### Porovnání dvou výsledků mezi sebou
 
 Use Case: Porovnání dvou výsledků mezi sebou
@@ -101,7 +132,28 @@ Basic flow:<br>
 2. Uživatel zařadí tento příkaz do svého CI/CD.
 3. Pokud program vrátí nenulový exit kód, tak CI/CD může selhat
 
-TODO: Mají být následující odstavec a příklad výpisu součástí zadání? 
+**TODO** (DH) Mají být následující odstavec a příklad výpisu součástí zadání?
+
+(PT) Příklad výstupu určitě není špatné mít také. Na druhou stranu možná by bylo užitečné
+mít jen nějaký centrální seznam vlastností, které by takový výpis měl splňovat
+(který by se týkal tohoto use case i use case o strukturovaném výpisu):
+- Varianta pro čtení člověkem a varianta pro zpracování strojem
+    - Člověk bude chtít spíš uspořádání v zarovnané tabulce
+    - Pro stroj je lepší nějaký formát typu CSV nebo JSON
+- Základní údaje
+    - O celém porovnání
+        - Které verze se porovnávají
+        - Calkové počty testů rozdělené podle výsledku (speed up, slow down, undecided)
+    - O každém testu
+        - Identifikace testu
+        - Čas (ideálně včetně nějakého intervalu spolehlivosti)
+        - Změna absolutně a relativně (ideálně také včetně intervalu spolehlivosti)
+        - Počty měření, ze kterých byla informace vypočítaná
+        - Výsledek testu
+- Filtrování a třídění výstupu
+    - Podle výsledku testu
+    - Podle velikosti změny
+    - Podle identifikace testu
 
 Pokud se uživatel rozhodne, že chce sám vidět jak se změnil výkon mezi posledními dvěma verzemi, pak použije příkaz `pute evaluate`. Příkaz spustí porovnání posledních dvou verzí a vypíše výsledek na standardní výstup. Takový výstup může vypadat následovně:
 
@@ -135,7 +187,11 @@ Jak ale poznám nerozhodnutelný výsledek?
 >>    -   Nastavený uživatel a stroj se neshodují?
 >>    -   Pokud nastane alespoň jedna z výše uvedených možností?
 
+**TODO** (PT) Tohle můžeme když tak probrat osobně, abych přesně věděl, kde jsou očekávání nejasná.
+
 #### Strukturovaný výpis (formát JSON)
+
+**TODO** (PT) Asi bych ty use cases nějak přerovnal, aby ty, co píší výsledky porovnání a liší se jen formátem byly nějak u sebe.
 
 Use Case: Porovnání dvou výsledků mezi sebou se strukturovaným výpisem
 
@@ -208,6 +264,17 @@ Basic flow:<br>
 
 #### Porovnání více výsledků s grafickým výstupem se zadáním vlastního relativního časového úseku
 
+**TODO** (PT) Asi by bylo dobré sjednotit, jak hodně se use cases liší, případně je dát do nějakých skupin.
+Tento a předcházející jsou si velmi podobné, třeba by šly napsat jako dvě varianty jednoho use case,
+nebo alespoň by bylo dobré dát je do společné skupiny use cases o grafickém výstupu.
+
+**TODO** (PT) Časový rozsah vypisovaných měření by mělo být možné měnit interaktivně přímo v grafickém rozhraní.
+
+**TODO** (PT) Z textu není jasné, jak bude zobrazená stránka vypadat, možná by bylo užitečné mít detailnější popis obsahu, třeba:
+- Graf naměřených hodnot (osa X verze programu, osa Y naměřené hodnoty)
+- Ovládací prvky pro volbu testu a metriky
+- Ovládací prvky pro změnu časového rozsahu
+
 Use Case: Uložení dlouhodobého testování výkonu
 
 Primary Actor: Uživatel nástroje
@@ -267,6 +334,10 @@ Success Guarantees: Uživatel bude výpisem informován o úspěchu, pak bude n�
 Preconditions: Nainstalovaný nástroj PUTE
 
 Triggers: Pomocí příkazu `pute config --set-user <username>` se změní jméno testera v konfiguračním souboru na požadované. Pomocí příkazu `pute config --set-machine <machine-name>` se změní jméno stroje v konfiguračním souboru na požadované.
+
+**TODO** (PT) Bylo by dobré zamyslet se nad tím, jak bude celý postup fungovat v případě, že bude konfigurace také sdílená (verzovaná).
+Pak by to asi nemělo být tak, že každý uživatel bude muset udržovat svoje lokální změny ?
+Proč se vlastně má nastavovat jméno uživatele a stroje, kde se použije ?
 
 Basic flow:<br>
 1. Uživatel zadá příkaz.
