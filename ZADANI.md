@@ -69,7 +69,7 @@ Postconditions: Vývojářský nástroj PUTE si přidá umístění, nebo test m
 
 Success Guarantees: Uživatel bude obeznámen s tím, že adresa byla přidaná
 
-Preconditions: Uživatel zadá platnou adresu složky nebo souboru. Nástroj PUTE bude inicializovaný.
+Preconditions: Nástroj PUTE bude inicializovaný. Uživatel zadá platnou adresu složky nebo souboru.
 
 Triggers: Pomocí příkazu `pute index-new-result <file>`, nebo `pute index-all-results <target-dir>` spustí skript pro přidání adres
 
@@ -97,7 +97,7 @@ Postconditions: Změna konfigurace nástroje podle uživatele
 
 Success Guarantees: Uživatel bude výpisem informován o úspěchu, pak bude návratový kód 0.
 
-Preconditions: Nainstalovaný nástroj PUTE
+Preconditions: Inicializovaný nástroj PUTE.
 
 Triggers: Pomocí příkazu `pute config --set-user <username>` se změní jméno testera v konfiguračním souboru na požadované. Pomocí příkazu `pute config --set-machine <machine-name>` se změní jméno stroje v konfiguračním souboru na požadované.
 
@@ -134,7 +134,7 @@ Postconditions: Vývojářský nástroj bude úspěšně inicializovaný a budou
 
 Success Guarantees: Pokud nedošlo k významnému zhoršení výsledků v žádném z testů, pak bude návratový kód 0.
 
-Preconditions: PUTE eviduje alespoň dva výsledky benchmark testů
+Preconditions: Systém PUTE je inicializovaný a eviduje alespoň dva výsledky benchmark testů.
 
 Triggers: Pomocí příkazu `pute evaluate` se spustí porovnání posledních dvou testů.
 
@@ -182,20 +182,20 @@ Use Case: Zobrazení dlouhodobého testování výkonu
 
 Primary Actor: Uživatel nástroje
 
-Scope: projekt, kde se bude nástroj užívat
+Scope: Projekt, kde se bude nástroj užívat
 
-Stručný popis: Program umožní zobrazit si změny výkonu za poslední týden ve webovém prohlížeči
+Stručný popis: Program umožní zobrazit si změny výkonu za poslední týden ve webovém prohlížeči.
 
 Postconditions: Výsledek běhu programu nijak neovlivní žádné soubory. V době běhu pouze dočasně vytvoří webovou stránku, kterou si uživatel bude moci zobrazit.
 
 Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webového prohlížeče bude možné zobrazit.
 
-Preconditions: Nutnost mít nainstalovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
+Preconditions: Inicializovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
 
-Triggers: Pomocí příkazu `pute evaluate --graphical` 
+Triggers: Pomocí příkazu `pute evaluate --graphical`.
 
 Basic flow:<br>
-1. Uživatel zadá příkaz.
+1. Uživatel zadá příkaz `pute evaluate --graphical`.
 2. Uživatel otevře webovou stránku, jejíž adresu vypíše program
 3. Uživatel si na webové stránce prohlédne vývoj výkonu své aplikace
 4. Uživatel dle instrukcí aplikace ukončí aplikaci
@@ -209,10 +209,10 @@ Stručný popis: Program umožní zobrazit a uložit si změny výkonu za posled
 
 Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webového prohlížeče bude možné zobrazit.
 
-Triggers: Pomocí příkazu `pute evaluate --graphical <target-dir>` 
+Triggers: Pomocí příkazu `pute evaluate --graphical <target-dir>`.
 
 Basic flow:<br>
-1. Uživatel zadá příkaz.
+1. Uživatel zadá příkaz `pute evaluate --graphical <target-dir>`.
 2. Program vypíše název a umístění webové stránky, kterou vytvořil, a poté skončí.
 3. Uživatel si ve svém prohlížeči může webovou stránku prohlédnout.
 
