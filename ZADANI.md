@@ -76,8 +76,8 @@ Triggers: Pomocí příkazu `pute index-new-result <file>`, nebo `pute index-all
 Basic flow:
 
 1. Uživatel v adresáři se složkou `.performance` zadá příkaz
--   pute index-new-result <file> pro soubor s měřením
--   pute index-all-results <dir> pro adresář s více soubory měření    
+    -   pute index-new-result <file> pro soubor s měřením
+    -   pute index-all-results <dir> pro adresář s více soubory měření
 2. Systém ověří, zda-li byl zadán uvnitř inicializovaného projektu, tedy ověří existenci složky `.performance`.
 3. Systém nalezne všechny testy k importování a do databáze testů uloží jejich umístění a verzi projektu ke které se výsledek vztahuje.
 
