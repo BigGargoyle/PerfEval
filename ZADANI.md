@@ -204,7 +204,6 @@ Basic flow:<br>
 3. Uživatel si na webové stránce prohlédne vývoj výkonu své aplikace
 4. Uživatel dle instrukcí aplikace ukončí aplikaci
 
-
 Alternativa:
 
 Motivace: Uživatel si může chtít grafický výstup uložit a podívat se na něj později.
