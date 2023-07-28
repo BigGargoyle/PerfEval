@@ -222,7 +222,8 @@ Basic flow:<br>
 1. Uživatel zadá příkaz.
 2. Program vypíše název a umístění webové stránky, kterou vytvořil, a poté skončí.
 3. Uživatel si ve svém prohlížeči může webovou stránku prohlédnout.
-~~
+
+<del>
 #### Porovnání více výsledků s grafickým výstupem se zadáním vlastního relativního časového úseku
 
 Use Case: Uložení dlouhodobého testování výkonu
@@ -267,7 +268,7 @@ Basic flow:<br>
 1. Uživatel zadá příkaz.
 2. Program se bude chovat jako po spuštění příkazu `pute evaluate --graphical`, nebo `pute evaluate --graphical <target-dir>` jediný rozdíl od těchto chování bude počtu testů, které program na webové stránce vyobrazí
 
-~~
+</del>
 ### Způsob ukládání dat
 Výsledky jednotlivých testů budou uloženy v libovolném formátu, který bude schopen PUTE rozpoznat a naformátovat. Jednotlivé testy budou do vyhodnocovače přidávány příkazem `pute index-new-result <file>`. Více testů je možné do vyhodnocovače přidat přidáním celé složky s výsledky pomocí příkazu `pute index-all-results <path>`.
 
