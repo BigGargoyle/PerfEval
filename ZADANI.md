@@ -110,7 +110,7 @@ Předpokládá se, že složka `.performance` v kořenovém adresáři projektu 
 
 ### Vyhodnocení výkonu bez grafického výstupu
 
-#### Porovnání dvou výsledků mezi sebou
+#### Porovnání dvou výsledků mezi sebou (formát pro čtení)
 
 Use Case: Porovnání dvou výsledků mezi sebou
 
@@ -118,7 +118,17 @@ Primary Actor: Uživatel nástroje, CI/CD
 
 Scope: projekt, kde se bude nástroj užívat
 
-Stručný popis: Uživatel, nebo CI/CD bude porovnávat dva poslední výsledky benchmark testů, které PUTE eviduje. Umožní rozpoznat, pokud došlo k významnému zhoršení výkonu
+Stručný popis: Uživatel, nebo CI/CD bude porovnávat dva poslední výsledky benchmark testů, které PUTE eviduje. Umožní rozpoznat, pokud došlo k významnému zhoršení výkonu. Součástí výsledku bude výpis strukturovaný do přehledné tabulky obsahující informace o porovnávaných testech.<br>
+O každém testu bude uvedeno:
+-   počet měření
+-   verze
+-   čas, kdy proběhlo měření
+-   průměrná hodnota v jednotce odpovídající benchmarkovacímu systému (operace za jednotku časum, sekundy, ...)
+
+O každé porovnávané dvojici výsledků (starší a novější test) bude uvedeno:
+-   Absolutní změna (o kolik se změnila průměrná naměřená hodnota)
+-   Relativní změna (o kolik procent se změnila průměrná naměřená hodnota)
+-   Výsledek statistického testu po porovnání obou testů
 
 Postconditions: Vývojářský nástroj bude úspěšně inicializovaný a budou se moci používat příkazy s začínající `pute`
 
@@ -130,43 +140,16 @@ Triggers: Pomocí příkazu `pute evaluate` se spustí porovnání posledních d
 
 Basic flow:<br>
 1. Uživatel spustí benchmark testy nad svým vyvíjeným SW.
-2. Uživatel zařadí tento příkaz do svého CI/CD.
-3. Pokud program vrátí nenulový exit kód, tak CI/CD může selhat
+2. Uživatel, nebo CI/CD spustí příkaz `pute evaluate`
+3. Výstupem bude přehledný výpis a v případě nějakého zaznamenaného zhoršení i nenulový exit kód.
 
-TODO: Mají být následující odstavec a příklad výpisu součástí zadání? 
+TODO: Příklad výstupu bude dodán až bude nějaký reálný vyroben. Pravděpodobně bude využita nějaká knohovna pro formátování výpisu (určitě nějaká existuje).
 
-Pokud se uživatel rozhodne, že chce sám vidět jak se změnil výkon mezi posledními dvěma verzemi, pak použije příkaz `pute evaluate`. Příkaz spustí porovnání posledních dvou verzí a vypíše výsledek na standardní výstup. Takový výstup může vypadat následovně:
+Alternativa:
 
-```
-TEST_NAME		|	NEW_TIME (ms)	|	LAST_MEASURED_TIME (ms)	|	CHANGE (%)
-PERFORMANCE_TEST_1	|	50		|		20		|	-60
-PERFORMANCE_TEST_2	|	60		|		80		|	+33
-PERFORMANCE_TEST_3	|	20		|		21		|	+5 !!! (Insufficient data)
-```
+Triggers: Výstup bude možné filtrovat pomocí úřepínače `--filter` s možnostmi `test-result`, `size-of-change` a `test-id`. Příkaz pak může vypadat následovně `pute evaluate --filter test-id` a dojde k přeuspořádání řádků na výstupu
 
-#### Strukturovaný výpis (formát JSON)
-
-Use Case: Porovnání dvou výsledků mezi sebou se strukturovaným výpisem
-
-Primary Actor: CI/CD
-
-Scope: projekt, kde se bude nástroj užívat
-
-Stručný popis: Možnost určená pro CI/CD, aby bylo možné provést strukturovaný výpis v rámci CI
-
-Postconditions: Vývojářský nástroj vypíše strukturovaný výpis na standardní výstup.
-
-Success Guarantees: Pokud nedošlo k významnému zhoršení výsledků v žádném z testů, pak bude návratový kód 0.
-
-Preconditions: PUTE eviduje alespoň dva výsledky benchmark testů
-
-Triggers: Pomocí příkazu `pute evaluate --json-output` se spustí porovnání posledních dvou testů.
-
-Basic flow:<br>
-1. Uživatel spustí benchmark testy nad svým vyvíjeným SW.
-2. Uživatel zařadí tento příkaz do svého CI/CD.
-3. Pokud program vrátí nenulový exit kód, tak CI/CD může selhat.
-4. Výstupem programu bude strukturovaný výpis ve formátu JSON na standardní výstup.
+Triggers: Pomocí příkazu `pute evaluate --json-output` dojde taktéž k porovnání posledních dvou výsledků testů mezi sebou. Výsledkem ale budou údaje o porovnávání testů ve formátu JSON.
 
 #### Porovnání více výsledků s posledním výsledkem
 
