@@ -3,6 +3,7 @@
 PUTE je nástroj, který vzniká v rámci předmětu Ročníkový projekt při studiu na MFF UK oboru Informatika se specializací Systémové programování.
 
 TODO: změnit název - zkratka je divná (s tím souhlasím, rád přijmu nápady)
+-   možná PerfEval?
 
 ## Cíl projektu
 Cílem práce je naprogramovat aplikaci, která by umožňovala vyhodnocovat výsledky výkonostních testů, které jsou spouštěny nad kódem uživatelů aplikace. Aplikace je tedy určena pro programátory a má za úkol pomáhat s vývojem jejich aplikací.
@@ -84,6 +85,7 @@ Basic flow:
 #### Větší projekt (možnosti vlastní konfigurace PUTE)
 
 TODO: Pravděpodobně není informace o tom, kdo a kde spustil vyhodnocování (resp. kdo a na jakém stroji měřil), protože tato informace bude součástí commitu, o který se stará verzovací nástroj (např. Git) pravděpodobně tedy není jméno stroje a testera důležité. Možná je vhodné tento use case úplně zrušit. Původní záměr bylo, že nástroje typu Git tuto konfiguraci umožňují, ale protože se tento nástroj bude používat v kombinaci s verzovacím nástrojem, pak toto pravděpodobně není nutné.
+Ze všech `pute config` příkazů bych nechal pouze `pute config --set-version` pro případ, že by ji chtěl uživatel zadávat sám.
 
 Use Case: Nastavení testera a stroje pro případ práce na více strojích a při více testerech
 
@@ -175,6 +177,8 @@ Jak ale poznám nerozhodnutelný výsledek?
 >>    -   Pokud nastane alespoň jedna z výše uvedených možností?
 
 ### Vyhodnocování výkonu s grafickým výstupem
+
+TODO: Z popisu není jasné, jak bude stránka vypadat. Nutné doplnit až bude existovat reálná představa.
 
 #### Porovnání více výsledků s grafickým výstupem bez ukládání výstupu
 
@@ -289,9 +293,9 @@ Soubory
 Příkazy
 -   pute init
 -   pute start-tests
--   pute config --set-user <username>
--   pute config --set-machine <machine-name>
--   pute config --test-directory <target-dir>
+-   ~~pute config --set-user <username>~~
+-   ~~pute config --set-machine <machine-name>~~
+-   ~~pute config --test-directory <target-dir>~~
 -   pute config --set-version <version>
 -   pute index-new-result <file>
 -   pute index-all-results <path>
