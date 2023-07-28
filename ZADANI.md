@@ -200,21 +200,14 @@ Basic flow:<br>
 3. Uživatel si na webové stránce prohlédne vývoj výkonu své aplikace
 4. Uživatel dle instrukcí aplikace ukončí aplikaci
 
-#### Porovnání více výsledků s grafickým výstupem s ukládáním výstupu
 
-Use Case: Uložení dlouhodobého testování výkonu
+Alternativa:
 
-Primary Actor: Uživatel nástroje
+Motivace: Uživatel si může chtít grafický výstup uložit a podívat se na něj později.
 
-Scope: projekt, kde se bude nástroj užívat
-
-Stručný popis: Program umožní zobrazit si změny výkonu za poslední týden ve webovém prohlížeči
-
-Postconditions: Výsledek běhu programu nijak neovlivní žádné soubory. V době běhu pouze dočasně vytvoří webovou stránku, kterou si uživatel bude moci zobrazit.
+Stručný popis: Program umožní zobrazit a uložit si změny výkonu za poslední týden ve webovém prohlížeči.
 
 Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webového prohlížeče bude možné zobrazit.
-
-Preconditions: Nutnost mít nainstalovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
 
 Triggers: Pomocí příkazu `pute evaluate --graphical <target-dir>` 
 
@@ -222,6 +215,9 @@ Basic flow:<br>
 1. Uživatel zadá příkaz.
 2. Program vypíše název a umístění webové stránky, kterou vytvořil, a poté skončí.
 3. Uživatel si ve svém prohlížeči může webovou stránku prohlédnout.
+
+
+TODO: Následující 2 use cases budou součástí webového rozhraní aplikace. Nebudou součástí zadávání příkazů na příkazovou řádku.
 
 <del>
 
@@ -303,10 +299,6 @@ Příkazy
 -   pute evaluate --json-output
 -   pute evaluate --graphical
 -   pute evaluate --graphical <target-dir>
--   pute evaluate --graphical --max-time-relative=xxdxxhxxm
--   pute evaluate --graphical <target-dir> --max-time-relative=xxdxxhxxm
--   pute evaluate --graphical --max-time-absolute=DD-MM-YYYYTHH:mm:ss
--   pute evaluate --graphical <target-dir> --max-time-absolute=DD-MM-YYYYTHH:mm:ss
 
 Podporované benchmarky (prozatím)
 -   BenchmarkDotNET
