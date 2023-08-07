@@ -16,14 +16,6 @@ PUTE bude naprogramovaný v programovacím jazyce JAVA a bude doplněn o podpůr
 
 ### Používání aplikace
 
-TODO: seznamy kroků u jendnotlivých use cases
-
-> Tuto část by bylo vhodné rozšířit do podoby připomínající standardní use cases.
-> Nejde mi ani tak o obrázky (těm bych zatím moc času nevěnoval), jako o typický
-> styl zápisu (hlavně stručný a jasný seznam kroků). Namátkové zdroje příkladů:
-> https://en.wikipedia.org/wiki/Use_case#Examples
-> https://www.usability.gov/how-to-and-tools/methods/use-cases.html
-
 ### Konfigurace PUTE
 
 TODO: Vyřešit verzování databáze a konfiguračního souboru.
@@ -82,34 +74,6 @@ Basic flow:
 2. Systém ověří, zda-li byl zadán uvnitř inicializovaného projektu, tedy ověří existenci složky `.performance`.
 3. Systém nalezne všechny testy k importování a do databáze testů uloží jejich umístění a verzi projektu ke které se výsledek vztahuje.
 
-#### Větší projekt (možnosti vlastní konfigurace PUTE)
-
-TODO: Pravděpodobně není informace o tom, kdo a kde spustil vyhodnocování (resp. kdo a na jakém stroji měřil), protože tato informace bude součástí commitu, o který se stará verzovací nástroj (např. Git) pravděpodobně tedy není jméno stroje a testera důležité. Možná je vhodné tento use case úplně zrušit. Původní záměr bylo, že nástroje typu Git tuto konfiguraci umožňují, ale protože se tento nástroj bude používat v kombinaci s verzovacím nástrojem, pak toto pravděpodobně není nutné.
-Ze všech `pute config` příkazů bych nechal pouze `pute config --set-version` pro případ, že by ji chtěl uživatel zadávat sám.
-
-Use Case: Nastavení testera a stroje pro případ práce na více strojích a při více testerech
-
-Primary Actor: uživatel
-
-Scope: projekt, kde se bude nástroj užívat
-
-Stručný popis: Možnost nastavit jméno testera a stroje
-
-Postconditions: Změna konfigurace nástroje podle uživatele
-
-Success Guarantees: Uživatel bude výpisem informován o úspěchu, pak bude návratový kód 0.
-
-Preconditions: Inicializovaný nástroj PUTE.
-
-Triggers: Pomocí příkazu `pute config --set-user <username>` se změní jméno testera v konfiguračním souboru na požadované. Pomocí příkazu `pute config --set-machine <machine-name>` se změní jméno stroje v konfiguračním souboru na požadované.
-
-Basic flow:<br>
-1. Uživatel zadá příkaz.
-
-> Z textu není jasné, jakou roli hraje složka `.performance`.
-
-Předpokládá se, že složka `.performance` v kořenovém adresáři projektu bude sloužit k režii PUTE. Bude tedy obsahovat cache testů, konfigurační soubory atd.
-
 ### Vyhodnocení výkonu bez grafického výstupu
 
 #### Porovnání dvou výsledků mezi sebou (formát pro čtení)
@@ -153,7 +117,7 @@ Triggers: Výstup bude možné filtrovat pomocí úřepínače `--filter` s mož
 
 Triggers: Pomocí příkazu `pute evaluate --json-output` dojde taktéž k porovnání posledních dvou výsledků testů mezi sebou. Výsledkem ale budou údaje o porovnávání testů ve formátu JSON.
 
-#### Porovnání více výsledků s posledním výsledkem
+#### Nalezení statisticky nerozhodnutelných výsledků
 
 Use Case: Porovnání dvou výsledků mezi sebou
 
@@ -233,57 +197,6 @@ Basic flow:<br>
 1. Uživatel zadá příkaz `pute evaluate --graphical <target-dir>`.
 2. Program vypíše název a umístění webové stránky, kterou vytvořil, a poté skončí.
 3. Uživatel si ve svém prohlížeči může webovou stránku prohlédnout.
-
-
-TODO: Následující 2 use cases budou součástí webového rozhraní aplikace. Nebudou součástí zadávání příkazů na příkazovou řádku.
-
-<del>
-
-#### Porovnání více výsledků s grafickým výstupem se zadáním vlastního relativního časového úseku
-
-Use Case: Uložení dlouhodobého testování výkonu
-
-Primary Actor: Uživatel nástroje
-
-Scope: projekt, kde se bude nástroj užívat
-
-Stručný popis: Program umožní zobrazit si změny výkonu za poslední uplynulý zadaný časový úsek ve webovém prohlížeči
-
-Postconditions: Výsledek běhu programu nijak neovlivní žádné soubory. V době běhu pouze dočasně vytvoří webovou stránku, kterou si uživatel bude moci zobrazit.
-
-Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webového prohlížeče bude možné zobrazit.
-
-Preconditions: Nutnost mít nainstalovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
-
-Triggers: Pomocí příkazu `pute evaluate --graphical --max-time-relative=xxdxxhxxm`, kde místo xx bude doplněn počet dní, hodin, nebo minut. Může být použit i příkaz `pute evaluate --graphical <target-dir> --max-time-relative=xxdxxhxxm`
-
-Basic flow:<br>
-1. Uživatel zadá příkaz.
-2. Program se bude chovat jako po spuštění příkazu `pute evaluate --graphical`, nebo `pute evaluate --graphical <target-dir>` jediný rozdíl od těchto chování bude počtu testů, které program na webové stránce vyobrazí
-
-#### Porovnání více výsledků s grafickým výstupem se zadáním vlastního absolutního časového úseku
-
-Use Case: Uložení dlouhodobého testování výkonu
-
-Primary Actor: Uživatel nástroje
-
-Scope: projekt, kde se bude nástroj užívat
-
-Stručný popis: Program umožní zobrazit si změny výkonu od zadaného datumu ve webovém prohlížeči
-
-Postconditions: Výsledek běhu programu nijak neovlivní žádné soubory. V době běhu pouze dočasně vytvoří webovou stránku, kterou si uživatel bude moci zobrazit.
-
-Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webového prohlížeče bude možné zobrazit.
-
-Preconditions: Nutnost mít nainstalovaný systém PUTE. V případě, že nebudou nalezeny žádné testy, pak bude stránka prázdná, nebo budou prázdné detaily o testování.
-
-Triggers: Pomocí příkazu `pute evaluate --graphical --max-time-absolute=DD-MM-YYYYTHH:mm:ss`, nebo příkazu `pute evaluate --graphical <target-dir> --max-time-absolute=DD-MM-YYYYTHH:mm:ss`
-
-Basic flow:<br>
-1. Uživatel zadá příkaz.
-2. Program se bude chovat jako po spuštění příkazu `pute evaluate --graphical`, nebo `pute evaluate --graphical <target-dir>` jediný rozdíl od těchto chování bude počtu testů, které program na webové stránce vyobrazí
-
-</del>
 
 ### Způsob ukládání dat
 Výsledky jednotlivých testů budou uloženy v libovolném formátu, který bude schopen PUTE rozpoznat a naformátovat. Jednotlivé testy budou do vyhodnocovače přidávány příkazem `pute index-new-result <file>`. Více testů je možné do vyhodnocovače přidat přidáním celé složky s výsledky pomocí příkazu `pute index-all-results <path>`.
