@@ -145,7 +145,7 @@ Basic flow:<br>
 2. Uživatel, nebo CI/CD spustí příkaz `pute evaluate`
 3. Výstupem bude přehledný výpis a v případě nějakého zaznamenaného zhoršení i nenulový exit kód.
 
-TODO: Příklad výstupu bude dodán až bude nějaký reálný vyroben. Pravděpodobně bude využita nějaká knohovna pro formátování výpisu (určitě nějaká existuje).
+TODO: Příklad výstupu bude dodán až bude nějaký reálný vyroben. Pravděpodobně bude využita nějaká knihovna pro formátování výpisu (určitě nějaká existuje).
 
 Alternativa:
 
@@ -155,26 +155,41 @@ Triggers: Pomocí příkazu `pute evaluate --json-output` dojde taktéž k porov
 
 #### Porovnání více výsledků s posledním výsledkem
 
-TODO: doplnit
-Také dobré by bylo popsat možnost integrace nástroje do nějakých automatizovaných skriptů, představoval bych si třeba možnost napsat si skript zhruba v tomto stylu:
->
-> ```
-> run-all-perf-tests
-> while true
-> do
->     UNDECIDED="$(pute list-undecided --max-time=1h)"
->     [[ -z "${UNDECIDED}" ]] && break
->     run-given-perf-tests ${UNDECIDED}
-> done
-> ```
+Use Case: Porovnání dvou výsledků mezi sebou
 
->> Use case doplním později, protože první se musím ujistit, že vím , co se očekávává.
+Primary Actor: Uživatel nástroje, CI/CD
 
->> Představuji si podle fragmentu kódu výše, že vyberu všechny testy, které jsou mladší než uvedený čas. Tyto testy potom porovnám s nejmladším testem a testy u kterých jsem se nebyl schopen rozhodnout vrátím (jako seznam názvů souborů, nebo absolutní cesty, ...)
-Jak ale poznám nerozhodnutelný výsledek?
->>    -   Je blízko hranice kritického oboru hodnot? (p-hodnota je velká, ale dostatečně malá)
->>    -   Nastavený uživatel a stroj se neshodují?
->>    -   Pokud nastane alespoň jedna z výše uvedených možností?
+Scope: projekt, kde se bude nástroj užívat
+
+Stručný popis: Uživatel, nebo CI/CD zjistí u kterých testů nebylo možné rozhodnout zda došlo, nebo nedošlo ke zlepšení/zhoršení. Uživatel, nebo CI/CD, se z výpisu také dozví kolik měření je u konkrétního testu zapotřebí, aby došlo k vyhodnocení (pokud je to v dostupném čase možné)
+
+Postconditions: Vývojářský nástroj bude úspěšně inicializovaný a budou se moci používat příkazy s začínající `pute`
+
+Success Guarantees: Pokud nedošlo k významnému zhoršení výsledků v žádném z testů, pak bude návratový kód 0.
+
+Preconditions: Systém PUTE je inicializovaný a eviduje alespoň dva výsledky benchmark testů.
+
+Triggers: Pomocí příkazu `pute list-undecided` se spustí porovnání posledních dvou měření a pro každé nerozhodné porovnání vypíše název testu a počet vzorků nutný pro porovnání s jasným výsledkem.
+
+Basic flow:<br>
+1. Uživatel spustí benchmark testy nad svým vyvíjeným SW.
+2. Uživatel, nebo CI/CD spustí příkaz `pute list-undecided`
+3. Výstupem bude výpis dvojic název a počet vzorků oddělených tabulátorem.
+
+Účelem je mít možnost napsat skript ve tvaru:<br>
+```
+run-all-perf-tests
+while true
+do
+    UNDECIDED="$(pute list-undecided --max-time=1h)"
+    [[ -z "${UNDECIDED}" ]] && break
+    run-given-perf-tests ${UNDECIDED}
+done
+```
+
+Alternativa:
+Triggers: Pomocí příkazu `pute list-undecided --max-time=1h` se spustí porovnání posledních dvou měření a pro každé nerozhodné porovnání vypíše název testu a počet vzorků nutný pro porovnání s jasným výsledkem. Program bude počítat s tím, že na každý jednotlivý test je vyhrazena nejvýše 1 hodina.
+
 
 ### Vyhodnocování výkonu s grafickým výstupem
 
