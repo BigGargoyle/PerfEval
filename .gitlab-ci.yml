@@ -1,7 +1,7 @@
 image: amazoncorretto:19 # Use the desired Java version
 
 before_script:
-  - yum install -y curl unzip # Install curl package using yum
+  - yum install -y curl zip unzip # Install curl package using yum
   - curl -s "https://get.sdkman.io" | bash
   - source "$HOME/.sdkman/bin/sdkman-init.sh"
   - sdk install gradle # Install Gradle using SDKMAN
