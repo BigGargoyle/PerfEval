@@ -1,0 +1,24 @@
+image: amazoncorretto:19 # Use the desired Java version
+
+before_script:
+  - apt-get update -qy
+  - apt-get install -y curl
+  - curl -s "https://get.sdkman.io" | bash
+  - source "$HOME/.sdkman/bin/sdkman-init.sh"
+  - sdk install gradle # Install Gradle using SDKMAN
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - gradle build # Build the project
+  artifacts:
+    paths:
+      - build/libs/*.jar # Publish the built JAR file as an artifact
+
+test:
+  stage: test
+  script:
+    - gradle test # Run JUnit tests using Gradle
