@@ -2,6 +2,11 @@ package org.example;
 // math library import
 import org.apache.commons.math3.stat.inference.TTest;
 import org.example.MeasurementFactory.IMeasurement;
+import org.example.MeasurementFactory.UniversalTimeUnit;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Represents result of comparing two IMeasurements
  */
@@ -28,14 +33,8 @@ public class CompareTestResult{
         double pValue = CompareMeasurements(test_new, test_old);
         testOK = !(Math.abs(pValue) > criticalValue);
 
-        oldTestAvg = test_old.getMeasuredTimes().stream()
-                .mapToDouble(Double::doubleValue)
-                .average()
-                .orElse(0.0);
-        newTestAvg = test_new.getMeasuredTimes().stream()
-                .mapToDouble(Double::doubleValue)
-                .average()
-                .orElse(0.0);
+        oldTestAvg = UniversalTimeUnitAverage(test_old.getMeasuredTimes()).GetNanoSeconds();
+        newTestAvg = UniversalTimeUnitAverage(test_new.getMeasuredTimes()).GetNanoSeconds();
 
 
         difference = newTestAvg/oldTestAvg;
@@ -43,6 +42,13 @@ public class CompareTestResult{
         if(!test_new.hasAscendingPerformanceUnit()){
             difference *= -1;
         }
+    }
+
+    private static UniversalTimeUnit UniversalTimeUnitAverage(List<UniversalTimeUnit> times){
+        long sum = 0;
+        for(UniversalTimeUnit time : times)
+            sum+=time.GetNanoSeconds();
+        return new UniversalTimeUnit(sum/times.size(), TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -74,8 +80,8 @@ public class CompareTestResult{
         double[] values1 = new double[test1.getMeasuredTimes().size()];
         double[] values2 = new double[test2.getMeasuredTimes().size()];
         for (int i = 0; i<values1.length;i++){
-            values1[i] = test1.getMeasuredTimes().get(i);
-            values2[i] = test2.getMeasuredTimes().get(i);
+            values1[i] = test1.getMeasuredTimes().get(i).GetNanoSeconds();
+            values2[i] = test2.getMeasuredTimes().get(i).GetNanoSeconds();
         }
         return tTestClass.t(values1,values2);
     }
