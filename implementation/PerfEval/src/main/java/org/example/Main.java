@@ -6,10 +6,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.IMeasurement;
 import org.example.MeasurementFactory.ParserIndustry;
+import org.example.MeasurementFactory.UniversalTimeUnit;
+import org.example.PerformanceComparatorFactory.ComparisonResult;
 
 public class Main {
     static double criticalValue = 0.05;
@@ -67,8 +70,8 @@ public class Main {
         PrintResult(comparison);
 
         boolean worseBehaviour = false;
-        for(CompareTestResult c : comparison){
-            if(!c.getCompareResult() && ((c.getNewTest().hasAscendingPerformanceUnit() && c.getDifference()>0) ||
+        /*for(CompareTestResult c : comparison){
+            if(c.getCompareResult() && ((c.getNewTest().hasAscendingPerformanceUnit() && c.getDifference()>0) ||
                     (!c.getNewTest().hasAscendingPerformanceUnit() && c.getDifference()>0))){
                 worseBehaviour = true;
             }
@@ -76,7 +79,7 @@ public class Main {
         if(worseBehaviour) {
             System.out.println("Some of your test/s gone worse.");
             System.exit(atLeastOneWorseResultExitCode);
-        }
+        }*/
     }
 
     static void PrintResultHeader(){
@@ -95,9 +98,9 @@ public class Main {
 
         // In case of change the change will be reported
         String testResultChanged = "";
-        if(!testResult.getCompareResult()){
+        /*if(!testResult.getCompareResult()){
             testResultChanged = "\t !!! SIGNIFICANT CHANGE !!!";
-        }
+        }*/
 
         String stringToPrint=String.format(formatString, nameOfTest, speedOfNewTest,
                 speedOfOldTest, testDifference, testResultChanged);
@@ -122,7 +125,8 @@ public class Main {
     static List<CompareTestResult>CompareSets(List<IMeasurement> oldSet, List<IMeasurement> newSet){
         var result = new ArrayList<CompareTestResult>();
         for (int i= 0; i<oldSet.size();i++){
-            result.add(new CompareTestResult(criticalValue,oldSet.get(i),newSet.get(i)));
+            result.add(new CompareTestResult(criticalValue,criticalValue,new UniversalTimeUnit(1, TimeUnit.HOURS),
+                    oldSet.get(i),newSet.get(i)));
         }
         return result;
     }

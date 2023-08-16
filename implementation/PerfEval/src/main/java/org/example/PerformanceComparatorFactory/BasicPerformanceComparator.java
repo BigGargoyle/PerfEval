@@ -1,6 +1,9 @@
 package org.example.PerformanceComparatorFactory;
 
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.inference.TTest;
+import org.example.MeasurementFactory.UniversalTimeUnit;
 
 import java.util.List;
 
@@ -18,21 +21,30 @@ public class BasicPerformanceComparator implements IPerformanceComparator{
     }
 
     @Override
-    public ComparisonResult CompareSets(double[] newSet, double[] oldSet) {
-        if(oldSet == null || newSet == null || oldSet.length==0 || newSet.length == 0){
+    public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
+        if(oldSet == null || newSet == null || oldSet.size() ==0 || newSet.size() == 0){
             // an error has occurred
             comparisonResult = ComparisonResult.None;
             return comparisonResult;
         }
 
         TTest tTest = new TTest();
-        double pValue = tTest.t(newSet, oldSet);
+        double pValue = tTest.t(ListToStatistic(newSet), ListToStatistic(oldSet));
         if(Math.abs(pValue) > criticalValue)
             comparisonResult = ComparisonResult.DifferentDistribution;
         else
             comparisonResult = ComparisonResult.SameDistribution;
         return comparisonResult;
     }
+
+    private SummaryStatistics ListToStatistic(List<UniversalTimeUnit> statSet){
+        SummaryStatistics stats = new SummaryStatistics();
+        for (UniversalTimeUnit value : statSet){
+            stats.addValue(value.GetNanoSeconds());
+        }
+        return stats;
+    }
+
     @Override
     public ComparisonResult GetLastComparisonResult() {
         return comparisonResult;
@@ -40,11 +52,6 @@ public class BasicPerformanceComparator implements IPerformanceComparator{
 
     @Override
     public int GetMinSampleCount() {
-        return -1;
-    }
-
-    @Override
-    public double GetConfidenceIntervalWidth() {
         return -1;
     }
 }

@@ -1,8 +1,8 @@
 package PerformanceComparatorTests;
 
 import org.example.MeasurementFactory.UniversalTimeUnit;
-import org.example.PerformanceComparatorFactory.NormalPerformanceComparator;
 import org.example.PerformanceComparatorFactory.ComparisonResult;
+import org.example.PerformanceComparatorFactory.BootstrapPerformanceComparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NormalPerformanceComparatorTest {
-    private NormalPerformanceComparator performanceComparator;
+public class BootstrapPerformanceComparatorTest {
+    private BootstrapPerformanceComparator performanceComparator;
 
     private List<UniversalTimeUnit> DoubleToTimeList(double[] arr){
         if (arr==null) return null;
@@ -30,7 +30,7 @@ public class NormalPerformanceComparatorTest {
         // Set the critical value to 0.05 for testing purposes
         double pValue = 0.05;
         double maxWidth = 0.1;
-        performanceComparator = new NormalPerformanceComparator(pValue, maxWidth);
+        performanceComparator = new BootstrapPerformanceComparator(pValue, maxWidth, new UniversalTimeUnit(1, TimeUnit.HOURS));
     }
 
     @Test
@@ -51,6 +51,19 @@ public class NormalPerformanceComparatorTest {
         ComparisonResult result = performanceComparator.CompareSets(DoubleToTimeList(newSet), DoubleToTimeList(oldSet));
         assertEquals(ComparisonResult.NotEnoughSamples, result);
         assertEquals(ComparisonResult.NotEnoughSamples, performanceComparator.GetLastComparisonResult());
+        assertTrue(performanceComparator.GetMinSampleCount()>newSet.length || performanceComparator.GetMinSampleCount()>oldSet.length);
+    }
+
+    @Test
+    public void testBootstrapRecommend() {
+        // Test when the two sets needs bootstrap
+        performanceComparator = new BootstrapPerformanceComparator(0.05, 0.1,
+                new UniversalTimeUnit(200, TimeUnit.NANOSECONDS));
+        double[] newSet = {10.0,20.0,30.0,40.0,50.0,60.0};
+        double[] oldSet = {10.0,20.0,30.0,40.0,50.0,60.0};
+        ComparisonResult result = performanceComparator.CompareSets(DoubleToTimeList(newSet), DoubleToTimeList(oldSet));
+        assertEquals(ComparisonResult.Bootstrap, result);
+        assertEquals(ComparisonResult.Bootstrap, performanceComparator.GetLastComparisonResult());
         assertTrue(performanceComparator.GetMinSampleCount()>newSet.length || performanceComparator.GetMinSampleCount()>oldSet.length);
     }
 

@@ -1,5 +1,7 @@
 package org.example.PerformanceComparatorFactory;
 
+import org.example.MeasurementFactory.UniversalTimeUnit;
+
 import java.util.List;
 
 public interface IPerformanceComparator {
@@ -9,7 +11,7 @@ public interface IPerformanceComparator {
      * @param oldSet list of old measured values
      * @return result of distribution comparison
      */
-    public ComparisonResult CompareSets(double[] newSet, double[] oldSet);
+    public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet);
 
     /**
      *
@@ -23,9 +25,4 @@ public interface IPerformanceComparator {
      */
     public int GetMinSampleCount();
 
-    /**
-     * Just in case of bootstrap.
-     * @return The width of confidence interval relative to an average of values.
-     */
-    public double GetConfidenceIntervalWidth();
 }

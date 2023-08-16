@@ -1,12 +1,14 @@
 package org.example.PerformanceComparatorFactory;
 
+import org.example.MeasurementFactory.UniversalTimeUnit;
+
 import java.util.List;
 /**
  * Implementation of IPerformanceComparator that always evaluates that there are not enough samples in the sets
  */
 public class AlwaysNotEnoughSamplesComparator implements IPerformanceComparator {
     @Override
-    public ComparisonResult CompareSets(double[] newSet, double[] oldSet) {
+    public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
         return ComparisonResult.NotEnoughSamples;
     }
 
@@ -17,11 +19,6 @@ public class AlwaysNotEnoughSamplesComparator implements IPerformanceComparator 
 
     @Override
     public int GetMinSampleCount() {
-        return 0;
-    }
-
-    @Override
-    public double GetConfidenceIntervalWidth() {
         return 0;
     }
 }

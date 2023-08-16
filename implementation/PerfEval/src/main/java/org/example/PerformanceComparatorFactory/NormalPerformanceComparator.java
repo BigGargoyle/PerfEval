@@ -5,6 +5,9 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.inference.TTest;
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.example.MeasurementFactory.UniversalTimeUnit;
+
+import java.util.List;
 
 /**
  * Implementation of IPerformanceComparator that is able to detect that given datasets have not enough samples to ensure
@@ -27,20 +30,20 @@ public class NormalPerformanceComparator implements IPerformanceComparator{
         criticalValue = pValue;
     }
     @Override
-    public ComparisonResult CompareSets(double[] newSet, double[] oldSet) {
+    public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
 
-        if(oldSet == null || newSet == null || oldSet.length==0 || newSet.length == 0){
+        if(oldSet == null || newSet == null || oldSet.size() ==0 || newSet.size() == 0){
             // an error has occurred
             comparisonResult = ComparisonResult.None;
             return comparisonResult;
         }
 
-        if(Math.abs(pValueOfTTest(newSet, oldSet)) > criticalValue) {
+        SummaryStatistics newStat = ListToStatistic(newSet);
+        SummaryStatistics oldStat = ListToStatistic(oldSet);
+        if(Math.abs(pValueOfTTest(newStat, oldStat)) > criticalValue) {
             comparisonResult = ComparisonResult.DifferentDistribution;
             return comparisonResult;
         }
-        SummaryStatistics newStat = ArrayToStatistic(newSet);
-        SummaryStatistics oldStat = ArrayToStatistic(oldSet);
         double newSetCIRadius = calcMeanCI(newStat, 1-criticalValue);
         double oldSetCIRadius = calcMeanCI(oldStat, 1-criticalValue);
 
@@ -65,15 +68,15 @@ public class NormalPerformanceComparator implements IPerformanceComparator{
      * @param values2
      * @return
      */
-    private static double pValueOfTTest(double[] values1, double[] values2){
+    private static double pValueOfTTest(SummaryStatistics values1, SummaryStatistics values2){
         TTest tTest = new TTest();
         return tTest.t(values1, values2);
     }
 
-    private SummaryStatistics ArrayToStatistic(double[] statSet){
+    private SummaryStatistics ListToStatistic(List<UniversalTimeUnit> statSet){
         SummaryStatistics stats = new SummaryStatistics();
-        for (double value : statSet){
-            stats.addValue(value);
+        for (UniversalTimeUnit value : statSet){
+            stats.addValue(value.GetNanoSeconds());
         }
         return stats;
     }
@@ -88,11 +91,6 @@ public class NormalPerformanceComparator implements IPerformanceComparator{
         if(comparisonResult == ComparisonResult.NotEnoughSamples)
             return minSampleCount;
         return -1;
-    }
-
-    @Override
-    public double GetConfidenceIntervalWidth() {
-        return 0;
     }
 
     //  start of code from https://gist.github.com/gcardone/5536578

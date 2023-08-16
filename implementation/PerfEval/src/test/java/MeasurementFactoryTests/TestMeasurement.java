@@ -25,8 +25,4 @@ public class TestMeasurement implements IMeasurement{
         return Values;
     }
 
-    @Override
-    public boolean hasAscendingPerformanceUnit() {
-        return AscendingPerfUnit;
-    }
 }

@@ -1,12 +1,14 @@
 package org.example.PerformanceComparatorFactory;
 
+import org.example.MeasurementFactory.UniversalTimeUnit;
+
 import java.util.List;
 /**
  * Implementation of IPerformanceComparator that always evaluates that sets are from the same distribution
  */
 public class AlwaysSameComparator implements IPerformanceComparator{
     @Override
-    public ComparisonResult CompareSets(double[] newSet, double[] oldSet) {
+    public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
         return ComparisonResult.SameDistribution;
     }
 
@@ -20,8 +22,4 @@ public class AlwaysSameComparator implements IPerformanceComparator{
         return 0;
     }
 
-    @Override
-    public double GetConfidenceIntervalWidth() {
-        return 0;
-    }
 }

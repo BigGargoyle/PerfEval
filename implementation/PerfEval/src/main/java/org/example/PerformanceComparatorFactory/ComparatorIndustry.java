@@ -1,5 +1,7 @@
 package org.example.PerformanceComparatorFactory;
 
+import org.example.MeasurementFactory.UniversalTimeUnit;
+
 public class ComparatorIndustry {
     /**
      *
@@ -9,13 +11,13 @@ public class ComparatorIndustry {
      * @param maxTimeToTest maximum amount of time for doing this benchmark test
      * @return the best implementation of IPerformanceComparator
      */
-    public static IPerformanceComparator GetComparator(double pValue, double maxConfidenceIntervalWidth, int maxTimeToTest){
+    public static IPerformanceComparator GetComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest){
         // return new BasicPerformanceComparator(pValue);
         return new NormalPerformanceComparator(pValue, maxConfidenceIntervalWidth);
         // return new BootstrapPerformanceComparator(pValue, maxConfidenceIntervalWidth, maxTimeToTest);
     }
 
-    public static IPerformanceComparator GetComparator(double pValue, double maxConfidenceIntervalWidth, int maxTimeToTest, ComparisonResult preferredComparisonResultType){
+    public static IPerformanceComparator GetComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest, ComparisonResult preferredComparisonResultType){
         switch(preferredComparisonResultType){
             case SameDistribution -> {
                 return new AlwaysSameComparator();

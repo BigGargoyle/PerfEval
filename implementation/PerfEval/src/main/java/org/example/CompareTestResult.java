@@ -3,6 +3,9 @@ package org.example;
 import org.apache.commons.math3.stat.inference.TTest;
 import org.example.MeasurementFactory.IMeasurement;
 import org.example.MeasurementFactory.UniversalTimeUnit;
+import org.example.PerformanceComparatorFactory.ComparatorIndustry;
+import org.example.PerformanceComparatorFactory.ComparisonResult;
+import org.example.PerformanceComparatorFactory.IPerformanceComparator;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +19,9 @@ public class CompareTestResult{
     private final double oldTestAvg;
     private final double newTestAvg;
     private double difference;
-    private final boolean testOK;
+    // private final boolean testOK;
+
+    private IPerformanceComparator performanceComparator;
 
     /**
      * Constructor of this class compares two input IMeasurements by some statistical method and then compares resulting
@@ -26,22 +31,26 @@ public class CompareTestResult{
      * @param test_new the newer one IMeasurement
      * @param test_old the older one IMeasurement
      */
-    public CompareTestResult(double criticalValue, IMeasurement test_new, IMeasurement test_old){
+    public CompareTestResult(double criticalValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest,
+                             IMeasurement test_new, IMeasurement test_old){
+
+        performanceComparator = ComparatorIndustry.GetComparator(criticalValue, maxConfidenceIntervalWidth, maxTimeToTest);
+        performanceComparator.CompareSets(test_new.getMeasuredTimes(), test_old.getMeasuredTimes());
+
         newTest = test_new;
         oldTest = test_old;
 
         double pValue = CompareMeasurements(test_new, test_old);
-        testOK = !(Math.abs(pValue) > criticalValue);
+        performanceComparator.CompareSets(test_new.getMeasuredTimes(), test_old.getMeasuredTimes());
 
         oldTestAvg = UniversalTimeUnitAverage(test_old.getMeasuredTimes()).GetNanoSeconds();
         newTestAvg = UniversalTimeUnitAverage(test_new.getMeasuredTimes()).GetNanoSeconds();
 
-
         difference = newTestAvg/oldTestAvg;
         difference = (1-difference)*100;
-        if(!test_new.hasAscendingPerformanceUnit()){
+        /*if(!test_new.hasAscendingPerformanceUnit()){
             difference *= -1;
-        }
+        }*/
     }
 
     private static UniversalTimeUnit UniversalTimeUnitAverage(List<UniversalTimeUnit> times){
@@ -61,7 +70,7 @@ public class CompareTestResult{
      *
      * @return if the newTest has better performance than the oldTest
      */
-    public boolean getCompareResult() { return testOK; }
+    public ComparisonResult getCompareResult() { return performanceComparator.GetLastComparisonResult(); }
     public IMeasurement getNewTest() { return newTest; }
     public IMeasurement getOldTest() { return oldTest; }
 

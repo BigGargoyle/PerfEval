@@ -57,9 +57,9 @@ public class JMHMeasurement implements IMeasurement {
         return MeasuredTimes;
     }
 
-    @Override
+    /*@Override
     public boolean hasAscendingPerformanceUnit() {
         // by default ops/us -> more ops/us -> better performance
         return true;
-    }
+    }*/
 }

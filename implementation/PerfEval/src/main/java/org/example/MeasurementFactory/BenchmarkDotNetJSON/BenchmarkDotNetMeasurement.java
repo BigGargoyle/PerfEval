@@ -55,9 +55,9 @@ public class BenchmarkDotNetMeasurement implements IMeasurement {
         return MeasuredTimes;
     }
 
-    @Override
+    /*@Override
     public boolean hasAscendingPerformanceUnit() {
         // by default time -> more time -> worse performance
         return false;
-    }
+    }*/
 }

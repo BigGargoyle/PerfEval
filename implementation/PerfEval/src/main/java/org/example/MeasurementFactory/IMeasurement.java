@@ -24,5 +24,5 @@ public interface IMeasurement {
      * It is needed to recognize if a higher value means better performance or not.
      * @return if a higher value means better performance
      */
-    boolean hasAscendingPerformanceUnit();
+    // boolean hasAscendingPerformanceUnit();
 }
