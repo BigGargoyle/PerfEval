@@ -42,13 +42,16 @@ Basic flow:<br>
 1. Uživatel si nainstaluje nástroj PUTE (pomocí skriptu `pute-installer.sh`)
 2. V kořenovém adresáři svého projektu spustí příkaz `pute init`
 3. Nástroj vytvoří složku `.performance` a v ní potřebné konfigurační soubory pro správnou práci nástroje
+    -   prázdná databáze souborů s výsledky testování
+    -   režijní soubory knihovny s potřebnými údaji (maximální doba běhu testu)
+    -   pomocí `.gitignore` souboru bude databáze souborů ignorovaná, ale konfigurační soubory se budou verzovat
 4. Obeznámí uživatele o úspěchu, nebo neúspěchu inicializace výpisem do konzole.
 
 #### Přidávání testů do PUTE
 
 TODO: import testů na základě formátu a regexu (bude součástí konfigurace i typ benchmarku a formát?)
 
-Motivace: Jednoduché přidávání výsledků testů do systému PUTE
+Motivace: Jednoduché přidávání výsledků testů do systému PUTE, udržování si základního přehledu o aktuálnosti testů
 
 Use Case: Přidání informací o lokaci testů do PUTE
 
