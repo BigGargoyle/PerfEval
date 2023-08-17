@@ -1,7 +1,6 @@
-package org.example;
+package org.example.Evaluation;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
 import dnl.utils.text.table.TextTable;
 
@@ -24,8 +23,8 @@ public class ResultPrinter {
         tableRow[1]=("NewAverage");
         tableRow[2]=("OldAverage");
         tableRow[3]=("Change [%]");
-        tableRow[4]=("Comparison result");
-        tableRow[5]=("Comparison verdict");
+        tableRow[4]=("Comparison verdict");
+        tableRow[5]=("Comparison result");
 
         return tableRow;
 
@@ -37,30 +36,19 @@ public class ResultPrinter {
         tableRow[1]=(String.valueOf(comparisonResult.getNewAvg()));
         tableRow[2]=(String.valueOf(comparisonResult.getOldAvg()));
         tableRow[3]=(String.valueOf(comparisonResult.getChange()));
+        if(comparisonResult.getComparisonVerdict())
+            tableRow[4]=("OK");
+        else
+            tableRow[4]=("NOT OK");
         switch (comparisonResult.getComparisonResult()){
 
-            case SameDistribution -> {
-                tableRow[4]=("same distribution");
-            }
-            case DifferentDistribution -> {
-                tableRow[4]=("different distribution");
-            }
-            case NotEnoughSamples -> {
-                // TODO: tato třída nepotřebuje vědět, co je performance comparator
-                tableRow[4]=("not enough samples (" + comparisonResult.getPerformanceComparator().GetMinSampleCount()
-                        + " samples needed)");
-            }
-            case Bootstrap -> {
-                tableRow[4]=("note enough samples (bootstrap was made)");
-            }
-            case None -> {
-                tableRow[4]=("NONE???");
-            }
+            case SameDistribution -> tableRow[5]=("same distribution");
+            case DifferentDistribution -> tableRow[5]=("different distribution");
+            case NotEnoughSamples -> tableRow[5]=("not enough samples (" + comparisonResult.getMinSampleCount()
+                    + " samples needed)");
+            case Bootstrap -> tableRow[5]=("note enough samples (bootstrap was made)");
+            case None -> tableRow[5]=("NONE???");
         }
-        if(comparisonResult.getComparisonVerdict())
-            tableRow[5]=("OK");
-        else
-            tableRow[5]=("NOT OK");
 
         return tableRow;
     }

@@ -18,10 +18,4 @@ public interface IMeasurementParser {
      */
     String GetParserType();
 
-    /**
-     * In the future it should be needed to identify each IMeasurement by a unique number. This function is used to
-     * create a unique number identifying the whole set of IMeasurements based on file modified time and benchmark type
-     * @return a unique number identifying source file
-     */
-    Long GetUniqueID();
 }

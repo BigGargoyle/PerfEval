@@ -35,7 +35,7 @@ public class BenchmarkDotNetMeasurement implements IMeasurement {
     private BenchmarkDotNetMeasurement(Benchmark pattern){
         Name = pattern.getMethodTitle();
         List<Measurement> measurements = pattern.getMeasurements();
-        MeasuredTimes = new ArrayList<UniversalTimeUnit>();
+        MeasuredTimes = new ArrayList<>();
         for(Measurement measurement:measurements){
             // I want to test only measurements with 'Workload' mode and 'Actual' stage
             if(measurement.getIterationMode().equals(testedIterationMode) &&
@@ -54,10 +54,4 @@ public class BenchmarkDotNetMeasurement implements IMeasurement {
     public List<UniversalTimeUnit> getMeasuredTimes() {
         return MeasuredTimes;
     }
-
-    /*@Override
-    public boolean hasAscendingPerformanceUnit() {
-        // by default time -> more time -> worse performance
-        return false;
-    }*/
 }

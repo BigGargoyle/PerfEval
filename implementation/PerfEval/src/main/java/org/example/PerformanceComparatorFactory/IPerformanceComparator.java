@@ -11,18 +11,18 @@ public interface IPerformanceComparator {
      * @param oldSet list of old measured values
      * @return result of distribution comparison
      */
-    public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet);
+    ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet);
 
     /**
      *
      * @return result of the last comparison
      */
-    public ComparisonResult GetLastComparisonResult();
+    ComparisonResult GetLastComparisonResult();
 
     /**
      * Just in case of NotEnoughSamples
      * @return Minimum count of samples needed to determine if both of sets have the same distribution.
      */
-    public int GetMinSampleCount();
+    int GetMinSampleCount();
 
 }

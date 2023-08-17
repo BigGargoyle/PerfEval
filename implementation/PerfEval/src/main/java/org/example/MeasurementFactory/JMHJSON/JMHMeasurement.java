@@ -24,7 +24,7 @@ public class JMHMeasurement implements IMeasurement {
     }
     private JMHMeasurement(BenchmarkJMHJSONBase input) throws IOException {
         Name = input.getBenchmark();
-        MeasuredTimes = new ArrayList<UniversalTimeUnit>();
+        MeasuredTimes = new ArrayList<>();
         PrimaryMetric primaryMetric = input.getPrimaryMetric();
         // !!! adding average of each measuredData, because rawData is a field of list of lists of Doubles
         for (List<Double> measuredData: primaryMetric.getRawData()){
@@ -56,10 +56,4 @@ public class JMHMeasurement implements IMeasurement {
     public List<UniversalTimeUnit> getMeasuredTimes() {
         return MeasuredTimes;
     }
-
-    /*@Override
-    public boolean hasAscendingPerformanceUnit() {
-        // by default ops/us -> more ops/us -> better performance
-        return true;
-    }*/
 }

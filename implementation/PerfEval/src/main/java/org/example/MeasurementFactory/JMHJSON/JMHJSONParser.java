@@ -3,7 +3,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.MeasurementFactory.JMHJSON.pojoJMH.BenchmarkJMHJSONBase;
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.IMeasurement;
-import org.example.MeasurementFactory.JMHJSON.JMHMeasurement;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.List;
 public class JMHJSONParser implements IMeasurementParser {
     Long timestamp = null;
     public List<IMeasurement> GetTestsFromFile(String fileName) {
-        List<IMeasurement> result = new ArrayList<IMeasurement>();
+        List<IMeasurement> result = new ArrayList<>();
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
         BenchmarkJMHJSONBase[] base;
@@ -41,10 +40,5 @@ public class JMHJSONParser implements IMeasurementParser {
     }
     public String GetParserType(){
         return "framework: JMH, format: JSON ";
-    }
-
-    @Override
-    public Long GetUniqueID() {
-        return timestamp;
     }
 }

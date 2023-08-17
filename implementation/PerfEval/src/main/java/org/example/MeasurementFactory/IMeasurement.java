@@ -18,11 +18,4 @@ public interface IMeasurement {
      */
     List<UniversalTimeUnit> getMeasuredTimes();
 
-    // larger value implies better performance
-
-    /**
-     * It is needed to recognize if a higher value means better performance or not.
-     * @return if a higher value means better performance
-     */
-    // boolean hasAscendingPerformanceUnit();
 }

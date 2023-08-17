@@ -13,8 +13,8 @@ public class ComparatorIndustry {
      */
     public static IPerformanceComparator GetComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest){
         // return new BasicPerformanceComparator(pValue);
-        return new NormalPerformanceComparator(pValue, maxConfidenceIntervalWidth);
-        // return new BootstrapPerformanceComparator(pValue, maxConfidenceIntervalWidth, maxTimeToTest);
+        // return new NormalPerformanceComparator(pValue, maxConfidenceIntervalWidth);
+        return new BootstrapPerformanceComparator(pValue, maxConfidenceIntervalWidth, maxTimeToTest);
     }
 
     public static IPerformanceComparator GetComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest, ComparisonResult preferredComparisonResultType){

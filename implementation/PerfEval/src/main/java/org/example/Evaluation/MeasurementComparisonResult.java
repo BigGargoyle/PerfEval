@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Evaluation;
 
 import org.example.MeasurementFactory.IMeasurement;
 import org.example.MeasurementFactory.UniversalTimeUnit;
@@ -37,17 +37,16 @@ public class MeasurementComparisonResult {
     public boolean getComparisonVerdict(){
         return TestVerdict;
     }
+    public int getMinSampleCount(){
+        return performanceComparator.GetMinSampleCount();
+    }
     public IMeasurement getOldMeasurement() {
         return oldMeasurement;
     }
     public IMeasurement getNewMeasurement(){
         return  newMeasurement;
     }
-    public IPerformanceComparator getPerformanceComparator(){
-        return  performanceComparator;
-    }
-    public MeasurementComparisonResult(double critValue, double maxCIWidth, UniversalTimeUnit maxTestTime,
-                                       IMeasurement _newMeasurement, IMeasurement _oldMeasurement,
+    public MeasurementComparisonResult(double critValue, IMeasurement _newMeasurement, IMeasurement _oldMeasurement,
                                        IPerformanceComparator _performanceComparator){
         oldMeasurement = _oldMeasurement;
         newMeasurement = _newMeasurement;

@@ -13,7 +13,7 @@ import org.example.MeasurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.*;
 public class BenchmarkDotNetJSONParser implements IMeasurementParser {
     Long timestamp = null;
     public List<IMeasurement> GetTestsFromFile(String fileName){
-        List<IMeasurement> result = new ArrayList<IMeasurement>();
+        List<IMeasurement> result = new ArrayList<>();
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
         BenchmarkDotNetJSONBase base;
@@ -35,8 +35,4 @@ public class BenchmarkDotNetJSONParser implements IMeasurementParser {
         return "framework: BenchmarkDotNet, format: JSON ";
     }
 
-    @Override
-    public Long GetUniqueID() {
-        return timestamp;
-    }
 }
