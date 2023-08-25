@@ -29,7 +29,7 @@ public class PerformanceEvaluator {
         // comparing sets of measurements
         if(!IsIdenticalSet(newSet, oldSet))
             throw new IOException("sets of tests are not same");
-        List<MeasurementComparisonResult> comparisonResults = CompareSets(newSet, oldSet, critValue,
+        List<IMeasurementComparisonResult> comparisonResults = CompareSets(newSet, oldSet, critValue,
                 maxCIWidth, maxTestTime);
 
         // printing result
@@ -38,10 +38,10 @@ public class PerformanceEvaluator {
 
     }
 
-    private static List<MeasurementComparisonResult> CompareSets(List<IMeasurement> newSet, List<IMeasurement> oldSet,
+    private static List<IMeasurementComparisonResult> CompareSets(List<IMeasurement> newSet, List<IMeasurement> oldSet,
                                                                  double critValue, double maxCIWidth,
                                                                  UniversalTimeUnit maxTestTime) {
-        List<MeasurementComparisonResult> result = new ArrayList<>();
+        List<IMeasurementComparisonResult> result = new ArrayList<>();
 
         for (int i = 0; i < newSet.size(); i++) {
             var comparator = ComparatorIndustry.GetComparator(critValue, maxCIWidth, maxTestTime);

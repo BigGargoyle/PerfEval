@@ -1,12 +1,14 @@
 package org.example.Evaluation;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import dnl.utils.text.table.TextTable;
+import org.codehaus.jackson.map.ObjectMapper;
 
 public class ResultPrinter {
 
-    public static void TablePrinter(List<MeasurementComparisonResult> measurementComparisonResults, PrintStream printStream){
+    public static void TablePrinter(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream){
         String[] tableHeader = CreateComparisonTableHeader();
         String[][] tableData = new String[measurementComparisonResults.size()][];
         for(int i =0;i<measurementComparisonResults.size();i++){
@@ -29,7 +31,7 @@ public class ResultPrinter {
         return tableRow;
 
     }
-    private static String[] MeasurementComparisonToTableRow(MeasurementComparisonResult comparisonResult){
+    private static String[] MeasurementComparisonToTableRow(IMeasurementComparisonResult comparisonResult){
         String[] tableRow = new String[6];
 
         tableRow[0]=(comparisonResult.getName());
@@ -54,8 +56,23 @@ public class ResultPrinter {
     }
 
 
-    public static void JSONPrinter(List<MeasurementComparisonResult> measurementComparisonResults, PrintStream printStream){
+    public static void JSONPrinter(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream) {
         // TODO: serializable MeasurementComparisonResult image
+        var objectMapper = new ObjectMapper();
+        for (IMeasurementComparisonResult comparisonResult: measurementComparisonResults) {
+            var measurementComparisonResultView = ConvertIMeasurementComparisonResult(comparisonResult);
+            try {
+                String jsonView = objectMapper.writeValueAsString(measurementComparisonResultView);
+            }
+            catch (IOException e) {
+                // TODO: exception handle
+            }
+
+        }
+    }
+
+    public static MeasurementComparisonResultView ConvertIMeasurementComparisonResult(IMeasurementComparisonResult comparisonResult){
+        return new MeasurementComparisonResultView(comparisonResult);
     }
 
 

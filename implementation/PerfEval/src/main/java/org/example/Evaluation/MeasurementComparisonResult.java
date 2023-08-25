@@ -3,13 +3,12 @@ package org.example.Evaluation;
 import org.example.MeasurementFactory.IMeasurement;
 import org.example.MeasurementFactory.UniversalTimeUnit;
 import org.example.PerformanceComparatorFactory.Bootstrap;
-import org.example.PerformanceComparatorFactory.ComparatorIndustry;
 import org.example.PerformanceComparatorFactory.ComparisonResult;
 import org.example.PerformanceComparatorFactory.IPerformanceComparator;
 
 import java.util.List;
 
-public class MeasurementComparisonResult {
+public class MeasurementComparisonResult implements IMeasurementComparisonResult{
     private final double newAverage;
     private final double oldAverage;
     private final double performanceChange;
@@ -19,30 +18,39 @@ public class MeasurementComparisonResult {
     private final IMeasurement oldMeasurement;
     private final IMeasurement newMeasurement;
 
+    @Override
     public String getName(){
         return newMeasurement.getName();
     }
+    @Override
     public double getNewAvg(){
         return newAverage;
     }
+    @Override
     public double getOldAvg(){
         return oldAverage;
     }
+    @Override
     public double getChange(){
         return performanceChange;
     }
+    @Override
     public ComparisonResult getComparisonResult(){
         return performanceComparator.GetLastComparisonResult();
     }
+    @Override
     public boolean getComparisonVerdict(){
         return TestVerdict;
     }
+    @Override
     public int getMinSampleCount(){
         return performanceComparator.GetMinSampleCount();
     }
+    @Override
     public IMeasurement getOldMeasurement() {
         return oldMeasurement;
     }
+    @Override
     public IMeasurement getNewMeasurement(){
         return  newMeasurement;
     }
