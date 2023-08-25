@@ -63,6 +63,15 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
         return newMeasurement;
     }
 
+    /**
+     * Compares _newMeasurement and _oldMeasurement from arguments and then constructed instance is behaving as result of this comparison (IMeasurementComparisonResult)
+     *
+     * @param critValue              pValue that is critical for statistical tests
+     * @param _newMeasurement        an instance of IMeasured that is viewed as current state of test
+     * @param _oldMeasurement        an instance of IMeasured that is viewed as previous state of test
+     * @param _performanceComparator instance od IPerformanceComparator that is used for comparing IMeasurements from arguments
+     */
+
     public MeasurementComparisonResult(double critValue, IMeasurement _newMeasurement, IMeasurement _oldMeasurement,
                                        IPerformanceComparator _performanceComparator) {
         oldMeasurement = _oldMeasurement;
@@ -79,6 +88,10 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
                 critValue, performanceComparator.GetMinSampleCount());
     }
 
+    /**
+     * @param timeUnitList list of UniversalTimeUnits to compute average
+     * @return average of nanoseconds of times from timeUnitList
+     */
     private static double UniversalTimeAverage(List<UniversalTimeUnit> timeUnitList) {
         long sum = 0;
         for (UniversalTimeUnit unit : timeUnitList) {
@@ -87,6 +100,9 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
         return (double) sum / timeUnitList.size();
     }
 
+    /**
+     * @return true if performance gone better or if is not significantly worse
+     */
     private boolean ResolveTestVerdict() {
 
         // Bootstrap state is missing because in case of bootstrap this method is not called

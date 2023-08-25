@@ -9,7 +9,6 @@ import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.ParserIndustry;
 import org.example.MeasurementFactory.UniversalTimeUnit;
 import org.example.PerformanceComparatorFactory.ComparatorIndustry;
-import org.example.PerformanceComparatorFactory.ComparisonResult;
 import org.example.PerformanceComparatorFactory.IPerformanceComparator;
 import org.example.ResultDatabase.IDatabase;
 
@@ -21,6 +20,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class PerfEvalEvaluator {
+    /**
+     * Method that will compare last two benchmark test results from database and print information about tests that do not have enough samples to compare, but there is enough time on test to make enough samples
+     *
+     * @param database database with data about benchmark test results
+     * @param args     CLI arguments that were typed in
+     * @return true - evaluation and printing result was successful, false - otherwise
+     */
     public static boolean ListUndecidedTestResults(IDatabase database, String[] args) {
         List<List<IMeasurement>> measurements = GetLastTwoMeasurements(database);
         // measurements item count is 2 and measurements[0] is older than measurements[1]
@@ -35,10 +41,17 @@ public class PerfEvalEvaluator {
         return true;
     }
 
+    /**
+     * Method that will compare last two benchmark test results from database and print information about comparison result for each of benchmark tests
+     *
+     * @param database database with data about benchmark test results
+     * @param args     CLI arguments that were typed in
+     * @return true - evaluation and printing result was successful, false - otherwise
+     */
     public static boolean EvaluateLastResults(IDatabase database, String[] args) {
         List<List<IMeasurement>> measurements = GetLastTwoMeasurements(database);
         // measurements item count is 2 and measurements[0] is older than measurements[1]
-        if (measurements == null)
+        if (measurements == null || measurements.size() == 2 || measurements.get(0) != null || measurements.get(1) != null)
             return false;
         List<IMeasurementComparisonResult> comparisonResults = CompareMeasurements(measurements);
         if (comparisonResults == null)
@@ -53,6 +66,11 @@ public class PerfEvalEvaluator {
         return true;
     }
 
+    /**
+     * Sets nonzero exit code in case of that performance got worse
+     *
+     * @param comparisonResults list of comparison results of benchmark test comparison
+     */
     private static void SetupExitCode(List<IMeasurementComparisonResult> comparisonResults) {
         for (IMeasurementComparisonResult comparisonResult : comparisonResults) {
             if (!comparisonResult.getComparisonVerdict()) {
@@ -63,11 +81,24 @@ public class PerfEvalEvaluator {
         System.exit(GlobalVars.OKExitCode);
     }
 
+    /**
+     * Searches database for two newest benchmark test results
+     *
+     * @param database database to search results in
+     * @return List of parsed files to instances of List of IMeasurements
+     */
     private static List<List<IMeasurement>> GetLastTwoMeasurements(IDatabase database) {
         String[] lastResultsFileNames = database.GetLastNResults(2);
         return MeasurementsFromFiles(lastResultsFileNames);
     }
 
+    /**
+     * Expects 2 IMeasurements in the list and then compares if the list have identical names of IMeasurements in them.
+     * Method will compare IMeasurements on the same indices and then returns List of IMeasurementComparisonResults with results of comparison
+     *
+     * @param measurements List with two parsed files that are represented as a list of IMeasurements
+     * @return list of results from each comparison or null if some step of checking input lists or reading config file failed
+     */
     private static List<IMeasurementComparisonResult> CompareMeasurements(List<List<IMeasurement>> measurements) {
         List<IMeasurement> olderMeasurement = measurements.get(0);
         List<IMeasurement> newerMeasurement = measurements.get(1);
@@ -100,6 +131,12 @@ public class PerfEvalEvaluator {
         return comparisonResults;
     }
 
+    /**
+     * Method that parses files which names were given in a fileNames parameter into a List of IMeasurements
+     *
+     * @param fileNames array of Strings with relative or absolute paths to files to be parsed
+     * @return list of parsed files or null if parsing had failed
+     */
     static List<List<IMeasurement>> MeasurementsFromFiles(String[] fileNames) {
         List<List<IMeasurement>> measurements = new ArrayList<>();
         if (fileNames.length == 0) return null;
@@ -116,6 +153,13 @@ public class PerfEvalEvaluator {
         return measurements;
     }
 
+    /**
+     * Method checks if item is an element of container
+     *
+     * @param container String array that would be searched
+     * @param item      String that is searched
+     * @return true - if item is an element of the container, false - otherwise
+     */
     static boolean Contains(String[] container, String item) {
         for (String element : container) {
             if (element.compareTo(item) == 0)
@@ -124,6 +168,11 @@ public class PerfEvalEvaluator {
         return false;
     }
 
+    /**
+     * Method reads config data from config file and returns them.
+     *
+     * @return Instance of ConfigData read from config file or null if there was an error or some config data are missing
+     */
     private static ConfigData ReadConfigFromIniFile() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.perfevalDir
@@ -154,6 +203,13 @@ public class PerfEvalEvaluator {
         }
     }
 
+    /**
+     * Represents data read from config file. Just to simplify passing them all to methods
+     *
+     * @param critValue
+     * @param maxCIWidth
+     * @param maxTimeOnTest
+     */
     record ConfigData(double critValue, double maxCIWidth, UniversalTimeUnit maxTimeOnTest) {
     }
 }

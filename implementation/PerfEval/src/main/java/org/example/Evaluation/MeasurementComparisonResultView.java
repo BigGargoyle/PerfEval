@@ -4,6 +4,9 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.example.MeasurementFactory.IMeasurement;
 import org.example.PerformanceComparatorFactory.ComparisonResult;
 
+/**
+ * Class that is representing serializable object of IMeasurementComparisonResult
+ */
 public class MeasurementComparisonResultView {
     @JsonProperty
     public double newAverage;
@@ -16,9 +19,11 @@ public class MeasurementComparisonResultView {
     @JsonProperty
     public boolean testVerdict;
 
-    public MeasurementComparisonResultView() {
-    }
-
+    /**
+     * Creates an instance of MeasurementComparisonResultView from an instance of IMeasurementComparisonResult
+     *
+     * @param comparisonResult instance of IMeasurementComparisonResult that this instance will be image of
+     */
     public MeasurementComparisonResultView(IMeasurementComparisonResult comparisonResult) {
         this.newAverage = comparisonResult.getNewAvg();
         this.oldAverage = comparisonResult.getOldAvg();
@@ -27,6 +32,15 @@ public class MeasurementComparisonResultView {
         this.testVerdict = comparisonResult.getComparisonVerdict();
     }
 
+    /**
+     * Crates an instance of MeasurementComparisonResultView from variables in arguments of method
+     *
+     * @param newAverage        value of newAverage to set
+     * @param oldAverage        value of oldAverage to set
+     * @param performanceChange value of performanceChange to set
+     * @param comparisonResult  value of ComparisonResult to set
+     * @param testVerdict       value of testVerdict to set
+     */
     public MeasurementComparisonResultView(double newAverage, double oldAverage, double performanceChange,
                                            ComparisonResult comparisonResult, boolean testVerdict) {
         this.newAverage = newAverage;
