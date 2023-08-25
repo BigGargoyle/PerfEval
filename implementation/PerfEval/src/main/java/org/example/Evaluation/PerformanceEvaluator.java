@@ -18,29 +18,29 @@ public class PerformanceEvaluator {
 
         // parsing files
         var parser = ParserIndustry.RecognizeParserFactory(newResultFileName);
-        if(parser == null)
+        if (parser == null)
             throw new IOException("file format has not been recognized");
         List<IMeasurement> newSet = parser.GetTestsFromFile(newResultFileName);
         List<IMeasurement> oldSet = parser.GetTestsFromFile(oldResultFileName);
 
-        if(newSet == null || oldSet == null)
+        if (newSet == null || oldSet == null)
             throw new IOException("file format has not been recognized");
 
         // comparing sets of measurements
-        if(!IsIdenticalSet(newSet, oldSet))
+        if (!IsIdenticalSet(newSet, oldSet))
             throw new IOException("sets of tests are not same");
         List<IMeasurementComparisonResult> comparisonResults = CompareSets(newSet, oldSet, critValue,
                 maxCIWidth, maxTestTime);
 
         // printing result
-        if(jsonFormat) ResultPrinter.JSONPrinter(comparisonResults, outputStream);
+        if (jsonFormat) ResultPrinter.JSONPrinter(comparisonResults, outputStream);
         else ResultPrinter.TablePrinter(comparisonResults, outputStream);
 
     }
 
     private static List<IMeasurementComparisonResult> CompareSets(List<IMeasurement> newSet, List<IMeasurement> oldSet,
-                                                                 double critValue, double maxCIWidth,
-                                                                 UniversalTimeUnit maxTestTime) {
+                                                                  double critValue, double maxCIWidth,
+                                                                  UniversalTimeUnit maxTestTime) {
         List<IMeasurementComparisonResult> result = new ArrayList<>();
 
         for (int i = 0; i < newSet.size(); i++) {
@@ -52,15 +52,13 @@ public class PerformanceEvaluator {
         return result;
     }
 
-    private static boolean IsIdenticalSet(List<IMeasurement> set1, List<IMeasurement> set2){
-        if(set1.size() != set2.size())
+    private static boolean IsIdenticalSet(List<IMeasurement> set1, List<IMeasurement> set2) {
+        if (set1.size() != set2.size())
             return false;
-        for (int i =0; i<set1.size();i++){
-            if(set1.get(i).getName().compareTo(set2.get(i).getName())!=0)
+        for (int i = 0; i < set1.size(); i++) {
+            if (set1.get(i).getName().compareTo(set2.get(i).getName()) != 0)
                 return false;
         }
         return true;
     }
-
-
 }

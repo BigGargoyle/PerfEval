@@ -5,6 +5,8 @@ import java.io.PrintStream;
 import java.util.List;
 import dnl.utils.text.table.TextTable;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.example.GlobalVars;
+import org.example.PerformanceComparatorFactory.ComparisonResult;
 
 public class ResultPrinter {
 
@@ -75,5 +77,18 @@ public class ResultPrinter {
         return new MeasurementComparisonResultView(comparisonResult);
     }
 
+    public static void PrintUndecided(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream){
+        for(IMeasurementComparisonResult comparisonResult : measurementComparisonResults){
+            if(comparisonResult.getComparisonResult() == ComparisonResult.NotEnoughSamples){
+                PrintUndecidedComparisonResult(comparisonResult, printStream);
+            }
+        }
+    }
+
+    private static void PrintUndecidedComparisonResult(IMeasurementComparisonResult comparisonResult, PrintStream printStream) {
+        String name = comparisonResult.getName();
+        int minSampleCount = comparisonResult.getMinSampleCount();
+        printStream.println(name + GlobalVars.ColumnDelimiter + minSampleCount);
+    }
 
 }

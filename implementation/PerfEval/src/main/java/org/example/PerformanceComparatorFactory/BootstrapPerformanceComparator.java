@@ -10,7 +10,7 @@ import org.example.MeasurementFactory.UniversalTimeUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class BootstrapPerformanceComparator implements IPerformanceComparator{
+public class BootstrapPerformanceComparator implements IPerformanceComparator {
 
     UniversalTimeUnit maxTestTime;
     double criticalValue;
@@ -20,19 +20,19 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator{
     ComparisonResult comparisonResult;
 
     /**
-     *
-     * @param pValue max p value for statistical tests that will be done with given data sets
+     * @param pValue                  max p value for statistical tests that will be done with given data sets
      * @param confidenceIntervalWidth maximum accepted relative width of confidence interval (relative to mean of data set)
      */
-    public BootstrapPerformanceComparator(double pValue, double confidenceIntervalWidth, UniversalTimeUnit testTime){
+    public BootstrapPerformanceComparator(double pValue, double confidenceIntervalWidth, UniversalTimeUnit testTime) {
         maxConfidenceIntervalWidth = confidenceIntervalWidth;
         criticalValue = pValue;
         maxTestTime = new UniversalTimeUnit(testTime.GetTime(TimeUnit.NANOSECONDS), TimeUnit.NANOSECONDS);
     }
+
     @Override
     public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
 
-        if(oldSet == null || newSet == null || oldSet.size()==0 || newSet.size() == 0){
+        if (oldSet == null || newSet == null || oldSet.size() == 0 || newSet.size() == 0) {
             // an error has occurred
             comparisonResult = ComparisonResult.None;
             return comparisonResult;
@@ -40,17 +40,17 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator{
 
         SummaryStatistics newStat = ListToStatistic(newSet);
         SummaryStatistics oldStat = ListToStatistic(oldSet);
-        if(Math.abs(pValueOfTTest(newStat, oldStat)) > criticalValue) {
+        if (Math.abs(pValueOfTTest(newStat, oldStat)) > criticalValue) {
             comparisonResult = ComparisonResult.DifferentDistribution;
             return comparisonResult;
         }
-        double newSetCIRadius = calcMeanCI(newStat, 1-criticalValue);
-        double oldSetCIRadius = calcMeanCI(oldStat, 1-criticalValue);
+        double newSetCIRadius = calcMeanCI(newStat, 1 - criticalValue);
+        double oldSetCIRadius = calcMeanCI(oldStat, 1 - criticalValue);
 
         double newMean = newStat.getMean();
         double oldMean = oldStat.getMean();
 
-        if(newSetCIRadius <= newMean * maxConfidenceIntervalWidth
+        if (newSetCIRadius <= newMean * maxConfidenceIntervalWidth
                 && oldSetCIRadius <= oldMean * maxConfidenceIntervalWidth) {
             comparisonResult = ComparisonResult.SameDistribution;
             return comparisonResult;
@@ -58,11 +58,11 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator{
 
         comparisonResult = ComparisonResult.NotEnoughSamples;
 
-        int oldMinSampleCount = calcMinSampleCount(oldStat, 1-criticalValue, maxConfidenceIntervalWidth);
-        int newMinSampleCount = calcMinSampleCount(newStat, 1-criticalValue, maxConfidenceIntervalWidth);
+        int oldMinSampleCount = calcMinSampleCount(oldStat, 1 - criticalValue, maxConfidenceIntervalWidth);
+        int newMinSampleCount = calcMinSampleCount(newStat, 1 - criticalValue, maxConfidenceIntervalWidth);
         minSampleCount = Math.max(oldMinSampleCount, newMinSampleCount);
 
-        if(newMean*minSampleCount>maxTestTime.GetNanoSeconds() || oldMean*minSampleCount>maxTestTime.GetNanoSeconds()){
+        if (newMean * minSampleCount > maxTestTime.GetNanoSeconds() || oldMean * minSampleCount > maxTestTime.GetNanoSeconds()) {
             comparisonResult = ComparisonResult.Bootstrap;
             return comparisonResult;
         }
@@ -72,18 +72,19 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator{
 
     /**
      * Calculates p value of T-test of hypothesis that values1 and values2 are from the same distribution
+     *
      * @param values1
      * @param values2
      * @return
      */
-    private static double pValueOfTTest(SummaryStatistics values1, SummaryStatistics values2){
+    private static double pValueOfTTest(SummaryStatistics values1, SummaryStatistics values2) {
         TTest tTest = new TTest();
         return tTest.t(values1, values2);
     }
 
-    private SummaryStatistics ListToStatistic(List<UniversalTimeUnit> statSet){
+    private SummaryStatistics ListToStatistic(List<UniversalTimeUnit> statSet) {
         SummaryStatistics stats = new SummaryStatistics();
-        for (UniversalTimeUnit value : statSet){
+        for (UniversalTimeUnit value : statSet) {
             stats.addValue(value.GetNanoSeconds());
         }
         return stats;
@@ -96,7 +97,7 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator{
 
     @Override
     public int GetMinSampleCount() {
-        if(comparisonResult == ComparisonResult.NotEnoughSamples || comparisonResult == ComparisonResult.Bootstrap)
+        if (comparisonResult == ComparisonResult.NotEnoughSamples || comparisonResult == ComparisonResult.Bootstrap)
             return minSampleCount;
         return -1;
     }
@@ -104,7 +105,6 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator{
     //  start of code from https://gist.github.com/gcardone/5536578
 
     /**
-     *
      * @param stats statistic for which is the confidence interval calculated for
      * @param level probability that the mean of stats is inside the confidence interval
      * @return distance between mean and one of the ends of the confidence interval
@@ -126,7 +126,7 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator{
 
     // code inspired by these equations https://ecampusontario.pressbooks.pub/introstats/chapter/7-5-calculating-the-sample-size-for-a-confidence-interval/
 
-    private static int calcMinSampleCount(SummaryStatistics statistics, double confidenceLevel, double maxWidth){
+    private static int calcMinSampleCount(SummaryStatistics statistics, double confidenceLevel, double maxWidth) {
         // Create a NormalDistribution object
         NormalDistribution normalDistribution = new NormalDistribution();
 
@@ -135,8 +135,8 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator{
 
         double mean = statistics.getMean();
         double standardDeviation = statistics.getStandardDeviation();
-        double sampleCount = Math.pow(criticalValue*standardDeviation/(mean*maxWidth),2);
+        double sampleCount = Math.pow(criticalValue * standardDeviation / (mean * maxWidth), 2);
 
-        return (int)Math.ceil(sampleCount);
+        return (int) Math.ceil(sampleCount);
     }
 }

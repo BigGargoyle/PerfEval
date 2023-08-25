@@ -12,7 +12,7 @@ public class GlobalVars {
     public static final String ColumnDelimiter = "\t";
     public static final double defaultStatisticCritValue = 0.05;
     public static final double defaultMaxCIWidth = 0.1;
-    public static final UniversalTimeUnit defaultMaxTimeOnTest = new UniversalTimeUnit(1,TimeUnit.HOURS);
+    public static final UniversalTimeUnit defaultMaxTimeOnTest = new UniversalTimeUnit(1, TimeUnit.HOURS);
 
     public static final String perfevalDir = ".performance";
     public static final String helpFileName = "help.txt";
@@ -34,9 +34,13 @@ public class GlobalVars {
     public static final String maxTimeForTestParameter = "--max-time";
 
     // exit codes
+    public static final int OKExitCode = 0;
     public static final int atLeastOneWorseResultExitCode = 1;
     public static final int invalidArgumentsExitCode = 2;
     public static final int perfevalNotInitializedExitCode = 3;
+    public static final int evaluationFailedExitCode = 4;
+    public static final int databaseErrorExitCode = 5;
 
-    private GlobalVars(){}
+    private GlobalVars() {
+    }
 }

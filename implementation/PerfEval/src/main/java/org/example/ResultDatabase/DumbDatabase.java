@@ -11,36 +11,36 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.PriorityQueue;
 
-public class DumbDatabase implements IDatabase{
+public class DumbDatabase implements IDatabase {
 
     static String DatabaseItemIdentifier = "R";
     static String DatabaseColumnSeparator = "\t";
     static String DatabaseFileName = ".performance/test_results.db";
     static SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
+
     @Override
     public String[] GetLastNResults(int n) {
         PriorityQueue<DatabaseItem> maxHeap = new PriorityQueue<>(Comparator.comparing(DatabaseItem::dateOfCreation));
-        try (BufferedReader reader = new BufferedReader(new FileReader(DatabaseFileName))){
+        try (BufferedReader reader = new BufferedReader(new FileReader(DatabaseFileName))) {
             String line;
-            while((line=reader.readLine())!=null){
+            while ((line = reader.readLine()) != null) {
                 DatabaseItem item = ParseDatabaseLine(line);
-                if(item==null) continue;
-                if(maxHeap.size()<=n)
+                if (item == null) continue;
+                if (maxHeap.size() <= n)
                     maxHeap.add(item);
                 else if (item.dateOfCreation.compareTo(maxHeap.peek().dateOfCreation()) < 0) {
                     maxHeap.poll();
                     maxHeap.add(item);
                 }
             }
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
 
         String[] result = new String[n];
-        for(int i = 0; i < result.length; i++) {
-            if(maxHeap.size()>0)
+        for (int i = 0; i < result.length; i++) {
+            if (maxHeap.size() > 0)
                 result[i] = maxHeap.poll().path;
             else
                 break;
@@ -52,7 +52,7 @@ public class DumbDatabase implements IDatabase{
     @Override
     public boolean AddFile(String fileName) {
         File file = new File(fileName);
-        if(!file.exists())
+        if (!file.exists())
             return false;
 
 
@@ -61,8 +61,7 @@ public class DumbDatabase implements IDatabase{
         try {
             BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
             date = new Date(attributes.creationTime().toMillis());
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -72,8 +71,7 @@ public class DumbDatabase implements IDatabase{
             FileWriter database = new FileWriter(DatabaseFileName);
             database.append(DatabaseItemToString(item));
             database.close();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -87,15 +85,15 @@ public class DumbDatabase implements IDatabase{
         // return false;
     }
 
-    boolean AddFilesFromDirDFS(File fileOrDir){
+    boolean AddFilesFromDirDFS(File fileOrDir) {
 
         //File file = new File(dirName);
 
         if (Files.isDirectory(fileOrDir.toPath())) {
             File[] files = fileOrDir.listFiles();
-            if(files == null) return false;
+            if (files == null) return false;
             boolean result = true;
-            for (var fileInDir:files) {
+            for (var fileInDir : files) {
                 result = result && AddFilesFromDirDFS(fileInDir);
             }
             return result;
@@ -106,34 +104,34 @@ public class DumbDatabase implements IDatabase{
         return true;
     }
 
-    DatabaseItem ParseDatabaseLine(String line){
+    DatabaseItem ParseDatabaseLine(String line) {
         String[] splittedLine = line.split("\t");
-        if(splittedLine.length>=4 && splittedLine[0].compareTo(DatabaseItemIdentifier)!=0)
+        if (splittedLine.length >= 4 && splittedLine[0].compareTo(DatabaseItemIdentifier) != 0)
             return null;
         Date date;
         try {
             date = DateFormat.parse(splittedLine[2]);
-        }
-        catch (ParseException e){
+        } catch (ParseException e) {
             e.printStackTrace();
             return null;
         }
         return new DatabaseItem(splittedLine[1], date, splittedLine[3]);
     }
 
-    String DatabaseItemToString(DatabaseItem databaseItem){
+    String DatabaseItemToString(DatabaseItem databaseItem) {
         String result = DatabaseItemIdentifier + DatabaseColumnSeparator;
         result += DateFormat.format(databaseItem.dateOfCreation) + DatabaseColumnSeparator;
         result += databaseItem.version;
         return result;
     }
 
-    String ResolveVersion(){
+    String ResolveVersion() {
         // TODO: implementation of git Version
         String version = "1234";
 
         return version;
     }
 
-    record DatabaseItem(String path, Date dateOfCreation, String version){}
+    record DatabaseItem(String path, Date dateOfCreation, String version) {
+    }
 }

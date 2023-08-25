@@ -16,9 +16,10 @@ public class MeasurementComparisonResultView {
     @JsonProperty
     public boolean testVerdict;
 
-    public MeasurementComparisonResultView(){}
+    public MeasurementComparisonResultView() {
+    }
 
-    public MeasurementComparisonResultView(IMeasurementComparisonResult comparisonResult){
+    public MeasurementComparisonResultView(IMeasurementComparisonResult comparisonResult) {
         this.newAverage = comparisonResult.getNewAvg();
         this.oldAverage = comparisonResult.getOldAvg();
         this.performanceChange = comparisonResult.getChange();

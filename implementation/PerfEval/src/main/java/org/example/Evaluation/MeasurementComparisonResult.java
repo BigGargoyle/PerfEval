@@ -8,7 +8,7 @@ import org.example.PerformanceComparatorFactory.IPerformanceComparator;
 
 import java.util.List;
 
-public class MeasurementComparisonResult implements IMeasurementComparisonResult{
+public class MeasurementComparisonResult implements IMeasurementComparisonResult {
     private final double newAverage;
     private final double oldAverage;
     private final double performanceChange;
@@ -19,43 +19,52 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
     private final IMeasurement newMeasurement;
 
     @Override
-    public String getName(){
+    public String getName() {
         return newMeasurement.getName();
     }
+
     @Override
-    public double getNewAvg(){
+    public double getNewAvg() {
         return newAverage;
     }
+
     @Override
-    public double getOldAvg(){
+    public double getOldAvg() {
         return oldAverage;
     }
+
     @Override
-    public double getChange(){
+    public double getChange() {
         return performanceChange;
     }
+
     @Override
-    public ComparisonResult getComparisonResult(){
+    public ComparisonResult getComparisonResult() {
         return performanceComparator.GetLastComparisonResult();
     }
+
     @Override
-    public boolean getComparisonVerdict(){
+    public boolean getComparisonVerdict() {
         return TestVerdict;
     }
+
     @Override
-    public int getMinSampleCount(){
+    public int getMinSampleCount() {
         return performanceComparator.GetMinSampleCount();
     }
+
     @Override
     public IMeasurement getOldMeasurement() {
         return oldMeasurement;
     }
+
     @Override
-    public IMeasurement getNewMeasurement(){
-        return  newMeasurement;
+    public IMeasurement getNewMeasurement() {
+        return newMeasurement;
     }
+
     public MeasurementComparisonResult(double critValue, IMeasurement _newMeasurement, IMeasurement _oldMeasurement,
-                                       IPerformanceComparator _performanceComparator){
+                                       IPerformanceComparator _performanceComparator) {
         oldMeasurement = _oldMeasurement;
         newMeasurement = _newMeasurement;
         // performanceComparator = ComparatorIndustry.GetComparator(critValue, maxCIWidth, maxTestTime);
@@ -64,27 +73,30 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
         newAverage = UniversalTimeAverage(newMeasurement.getMeasuredTimes());
         oldAverage = UniversalTimeAverage(oldMeasurement.getMeasuredTimes());
         performanceChange = 100 * oldAverage / newAverage - 100;
-        if(performanceComparator.GetLastComparisonResult()!=ComparisonResult.Bootstrap)
+        if (performanceComparator.GetLastComparisonResult() != ComparisonResult.Bootstrap)
             TestVerdict = ResolveTestVerdict();
         else TestVerdict = Bootstrap.Evaluate(newMeasurement.getMeasuredTimes(), oldMeasurement.getMeasuredTimes(),
                 critValue, performanceComparator.GetMinSampleCount());
     }
-    private static double UniversalTimeAverage(List<UniversalTimeUnit> timeUnitList)
-    {
+
+    private static double UniversalTimeAverage(List<UniversalTimeUnit> timeUnitList) {
         long sum = 0;
-        for(UniversalTimeUnit unit : timeUnitList){
-            sum+=unit.GetNanoSeconds();
+        for (UniversalTimeUnit unit : timeUnitList) {
+            sum += unit.GetNanoSeconds();
         }
-        return (double) sum/timeUnitList.size();
+        return (double) sum / timeUnitList.size();
     }
 
-    private boolean ResolveTestVerdict(){
+    private boolean ResolveTestVerdict() {
+
+        // Bootstrap state is missing because in case of bootstrap this method is not called
+
         switch (performanceComparator.GetLastComparisonResult()) {
             case SameDistribution -> {
                 return true;
             }
             case DifferentDistribution -> {
-                return performanceChange>0;
+                return performanceChange > 0;
             }
             case NotEnoughSamples -> {
                 return false;
@@ -92,6 +104,4 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
             default -> throw new IllegalStateException("Unexpected value: " + performanceComparator.GetLastComparisonResult());
         }
     }
-
-
 }

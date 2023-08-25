@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Implementation of IPerformanceComparator that always evaluate sets as they are from different distribution
  */
-public class AlwaysDifferentComparator implements IPerformanceComparator{
+public class AlwaysDifferentComparator implements IPerformanceComparator {
     @Override
     public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
         return ComparisonResult.DifferentDistribution;

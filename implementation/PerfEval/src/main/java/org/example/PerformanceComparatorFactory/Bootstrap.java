@@ -9,8 +9,9 @@ import java.util.Random;
 
 public class Bootstrap {
     static int DefaultBootstrapSampleSize = 1_000;
+
     public static boolean Evaluate(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet,
-                                   double critValue, int minSampleCount){
+                                   double critValue, int minSampleCount) {
 
         double[] sample1 = CreateBootstrapSample(newSet, minSampleCount);
         double[] sample2 = CreateBootstrapSample(oldSet, minSampleCount);
@@ -21,12 +22,12 @@ public class Bootstrap {
         return !(Math.abs(pValue) > critValue);
     }
 
-    static double[] CreateBootstrapSample(List<UniversalTimeUnit> basicSample, int minSampleCount){
+    static double[] CreateBootstrapSample(List<UniversalTimeUnit> basicSample, int minSampleCount) {
         int sampleSize = Math.max(DefaultBootstrapSampleSize, minSampleCount);
         double[] result = new double[sampleSize];
-        for (int i = 0; i < sampleSize; i++){
+        for (int i = 0; i < sampleSize; i++) {
             SummaryStatistics tempStat = new SummaryStatistics();
-            for(int j = 0; j < basicSample.size(); j++){
+            for (int j = 0; j < basicSample.size(); j++) {
                 Random rand = new Random();
                 UniversalTimeUnit randomElement = basicSample.get(rand.nextInt(basicSample.size()));
                 tempStat.addValue(randomElement.GetNanoSeconds());
@@ -35,7 +36,5 @@ public class Bootstrap {
         }
         return result;
     }
-
-
 
 }

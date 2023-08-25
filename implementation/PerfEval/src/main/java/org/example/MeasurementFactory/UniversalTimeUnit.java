@@ -11,7 +11,8 @@ public class UniversalTimeUnit {
     static int TWENTY_FOUR = 24;
 
     long nanoseconds;
-    public UniversalTimeUnit(long value, TimeUnit timeUnit){
+
+    public UniversalTimeUnit(long value, TimeUnit timeUnit) {
         SetTime(value, timeUnit);
     }
 
@@ -57,21 +58,27 @@ public class UniversalTimeUnit {
     public long GetNanoSeconds() {
         return GetTime(TimeUnit.NANOSECONDS);
     }
+
     public long GetMicroSeconds() {
         return GetTime(TimeUnit.MICROSECONDS);
     }
+
     public long GetMilliSeconds() {
         return GetTime(TimeUnit.MILLISECONDS);
     }
+
     public long GetSeconds() {
         return GetTime(TimeUnit.SECONDS);
     }
+
     public long GetMinutes() {
         return GetTime(TimeUnit.MINUTES);
     }
+
     public long GetHours() {
         return GetTime(TimeUnit.HOURS);
     }
+
     public long GetDays() {
         return GetTime(TimeUnit.DAYS);
     }

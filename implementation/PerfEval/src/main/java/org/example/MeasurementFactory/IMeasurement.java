@@ -7,13 +7,11 @@ import java.util.List;
  */
 public interface IMeasurement {
     /**
-     *
      * @return name of test
      */
     String getName();
 
     /**
-     *
      * @return measured values
      */
     List<UniversalTimeUnit> getMeasuredTimes();

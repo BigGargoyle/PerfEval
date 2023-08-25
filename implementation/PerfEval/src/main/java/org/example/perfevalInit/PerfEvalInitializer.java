@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class PerfEvalInitializer {
 
-    public static boolean InitPerfEval(){
+    public static boolean InitPerfEval() {
         try {
             BufferedWriter iniFile = new BufferedWriter(new FileWriter(GlobalVars.IniFileName));
             boolean success = writeIniFileContent(iniFile);
@@ -21,33 +21,30 @@ public class PerfEvalInitializer {
             helpFile.close();
 
             return success;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             return false;
         }
     }
 
-    static boolean writeIniFileContent(BufferedWriter iniFileWriter){
+    static boolean writeIniFileContent(BufferedWriter iniFileWriter) {
         try {
-            iniFileWriter.write(GlobalVars.critValueSign+GlobalVars.ColumnDelimiter+GlobalVars.defaultStatisticCritValue);
+            iniFileWriter.write(GlobalVars.critValueSign + GlobalVars.ColumnDelimiter + GlobalVars.defaultStatisticCritValue);
             iniFileWriter.newLine();
-            iniFileWriter.write(GlobalVars.maxCIWidthSign+GlobalVars.ColumnDelimiter+GlobalVars.defaultMaxCIWidth);
+            iniFileWriter.write(GlobalVars.maxCIWidthSign + GlobalVars.ColumnDelimiter + GlobalVars.defaultMaxCIWidth);
             iniFileWriter.newLine();
-            iniFileWriter.write(GlobalVars.maxTimeOnTestSign+GlobalVars.ColumnDelimiter+GlobalVars.defaultMaxTimeOnTest.GetNanoSeconds());
+            iniFileWriter.write(GlobalVars.maxTimeOnTestSign + GlobalVars.ColumnDelimiter + GlobalVars.defaultMaxTimeOnTest.GetNanoSeconds());
             iniFileWriter.newLine();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             return false;
         }
         return true;
     }
 
-    static boolean writeHelpFileContent(BufferedWriter helpFileWriter){
+    static boolean writeHelpFileContent(BufferedWriter helpFileWriter) {
         try {
             // TODO: doplnit obsah help souboru
             helpFileWriter.write("?");
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             return false;
         }
         return true;

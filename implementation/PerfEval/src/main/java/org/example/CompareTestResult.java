@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Represents result of comparing two IMeasurements
  */
-public class CompareTestResult{
+public class CompareTestResult {
     private final IMeasurement newTest;
     private final IMeasurement oldTest;
     private final double oldTestAvg;
@@ -27,12 +27,13 @@ public class CompareTestResult{
      * Constructor of this class compares two input IMeasurements by some statistical method and then compares resulting
      * p-value with critical value. If p-value is larger than the criticalValue, then getCompareResult method will be
      * returning true
+     *
      * @param criticalValue highest possible p-value of the statistic test result
-     * @param test_new the newer one IMeasurement
-     * @param test_old the older one IMeasurement
+     * @param test_new      the newer one IMeasurement
+     * @param test_old      the older one IMeasurement
      */
     public CompareTestResult(double criticalValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest,
-                             IMeasurement test_new, IMeasurement test_old){
+                             IMeasurement test_new, IMeasurement test_old) {
 
         performanceComparator = ComparatorIndustry.GetComparator(criticalValue, maxConfidenceIntervalWidth, maxTimeToTest);
         performanceComparator.CompareSets(test_new.getMeasuredTimes(), test_old.getMeasuredTimes());
@@ -46,52 +47,64 @@ public class CompareTestResult{
         oldTestAvg = UniversalTimeUnitAverage(test_old.getMeasuredTimes()).GetNanoSeconds();
         newTestAvg = UniversalTimeUnitAverage(test_new.getMeasuredTimes()).GetNanoSeconds();
 
-        difference = newTestAvg/oldTestAvg;
-        difference = (1-difference)*100;
+        difference = newTestAvg / oldTestAvg;
+        difference = (1 - difference) * 100;
         /*if(!test_new.hasAscendingPerformanceUnit()){
             difference *= -1;
         }*/
     }
 
-    private static UniversalTimeUnit UniversalTimeUnitAverage(List<UniversalTimeUnit> times){
+    private static UniversalTimeUnit UniversalTimeUnitAverage(List<UniversalTimeUnit> times) {
         long sum = 0;
-        for(UniversalTimeUnit time : times)
-            sum+=time.GetNanoSeconds();
-        return new UniversalTimeUnit(sum/times.size(), TimeUnit.NANOSECONDS);
+        for (UniversalTimeUnit time : times)
+            sum += time.GetNanoSeconds();
+        return new UniversalTimeUnit(sum / times.size(), TimeUnit.NANOSECONDS);
     }
 
     /**
-     *
      * @return the difference of performance between the newTest and the oldTest expressed in a percentage
      */
-    public double getDifference() { return difference; }
+    public double getDifference() {
+        return difference;
+    }
 
     /**
-     *
      * @return if the newTest has better performance than the oldTest
      */
-    public ComparisonResult getCompareResult() { return performanceComparator.GetLastComparisonResult(); }
-    public IMeasurement getNewTest() { return newTest; }
-    public IMeasurement getOldTest() { return oldTest; }
+    public ComparisonResult getCompareResult() {
+        return performanceComparator.GetLastComparisonResult();
+    }
+
+    public IMeasurement getNewTest() {
+        return newTest;
+    }
+
+    public IMeasurement getOldTest() {
+        return oldTest;
+    }
 
     /**
-     *
      * @return Average of Values of the oldTest
      */
-    public double getOldTestAvg() { return oldTestAvg; }
+    public double getOldTestAvg() {
+        return oldTestAvg;
+    }
+
     /**
-     *
      * @return Average of Values of the newTest
      */
-    public double getNewTestAvg() { return newTestAvg; }
+    public double getNewTestAvg() {
+        return newTestAvg;
+    }
+
     static double CompareMeasurements(IMeasurement test1, IMeasurement test2) {
         TTest tTestClass = new TTest();
         double[] values1 = new double[test1.getMeasuredTimes().size()];
         double[] values2 = new double[test2.getMeasuredTimes().size()];
-        for (int i = 0; i<values1.length;i++){
+        for (int i = 0; i < values1.length; i++) {
             values1[i] = test1.getMeasuredTimes().get(i).GetNanoSeconds();
             values2[i] = test2.getMeasuredTimes().get(i).GetNanoSeconds();
         }
-        return tTestClass.t(values1,values2);
+        return tTestClass.t(values1, values2);
     }
 }

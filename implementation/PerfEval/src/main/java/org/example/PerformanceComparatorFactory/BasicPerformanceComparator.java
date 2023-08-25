@@ -11,17 +11,18 @@ import java.util.List;
  * T-test does not deny hypothesis that they are from the same distribution then evaluates sets as they are from
  * the same distribution
  */
-public class BasicPerformanceComparator implements IPerformanceComparator{
+public class BasicPerformanceComparator implements IPerformanceComparator {
     double criticalValue;
     ComparisonResult comparisonResult;
-    public BasicPerformanceComparator(double pValue){
+
+    public BasicPerformanceComparator(double pValue) {
         this.criticalValue = pValue;
         comparisonResult = ComparisonResult.None;
     }
 
     @Override
     public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
-        if(oldSet == null || newSet == null || oldSet.size() ==0 || newSet.size() == 0){
+        if (oldSet == null || newSet == null || oldSet.size() == 0 || newSet.size() == 0) {
             // an error has occurred
             comparisonResult = ComparisonResult.None;
             return comparisonResult;
@@ -29,16 +30,16 @@ public class BasicPerformanceComparator implements IPerformanceComparator{
 
         TTest tTest = new TTest();
         double pValue = tTest.t(ListToStatistic(newSet), ListToStatistic(oldSet));
-        if(Math.abs(pValue) > criticalValue)
+        if (Math.abs(pValue) > criticalValue)
             comparisonResult = ComparisonResult.DifferentDistribution;
         else
             comparisonResult = ComparisonResult.SameDistribution;
         return comparisonResult;
     }
 
-    private SummaryStatistics ListToStatistic(List<UniversalTimeUnit> statSet){
+    private SummaryStatistics ListToStatistic(List<UniversalTimeUnit> statSet) {
         SummaryStatistics stats = new SummaryStatistics();
-        for (UniversalTimeUnit value : statSet){
+        for (UniversalTimeUnit value : statSet) {
             stats.addValue(value.GetNanoSeconds());
         }
         return stats;

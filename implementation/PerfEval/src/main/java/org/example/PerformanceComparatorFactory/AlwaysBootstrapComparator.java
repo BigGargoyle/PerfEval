@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Implementation of IPerformanceComparator that always "do bootstrap"
  */
-public class AlwaysBootstrapComparator implements IPerformanceComparator{
+public class AlwaysBootstrapComparator implements IPerformanceComparator {
 
     @Override
     public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
