@@ -15,7 +15,7 @@ stages:
 build:
   stage: build
   script:
-    - gradle build --no-tests # Build the project
+    - gradle build # Build the project
   artifacts:
     paths:
       - build/libs/*.jar # Publish the built JAR file as an artifact
