@@ -2,23 +2,31 @@ package org.example.perfevalInit;
 
 import org.example.GlobalVars;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class PerfEvalInitializer {
-
+    /**
+     * Method that controls PerfEval System
+     *
+     * @return true - if initialization was successful, false - otherwise
+     */
     public static boolean InitPerfEval() {
         try {
-            BufferedWriter iniFile = new BufferedWriter(new FileWriter(GlobalVars.IniFileName));
-            boolean success = writeIniFileContent(iniFile);
-            iniFile.close();
+            if(!directoryExistsOrCreate(GlobalVars.perfevalDir))
+                return false;
+
+            IniFileData iniFileData = new IniFileData(false);
+            boolean success = IniFileData.CreateNewIniFile(iniFileData);
 
             BufferedWriter helpFile = new BufferedWriter(new FileWriter(GlobalVars.helpFileName));
             success = success & writeHelpFileContent(helpFile);
-
             helpFile.close();
+
+            success = success & forcefullyCreateNewFile(GlobalVars.DatabaseFileName);
+            success = success & forcefullyCreateNewFile(GlobalVars.DatabaseCacheFileName);
 
             return success;
         } catch (IOException e) {
@@ -26,20 +34,28 @@ public class PerfEvalInitializer {
         }
     }
 
-    static boolean writeIniFileContent(BufferedWriter iniFileWriter) {
+    static boolean directoryExistsOrCreate(String dirName){
+        File dir = new File(dirName);
+        if(dir.exists())
+            return true;
+        return dir.mkdirs();
+    }
+
+    static boolean forcefullyCreateNewFile(String fileName) {
+        File file = new File(fileName);
         try {
-            iniFileWriter.write(GlobalVars.critValueSign + GlobalVars.ColumnDelimiter + GlobalVars.defaultStatisticCritValue);
-            iniFileWriter.newLine();
-            iniFileWriter.write(GlobalVars.maxCIWidthSign + GlobalVars.ColumnDelimiter + GlobalVars.defaultMaxCIWidth);
-            iniFileWriter.newLine();
-            iniFileWriter.write(GlobalVars.maxTimeOnTestSign + GlobalVars.ColumnDelimiter + GlobalVars.defaultMaxTimeOnTest.GetNanoSeconds());
-            iniFileWriter.newLine();
+            if (file.exists() && !file.delete())
+                return false;
+            return file.createNewFile();
         } catch (IOException e) {
             return false;
         }
-        return true;
     }
 
+    /**
+     * @param helpFileWriter where to write content of help file
+     * @return true - if writing was successful, false - otherwise
+     */
     static boolean writeHelpFileContent(BufferedWriter helpFileWriter) {
         try {
             // TODO: doplnit obsah help souboru

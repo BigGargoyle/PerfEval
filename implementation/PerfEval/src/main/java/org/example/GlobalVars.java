@@ -9,14 +9,22 @@ public class GlobalVars {
     public static final String critValueSign = "P";
     public static final String maxCIWidthSign = "C";
     public static final String maxTimeOnTestSign = "T";
+    public static final String gitSign = "G";
+    public static final String DatabaseItemIdentifier = "R";
     public static final String ColumnDelimiter = "\t";
     public static final double defaultStatisticCritValue = 0.05;
     public static final double defaultMaxCIWidth = 0.1;
     public static final UniversalTimeUnit defaultMaxTimeOnTest = new UniversalTimeUnit(1, TimeUnit.HOURS);
 
+    public static final String TrueString = "TRUE";
+    public static final String FalseString = "FALSE";
+
+    public static final String gitFileName = ".git";
     public static final String perfevalDir = ".performance";
     public static final String helpFileName = "help.txt";
     public static final String IniFileName = "config.ini";
+    public static final String DatabaseFileName = ".performance/test_results.db";
+    public static final String DatabaseCacheFileName = ".performance/test_results_cache.db";
 
     // commands
     public static final String initCommand = "init";
@@ -29,6 +37,7 @@ public class GlobalVars {
     public static final String helpFlag = "--help";
     public static final String graphicalFlag = "--graphical";
     public static final String jsonOutputFlag = "--json-output";
+    public static final String forceFlag = "--force";
 
     // possible params
     public static final String maxTimeForTestParameter = "--max-time";

@@ -73,15 +73,20 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator {
     /**
      * Calculates p value of T-test of hypothesis that values1 and values2 are from the same distribution
      *
-     * @param values1
-     * @param values2
-     * @return
+     * @param values1 first statistic to be TTested
+     * @param values2 second statistic to be TTested
+     * @return pValue of TTest
      */
     private static double pValueOfTTest(SummaryStatistics values1, SummaryStatistics values2) {
         TTest tTest = new TTest();
         return tTest.t(values1, values2);
     }
 
+    /**
+     *
+     * @param statSet list of UniversalTimeUnits that the SummaryStatistics will be created from
+     * @return SummaryStatistics of times from list
+     */
     private SummaryStatistics ListToStatistic(List<UniversalTimeUnit> statSet) {
         SummaryStatistics stats = new SummaryStatistics();
         for (UniversalTimeUnit value : statSet) {
@@ -126,6 +131,15 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator {
 
     // code inspired by these equations https://ecampusontario.pressbooks.pub/introstats/chapter/7-5-calculating-the-sample-size-for-a-confidence-interval/
 
+    /**
+     * Equations from @see <a href="URL#<a href="https://ecampusontario.pressbooks.pub/introstats/chapter/7-5-calculating-the-sample-size-for-a-confidence-interval/">
+     *     </a>">this link</a> are used to compute minimal sample count
+     *
+     * @param statistics statistic to calculate minimal sample count from
+     * @param confidenceLevel statistically
+     * @param maxWidth maximal relative width of confidence interval
+     * @return minimal count of measured samples to get statistically significant results
+     */
     private static int calcMinSampleCount(SummaryStatistics statistics, double confidenceLevel, double maxWidth) {
         // Create a NormalDistribution object
         NormalDistribution normalDistribution = new NormalDistribution();

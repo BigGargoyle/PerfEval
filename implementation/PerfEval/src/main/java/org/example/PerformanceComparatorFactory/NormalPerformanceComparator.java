@@ -118,6 +118,15 @@ public class NormalPerformanceComparator implements IPerformanceComparator {
 
     // code inspired by these equations https://ecampusontario.pressbooks.pub/introstats/chapter/7-5-calculating-the-sample-size-for-a-confidence-interval/
 
+    /**
+     * Equations from @see <a href="URL#<a href="https://ecampusontario.pressbooks.pub/introstats/chapter/7-5-calculating-the-sample-size-for-a-confidence-interval/">
+     *     </a>">this link</a> are used to compute minimal sample count
+     *
+     * @param statistics statistic to calculate minimal sample count from
+     * @param confidenceLevel statistically
+     * @param maxWidth maximal relative width of confidence interval
+     * @return minimal count of measured samples to get statistically significant results
+     */
     private static int calcMinSampleCount(SummaryStatistics statistics, double confidenceLevel, double maxWidth) {
         // Create a NormalDistribution object
         NormalDistribution normalDistribution = new NormalDistribution();

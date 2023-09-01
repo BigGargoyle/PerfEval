@@ -11,6 +11,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.PriorityQueue;
 
+/**
+ * Implementation of IDatabase with no caching, everytime something is searched in the database then the whole database is gone through
+ */
 public class DumbDatabase implements IDatabase {
 
     static String DatabaseItemIdentifier = "R";
@@ -28,7 +31,7 @@ public class DumbDatabase implements IDatabase {
                 if (item == null) continue;
                 if (maxHeap.size() <= n)
                     maxHeap.add(item);
-                else if (item.dateOfCreation.compareTo(maxHeap.peek().dateOfCreation()) < 0) {
+                else if (item.dateOfCreation().compareTo(maxHeap.peek().dateOfCreation()) < 0) {
                     maxHeap.poll();
                     maxHeap.add(item);
                 }
@@ -41,7 +44,7 @@ public class DumbDatabase implements IDatabase {
         String[] result = new String[n];
         for (int i = 0; i < result.length; i++) {
             if (maxHeap.size() > 0)
-                result[i] = maxHeap.poll().path;
+                result[i] = maxHeap.poll().path();
             else
                 break;
         }
@@ -85,6 +88,11 @@ public class DumbDatabase implements IDatabase {
         // return false;
     }
 
+    /**
+     *
+     * @param fileOrDir path to a file that is meant to be added to database or to a directory inside which there are files (benchmark results) searched
+     * @return true - if adding was always successful, false - otherwise
+     */
     boolean AddFilesFromDirDFS(File fileOrDir) {
 
         //File file = new File(dirName);
@@ -104,6 +112,11 @@ public class DumbDatabase implements IDatabase {
         return true;
     }
 
+    /**
+     *
+     * @param line line from a database file
+     * @return an instance of a DatabaseItem which was created from the line
+     */
     DatabaseItem ParseDatabaseLine(String line) {
         String[] splittedLine = line.split("\t");
         if (splittedLine.length >= 4 && splittedLine[0].compareTo(DatabaseItemIdentifier) != 0)
@@ -118,13 +131,22 @@ public class DumbDatabase implements IDatabase {
         return new DatabaseItem(splittedLine[1], date, splittedLine[3]);
     }
 
+    /**
+     *
+     * @param databaseItem creating a database file line from an instance of DatabaseItem
+     * @return database file line
+     */
     String DatabaseItemToString(DatabaseItem databaseItem) {
         String result = DatabaseItemIdentifier + DatabaseColumnSeparator;
-        result += DateFormat.format(databaseItem.dateOfCreation) + DatabaseColumnSeparator;
-        result += databaseItem.version;
+        result += DateFormat.format(databaseItem.dateOfCreation()) + DatabaseColumnSeparator;
+        result += databaseItem.version();
         return result;
     }
 
+    /**
+     *
+     * @return version of software to which the new database file belongs to
+     */
     String ResolveVersion() {
         // TODO: implementation of git Version
         String version = "1234";
@@ -132,6 +154,4 @@ public class DumbDatabase implements IDatabase {
         return version;
     }
 
-    record DatabaseItem(String path, Date dateOfCreation, String version) {
-    }
 }

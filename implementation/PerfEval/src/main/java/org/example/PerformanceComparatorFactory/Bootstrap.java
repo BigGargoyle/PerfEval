@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Bootstrap {
-    static int DefaultBootstrapSampleSize = 1_000;
+    static int DefaultBootstrapSampleSize = 10_000;
 
     public static boolean Evaluate(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet,
                                    double critValue, int minSampleCount) {

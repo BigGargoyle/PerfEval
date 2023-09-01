@@ -16,7 +16,7 @@ public class Main {
             System.exit(GlobalVars.invalidArgumentsExitCode);
             return;
         }
-        if (!perfevalSetup() || Contains(args, GlobalVars.initCommand)) {
+        if (!perfEvalSetup() && !Contains(args, GlobalVars.initCommand)) {
             System.err.println(GlobalVars.perfevalDir + " directory was not found");
             System.exit(GlobalVars.perfevalNotInitializedExitCode);
             return;
@@ -40,13 +40,19 @@ public class Main {
     }
 
     private static void InitCommandHandle(String[] args) {
+        if ((new File(GlobalVars.perfevalDir, GlobalVars.IniFileName).exists()) && !Contains(args, GlobalVars.forceFlag)) {
+            System.out.println("PerfEval already initialized.");
+            return;
+        }
         if (!PerfEvalInitializer.InitPerfEval()) {
             System.err.println("PerfEval cannot be initialized");
             System.exit(GlobalVars.perfevalNotInitializedExitCode);
+            return;
         }
+        System.out.println("PerfEval successfully initialized.");
     }
 
-    static boolean perfevalSetup() {
+    static boolean perfEvalSetup() {
         File file = new File(GlobalVars.perfevalDir);
         return file.exists() && file.isDirectory();
     }
