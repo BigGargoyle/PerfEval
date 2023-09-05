@@ -1,6 +1,8 @@
 package org.example.ResultDatabase;
 
 import org.example.GlobalVars;
+import org.example.MeasurementFactory.IMeasurementParser;
+import org.example.MeasurementFactory.ParserIndustry;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -15,7 +17,7 @@ import java.util.PriorityQueue;
 
 public class CacheDatabase implements IDatabase {
 
-    static int maxCountOfItemsInCache = 50;
+    static int maxCountOfItemsInCache = 5;
     static SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
 
     PriorityQueue<DatabaseItem> databaseCache;
@@ -27,7 +29,7 @@ public class CacheDatabase implements IDatabase {
     private void UpdateDatabaseCache(){
         try (FileWriter writer = new FileWriter(GlobalVars.DatabaseCacheFileName)){
             for(DatabaseItem item : databaseCache){
-                String line = DatabaseItemToString(item);
+                String line = DatabaseItemToString(item)+System.lineSeparator();
                 writer.write(line);
             }
             writer.flush();
@@ -107,6 +109,11 @@ public class CacheDatabase implements IDatabase {
         if (!file.exists())
             return false;
 
+        if(HasUnknownTestFormat(fileName)){
+            System.err.println("Unknown file format");
+            return false;
+        }
+
         DatabaseItem item = CreateItemFromFileName(fileName);
         if(item == null) return false;
 
@@ -114,11 +121,15 @@ public class CacheDatabase implements IDatabase {
 
         return AddItemToDatabase(item);
     }
+    static boolean HasUnknownTestFormat(String filePath){
+        IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(filePath);
+        return parser == null;
+    }
 
     private boolean AddItemToDatabase(DatabaseItem item){
         try {
-            FileWriter database = new FileWriter(GlobalVars.DatabaseFileName);
-            database.append(DatabaseItemToString(item));
+            FileWriter database = new FileWriter(GlobalVars.DatabaseFileName, true);
+            database.append(DatabaseItemToString(item)).append(System.lineSeparator());
             database.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -175,7 +186,7 @@ public class CacheDatabase implements IDatabase {
             if (files == null) return false;
             boolean result = true;
             for (var fileInDir : files) {
-                result = result && AddFilesFromDirDFS(fileInDir);
+                result = result & AddFilesFromDirDFS(fileInDir);
             }
             return result;
         }
@@ -209,6 +220,7 @@ public class CacheDatabase implements IDatabase {
      */
     static String DatabaseItemToString(DatabaseItem databaseItem) {
         String result = GlobalVars.DatabaseItemIdentifier + GlobalVars.ColumnDelimiter;
+        result += databaseItem.path() + GlobalVars.ColumnDelimiter;
         result += DateFormat.format(databaseItem.dateOfCreation()) + GlobalVars.ColumnDelimiter;
         result += databaseItem.version();
         return result;

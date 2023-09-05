@@ -9,17 +9,19 @@ import java.util.concurrent.TimeUnit;
 
 public class BootstrapTest {
 
+
+    //TODO: velmi velká čísla, UniversalTimeUnit je asi nevhodný pro tato porovnání ??? --> zmenšení rozptylu
     @Test
     public void testEvaluateSameDistribution() {
         List<UniversalTimeUnit> newSet = new ArrayList<>();
         newSet.add(new UniversalTimeUnit(200, TimeUnit.NANOSECONDS));
-        newSet.add(new UniversalTimeUnit(210, TimeUnit.NANOSECONDS));
-        newSet.add(new UniversalTimeUnit(220, TimeUnit.NANOSECONDS));
+        newSet.add(new UniversalTimeUnit(201, TimeUnit.NANOSECONDS));
+        newSet.add(new UniversalTimeUnit(202, TimeUnit.NANOSECONDS));
 
         List<UniversalTimeUnit> oldSet = new ArrayList<>();
         oldSet.add(new UniversalTimeUnit(200, TimeUnit.NANOSECONDS));
-        oldSet.add(new UniversalTimeUnit(210, TimeUnit.NANOSECONDS));
-        oldSet.add(new UniversalTimeUnit(220, TimeUnit.NANOSECONDS));
+        oldSet.add(new UniversalTimeUnit(201, TimeUnit.NANOSECONDS));
+        oldSet.add(new UniversalTimeUnit(202, TimeUnit.NANOSECONDS));
 
         boolean result = Bootstrap.Evaluate(newSet, oldSet, 0.05, 3);
         assertTrue(result);

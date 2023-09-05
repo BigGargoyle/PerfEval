@@ -1,5 +1,10 @@
 package org.example.ResultDatabase;
 
+import org.example.MeasurementFactory.IMeasurementParser;
+import org.example.MeasurementFactory.ParserIndustry;
+import org.example.PerformanceComparatorFactory.ComparatorIndustry;
+import org.example.PerformanceComparatorFactory.IPerformanceComparator;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 
 /**
@@ -68,11 +74,19 @@ public class DumbDatabase implements IDatabase {
             e.printStackTrace();
             return false;
         }
+
+        if(HasUnknownTestFormat(path.toString())){
+            System.err.println("Unknown file format");
+            return false;
+        }
+
         String version = ResolveVersion();
         DatabaseItem item = new DatabaseItem(path.toString(), date, version);
+
+
         try {
-            FileWriter database = new FileWriter(DatabaseFileName);
-            database.append(DatabaseItemToString(item));
+            FileWriter database = new FileWriter(DatabaseFileName, true);
+            database.append(DatabaseItemToString(item)).append(System.lineSeparator());
             database.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -80,6 +94,11 @@ public class DumbDatabase implements IDatabase {
         }
 
         return true;
+    }
+
+    static boolean HasUnknownTestFormat(String filePath){
+        IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(filePath);
+        return parser == null;
     }
 
     @Override
@@ -102,7 +121,7 @@ public class DumbDatabase implements IDatabase {
             if (files == null) return false;
             boolean result = true;
             for (var fileInDir : files) {
-                result = result && AddFilesFromDirDFS(fileInDir);
+                result = result & AddFilesFromDirDFS(fileInDir);
             }
             return result;
         }
@@ -138,6 +157,7 @@ public class DumbDatabase implements IDatabase {
      */
     String DatabaseItemToString(DatabaseItem databaseItem) {
         String result = DatabaseItemIdentifier + DatabaseColumnSeparator;
+        result += databaseItem.path() + DatabaseColumnSeparator;
         result += DateFormat.format(databaseItem.dateOfCreation()) + DatabaseColumnSeparator;
         result += databaseItem.version();
         return result;

@@ -10,6 +10,8 @@ import java.util.Random;
 public class Bootstrap {
     static int DefaultBootstrapSampleSize = 10_000;
 
+    //TODO: velmi velká čísla, UniversalTimeUnit je asi nevhodný pro tato porovnání ??? --> zmenšení rozptylu
+    // nebo Bootstrap není dobře
     public static boolean Evaluate(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet,
                                    double critValue, int minSampleCount) {
 

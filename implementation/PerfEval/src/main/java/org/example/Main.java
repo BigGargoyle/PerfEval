@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import org.example.ResultDatabase.CacheDatabase;
 import org.example.ResultDatabase.DumbDatabase;
 import org.example.ResultDatabase.IDatabase;
 import org.example.perfevalCLIEvaluator.PerfEvalEvaluator;
@@ -85,32 +87,47 @@ public class Main {
     }
 
     static void EvaluateCommandHandle(String[] args) {
-        if (!PerfEvalEvaluator.EvaluateLastResults(new DumbDatabase(), args)) {
+        if (!PerfEvalEvaluator.EvaluateLastResults(InitDatabase(), args)) {
             System.err.println("Evaluation of results failed");
             System.exit(GlobalVars.evaluationFailedExitCode);
         }
     }
 
     static void IndexNewCommandHandle(String[] args) {
-        IDatabase database = new DumbDatabase();
-        if (!database.AddFile(args[0])) {
+        IDatabase database = InitDatabase();
+        if(args.length != 2){
+            System.err.println("Unknown arguments");
+            System.exit(GlobalVars.invalidArgumentsExitCode);
+            return;
+        }
+        if (!database.AddFile(args[1])) {
             System.err.println("File cannot be added");
             System.exit(GlobalVars.databaseErrorExitCode);
         }
     }
 
     static void IndexAllCommandHandle(String[] args) {
-        IDatabase database = new DumbDatabase();
-        if (!database.AddFilesFromDir(args[0])) {
+        IDatabase database = InitDatabase();
+        if(args.length != 2){
+            System.err.println("Unknown arguments");
+            System.exit(GlobalVars.invalidArgumentsExitCode);
+            return;
+        }
+        if (!database.AddFilesFromDir(args[1])) {
             System.err.println("Some of file/s in directory cannot be added");
             System.exit(GlobalVars.databaseErrorExitCode);
         }
     }
 
     static void UndecidedCommandHandle(String[] args) {
-        if (!PerfEvalEvaluator.ListUndecidedTestResults(new DumbDatabase(), args)) {
+        if (!PerfEvalEvaluator.ListUndecidedTestResults(InitDatabase(), args)) {
             System.err.println("Evaluation of results failed");
             System.exit(GlobalVars.evaluationFailedExitCode);
         }
     }
+
+    static IDatabase InitDatabase(){
+        return new CacheDatabase();
+    }
+
 }
