@@ -49,7 +49,7 @@ public class CacheDatabase implements IDatabase {
                 if (item == null) continue;
                 if (maxHeap.size() <= countOfItemsInQueue)
                     maxHeap.add(item);
-                else if (item.dateOfCreation().compareTo(maxHeap.peek().dateOfCreation()) < 0) {
+                else if (item.dateOfCreation().compareTo(maxHeap.peek().dateOfCreation()) > 0) {
                     maxHeap.poll();
                     maxHeap.add(item);
                 }
@@ -65,7 +65,7 @@ public class CacheDatabase implements IDatabase {
     @Override
     public String[] GetLastNResults(int n) {
         PriorityQueue<DatabaseItem> maxHeap;
-        if (n > maxCountOfItemsInCache || n > databaseCache.size())
+        if (n > databaseCache.size())
             maxHeap = CreatePriorityQueueFromFile(GlobalVars.DatabaseFileName, n);
         else {
             maxHeap = GetLastNResultsFromCache(n);
@@ -85,7 +85,7 @@ public class CacheDatabase implements IDatabase {
     }
 
     private PriorityQueue<DatabaseItem> GetLastNResultsFromCache(int n) {
-        PriorityQueue<DatabaseItem> result = new PriorityQueue<>();
+        PriorityQueue<DatabaseItem> result = new PriorityQueue<>(Comparator.comparing(DatabaseItem::dateOfCreation));
         DatabaseItem[] lastItems = new DatabaseItem[n];
         for (int i = 0; i < lastItems.length; i++) {
             lastItems[i] = databaseCache.poll();
@@ -144,7 +144,7 @@ public class CacheDatabase implements IDatabase {
             return;
         }
         if(databaseCache.peek()==null) return;
-        if (item.dateOfCreation().compareTo(databaseCache.peek().dateOfCreation()) < 0) {
+        if (item.dateOfCreation().compareTo(databaseCache.peek().dateOfCreation()) > 0) {
             databaseCache.poll();
             databaseCache.add(item);
         }

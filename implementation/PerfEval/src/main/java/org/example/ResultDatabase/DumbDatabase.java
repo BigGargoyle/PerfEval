@@ -37,7 +37,7 @@ public class DumbDatabase implements IDatabase {
                 if (item == null) continue;
                 if (maxHeap.size() <= n)
                     maxHeap.add(item);
-                else if (item.dateOfCreation().compareTo(maxHeap.peek().dateOfCreation()) < 0) {
+                else if (item.dateOfCreation().compareTo(maxHeap.peek().dateOfCreation()) > 0) {
                     maxHeap.poll();
                     maxHeap.add(item);
                 }

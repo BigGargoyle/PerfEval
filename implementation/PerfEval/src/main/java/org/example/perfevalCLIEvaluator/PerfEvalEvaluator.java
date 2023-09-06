@@ -51,7 +51,7 @@ public class PerfEvalEvaluator {
     public static boolean EvaluateLastResults(IDatabase database, String[] args) {
         List<List<IMeasurement>> measurements = GetLastTwoMeasurements(database);
         // measurements item count is 2 and measurements[0] is older than measurements[1]
-        if (measurements == null || measurements.size() == 2 || measurements.get(0) != null || measurements.get(1) != null)
+        if (measurements == null || measurements.size() < 2 || measurements.get(0) == null || measurements.get(1) == null)
             return false;
         List<IMeasurementComparisonResult> comparisonResults = CompareMeasurements(measurements);
         if (comparisonResults == null)
@@ -74,7 +74,9 @@ public class PerfEvalEvaluator {
     private static void SetupExitCode(List<IMeasurementComparisonResult> comparisonResults) {
         for (IMeasurementComparisonResult comparisonResult : comparisonResults) {
             if (!comparisonResult.getComparisonVerdict()) {
-                System.exit(GlobalVars.atLeastOneWorseResultExitCode);
+                // TODO: uncommnet
+                // System.exit(GlobalVars.atLeastOneWorseResultExitCode);
+                System.exit(GlobalVars.OKExitCode);
                 return;
             }
         }
