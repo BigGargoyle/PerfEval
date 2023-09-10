@@ -210,7 +210,7 @@ Basic flow:<br>
 3. Uživatel si ve svém prohlížeči může webovou stránku prohlédnout.
 
 ### Způsob ukládání dat
-Výsledky jednotlivých testů budou uloženy v libovolném formátu, který bude schopen PerfEval rozpoznat a naformátovat. Jednotlivé testy budou do vyhodnocovače přidávány příkazem `PerfEval index-new-result <file>`. Více testů je možné do vyhodnocovače přidat přidáním celé složky s výsledky pomocí příkazu `perfeval index-all-results <path>`.
+Výsledky jednotlivých testů budou uloženy v libovolném formátu, který bude schopen PerfEval rozpoznat a naformátovat. Jednotlivé testy budou do vyhodnocovače přidávány příkazem `perfeval index-new-result <file>`. Více testů je možné do vyhodnocovače přidat přidáním celé složky s výsledky pomocí příkazu `perfeval index-all-results <path>`.
 
 > Následující 3 odstavce se stanou součástí dokumentace
 
@@ -224,23 +224,24 @@ Pomocí příkazů na konfiguraci bude možné určit složku, kde se nachází 
 ### Stručné shrnutí
 Soubory
 -   .performace - složka
--   PerfEval-installer.sh
--   PerfEval-config.json
--   PerfEvalval-result.html
+-   perfeval-installer.sh
+-   config.ini
+-   perfeval-result.html
 
 Příkazy
--   PerfEval init
--   PerfEval start-tests
--   ~~PerfEval config --set-user <username>~~
--   ~~PerfEval config --set-machine <machine-name>~~
--   ~~PerfEval config --test-directory <target-dir>~~
--   PerfEval config --set-version \<version\>
--   PerfEval index-new-result \<file\>
--   PerfEval index-all-results \<path\>
--   PerfEval evaluate
--   PerfEval evaluate --json-output
--   PerfEval evaluate --graphical
--   PerfEval evaluate --graphical \<target-dir\>
+-   perfeval init
+-   perfeval start-tests
+-   ~~perfeval config --set-user <username>~~
+-   ~~perfeval config --set-machine <machine-name>~~
+-   ~~perfeval config --test-directory <target-dir>~~
+-   perfeval config --set-version \<version\>
+-   perfeval config --set-test-max-time \<version\>
+-   perfeval index-new-result \<file\>
+-   perfeval index-all-results \<path\>
+-   perfeval evaluate
+-   perfeval evaluate --json-output
+-   perfeval evaluate --graphical
+-   perfeval evaluate --graphical \<target-dir\>
 
 Podporované benchmarky (prozatím)
 -   BenchmarkDotNET
