@@ -111,7 +111,16 @@ Basic flow:<br>
 2. Uživatel, nebo CI/CD spustí příkaz `perfeval evaluate`
 3. Výstupem bude přehledný výpis a v případě nějakého zaznamenaného zhoršení i nenulový exit kód.
 
-TODO: Příklad výstupu bude dodán až bude nějaký reálný vyroben. Pravděpodobně bude využita nějaká knihovna pro formátování výpisu (určitě nějaká existuje).
+Příklad výstupu:
+```
+______________________________________________________________________________________________________________________________
+| Name            | NewAverage         | OldAverage         | Change [%]          | Comparison verdict| Comparison result     |
+|=============================================================================================================================|
+| LINQSort        | 5.996717533333334E8| 6.235383357142857E8| 3.9799410674736038  | OK                | different distribution|
+| SortingAlgorithm| 7.20001E8          | 7.232769933333334E8| 0.45499844213181007 | OK                | different distribution|
+| BubbleSort      | 5.777415904761904E8| 5.760881533333334E8| -0.28618973778472423| NOT OK            | different distribution|
+| QuickSort       | 5.271162466666667E8| 5.2867882E8        | 0.2964380899307457  | OK                | different distribution|
+```
 
 Alternativa:
 
