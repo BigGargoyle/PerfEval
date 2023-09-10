@@ -234,13 +234,13 @@ Příkazy
 -   ~~PerfEval config --set-user <username>~~
 -   ~~PerfEval config --set-machine <machine-name>~~
 -   ~~PerfEval config --test-directory <target-dir>~~
--   PerfEval config --set-version <version>
--   PerfEval index-new-result <file>
--   PerfEval index-all-results <path>
+-   PerfEval config --set-version \<version\>
+-   PerfEval index-new-result \<file\>
+-   PerfEval index-all-results \<path\>
 -   PerfEval evaluate
 -   PerfEval evaluate --json-output
 -   PerfEval evaluate --graphical
--   PerfEval evaluate --graphical <target-dir>
+-   PerfEval evaluate --graphical \<target-dir\>
 
 Podporované benchmarky (prozatím)
 -   BenchmarkDotNET
