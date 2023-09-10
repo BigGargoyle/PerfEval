@@ -10,6 +10,7 @@ public class GlobalVars {
     public static final String maxCIWidthSign = "C";
     public static final String maxTimeOnTestSign = "T";
     public static final String gitSign = "G";
+    public static final String versionSign = "V";
     public static final String DatabaseItemIdentifier = "R";
     public static final String ColumnDelimiter = "\t";
     public static final double defaultStatisticCritValue = 0.05;
@@ -18,7 +19,9 @@ public class GlobalVars {
 
     public static final String TrueString = "TRUE";
     public static final String FalseString = "FALSE";
+    public static final String UnknownVersion = "UNKNOWN VERSION";
 
+    public static final String gitFileDir = ".";
     public static final String gitFileName = ".git";
     public static final String perfevalDir = ".performance";
     public static final String helpFileName = "help.txt";
@@ -32,6 +35,7 @@ public class GlobalVars {
     public static final String indexNewCommand = "index-new-result";
     public static final String indexAllCommand = "index-all-results";
     public static final String undecidedCommand = "list-undecided";
+    public static final String configCommand = "config";
 
     // flags
     public static final String helpFlag = "--help";
@@ -40,6 +44,7 @@ public class GlobalVars {
     public static final String forceFlag = "--force";
 
     // possible params
+    // TODO: accept this param
     public static final String maxTimeForTestParameter = "--max-time";
 
     // exit codes
@@ -50,6 +55,5 @@ public class GlobalVars {
     public static final int evaluationFailedExitCode = 4;
     public static final int databaseErrorExitCode = 5;
 
-    private GlobalVars() {
-    }
+    private GlobalVars() {}
 }

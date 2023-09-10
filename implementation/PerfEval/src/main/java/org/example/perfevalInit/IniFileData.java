@@ -12,6 +12,7 @@ public class IniFileData {
     public UniversalTimeUnit maxTimeOnTest;
     public double maxCIWidth;
     public double critValue;
+    public String version;
     public IniFileData(boolean readFromFile){
         if(readFromFile){
             ReadDataFromIniFile();
@@ -69,6 +70,7 @@ public class IniFileData {
                             return;
                         }
                     }
+                    case GlobalVars.versionSign -> version = splittedLine[1];
                 }
             }
         }
@@ -76,7 +78,11 @@ public class IniFileData {
             validConfig = false;
             return;
         }
-        validConfig = true;
+        if(maxTimeOnTest == null && maxTimeOnTest.GetNanoSeconds() > 0) validConfig = false;
+        else if(version == null) validConfig = false;
+        else if(!(critValue>0 && critValue<1)) validConfig = false;
+        else if(!(maxCIWidth>0 && maxCIWidth<1)) validConfig = false;
+        else validConfig = true;
     }
 
     private void SetDefaultData(){
@@ -85,6 +91,7 @@ public class IniFileData {
         maxTimeOnTest = GlobalVars.defaultMaxTimeOnTest;
         maxCIWidth = GlobalVars.defaultMaxCIWidth;
         critValue = GlobalVars.defaultStatisticCritValue;
+        version = GlobalVars.UnknownVersion;
     }
 
     public static boolean CreateNewIniFile(IniFileData iniFileData){
@@ -116,6 +123,8 @@ public class IniFileData {
                 writer.write(GlobalVars.gitSign + GlobalVars.ColumnDelimiter + GlobalVars.TrueString);
             else
                 writer.write(GlobalVars.gitSign + GlobalVars.ColumnDelimiter + GlobalVars.FalseString);
+            writer.newLine();
+            writer.write(GlobalVars.versionSign+GlobalVars.ColumnDelimiter+fileData.version);
             writer.newLine();
         }catch (IOException e){
             return false;

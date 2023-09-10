@@ -1,8 +1,13 @@
 package org.example.ResultDatabase;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.example.GlobalVars;
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.ParserIndustry;
+import org.example.perfevalInit.IniFileData;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -160,7 +165,7 @@ public class CacheDatabase implements IDatabase {
             e.printStackTrace();
             return null;
         }
-        String version = ResolveVersion();
+        String version = ResolveVersion(date);
         return new DatabaseItem(path.toString(), date, version);
     }
 
@@ -229,11 +234,27 @@ public class CacheDatabase implements IDatabase {
     /**
      * @return version of software to which the new database file belongs to
      */
-    String ResolveVersion() {
-        // TODO: implementation of git Version
-        String version = "1234";
+    String ResolveVersion(Date dateOfCreation) {
+        IniFileData configData = new IniFileData(true);
+        if(!configData.validConfig){
+            return GlobalVars.UnknownVersion;
+        }
+        if(!configData.gitFilePresence){
+            return configData.version;
+        }
 
-        return version;
+        try(Git git = Git.open(new File(GlobalVars.gitFileDir))){
+            Iterable<RevCommit> commits = git.log().all().call();
+            for(RevCommit commit : commits){
+                if(commit.getCommitterIdent().getWhen().before(dateOfCreation)){
+                    return commit.getName();
+                }
+            }
+        }catch (IOException | GitAPIException e){
+            return GlobalVars.UnknownVersion;
+        }
+
+        return GlobalVars.UnknownVersion;
     }
 
 }

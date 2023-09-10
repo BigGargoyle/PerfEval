@@ -9,6 +9,7 @@ import org.example.ResultDatabase.CacheDatabase;
 import org.example.ResultDatabase.DumbDatabase;
 import org.example.ResultDatabase.IDatabase;
 import org.example.perfevalCLIEvaluator.PerfEvalEvaluator;
+import org.example.perfevalConfig.ConfigManager;
 import org.example.perfevalInit.PerfEvalInitializer;
 
 public class Main {
@@ -34,6 +35,7 @@ public class Main {
             case GlobalVars.indexNewCommand -> IndexNewCommandHandle(args);
             case GlobalVars.indexAllCommand -> IndexAllCommandHandle(args);
             case GlobalVars.undecidedCommand -> UndecidedCommandHandle(args);
+            case GlobalVars.configCommand -> ConfigCommandHandle(args);
             default -> {
                 System.err.println("Unknown argument:" + args[0]);
                 System.exit(GlobalVars.invalidArgumentsExitCode);
@@ -123,6 +125,18 @@ public class Main {
         if (!PerfEvalEvaluator.ListUndecidedTestResults(InitDatabase(), args)) {
             System.err.println("Evaluation of results failed");
             System.exit(GlobalVars.evaluationFailedExitCode);
+        }
+    }
+
+    static void ConfigCommandHandle(String[] args){
+        if(args.length != 2){
+            System.err.println("Unknown arguments");
+            System.exit(GlobalVars.invalidArgumentsExitCode);
+            return;
+        }
+        if(!ConfigManager.Config(args)){
+            System.err.println("Arguments of configurations are not valid");
+            System.exit(GlobalVars.invalidArgumentsExitCode);
         }
     }
 

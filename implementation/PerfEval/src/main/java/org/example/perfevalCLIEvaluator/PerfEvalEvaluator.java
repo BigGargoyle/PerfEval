@@ -9,6 +9,7 @@ import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.ParserIndustry;
 import org.example.MeasurementFactory.UniversalTimeUnit;
 import org.example.PerformanceComparatorFactory.ComparatorIndustry;
+import org.example.PerformanceComparatorFactory.ComparisonResult;
 import org.example.PerformanceComparatorFactory.IPerformanceComparator;
 import org.example.ResultDatabase.IDatabase;
 
@@ -122,6 +123,7 @@ public class PerfEvalEvaluator {
                 configData.maxCIWidth,
                 configData.maxTimeOnTest
         );
+
         List<IMeasurementComparisonResult> comparisonResults = new ArrayList<>();
         for (int i = 0; i < olderMeasurement.size(); i++) {
             IMeasurementComparisonResult comparisonResult =
