@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.example.ResultDatabase.CacheDatabase;
-import org.example.ResultDatabase.DumbDatabase;
 import org.example.ResultDatabase.IDatabase;
 import org.example.perfevalCLIEvaluator.PerfEvalEvaluator;
 import org.example.perfevalConfig.ConfigManager;
@@ -25,7 +24,7 @@ public class Main {
             return;
         }
         if (Contains(args, GlobalVars.helpFlag)) {
-            HelpCommandHandle(args);
+            HelpCommandHandle();
             return;
         }
 
@@ -69,7 +68,7 @@ public class Main {
         return false;
     }
 
-    static void HelpCommandHandle(String[] args) {
+    static void HelpCommandHandle() {
         File helpFile = new File(GlobalVars.perfevalDir + "/" + GlobalVars.helpFileName);
         if (!helpFile.exists() || !helpFile.isFile()) {
             System.err.println("Help file was not found in " + GlobalVars.perfevalDir + " directory");

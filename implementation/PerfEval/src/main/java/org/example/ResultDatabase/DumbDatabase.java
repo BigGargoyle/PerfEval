@@ -2,8 +2,6 @@ package org.example.ResultDatabase;
 
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.ParserIndustry;
-import org.example.PerformanceComparatorFactory.ComparatorIndustry;
-import org.example.PerformanceComparatorFactory.IPerformanceComparator;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,7 +12,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.PriorityQueue;
 
 /**

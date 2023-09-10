@@ -2,6 +2,7 @@ package org.example.Evaluation;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import dnl.utils.text.table.TextTable;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -81,16 +82,17 @@ public class ResultPrinter {
      * @param printStream                  PrintStream to print result to
      */
     public static void JSONPrinter(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream) {
-        // TODO: serializable MeasurementComparisonResult image -> List -> writeValueAsString ...
-        var objectMapper = new ObjectMapper();
+        List<MeasurementComparisonResultView> measurementComparisonResultViews = new ArrayList<>();
         for (IMeasurementComparisonResult comparisonResult : measurementComparisonResults) {
             var measurementComparisonResultView = ConvertIMeasurementComparisonResult(comparisonResult);
-            try {
-                String jsonView = objectMapper.writeValueAsString(measurementComparisonResultView);
-            } catch (IOException e) {
-                // TODO: exception handle
-            }
-
+            measurementComparisonResultViews.add(measurementComparisonResultView);
+        }
+        var objectMapper = new ObjectMapper();
+        try {
+            String json = objectMapper.writeValueAsString(measurementComparisonResultViews);
+            printStream.println(json);
+        }catch (IOException e){
+            printStream.println("Cannot be formatted");
         }
     }
 

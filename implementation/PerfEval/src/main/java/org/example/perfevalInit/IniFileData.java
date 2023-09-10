@@ -78,11 +78,10 @@ public class IniFileData {
             validConfig = false;
             return;
         }
-        if(maxTimeOnTest == null && maxTimeOnTest.GetNanoSeconds() > 0) validConfig = false;
+        if(maxTimeOnTest == null || maxTimeOnTest.GetNanoSeconds() < 0) validConfig = false;
         else if(version == null) validConfig = false;
         else if(!(critValue>0 && critValue<1)) validConfig = false;
-        else if(!(maxCIWidth>0 && maxCIWidth<1)) validConfig = false;
-        else validConfig = true;
+        else validConfig = maxCIWidth > 0 && maxCIWidth < 1;
     }
 
     private void SetDefaultData(){
@@ -100,7 +99,9 @@ public class IniFileData {
             return false;
         File file = new File(GlobalVars.perfevalDir,GlobalVars.IniFileName);
         try {
-            if(file.exists()) file.delete();
+            if(file.exists())
+                if(!file.delete())
+                    return false;
             if(!file.createNewFile()){
                 return false;
             }
