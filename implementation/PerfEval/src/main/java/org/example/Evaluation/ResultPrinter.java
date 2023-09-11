@@ -42,7 +42,6 @@ public class ResultPrinter {
         tableRow[5] = ("Comparison result");
 
         return tableRow;
-
     }
 
     /**

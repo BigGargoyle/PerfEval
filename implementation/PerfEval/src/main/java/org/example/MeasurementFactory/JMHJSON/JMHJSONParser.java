@@ -30,7 +30,6 @@ public class JMHJSONParser implements IMeasurementParser {
             }
         }
         catch (IOException e){
-            // TODO: Exception message?
             return null;
         }
 

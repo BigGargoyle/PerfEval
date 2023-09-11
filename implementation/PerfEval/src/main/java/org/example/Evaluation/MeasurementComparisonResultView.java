@@ -19,6 +19,9 @@ public class MeasurementComparisonResultView {
     @JsonProperty
     public boolean testVerdict;
 
+    @JsonProperty
+    public String testName;
+
     /**
      * Creates an instance of MeasurementComparisonResultView from an instance of IMeasurementComparisonResult
      *
@@ -30,6 +33,7 @@ public class MeasurementComparisonResultView {
         this.performanceChange = comparisonResult.getChange();
         this.comparisonResult = comparisonResult.getComparisonResult();
         this.testVerdict = comparisonResult.getComparisonVerdict();
+        this.testName = comparisonResult.getName();
     }
 
     /**
@@ -40,13 +44,15 @@ public class MeasurementComparisonResultView {
      * @param performanceChange value of performanceChange to set
      * @param comparisonResult  value of ComparisonResult to set
      * @param testVerdict       value of testVerdict to set
+     * @param name              value of name of the test
      */
     public MeasurementComparisonResultView(double newAverage, double oldAverage, double performanceChange,
-                                           ComparisonResult comparisonResult, boolean testVerdict) {
+                                           ComparisonResult comparisonResult, boolean testVerdict, String name) {
         this.newAverage = newAverage;
         this.oldAverage = oldAverage;
         this.performanceChange = performanceChange;
         this.comparisonResult = comparisonResult;
         this.testVerdict = testVerdict;
+        this.testName = name;
     }
 }

@@ -9,6 +9,7 @@ import org.example.ResultDatabase.CacheDatabase;
 import org.example.ResultDatabase.IDatabase;
 import org.example.perfevalCLIEvaluator.PerfEvalEvaluator;
 import org.example.perfevalConfig.ConfigManager;
+import org.example.perfevalGraphicalEvaluator.GraphicalEvaluator;
 import org.example.perfevalInit.PerfEvalInitializer;
 
 public class Main {
@@ -88,7 +89,12 @@ public class Main {
     }
 
     static void EvaluateCommandHandle(String[] args) {
-        if (!PerfEvalEvaluator.EvaluateLastResults(InitDatabase(), args)) {
+        if(Contains(args, GlobalVars.graphicalFlag)){
+            if(!GraphicalEvaluator.EvaluateGraphical(args)){
+                System.err.println("Graphical results cannot be evaluated");
+            }
+        }
+        else if (!PerfEvalEvaluator.EvaluateLastResults(InitDatabase(), args)) {
             System.err.println("Evaluation of results failed");
             System.exit(GlobalVars.evaluationFailedExitCode);
         }

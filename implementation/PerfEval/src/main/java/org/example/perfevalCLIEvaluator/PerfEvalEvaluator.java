@@ -17,10 +17,18 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class PerfEvalEvaluator {
+
+    private static final String equalSign = "=";
+    private static final String testResultFilter = "test-result";
+    private static final String sizeOfChangeFilter = "size-of-change";
+    private static final String testIDFilter = "test-id";
+
     /**
      * Method that will compare last two benchmark test results from database and print information about tests that do not have enough samples to compare, but there is enough time on test to make enough samples
      *
@@ -57,6 +65,15 @@ public class PerfEvalEvaluator {
         List<IMeasurementComparisonResult> comparisonResults = CompareMeasurements(measurements);
         if (comparisonResults == null)
             return false;
+
+        if(Contains(args, GlobalVars.filterParam)){
+            var tmp = Filter(comparisonResults, args);
+            if(tmp!=null)
+                comparisonResults = tmp;
+            else
+                System.err.println("Unknown filter");
+        }
+
         if (Contains(args, GlobalVars.jsonOutputFlag))
             ResultPrinter.JSONPrinter(comparisonResults, System.out);
         else
@@ -65,6 +82,43 @@ public class PerfEvalEvaluator {
         SetupExitCode(comparisonResults);
 
         return true;
+    }
+
+    private static List<IMeasurementComparisonResult> Filter(List<IMeasurementComparisonResult> measurementComparisonResults, String[] args){
+        String filter = null;
+        for (int i = 0; i<args.length;i++){
+            if(args[i].contains(GlobalVars.filterParam)){
+                if(args[i].contains(equalSign)){
+                    String[] splitted = args[i].split(equalSign);
+                    if(splitted.length<2) return null;
+                    filter = splitted[1];
+                }
+                else if(i+1< args.length){
+                    filter = args[i+1];
+                }
+            }
+        }
+        if(filter == null) return null;
+        switch (filter){
+            case testResultFilter -> {
+                List<IMeasurementComparisonResult> resultList = new ArrayList<>(measurementComparisonResults);
+                resultList.sort(Comparator.comparing(IMeasurementComparisonResult::getComparisonResult, Comparator.comparingInt(ComparisonResult::getResultNumber)));
+                return resultList;
+            }
+            case sizeOfChangeFilter -> {
+                List<IMeasurementComparisonResult> resultList = new ArrayList<>(measurementComparisonResults);
+                resultList.sort(Comparator.comparing(IMeasurementComparisonResult::getChange));
+                return resultList;
+            }
+            case testIDFilter -> {
+                List<IMeasurementComparisonResult> resultList = new ArrayList<>(measurementComparisonResults);
+                resultList.sort(Comparator.comparing(IMeasurementComparisonResult::getName));
+                return resultList;
+            }
+            default -> {
+                return null;
+            }
+        }
     }
 
     /**
@@ -166,7 +220,7 @@ public class PerfEvalEvaluator {
      */
     static boolean Contains(String[] container, String item) {
         for (String element : container) {
-            if (element.compareTo(item) == 0)
+            if (element.contains(item))
                 return true;
         }
         return false;

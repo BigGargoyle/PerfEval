@@ -42,6 +42,7 @@ public class GlobalVars {
     public static final String graphicalFlag = "--graphical";
     public static final String jsonOutputFlag = "--json-output";
     public static final String forceFlag = "--force";
+    public static final String filterParam = "--filter";
 
     // possible params
     // TODO: accept this param

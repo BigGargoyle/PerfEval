@@ -35,7 +35,7 @@ public class IMeasurementComparisonViewTest {
 
     @Test
     public void testConstructorWithValues() {
-        MeasurementComparisonResultView resultView = new MeasurementComparisonResultView(15.0, 10.0, -0.5, ComparisonResult.SameDistribution, true);
+        MeasurementComparisonResultView resultView = new MeasurementComparisonResultView(15.0, 10.0, -0.5, ComparisonResult.SameDistribution, true, "test_name");
         assertEquals(15.0, resultView.newAverage, 0.001);
         assertEquals(10.0, resultView.oldAverage, 0.001);
         assertEquals(-0.5, resultView.performanceChange, 0.001);
