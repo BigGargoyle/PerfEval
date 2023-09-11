@@ -15,10 +15,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class JMHMeasurement implements IMeasurement {
 
-    static String[] acceptableScoreUnits = new String[] {"ns/op","us/op","ms/op","s/op"};
+    static final String[] acceptableScoreUnits = new String[] {"ns/op","us/op","ms/op","s/op"};
 
-    String Name;
-    List<UniversalTimeUnit> MeasuredTimes;
+    final String Name;
+    final List<UniversalTimeUnit> MeasuredTimes;
     public static IMeasurement ConstructTest(BenchmarkJMHJSONBase input) throws IOException {
         return new JMHMeasurement(input);
     }

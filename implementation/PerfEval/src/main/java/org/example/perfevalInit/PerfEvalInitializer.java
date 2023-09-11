@@ -34,10 +34,15 @@ public class PerfEvalInitializer {
         }
     }
 
+    /**
+     *
+     * @param dirName which dir is going to be checked
+     * @return if dir was created
+     */
     static boolean directoryExistsOrCreate(String dirName){
         File dir = new File(dirName);
         if(dir.exists())
-            return true;
+            return false;
         return dir.mkdirs();
     }
 

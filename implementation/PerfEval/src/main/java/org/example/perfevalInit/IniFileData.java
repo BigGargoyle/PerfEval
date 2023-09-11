@@ -94,10 +94,12 @@ public class IniFileData {
     }
 
     public static boolean CreateNewIniFile(IniFileData iniFileData){
+        if(!(new File(GlobalVars.gitIgnoreFileName).exists()))
+            CreateGitIgnoreFile();
         boolean result;
         if(!iniFileData.validConfig)
             return false;
-        File file = new File(GlobalVars.perfevalDir,GlobalVars.IniFileName);
+        File file = new File(GlobalVars.IniFileName);
         try {
             if(file.exists())
                 if(!file.delete())
@@ -131,5 +133,18 @@ public class IniFileData {
             return false;
         }
         return true;
+    }
+
+    private static void CreateGitIgnoreFile(){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(GlobalVars.gitIgnoreFileName))){
+            writer.write(GlobalVars.DatabaseFileName);
+            writer.newLine();
+            writer.write(GlobalVars.DatabaseCacheFileName);
+            writer.newLine();
+            writer.write(GlobalVars.IniFileName);
+            writer.newLine();
+        }catch (IOException e){
+            System.err.println(".gitignore file cannot be created");
+        }
     }
 }

@@ -45,7 +45,7 @@ public class ScorePercentiles {
     @JsonProperty("100.0")
     private Double _1000;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("0.0")
     public Double get00() {

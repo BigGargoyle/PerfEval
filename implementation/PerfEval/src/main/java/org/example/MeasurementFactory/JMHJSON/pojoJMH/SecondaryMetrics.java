@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class SecondaryMetrics {
 
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {

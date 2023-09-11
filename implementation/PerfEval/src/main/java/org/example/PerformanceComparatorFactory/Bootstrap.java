@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Bootstrap {
-    static int DefaultBootstrapSampleSize = 10_000;
+    static final int DefaultBootstrapSampleSize = 10_000;
 
     //TODO: velmi velká čísla, UniversalTimeUnit je asi nevhodný pro tato porovnání ??? --> zmenšení rozptylu
     // nebo Bootstrap není dobře

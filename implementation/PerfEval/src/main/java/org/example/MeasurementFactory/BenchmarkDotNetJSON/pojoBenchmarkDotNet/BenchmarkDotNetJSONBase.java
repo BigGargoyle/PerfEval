@@ -25,7 +25,7 @@ public class BenchmarkDotNetJSONBase {
     @JsonProperty("Benchmarks")
     private List<Benchmark> benchmarks;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("Title")
     public String getTitle() {

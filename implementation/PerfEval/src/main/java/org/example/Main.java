@@ -44,7 +44,7 @@ public class Main {
     }
 
     private static void InitCommandHandle(String[] args) {
-        if ((new File(GlobalVars.perfevalDir, GlobalVars.IniFileName).exists()) && !Contains(args, GlobalVars.forceFlag)) {
+        if ((new File(GlobalVars.IniFileName).exists()) && !Contains(args, GlobalVars.forceFlag)) {
             System.out.println("PerfEval already initialized.");
             return;
         }

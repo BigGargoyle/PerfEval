@@ -33,7 +33,7 @@ public class Measurement {
     @JsonProperty("Nanoseconds")
     private Integer nanoseconds;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("IterationMode")
     public String getIterationMode() {

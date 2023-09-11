@@ -1,6 +1,5 @@
 import org.example.Evaluation.MeasurementComparisonResultView;
 import org.example.Evaluation.IMeasurementComparisonResult;
-import org.example.MeasurementFactory.IMeasurement;
 import org.example.PerformanceComparatorFactory.ComparisonResult;
 
 import org.junit.jupiter.api.BeforeEach;

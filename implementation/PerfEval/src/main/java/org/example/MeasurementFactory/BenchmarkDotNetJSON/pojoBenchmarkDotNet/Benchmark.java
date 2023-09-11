@@ -46,7 +46,7 @@ public class Benchmark {
     @JsonProperty("Measurements")
     private List<Measurement> measurements;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("DisplayInfo")
     public String getDisplayInfo() {

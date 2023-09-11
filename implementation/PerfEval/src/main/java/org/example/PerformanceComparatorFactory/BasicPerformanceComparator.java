@@ -12,7 +12,7 @@ import java.util.List;
  * the same distribution
  */
 public class BasicPerformanceComparator implements IPerformanceComparator {
-    double criticalValue;
+    final double criticalValue;
     ComparisonResult comparisonResult;
 
     public BasicPerformanceComparator(double pValue) {

@@ -70,7 +70,7 @@ public class BenchmarkJMHJSONBase {
     @JsonProperty("secondaryMetrics")
     private SecondaryMetrics secondaryMetrics;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("jmhVersion")
     public String getJmhVersion() {

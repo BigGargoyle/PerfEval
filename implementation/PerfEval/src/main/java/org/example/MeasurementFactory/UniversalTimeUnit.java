@@ -14,16 +14,16 @@ public class UniversalTimeUnit {
     /**
      * Number used to recalculation between time units (ns, us, ms, s)
      */
-    static int ONE_THOUSAND = 1000;
+    static final int ONE_THOUSAND = 1000;
     /**
      * Number used to recalculation between time units (s, min, h)
      */
-    static int SIXTY = 60;
+    static final int SIXTY = 60;
 
     /**
      * Number used to recalculation between time units (h, d)
      */
-    static int TWENTY_FOUR = 24;
+    static final int TWENTY_FOUR = 24;
 
     /**
      * Field used to store time in ns (smallest possible time unit)

@@ -6,9 +6,9 @@ import org.example.MeasurementFactory.UniversalTimeUnit;
 
 public class TestMeasurement implements IMeasurement{
 
-    String Name;
-    List<UniversalTimeUnit> Values;
-    boolean AscendingPerfUnit;
+    final String Name;
+    final List<UniversalTimeUnit> Values;
+    final boolean AscendingPerfUnit;
 
     public TestMeasurement(String name, List<UniversalTimeUnit> values, boolean ascendingPerfUnit){
         Name = name;

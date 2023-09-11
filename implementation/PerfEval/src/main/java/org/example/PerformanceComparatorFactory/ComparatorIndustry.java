@@ -11,8 +11,6 @@ public class ComparatorIndustry {
      * @return the best implementation of IPerformanceComparator
      */
     public static IPerformanceComparator GetComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest) {
-        // return new BasicPerformanceComparator(pValue);
-        // return new NormalPerformanceComparator(pValue, maxConfidenceIntervalWidth);
         return new BootstrapPerformanceComparator(pValue, maxConfidenceIntervalWidth, maxTimeToTest);
     }
 

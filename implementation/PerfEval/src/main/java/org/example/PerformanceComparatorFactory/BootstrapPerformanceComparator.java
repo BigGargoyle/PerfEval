@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit;
 
 public class BootstrapPerformanceComparator implements IPerformanceComparator {
 
-    UniversalTimeUnit maxTestTime;
-    double criticalValue;
+    final UniversalTimeUnit maxTestTime;
+    final double criticalValue;
     // maxConfidenceIntervalWidth = 0.1 means confidence interval mean+-(0.1*mean)
-    double maxConfidenceIntervalWidth;
+    final double maxConfidenceIntervalWidth;
     int minSampleCount;
     ComparisonResult comparisonResult;
 

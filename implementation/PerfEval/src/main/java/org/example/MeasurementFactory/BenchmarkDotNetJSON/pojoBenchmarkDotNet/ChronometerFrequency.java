@@ -18,7 +18,7 @@ public class ChronometerFrequency {
     @JsonProperty("Hertz")
     private Integer hertz;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("Hertz")
     public Integer getHertz() {

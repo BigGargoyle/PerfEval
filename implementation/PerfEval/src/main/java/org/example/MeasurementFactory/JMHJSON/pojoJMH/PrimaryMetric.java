@@ -34,7 +34,7 @@ public class PrimaryMetric {
     @JsonProperty("rawData")
     private List<List<Double>> rawData;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("score")
     public Double getScore() {

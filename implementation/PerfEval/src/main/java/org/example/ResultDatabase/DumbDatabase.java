@@ -19,10 +19,10 @@ import java.util.PriorityQueue;
  */
 public class DumbDatabase implements IDatabase {
 
-    static String DatabaseItemIdentifier = "R";
-    static String DatabaseColumnSeparator = "\t";
-    static String DatabaseFileName = ".performance/test_results.db";
-    static SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
+    static final String DatabaseItemIdentifier = "R";
+    static final String DatabaseColumnSeparator = "\t";
+    static final String DatabaseFileName = ".performance/test_results.db";
+    static final SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
 
     @Override
     public String[] GetLastNResults(int n) {

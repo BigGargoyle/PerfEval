@@ -1,7 +1,6 @@
 package org.example.Evaluation;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.example.MeasurementFactory.IMeasurement;
 import org.example.PerformanceComparatorFactory.ComparisonResult;
 
 /**
@@ -9,18 +8,18 @@ import org.example.PerformanceComparatorFactory.ComparisonResult;
  */
 public class MeasurementComparisonResultView {
     @JsonProperty
-    public double newAverage;
+    public final double newAverage;
     @JsonProperty
-    public double oldAverage;
+    public final double oldAverage;
     @JsonProperty
-    public double performanceChange;
+    public final double performanceChange;
     @JsonProperty
-    public ComparisonResult comparisonResult;
+    public final ComparisonResult comparisonResult;
     @JsonProperty
-    public boolean testVerdict;
+    public final boolean testVerdict;
 
     @JsonProperty
-    public String testName;
+    public final String testName;
 
     /**
      * Creates an instance of MeasurementComparisonResultView from an instance of IMeasurementComparisonResult

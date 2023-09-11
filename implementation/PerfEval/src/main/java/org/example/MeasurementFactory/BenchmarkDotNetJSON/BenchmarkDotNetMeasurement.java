@@ -18,10 +18,10 @@ public class BenchmarkDotNetMeasurement implements IMeasurement {
     * it is needed because the BenchmarkDotNet framework is measuring also warmup, jitting, overhead etc. phases
     * of the software running
     * */
-    static String testedIterationMode = "Workload";
-    static String testedIterationStage = "Actual";
-    String Name;
-    List<UniversalTimeUnit> MeasuredTimes;
+    static final String testedIterationMode = "Workload";
+    static final String testedIterationStage = "Actual";
+    final String Name;
+    final List<UniversalTimeUnit> MeasuredTimes;
     public static IMeasurement ConstructTest(Benchmark pattern){
         return new BenchmarkDotNetMeasurement(pattern);
     }

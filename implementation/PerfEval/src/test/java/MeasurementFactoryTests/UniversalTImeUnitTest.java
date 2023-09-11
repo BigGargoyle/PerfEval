@@ -3,7 +3,6 @@ package MeasurementFactoryTests;
 import org.junit.jupiter.api.Test;
 import org.example.MeasurementFactory.UniversalTimeUnit;
 
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;

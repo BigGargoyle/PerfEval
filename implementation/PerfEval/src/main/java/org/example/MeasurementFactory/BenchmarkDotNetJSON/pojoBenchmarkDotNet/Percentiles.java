@@ -42,7 +42,7 @@ public class Percentiles {
     @JsonProperty("P100")
     private Double p100;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("P0")
     public Double getP0() {

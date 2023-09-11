@@ -79,7 +79,7 @@ public class Statistics {
     @JsonProperty("Percentiles")
     private Percentiles percentiles;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("OriginalValues")
     public List<Double> getOriginalValues() {

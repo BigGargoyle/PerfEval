@@ -14,9 +14,9 @@ import java.util.List;
  * that they are from the same distribution
  */
 public class NormalPerformanceComparator implements IPerformanceComparator {
-    double criticalValue;
+    final double criticalValue;
     // maxConfidenceIntervalWidth = 0.1 means confidence interval mean+-(0.1*mean)
-    double maxConfidenceIntervalWidth;
+    final double maxConfidenceIntervalWidth;
     int minSampleCount;
     ComparisonResult comparisonResult;
 

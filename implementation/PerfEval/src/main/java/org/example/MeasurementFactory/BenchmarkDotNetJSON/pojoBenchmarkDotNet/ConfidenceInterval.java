@@ -35,7 +35,7 @@ public class ConfidenceInterval {
     @JsonProperty("Upper")
     private Double upper;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("N")
     public Integer getN() {

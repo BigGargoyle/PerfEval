@@ -60,7 +60,7 @@ public class HostEnvironmentInfo {
     @JsonProperty("HardwareTimerKind")
     private String hardwareTimerKind;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     @JsonProperty("BenchmarkDotNetCaption")
     public String getBenchmarkDotNetCaption() {
