@@ -30,15 +30,14 @@ public class CacheDatabase implements IDatabase {
         databaseCache = CreatePriorityQueueFromFile(GlobalVars.DatabaseCacheFileName, maxCountOfItemsInCache);
     }
 
-    private void UpdateDatabaseCache(){
-        try (FileWriter writer = new FileWriter(GlobalVars.DatabaseCacheFileName)){
-            for(DatabaseItem item : databaseCache){
-                String line = DatabaseItemToString(item)+System.lineSeparator();
+    private void UpdateDatabaseCache() {
+        try (FileWriter writer = new FileWriter(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseCacheFileName)) {
+            for (DatabaseItem item : databaseCache) {
+                String line = DatabaseItemToString(item) + System.lineSeparator();
                 writer.write(line);
             }
             writer.flush();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -46,7 +45,7 @@ public class CacheDatabase implements IDatabase {
 
     static private PriorityQueue<DatabaseItem> CreatePriorityQueueFromFile(String fileName, int countOfItemsInQueue) {
         PriorityQueue<DatabaseItem> maxHeap = new PriorityQueue<>(Comparator.comparing(DatabaseItem::dateOfCreation));
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.workingDirectory + "/" + fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 DatabaseItem item = ParseDatabaseLine(line);
@@ -75,7 +74,7 @@ public class CacheDatabase implements IDatabase {
             maxHeap = GetLastNResultsFromCache(n);
         }
 
-        if(maxHeap == null) return null;
+        if (maxHeap == null || maxHeap.size() < n) return null;
 
         String[] result = new String[n];
         for (int i = 0; i < result.length; i++) {
@@ -104,35 +103,36 @@ public class CacheDatabase implements IDatabase {
     @Override
     public boolean AddFile(String fileName) {
         boolean result = AddFileToDatabase(fileName);
-        if(result) UpdateDatabaseCache();
+        if (result) UpdateDatabaseCache();
         return result;
     }
 
-    private boolean AddFileToDatabase(String fileName){
-        File file = new File(fileName);
+    private boolean AddFileToDatabase(String fileName) {
+        File file = new File(GlobalVars.workingDirectory, fileName);
         if (!file.exists())
             return false;
 
-        if(HasUnknownTestFormat(fileName)){
+        if (HasUnknownTestFormat(fileName)) {
             System.err.println("Unknown file format");
             return false;
         }
 
         DatabaseItem item = CreateItemFromFileName(fileName);
-        if(item == null) return false;
+        if (item == null) return false;
 
         TryAddItemToCache(item);
 
         return AddItemToDatabase(item);
     }
-    static boolean HasUnknownTestFormat(String filePath){
+
+    static boolean HasUnknownTestFormat(String filePath) {
         IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(filePath);
         return parser == null;
     }
 
-    private boolean AddItemToDatabase(DatabaseItem item){
+    private boolean AddItemToDatabase(DatabaseItem item) {
         try {
-            FileWriter database = new FileWriter(GlobalVars.DatabaseFileName, true);
+            FileWriter database = new FileWriter(GlobalVars.workingDirectory + "/" + GlobalVars.DatabaseFileName, true);
             database.append(DatabaseItemToString(item)).append(System.lineSeparator());
             database.close();
         } catch (IOException e) {
@@ -147,14 +147,14 @@ public class CacheDatabase implements IDatabase {
             databaseCache.add(item);
             return;
         }
-        if(databaseCache.peek()==null) return;
+        if (databaseCache.peek() == null) return;
         if (item.dateOfCreation().compareTo(databaseCache.peek().dateOfCreation()) > 0) {
             databaseCache.poll();
             databaseCache.add(item);
         }
     }
 
-    private DatabaseItem CreateItemFromFileName(String fileName){
+    private DatabaseItem CreateItemFromFileName(String fileName) {
         Path path = Paths.get(fileName);
         Date date;
         try {
@@ -165,7 +165,7 @@ public class CacheDatabase implements IDatabase {
             return null;
         }
         String version = ResolveVersion(date);
-        return new DatabaseItem(path.toString(), date, version);
+        return new DatabaseItem(path.toAbsolutePath().toString(), date, version);
     }
 
     @Override
@@ -235,21 +235,21 @@ public class CacheDatabase implements IDatabase {
      */
     String ResolveVersion(Date dateOfCreation) {
         IniFileData configData = new IniFileData(true);
-        if(!configData.validConfig){
+        if (!configData.validConfig) {
             return GlobalVars.UnknownVersion;
         }
-        if(!configData.gitFilePresence){
+        if (!configData.gitFilePresence) {
             return configData.version;
         }
 
-        try(Git git = Git.open(new File(GlobalVars.gitFileDir))){
+        try (Git git = Git.open(new File(GlobalVars.gitFileDir))) {
             Iterable<RevCommit> commits = git.log().all().call();
-            for(RevCommit commit : commits){
-                if(commit.getCommitterIdent().getWhen().before(dateOfCreation)){
+            for (RevCommit commit : commits) {
+                if (commit.getCommitterIdent().getWhen().before(dateOfCreation)) {
                     return commit.getName();
                 }
             }
-        }catch (IOException | GitAPIException e){
+        } catch (IOException | GitAPIException e) {
             return GlobalVars.UnknownVersion;
         }
 

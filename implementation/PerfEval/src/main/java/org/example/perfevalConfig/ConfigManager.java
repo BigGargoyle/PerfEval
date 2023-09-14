@@ -19,16 +19,16 @@ public class ConfigManager {
 
     public static boolean Config(String[] args) {
 
-        if (args[1] == null) return false;
+        if (args[2] == null) return false;
 
         String[] params = new String[2];
-        if (args[1].contains(equalSign)) {
-            String[] splittedArg = args[1].split(equalSign);
+        if (args[2].contains(equalSign)) {
+            String[] splittedArg = args[2].split(equalSign);
             if (splittedArg.length < 2 || splittedArg[0] == null || splittedArg[1] == null) {
                 params[0] = splittedArg[0];
                 params[1] = splittedArg[1];
             } else return false;
-        } else if (args.length < 3)
+        } else if (args.length < 4)
             return false;
         else {
             params[0] = args[1];

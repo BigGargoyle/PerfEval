@@ -15,13 +15,13 @@ public class PerfEvalInitializer {
      */
     public static boolean InitPerfEval() {
         try {
-            if(!directoryExistsOrCreate(GlobalVars.perfevalDir))
-                return false;
+
+            directoryExistsOrCreate(GlobalVars.perfevalDir);
 
             IniFileData iniFileData = new IniFileData(false);
             boolean success = IniFileData.CreateNewIniFile(iniFileData);
 
-            BufferedWriter helpFile = new BufferedWriter(new FileWriter(GlobalVars.helpFileName));
+            BufferedWriter helpFile = new BufferedWriter(new FileWriter(GlobalVars.workingDirectory+"/"+GlobalVars.helpFileName));
             success = success & writeHelpFileContent(helpFile);
             helpFile.close();
 
@@ -35,19 +35,18 @@ public class PerfEvalInitializer {
     }
 
     /**
-     *
      * @param dirName which dir is going to be checked
      * @return if dir was created
      */
-    static boolean directoryExistsOrCreate(String dirName){
-        File dir = new File(dirName);
-        if(dir.exists())
+    static boolean directoryExistsOrCreate(String dirName) {
+        File dir = new File(GlobalVars.workingDirectory, dirName);
+        if (dir.exists())
             return false;
         return dir.mkdirs();
     }
 
     static boolean forcefullyCreateNewFile(String fileName) {
-        File file = new File(fileName);
+        File file = new File(GlobalVars.workingDirectory, fileName);
         try {
             if (file.exists() && !file.delete())
                 return false;
@@ -57,17 +56,33 @@ public class PerfEvalInitializer {
         }
     }
 
+    private static void CreateGitIgnoreFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(GlobalVars.workingDirectory + "/" + GlobalVars.gitIgnoreFileName))) {
+            writer.write(GlobalVars.DatabaseFileName.split("/")[1]);
+            writer.newLine();
+            writer.write(GlobalVars.DatabaseCacheFileName.split("/")[1]);
+            writer.newLine();
+            writer.write(GlobalVars.IniFileName.split("/")[1]);
+            writer.newLine();
+            writer.write(GlobalVars.helpFileName.split("/")[1]);
+            writer.newLine();
+        } catch (IOException e) {
+            System.err.println(".gitignore file cannot be created");
+        }
+    }
+
     /**
      * @param helpFileWriter where to write content of help file
      * @return true - if writing was successful, false - otherwise
      */
     static boolean writeHelpFileContent(BufferedWriter helpFileWriter) {
+        /*
         try {
-            // TODO: doplnit obsah help souboru
-            helpFileWriter.write("?");
+
         } catch (IOException e) {
             return false;
         }
+        return true;*/
         return true;
     }
 }

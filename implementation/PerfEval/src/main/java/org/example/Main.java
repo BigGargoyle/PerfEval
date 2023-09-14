@@ -14,22 +14,31 @@ import org.example.perfevalInit.PerfEvalInitializer;
 
 public class Main {
     public static void main(String[] args) {
-        if (args.length == 0) {
+        if (Contains(args, GlobalVars.helpFlag)) {
+            HelpCommandHandle();
+            return;
+        }
+        if (args.length < 2) {
             System.err.println("No arguments found");
             System.exit(GlobalVars.invalidArgumentsExitCode);
             return;
         }
+        if (!(new File(args[0]).isDirectory())) {
+            System.err.println(args[0] + " directory was not found");
+            System.exit(GlobalVars.invalidArgumentsExitCode);
+            return;
+        }
+        GlobalVars.workingDirectory = args[0];
+
         if (!perfEvalSetup() && !Contains(args, GlobalVars.initCommand)) {
             System.err.println(GlobalVars.perfevalDir + " directory was not found");
             System.exit(GlobalVars.perfevalNotInitializedExitCode);
             return;
         }
-        if (Contains(args, GlobalVars.helpFlag)) {
-            HelpCommandHandle();
-            return;
-        }
 
-        switch (args[0]) {
+
+        String command = args[1];
+        switch (command) {
             case GlobalVars.initCommand -> InitCommandHandle(args);
             case GlobalVars.evaluateCommand -> EvaluateCommandHandle(args);
             case GlobalVars.indexNewCommand -> IndexNewCommandHandle(args);
@@ -37,14 +46,14 @@ public class Main {
             case GlobalVars.undecidedCommand -> UndecidedCommandHandle(args);
             case GlobalVars.configCommand -> ConfigCommandHandle(args);
             default -> {
-                System.err.println("Unknown argument:" + args[0]);
+                System.err.println("Unknown argument:" + command);
                 System.exit(GlobalVars.invalidArgumentsExitCode);
             }
         }
     }
 
     private static void InitCommandHandle(String[] args) {
-        if ((new File(GlobalVars.IniFileName).exists()) && !Contains(args, GlobalVars.forceFlag)) {
+        if ((new File(GlobalVars.workingDirectory, GlobalVars.IniFileName).exists()) && !Contains(args, GlobalVars.forceFlag)) {
             System.out.println("PerfEval already initialized.");
             return;
         }
@@ -57,7 +66,7 @@ public class Main {
     }
 
     static boolean perfEvalSetup() {
-        File file = new File(GlobalVars.perfevalDir);
+        File file = new File(GlobalVars.workingDirectory, GlobalVars.perfevalDir);
         return file.exists() && file.isDirectory();
     }
 
@@ -70,7 +79,7 @@ public class Main {
     }
 
     static void HelpCommandHandle() {
-        File helpFile = new File(GlobalVars.perfevalDir + "/" + GlobalVars.helpFileName);
+        File helpFile = new File(GlobalVars.workingDirectory, GlobalVars.helpFileName);
         if (!helpFile.exists() || !helpFile.isFile()) {
             System.err.println("Help file was not found in " + GlobalVars.perfevalDir + " directory");
             System.exit(GlobalVars.perfevalNotInitializedExitCode);
@@ -89,12 +98,11 @@ public class Main {
     }
 
     static void EvaluateCommandHandle(String[] args) {
-        if(Contains(args, GlobalVars.graphicalFlag)){
-            if(!GraphicalEvaluator.EvaluateGraphical(args)){
+        if (Contains(args, GlobalVars.graphicalFlag)) {
+            if (!GraphicalEvaluator.EvaluateGraphical(args)) {
                 System.err.println("Graphical results cannot be evaluated");
             }
-        }
-        else if (!PerfEvalEvaluator.EvaluateLastResults(InitDatabase(), args)) {
+        } else if (!PerfEvalEvaluator.EvaluateLastResults(InitDatabase(), args)) {
             System.err.println("Evaluation of results failed");
             System.exit(GlobalVars.evaluationFailedExitCode);
         }
@@ -102,12 +110,12 @@ public class Main {
 
     static void IndexNewCommandHandle(String[] args) {
         IDatabase database = InitDatabase();
-        if(args.length != 2){
+        if (args.length != 3) {
             System.err.println("Unknown arguments");
             System.exit(GlobalVars.invalidArgumentsExitCode);
             return;
         }
-        if (!database.AddFile(args[1])) {
+        if (!database.AddFile(args[2])) {
             System.err.println("File cannot be added");
             System.exit(GlobalVars.databaseErrorExitCode);
         }
@@ -115,12 +123,12 @@ public class Main {
 
     static void IndexAllCommandHandle(String[] args) {
         IDatabase database = InitDatabase();
-        if(args.length != 2){
+        if (args.length != 3) {
             System.err.println("Unknown arguments");
             System.exit(GlobalVars.invalidArgumentsExitCode);
             return;
         }
-        if (!database.AddFilesFromDir(args[1])) {
+        if (!database.AddFilesFromDir(args[2])) {
             System.err.println("Some of file/s in directory cannot be added");
             System.exit(GlobalVars.databaseErrorExitCode);
         }
@@ -133,19 +141,19 @@ public class Main {
         }
     }
 
-    static void ConfigCommandHandle(String[] args){
-        if(args.length != 2){
+    static void ConfigCommandHandle(String[] args) {
+        if (args.length != 3) {
             System.err.println("Unknown arguments");
             System.exit(GlobalVars.invalidArgumentsExitCode);
             return;
         }
-        if(!ConfigManager.Config(args)){
+        if (!ConfigManager.Config(args)) {
             System.err.println("Arguments of configurations are not valid");
             System.exit(GlobalVars.invalidArgumentsExitCode);
         }
     }
 
-    static IDatabase InitDatabase(){
+    static IDatabase InitDatabase() {
         return new CacheDatabase();
     }
 

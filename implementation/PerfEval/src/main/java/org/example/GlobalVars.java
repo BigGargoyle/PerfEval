@@ -5,6 +5,7 @@ import org.example.MeasurementFactory.UniversalTimeUnit;
 import java.util.concurrent.TimeUnit;
 
 public class GlobalVars {
+    public static String workingDirectory = ".";
     public static final String commentSign = "#";
     public static final String critValueSign = "P";
     public static final String maxCIWidthSign = "C";
@@ -23,9 +24,9 @@ public class GlobalVars {
 
     public static final String gitFileDir = ".";
     public static final String gitFileName = ".git";
-    public static final String gitIgnoreFileName = ".performance/.gitignore";
     public static final String perfevalDir = ".performance";
-    public static final String helpFileName = "help.txt";
+    public static final String gitIgnoreFileName = ".performance/.gitignore";
+    public static final String helpFileName = ".performance/help.txt";
     public static final String IniFileName = ".performance/config.ini";
     public static final String DatabaseFileName = ".performance/test_results.db";
     public static final String DatabaseCacheFileName = ".performance/test_results_cache.db";

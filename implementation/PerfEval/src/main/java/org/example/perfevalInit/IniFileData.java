@@ -13,59 +13,56 @@ public class IniFileData {
     public double maxCIWidth;
     public double critValue;
     public String version;
-    public IniFileData(boolean readFromFile){
-        if(readFromFile){
+
+    public IniFileData(boolean readFromFile) {
+        if (readFromFile) {
             ReadDataFromIniFile();
-        }
-        else{
+        } else {
             SetDefaultData();
         }
     }
 
-    private void ReadDataFromIniFile(){
-        try(BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.IniFileName))){
+    private void ReadDataFromIniFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.workingDirectory + "/" + GlobalVars.IniFileName))) {
             String line;
-            while((line = reader.readLine()) != null){
+            while ((line = reader.readLine()) != null) {
                 String[] splittedLine = line.split(GlobalVars.ColumnDelimiter);
-                if(splittedLine.length < 2) continue;
-                switch (splittedLine[0]){
+                if (splittedLine.length < 2) continue;
+                switch (splittedLine[0]) {
                     case GlobalVars.gitSign -> gitFilePresence = splittedLine[1].compareTo(GlobalVars.TrueString) == 0;
                     case GlobalVars.critValueSign -> {
-                        try{
+                        try {
                             critValue = Double.parseDouble(splittedLine[1]);
-                            if(critValue>=1 || critValue<=0)
-                            {
+                            if (critValue >= 1 || critValue <= 0) {
                                 validConfig = false;
                                 return;
                             }
-                        }catch (NumberFormatException e){
+                        } catch (NumberFormatException e) {
                             validConfig = false;
                             return;
                         }
                     }
                     case GlobalVars.maxCIWidthSign -> {
-                        try{
+                        try {
                             maxCIWidth = Double.parseDouble(splittedLine[1]);
-                            if(maxCIWidth>=1 || maxCIWidth<=0)
-                            {
+                            if (maxCIWidth >= 1 || maxCIWidth <= 0) {
                                 validConfig = false;
                                 return;
                             }
-                        }catch (NumberFormatException e){
+                        } catch (NumberFormatException e) {
                             validConfig = false;
                             return;
                         }
                     }
                     case GlobalVars.maxTimeOnTestSign -> {
-                        try{
+                        try {
                             long nanoseconds = Long.parseLong(splittedLine[1]);
-                            if(nanoseconds < 0)
-                            {
+                            if (nanoseconds < 0) {
                                 validConfig = false;
                                 return;
                             }
                             maxTimeOnTest = new UniversalTimeUnit(nanoseconds, TimeUnit.NANOSECONDS);
-                        }catch (NumberFormatException e){
+                        } catch (NumberFormatException e) {
                             validConfig = false;
                             return;
                         }
@@ -73,18 +70,17 @@ public class IniFileData {
                     case GlobalVars.versionSign -> version = splittedLine[1];
                 }
             }
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             validConfig = false;
             return;
         }
-        if(maxTimeOnTest == null || maxTimeOnTest.GetNanoSeconds() < 0) validConfig = false;
-        else if(version == null) validConfig = false;
-        else if(!(critValue>0 && critValue<1)) validConfig = false;
+        if (maxTimeOnTest == null || maxTimeOnTest.GetNanoSeconds() < 0) validConfig = false;
+        else if (version == null) validConfig = false;
+        else if (!(critValue > 0 && critValue < 1)) validConfig = false;
         else validConfig = maxCIWidth > 0 && maxCIWidth < 1;
     }
 
-    private void SetDefaultData(){
+    private void SetDefaultData() {
         validConfig = true;
         gitFilePresence = (new File(GlobalVars.gitFileName)).exists();
         maxTimeOnTest = GlobalVars.defaultMaxTimeOnTest;
@@ -93,58 +89,44 @@ public class IniFileData {
         version = GlobalVars.UnknownVersion;
     }
 
-    public static boolean CreateNewIniFile(IniFileData iniFileData){
-        if(!(new File(GlobalVars.gitIgnoreFileName).exists()))
-            CreateGitIgnoreFile();
+    public static boolean CreateNewIniFile(IniFileData iniFileData) {
         boolean result;
-        if(!iniFileData.validConfig)
+        if (!iniFileData.validConfig)
             return false;
-        File file = new File(GlobalVars.IniFileName);
+        File file = new File(GlobalVars.workingDirectory, GlobalVars.IniFileName);
         try {
-            if(file.exists())
-                if(!file.delete())
+            if (file.exists())
+                if (!file.delete())
                     return false;
-            if(!file.createNewFile()){
+            if (!file.createNewFile()) {
                 return false;
             }
             result = WriteIniFileContent(iniFileData, file);
 
-        }catch (IOException | SecurityException e){
+        } catch (IOException | SecurityException e) {
             return false;
         }
         return result;
     }
-    private static boolean WriteIniFileContent(IniFileData fileData, File file){
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))){
+
+    private static boolean WriteIniFileContent(IniFileData fileData, File file) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(GlobalVars.critValueSign + GlobalVars.ColumnDelimiter + fileData.critValue);
             writer.newLine();
             writer.write(GlobalVars.maxCIWidthSign + GlobalVars.ColumnDelimiter + fileData.maxCIWidth);
             writer.newLine();
             writer.write(GlobalVars.maxTimeOnTestSign + GlobalVars.ColumnDelimiter + fileData.maxTimeOnTest.GetNanoSeconds());
             writer.newLine();
-            if(fileData.gitFilePresence)
+            if (fileData.gitFilePresence)
                 writer.write(GlobalVars.gitSign + GlobalVars.ColumnDelimiter + GlobalVars.TrueString);
             else
                 writer.write(GlobalVars.gitSign + GlobalVars.ColumnDelimiter + GlobalVars.FalseString);
             writer.newLine();
-            writer.write(GlobalVars.versionSign+GlobalVars.ColumnDelimiter+fileData.version);
+            writer.write(GlobalVars.versionSign + GlobalVars.ColumnDelimiter + fileData.version);
             writer.newLine();
-        }catch (IOException e){
+        } catch (IOException e) {
             return false;
         }
         return true;
-    }
-
-    private static void CreateGitIgnoreFile(){
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(GlobalVars.gitIgnoreFileName))){
-            writer.write(GlobalVars.DatabaseFileName);
-            writer.newLine();
-            writer.write(GlobalVars.DatabaseCacheFileName);
-            writer.newLine();
-            writer.write(GlobalVars.IniFileName);
-            writer.newLine();
-        }catch (IOException e){
-            System.err.println(".gitignore file cannot be created");
-        }
     }
 }

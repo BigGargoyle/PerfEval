@@ -196,7 +196,7 @@ public class PerfEvalEvaluator {
      */
     static List<List<IMeasurement>> MeasurementsFromFiles(String[] fileNames) {
         List<List<IMeasurement>> measurements = new ArrayList<>();
-        if (fileNames.length == 0) return null;
+        if (fileNames==null || fileNames.length == 0) return null;
         IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(fileNames[0]);
         if (parser == null) {
             System.err.println("File format was not recognized");
@@ -232,7 +232,7 @@ public class PerfEvalEvaluator {
      */
     private static ConfigData ReadConfigFromIniFile() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.perfevalDir
+            BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.workingDirectory
                     + "/" + GlobalVars.IniFileName));
             double critValue = 0;
             double CIWidth = 0;
