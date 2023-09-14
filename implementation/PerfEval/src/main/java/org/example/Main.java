@@ -115,7 +115,7 @@ public class Main {
             System.exit(GlobalVars.invalidArgumentsExitCode);
             return;
         }
-        if (!database.AddFile(args[2])) {
+        if (!database.AddFile(GlobalVars.workingDirectory+"/"+args[2])) {
             System.err.println("File cannot be added");
             System.exit(GlobalVars.databaseErrorExitCode);
         }
@@ -128,7 +128,7 @@ public class Main {
             System.exit(GlobalVars.invalidArgumentsExitCode);
             return;
         }
-        if (!database.AddFilesFromDir(args[2])) {
+        if (!database.AddFilesFromDir(GlobalVars.workingDirectory+"/"+args[2])) {
             System.err.println("Some of file/s in directory cannot be added");
             System.exit(GlobalVars.databaseErrorExitCode);
         }

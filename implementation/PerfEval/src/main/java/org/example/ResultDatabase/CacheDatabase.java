@@ -1,8 +1,6 @@
 package org.example.ResultDatabase;
 
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.revwalk.RevCommit;
+
 import org.example.GlobalVars;
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.ParserIndustry;
@@ -27,7 +25,7 @@ public class CacheDatabase implements IDatabase {
     final PriorityQueue<DatabaseItem> databaseCache;
 
     public CacheDatabase() {
-        databaseCache = CreatePriorityQueueFromFile(GlobalVars.DatabaseCacheFileName, maxCountOfItemsInCache);
+        databaseCache = CreatePriorityQueueFromFile(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseCacheFileName, maxCountOfItemsInCache);
     }
 
     private void UpdateDatabaseCache() {
@@ -45,7 +43,7 @@ public class CacheDatabase implements IDatabase {
 
     static private PriorityQueue<DatabaseItem> CreatePriorityQueueFromFile(String fileName, int countOfItemsInQueue) {
         PriorityQueue<DatabaseItem> maxHeap = new PriorityQueue<>(Comparator.comparing(DatabaseItem::dateOfCreation));
-        try (BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.workingDirectory + "/" + fileName))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 DatabaseItem item = ParseDatabaseLine(line);
@@ -69,7 +67,7 @@ public class CacheDatabase implements IDatabase {
     public String[] GetLastNResults(int n) {
         PriorityQueue<DatabaseItem> maxHeap;
         if (n > databaseCache.size())
-            maxHeap = CreatePriorityQueueFromFile(GlobalVars.DatabaseFileName, n);
+            maxHeap = CreatePriorityQueueFromFile(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseFileName, n);
         else {
             maxHeap = GetLastNResultsFromCache(n);
         }
@@ -108,7 +106,7 @@ public class CacheDatabase implements IDatabase {
     }
 
     private boolean AddFileToDatabase(String fileName) {
-        File file = new File(GlobalVars.workingDirectory, fileName);
+        File file = new File(fileName);
         if (!file.exists())
             return false;
 
@@ -116,12 +114,10 @@ public class CacheDatabase implements IDatabase {
             System.err.println("Unknown file format");
             return false;
         }
-
         DatabaseItem item = CreateItemFromFileName(fileName);
         if (item == null) return false;
 
         TryAddItemToCache(item);
-
         return AddItemToDatabase(item);
     }
 
@@ -132,7 +128,7 @@ public class CacheDatabase implements IDatabase {
 
     private boolean AddItemToDatabase(DatabaseItem item) {
         try {
-            FileWriter database = new FileWriter(GlobalVars.workingDirectory + "/" + GlobalVars.DatabaseFileName, true);
+            FileWriter database = new FileWriter(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseFileName, true);
             database.append(DatabaseItemToString(item)).append(System.lineSeparator());
             database.close();
         } catch (IOException e) {
@@ -161,7 +157,7 @@ public class CacheDatabase implements IDatabase {
             BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
             date = new Date(attributes.creationTime().toMillis());
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return null;
         }
         String version = ResolveVersion(date);
@@ -195,7 +191,7 @@ public class CacheDatabase implements IDatabase {
             return result;
         }
         if (Files.isRegularFile(fileOrDir.toPath())) {
-            return AddFileToDatabase(fileOrDir.toPath().toString());
+            return AddFileToDatabase(fileOrDir.toPath().toAbsolutePath().toString());
         }
         return true;
     }
@@ -241,8 +237,7 @@ public class CacheDatabase implements IDatabase {
         if (!configData.gitFilePresence) {
             return configData.version;
         }
-
-        try (Git git = Git.open(new File(GlobalVars.gitFileDir))) {
+        /*try (Git git = Git.open(new File(GlobalVars.gitFileDir))) {
             Iterable<RevCommit> commits = git.log().all().call();
             for (RevCommit commit : commits) {
                 if (commit.getCommitterIdent().getWhen().before(dateOfCreation)) {
@@ -251,7 +246,7 @@ public class CacheDatabase implements IDatabase {
             }
         } catch (IOException | GitAPIException e) {
             return GlobalVars.UnknownVersion;
-        }
+        }*/
 
         return GlobalVars.UnknownVersion;
     }

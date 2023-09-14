@@ -51,7 +51,7 @@ public class ResultPrinter {
      * @return table row with info about comparisonResult
      */
     private static String[] MeasurementComparisonToTableRow(IMeasurementComparisonResult comparisonResult) {
-        String[] tableRow = new String[6];
+        String[] tableRow = new String[8];
 
         tableRow[0] = (comparisonResult.getName());
         tableRow[1] = (String.valueOf(comparisonResult.getNewAvg()));

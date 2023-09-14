@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+
+import org.example.GlobalVars;
 import org.example.MeasurementFactory.BenchmarkDotNetJSON.BenchmarkDotNetJSONParser;
 import org.example.MeasurementFactory.JMHJSON.JMHJSONParser;
 /**
@@ -28,9 +30,9 @@ public class ParserIndustry {
 
         String oneLine = String.join("", lines);
         if (oneLine.contains("\"BenchmarkDotNetVersion\"") && oneLine.contains("\"BenchmarkDotNetCaption\""))
-            return new BenchmarkDotNetJSONParser();
+            return BenchmarkDotNetJSONParserFactory();
         if (oneLine.contains("\"jmhVersion\"") && oneLine.contains("\"benchmark\""))
-            return new JMHJSONParser();
+            return JMHJSONParserFactory();
         return null;
     }
 

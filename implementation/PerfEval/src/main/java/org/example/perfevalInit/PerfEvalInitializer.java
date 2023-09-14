@@ -28,6 +28,8 @@ public class PerfEvalInitializer {
             success = success & forcefullyCreateNewFile(GlobalVars.DatabaseFileName);
             success = success & forcefullyCreateNewFile(GlobalVars.DatabaseCacheFileName);
 
+            CreateGitIgnoreFile();
+
             return success;
         } catch (IOException e) {
             return false;
