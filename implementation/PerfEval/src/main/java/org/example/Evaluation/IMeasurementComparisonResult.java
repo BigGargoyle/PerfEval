@@ -1,6 +1,6 @@
 package org.example.Evaluation;
 
-import org.example.MeasurementFactory.IMeasurement;
+import org.example.MeasurementFactory.Measurement;
 import org.example.PerformanceComparatorFactory.ComparisonResult;
 
 public interface IMeasurementComparisonResult {
@@ -42,10 +42,10 @@ public interface IMeasurementComparisonResult {
     /**
      * @return the instance of the older one IMeasurement that was compared with the newer one IMeasurement
      */
-    IMeasurement getOldMeasurement();
+    Measurement getOldMeasurement();
 
     /**
      * @return the instance of the newer one IMeasurement that was compared with the older one IMeasurement
      */
-    IMeasurement getNewMeasurement();
+    Measurement getNewMeasurement();
 }

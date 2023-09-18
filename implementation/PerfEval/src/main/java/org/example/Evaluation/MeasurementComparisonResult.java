@@ -1,6 +1,6 @@
 package org.example.Evaluation;
 
-import org.example.MeasurementFactory.IMeasurement;
+import org.example.MeasurementFactory.Measurement;
 import org.example.MeasurementFactory.UniversalTimeUnit;
 import org.example.PerformanceComparatorFactory.Bootstrap;
 import org.example.PerformanceComparatorFactory.ComparisonResult;
@@ -15,12 +15,12 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
     // private ComparisonResult comparisonResult;
     private final boolean testVerdict;
     private final IPerformanceComparator performanceComparator;
-    private final IMeasurement oldMeasurement;
-    private final IMeasurement newMeasurement;
+    private final Measurement oldMeasurement;
+    private final Measurement newMeasurement;
 
     @Override
     public String getName() {
-        return newMeasurement.getName();
+        return newMeasurement.name();
     }
 
     @Override
@@ -54,12 +54,12 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
     }
 
     @Override
-    public IMeasurement getOldMeasurement() {
+    public Measurement getOldMeasurement() {
         return oldMeasurement;
     }
 
     @Override
-    public IMeasurement getNewMeasurement() {
+    public Measurement getNewMeasurement() {
         return newMeasurement;
     }
 
@@ -72,20 +72,20 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
      * @param _performanceComparator instance od IPerformanceComparator that is used for comparing IMeasurements from arguments
      */
 
-    public MeasurementComparisonResult(double critValue, IMeasurement _newMeasurement, IMeasurement _oldMeasurement,
+    public MeasurementComparisonResult(double critValue, Measurement _newMeasurement, Measurement _oldMeasurement,
                                        IPerformanceComparator _performanceComparator) {
         oldMeasurement = _oldMeasurement;
         newMeasurement = _newMeasurement;
         // performanceComparator = ComparatorIndustry.GetComparator(critValue, maxCIWidth, maxTestTime);
         performanceComparator = _performanceComparator;
-        performanceComparator.compareSets(newMeasurement.getMeasuredTimes(), oldMeasurement.getMeasuredTimes());
-        newAverage = universalTimeAverage(newMeasurement.getMeasuredTimes());
-        oldAverage = universalTimeAverage(oldMeasurement.getMeasuredTimes());
+        performanceComparator.compareSets(newMeasurement.measuredTimes(), oldMeasurement.measuredTimes());
+        newAverage = universalTimeAverage(newMeasurement.measuredTimes());
+        oldAverage = universalTimeAverage(oldMeasurement.measuredTimes());
         performanceChange = 100 * oldAverage / newAverage - 100;
         if (performanceComparator.getLastComparisonResult() != ComparisonResult.Bootstrap)
             testVerdict = resolveTestVerdict();
-        else testVerdict = Bootstrap.evaluate(newMeasurement.getMeasuredTimes(), oldMeasurement.getMeasuredTimes(),
-                critValue, performanceComparator.getMinSampleCount());
+        else testVerdict = Bootstrap.evaluate(newMeasurement.measuredTimes(), oldMeasurement.measuredTimes(),
+                critValue);
     }
 
     /**

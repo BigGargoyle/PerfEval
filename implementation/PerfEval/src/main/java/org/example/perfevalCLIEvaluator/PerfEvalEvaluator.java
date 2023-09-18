@@ -7,7 +7,7 @@ import org.example.GlobalVariables.CLIFlags;
 import org.example.GlobalVariables.DBFlags;
 import org.example.GlobalVariables.ExitCode;
 import org.example.GlobalVariables.FileNames;
-import org.example.MeasurementFactory.IMeasurement;
+import org.example.MeasurementFactory.Measurement;
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.ParserFactory;
 import org.example.MeasurementFactory.UniversalTimeUnit;
@@ -39,7 +39,7 @@ public class PerfEvalEvaluator {
      * @return true - evaluation and printing result was successful, false - otherwise
      */
     public static boolean listUndecidedTestResults(IDatabase database, String[] args) {
-        List<List<IMeasurement>> measurements = getLastTwoMeasurements(database);
+        List<List<Measurement>> measurements = getLastTwoMeasurements(database);
         // measurements item count is 2 and measurements[0] is older than measurements[1]
         if (measurements == null)
             return false;
@@ -60,7 +60,7 @@ public class PerfEvalEvaluator {
      * @return true - evaluation and printing result was successful, false - otherwise
      */
     public static boolean evaluateLastResults(IDatabase database, String[] args) {
-        List<List<IMeasurement>> measurements = getLastTwoMeasurements(database);
+        List<List<Measurement>> measurements = getLastTwoMeasurements(database);
         // measurements item count is 2 and measurements[0] is older than measurements[1]
         if (measurements == null || measurements.size() < 2 || measurements.get(0) == null || measurements.get(1) == null)
             return false;
@@ -143,7 +143,7 @@ public class PerfEvalEvaluator {
      * @param database database to search results in
      * @return List of parsed files to instances of List of IMeasurements
      */
-    private static List<List<IMeasurement>> getLastTwoMeasurements(IDatabase database) {
+    private static List<List<Measurement>> getLastTwoMeasurements(IDatabase database) {
         String[] lastResultsFileNames = database.getLastNResults(2);
         return measurementsFromFiles(lastResultsFileNames);
     }
@@ -155,15 +155,15 @@ public class PerfEvalEvaluator {
      * @param measurements List with two parsed files that are represented as a list of IMeasurements
      * @return list of results from each comparison or null if some step of checking input lists or reading config file failed
      */
-    private static List<IMeasurementComparisonResult> compareMeasurements(List<List<IMeasurement>> measurements) {
-        List<IMeasurement> olderMeasurement = measurements.get(0);
-        List<IMeasurement> newerMeasurement = measurements.get(1);
+    private static List<IMeasurementComparisonResult> compareMeasurements(List<List<Measurement>> measurements) {
+        List<Measurement> olderMeasurement = measurements.get(0);
+        List<Measurement> newerMeasurement = measurements.get(1);
 
         // test if sets of measurements are the same
         if (olderMeasurement.size() != newerMeasurement.size())
             return null;
         for (int i = 0; i < olderMeasurement.size(); i++) {
-            if (olderMeasurement.get(i).getName().compareTo(newerMeasurement.get(i).getName()) != 0)
+            if (olderMeasurement.get(i).name().compareTo(newerMeasurement.get(i).name()) != 0)
                 return null;
         }
 
@@ -194,8 +194,8 @@ public class PerfEvalEvaluator {
      * @param fileNames array of Strings with relative or absolute paths to files to be parsed
      * @return list of parsed files or null if parsing had failed
      */
-    static List<List<IMeasurement>> measurementsFromFiles(String[] fileNames) {
-        List<List<IMeasurement>> measurements = new ArrayList<>();
+    static List<List<Measurement>> measurementsFromFiles(String[] fileNames) {
+        List<List<Measurement>> measurements = new ArrayList<>();
         if (fileNames==null || fileNames.length == 0) return null;
         IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileNames[0]);
         if (parser == null) {
@@ -203,7 +203,7 @@ public class PerfEvalEvaluator {
             return null;
         }
         for (String fileName : fileNames) {
-            List<IMeasurement> measurement = parser.getTestsFromFile(fileName);
+            List<Measurement> measurement = parser.getTestsFromFile(fileName);
             measurements.add(measurement);
         }
 

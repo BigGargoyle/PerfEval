@@ -4,7 +4,7 @@ import java.util.List;
 import org.example.MeasurementFactory.BenchmarkDotNetJSON.BenchmarkDotNetJSONParser;
 import org.example.MeasurementFactory.JMHJSON.JMHJSONParser;
 import org.example.MeasurementFactory.ParserFactory;
-import org.example.MeasurementFactory.IMeasurement;
+import org.example.MeasurementFactory.Measurement;
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ public class ParserTest {
         String fileName = "src/test/resources/Sorting1.json";
         int countOfTestInFile = 2;
         IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
-        List<IMeasurement> measurements = parser.getTestsFromFile(fileName);
+        List<Measurement> measurements = parser.getTestsFromFile(fileName);
 
         assertEquals(2, measurements.size());
     }

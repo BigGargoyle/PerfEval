@@ -2,7 +2,7 @@ package org.example.MeasurementFactory.JMHJSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.MeasurementFactory.JMHJSON.pojoJMH.BenchmarkJMHJSONBase;
 import org.example.MeasurementFactory.IMeasurementParser;
-import org.example.MeasurementFactory.IMeasurement;
+import org.example.MeasurementFactory.Measurement;
 import org.example.MeasurementFactory.JMHJSON.pojoJMH.PrimaryMetric;
 import org.example.MeasurementFactory.UniversalTimeUnit;
 
@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class JMHJSONParser implements IMeasurementParser {
 
-    public List<IMeasurement> getTestsFromFile(String fileName) {
-        List<IMeasurement> result = new ArrayList<>();
+    public List<Measurement> getTestsFromFile(String fileName) {
+        List<Measurement> result = new ArrayList<>();
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
         BenchmarkJMHJSONBase[] base;
@@ -46,7 +46,7 @@ public class JMHJSONParser implements IMeasurementParser {
 
     static final String[] acceptableScoreUnits = new String[] {"ns/op","us/op","ms/op","s/op"};
 
-    public static IMeasurement ConstructTest(BenchmarkJMHJSONBase input) throws IOException {
+    public static Measurement ConstructTest(BenchmarkJMHJSONBase input) throws IOException {
         String name = input.getBenchmark();
         List<UniversalTimeUnit> measuredTimes = new ArrayList<>();
         PrimaryMetric primaryMetric = input.getPrimaryMetric();
@@ -68,7 +68,7 @@ public class JMHJSONParser implements IMeasurementParser {
                         .average().orElse(0.0)), TimeUnit.SECONDS));
             }
         }
-        return new IMeasurement(name, measuredTimes);
+        return new Measurement(name, measuredTimes);
     }
 
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.example.MeasurementFactory.IMeasurement;
+import org.example.MeasurementFactory.Measurement;
 import org.example.MeasurementFactory.IMeasurementParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.MeasurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.*;
@@ -15,8 +15,8 @@ import org.example.MeasurementFactory.UniversalTimeUnit;
  */
 public class BenchmarkDotNetJSONParser implements IMeasurementParser {
     Long timestamp = null;
-    public List<IMeasurement> getTestsFromFile(String fileName){
-        List<IMeasurement> result = new ArrayList<>();
+    public List<Measurement> getTestsFromFile(String fileName){
+        List<Measurement> result = new ArrayList<>();
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
         BenchmarkDotNetJSONBase base;
@@ -53,18 +53,18 @@ public class BenchmarkDotNetJSONParser implements IMeasurementParser {
      * This class main usage is for simplifying and clarifying data package that is contained inside the
      * BenchmarkDotNetJSONBase class.
      * */
-    public static IMeasurement ConstructTest(Benchmark pattern){
+    public static Measurement ConstructTest(Benchmark pattern){
         var name = pattern.getMethodTitle();
-        List<Measurement> measurements = pattern.getMeasurements();
+        List<org.example.MeasurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.Measurement> measurements = pattern.getMeasurements();
         List<UniversalTimeUnit> measuredTimes = new ArrayList<>();
-        for(Measurement measurement:measurements){
+        for(org.example.MeasurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.Measurement measurement:measurements){
             // I want to test only measurements with 'Workload' mode and 'Actual' stage
             if(measurement.getIterationMode().equals(testedIterationMode) &&
                     measurement.getIterationStage().equals(testedIterationStage)){
                 measuredTimes.add(new UniversalTimeUnit(measurement.getNanoseconds(), TimeUnit.NANOSECONDS));
             }
         }
-        return new IMeasurement(name, measuredTimes);
+        return new Measurement(name, measuredTimes);
     }
 
 }
