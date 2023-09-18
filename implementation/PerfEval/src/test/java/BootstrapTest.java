@@ -22,7 +22,7 @@ public class BootstrapTest {
         oldSet.add(new UniversalTimeUnit(201, TimeUnit.NANOSECONDS));
         oldSet.add(new UniversalTimeUnit(202, TimeUnit.NANOSECONDS));
 
-        boolean result = Bootstrap.evaluate(newSet, oldSet, 0.1);
+        boolean result = Bootstrap.evaluate(newSet, oldSet, 0.05);
         assertTrue(result);
     }
 
