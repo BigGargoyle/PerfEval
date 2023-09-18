@@ -9,7 +9,7 @@ import org.example.MeasurementFactory.JMHJSON.JMHJSONParser;
 /**
  * Represents place where methods for constructing Parsers are stored
  */
-public class ParserIndustry {
+public class ParserFactory {
     // construct parser according to file structure
 
     /**

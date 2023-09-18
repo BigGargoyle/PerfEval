@@ -3,7 +3,7 @@ package MeasurementFactoryTests;
 import java.util.List;
 import org.example.MeasurementFactory.BenchmarkDotNetJSON.BenchmarkDotNetJSONParser;
 import org.example.MeasurementFactory.JMHJSON.JMHJSONParser;
-import org.example.MeasurementFactory.ParserIndustry;
+import org.example.MeasurementFactory.ParserFactory;
 import org.example.MeasurementFactory.IMeasurement;
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/MyBenchmarks.SortingAlgorithms-report.json";
 
-        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(fileName);
+        IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
 
         assertSame(BenchmarkDotNetJSONParser.class, parser.getClass());
     }
@@ -25,7 +25,7 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/Sorting1.json";
         int countOfTestInFile = 2;
-        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(fileName);
+        IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
         List<IMeasurement> measurements = parser.getTestsFromFile(fileName);
 
         assertEquals(2, measurements.size());
@@ -35,7 +35,7 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/resultJMH.json";
 
-        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(fileName);
+        IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
 
         assertSame(JMHJSONParser.class, parser.getClass());
     }
@@ -44,7 +44,7 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/unknownFileType";
 
-        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(fileName);
+        IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
 
         assertNull(parser);
     }

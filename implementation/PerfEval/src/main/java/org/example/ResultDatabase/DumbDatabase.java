@@ -1,7 +1,7 @@
 package org.example.ResultDatabase;
 
 import org.example.MeasurementFactory.IMeasurementParser;
-import org.example.MeasurementFactory.ParserIndustry;
+import org.example.MeasurementFactory.ParserFactory;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -94,7 +94,7 @@ public class DumbDatabase implements IDatabase {
     }
 
     static boolean hasUnknownTestFormat(String filePath){
-        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(filePath);
+        IMeasurementParser parser = ParserFactory.recognizeParserFactory(filePath);
         return parser == null;
     }
 

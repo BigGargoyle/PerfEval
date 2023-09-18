@@ -9,9 +9,9 @@ import org.example.GlobalVariables.ExitCode;
 import org.example.GlobalVariables.FileNames;
 import org.example.MeasurementFactory.IMeasurement;
 import org.example.MeasurementFactory.IMeasurementParser;
-import org.example.MeasurementFactory.ParserIndustry;
+import org.example.MeasurementFactory.ParserFactory;
 import org.example.MeasurementFactory.UniversalTimeUnit;
-import org.example.PerformanceComparatorFactory.ComparatorIndustry;
+import org.example.PerformanceComparatorFactory.ComparatorFactory;
 import org.example.PerformanceComparatorFactory.ComparisonResult;
 import org.example.PerformanceComparatorFactory.IPerformanceComparator;
 import org.example.ResultDatabase.IDatabase;
@@ -171,7 +171,7 @@ public class PerfEvalEvaluator {
         if (configData == null)
             return null;
 
-        IPerformanceComparator performanceComparator = ComparatorIndustry.getComparator(
+        IPerformanceComparator performanceComparator = ComparatorFactory.getComparator(
                 configData.critValue,
                 configData.maxCIWidth,
                 configData.maxTimeOnTest
@@ -197,7 +197,7 @@ public class PerfEvalEvaluator {
     static List<List<IMeasurement>> measurementsFromFiles(String[] fileNames) {
         List<List<IMeasurement>> measurements = new ArrayList<>();
         if (fileNames==null || fileNames.length == 0) return null;
-        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(fileNames[0]);
+        IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileNames[0]);
         if (parser == null) {
             System.err.println("File format was not recognized");
             return null;

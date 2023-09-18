@@ -5,7 +5,7 @@ import org.example.GlobalVariables.DBFlags;
 import org.example.GlobalVariables.FileNames;
 import org.example.GlobalVariables.StringConstants;
 import org.example.MeasurementFactory.IMeasurementParser;
-import org.example.MeasurementFactory.ParserIndustry;
+import org.example.MeasurementFactory.ParserFactory;
 import org.example.perfevalInit.IniFileData;
 
 import java.io.*;
@@ -124,7 +124,7 @@ public class CacheDatabase implements IDatabase {
     }
 
     static boolean hasUnknownTestFormat(String filePath) {
-        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(filePath);
+        IMeasurementParser parser = ParserFactory.recognizeParserFactory(filePath);
         return parser == null;
     }
 

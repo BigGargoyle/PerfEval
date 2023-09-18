@@ -3,16 +3,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.MeasurementFactory.JMHJSON.pojoJMH.BenchmarkJMHJSONBase;
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.IMeasurement;
+import org.example.MeasurementFactory.JMHJSON.pojoJMH.PrimaryMetric;
+import org.example.MeasurementFactory.UniversalTimeUnit;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of IMeasurementParser for JMH framework test result in the JSON format
  */
 public class JMHJSONParser implements IMeasurementParser {
-    Long timestamp = null;
+
     public List<IMeasurement> getTestsFromFile(String fileName) {
         List<IMeasurement> result = new ArrayList<>();
         File inputFile = new File(fileName);
@@ -26,18 +31,44 @@ public class JMHJSONParser implements IMeasurementParser {
 
         try {
             for (BenchmarkJMHJSONBase benchmark : base) {
-                result.add(JMHMeasurement.ConstructTest(benchmark));
+                result.add(ConstructTest(benchmark));
             }
         }
         catch (IOException e){
             return null;
         }
 
-        timestamp = inputFile.lastModified();
-
         return result;
     }
     public String GetParserType(){
         return "framework: JMH, format: JSON ";
     }
+
+    static final String[] acceptableScoreUnits = new String[] {"ns/op","us/op","ms/op","s/op"};
+
+    public static IMeasurement ConstructTest(BenchmarkJMHJSONBase input) throws IOException {
+        String name = input.getBenchmark();
+        List<UniversalTimeUnit> measuredTimes = new ArrayList<>();
+        PrimaryMetric primaryMetric = input.getPrimaryMetric();
+        // !!! adding average of each measuredData, because rawData is a field of list of lists of Doubles
+        for (List<Double> measuredData: primaryMetric.getRawData()){
+            String scoreUnit = primaryMetric.getScoreUnit();
+            if(!Arrays.asList(acceptableScoreUnits).contains(scoreUnit)){
+                throw new IOException("Unexpected scoreUnit type. Acceptable types are: ns/op, us/op, ms/op, s/op");
+            }
+
+            switch (scoreUnit){
+                case "ns/op"-> measuredTimes.add(new UniversalTimeUnit(Math.round(measuredData.stream().mapToDouble(Double::doubleValue)
+                        .average().orElse(0.0)), TimeUnit.NANOSECONDS));
+                case "us/op"-> measuredTimes.add(new UniversalTimeUnit(Math.round(measuredData.stream().mapToDouble(Double::doubleValue)
+                        .average().orElse(0.0)), TimeUnit.MICROSECONDS));
+                case "ms/op"-> measuredTimes.add(new UniversalTimeUnit(Math.round(measuredData.stream().mapToDouble(Double::doubleValue)
+                        .average().orElse(0.0)), TimeUnit.MILLISECONDS));
+                case "s/op"-> measuredTimes.add(new UniversalTimeUnit(Math.round(measuredData.stream().mapToDouble(Double::doubleValue)
+                        .average().orElse(0.0)), TimeUnit.SECONDS));
+            }
+        }
+        return new IMeasurement(name, measuredTimes);
+    }
+
 }

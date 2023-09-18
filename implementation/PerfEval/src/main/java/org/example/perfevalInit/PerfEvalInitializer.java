@@ -16,7 +16,8 @@ public class PerfEvalInitializer {
     public static boolean InitPerfEval() {
         try {
 
-            directoryExistsOrCreate(FileNames.perfevalDir);
+            if(!directoryExistsOrCreate(FileNames.perfevalDir))
+                return false;
 
             IniFileData iniFileData = new IniFileData(false);
             boolean success = IniFileData.createNewIniFile(iniFileData);
@@ -43,7 +44,7 @@ public class PerfEvalInitializer {
     static boolean directoryExistsOrCreate(String dirName) {
         File dir = new File(FileNames.workingDirectory, dirName);
         if (dir.exists())
-            return false;
+            return true;
         return dir.mkdirs();
     }
 

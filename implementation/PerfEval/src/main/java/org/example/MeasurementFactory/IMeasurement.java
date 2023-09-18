@@ -5,15 +5,27 @@ import java.util.List;
 /**
  * An interface that represents measurements of one benchmark test.
  */
-public interface IMeasurement {
+public class IMeasurement {
+    final String name;
+    final List<UniversalTimeUnit> measuredTimes;
+
+    public IMeasurement(String name, List<UniversalTimeUnit> measuredTimes){
+        this.name = name;
+        this.measuredTimes = measuredTimes;
+    }
+
     /**
      * @return name of test
      */
-    String getName();
+    public String getName(){
+        return name;
+    }
 
     /**
      * @return measured values
      */
-    List<UniversalTimeUnit> getMeasuredTimes();
+    public List<UniversalTimeUnit> getMeasuredTimes(){
+        return measuredTimes;
+    }
 
 }

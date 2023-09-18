@@ -2,7 +2,7 @@ package org.example.PerformanceComparatorFactory;
 
 import org.example.MeasurementFactory.UniversalTimeUnit;
 
-public class ComparatorIndustry {
+public class ComparatorFactory {
     /**
      * @param pValue                     max p value for statistical tests that will be done with given data sets inside IPerformanceComparator
      * @param maxConfidenceIntervalWidth maximum relative width of confidence interval of the set mean
