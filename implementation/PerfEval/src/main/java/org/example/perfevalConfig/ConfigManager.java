@@ -1,7 +1,7 @@
 package org.example.perfevalConfig;
 
-import org.example.GlobalVariables.FileNames;
-import org.example.MeasurementFactory.UniversalTimeUnit;
+import org.example.globalVariables.FileNames;
+import org.example.measurementFactory.UniversalTimeUnit;
 import org.example.perfevalInit.IniFileData;
 
 import java.io.File;

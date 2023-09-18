@@ -1,7 +1,7 @@
 package MeasurementFactoryTests;
 
 import org.junit.jupiter.api.Test;
-import org.example.MeasurementFactory.UniversalTimeUnit;
+import org.example.measurementFactory.UniversalTimeUnit;
 
 import java.util.concurrent.TimeUnit;
 

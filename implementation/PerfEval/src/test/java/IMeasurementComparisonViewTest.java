@@ -1,9 +1,3 @@
-import org.example.Evaluation.MeasurementComparisonResultView;
-import org.example.Evaluation.IMeasurementComparisonResult;
-import org.example.PerformanceComparatorFactory.ComparisonResult;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IMeasurementComparisonViewTest {

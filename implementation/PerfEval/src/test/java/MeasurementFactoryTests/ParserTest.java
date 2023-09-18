@@ -1,11 +1,11 @@
 package MeasurementFactoryTests;
 
 import java.util.List;
-import org.example.MeasurementFactory.BenchmarkDotNetJSON.BenchmarkDotNetJSONParser;
-import org.example.MeasurementFactory.JMHJSON.JMHJSONParser;
-import org.example.MeasurementFactory.ParserFactory;
-import org.example.MeasurementFactory.Measurement;
-import org.example.MeasurementFactory.IMeasurementParser;
+import org.example.measurementFactory.BenchmarkDotNetJSON.BenchmarkDotNetJSONParser;
+import org.example.measurementFactory.JMHJSON.JMHJSONParser;
+import org.example.measurementFactory.ParserFactory;
+import org.example.measurementFactory.Measurement;
+import org.example.measurementFactory.IMeasurementParser;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

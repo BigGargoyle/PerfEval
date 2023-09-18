@@ -1,10 +1,10 @@
 package org.example.perfevalInit;
 
-import org.example.GlobalVariables.DBFlags;
-import org.example.GlobalVariables.DefaultIniValues;
-import org.example.GlobalVariables.FileNames;
-import org.example.GlobalVariables.StringConstants;
-import org.example.MeasurementFactory.UniversalTimeUnit;
+import org.example.globalVariables.DBFlags;
+import org.example.globalVariables.DefaultIniValues;
+import org.example.globalVariables.FileNames;
+import org.example.globalVariables.StringConstants;
+import org.example.measurementFactory.UniversalTimeUnit;
 
 import java.io.*;
 import java.util.concurrent.TimeUnit;

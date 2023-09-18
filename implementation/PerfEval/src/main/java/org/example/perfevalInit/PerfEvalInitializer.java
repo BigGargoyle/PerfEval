@@ -1,6 +1,6 @@
 package org.example.perfevalInit;
 
-import org.example.GlobalVariables.FileNames;
+import org.example.globalVariables.FileNames;
 
 import java.io.BufferedWriter;
 import java.io.File;

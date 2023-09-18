@@ -1,20 +1,20 @@
 package org.example.perfevalCLIEvaluator;
 
-import org.example.Evaluation.IMeasurementComparisonResult;
-import org.example.Evaluation.MeasurementComparisonResult;
-import org.example.Evaluation.ResultPrinter;
-import org.example.GlobalVariables.CLIFlags;
-import org.example.GlobalVariables.DBFlags;
-import org.example.GlobalVariables.ExitCode;
-import org.example.GlobalVariables.FileNames;
-import org.example.MeasurementFactory.Measurement;
-import org.example.MeasurementFactory.IMeasurementParser;
-import org.example.MeasurementFactory.ParserFactory;
-import org.example.MeasurementFactory.UniversalTimeUnit;
-import org.example.PerformanceComparatorFactory.ComparatorFactory;
-import org.example.PerformanceComparatorFactory.ComparisonResult;
-import org.example.PerformanceComparatorFactory.IPerformanceComparator;
-import org.example.ResultDatabase.IDatabase;
+import org.example.evaluation.IMeasurementComparisonResult;
+import org.example.evaluation.MeasurementComparisonResult;
+import org.example.evaluation.ResultPrinter;
+import org.example.globalVariables.CLIFlags;
+import org.example.globalVariables.DBFlags;
+import org.example.globalVariables.ExitCode;
+import org.example.globalVariables.FileNames;
+import org.example.measurementFactory.Measurement;
+import org.example.measurementFactory.IMeasurementParser;
+import org.example.measurementFactory.ParserFactory;
+import org.example.measurementFactory.UniversalTimeUnit;
+import org.example.performanceComparatorFactory.ComparatorFactory;
+import org.example.performanceComparatorFactory.ComparisonResult;
+import org.example.performanceComparatorFactory.IPerformanceComparator;
+import org.example.resultDatabase.IDatabase;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

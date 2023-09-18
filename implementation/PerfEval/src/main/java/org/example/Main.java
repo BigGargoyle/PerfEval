@@ -5,16 +5,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.example.GlobalVariables.CLICommands;
-import org.example.GlobalVariables.CLIFlags;
-import org.example.GlobalVariables.FileNames;
-import org.example.ResultDatabase.CacheDatabase;
-import org.example.ResultDatabase.IDatabase;
+import org.example.globalVariables.CLICommands;
+import org.example.globalVariables.CLIFlags;
+import org.example.globalVariables.FileNames;
+import org.example.resultDatabase.CacheDatabase;
+import org.example.resultDatabase.IDatabase;
 import org.example.perfevalCLIEvaluator.PerfEvalEvaluator;
 import org.example.perfevalConfig.ConfigManager;
 import org.example.perfevalGraphicalEvaluator.GraphicalEvaluator;
 import org.example.perfevalInit.PerfEvalInitializer;
-import org.example.GlobalVariables.ExitCode;
+import org.example.globalVariables.ExitCode;
 
 public class Main {
     public static void main(String[] args) {

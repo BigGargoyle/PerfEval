@@ -1,7 +1,7 @@
 package PerformanceComparatorTests;
 
-import org.example.MeasurementFactory.UniversalTimeUnit;
-import org.example.PerformanceComparatorFactory.*;
+import org.example.measurementFactory.UniversalTimeUnit;
+import org.example.performanceComparatorFactory.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
