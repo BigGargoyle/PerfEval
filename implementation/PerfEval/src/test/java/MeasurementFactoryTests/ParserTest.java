@@ -16,7 +16,7 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/MyBenchmarks.SortingAlgorithms-report.json";
 
-        IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(fileName);
+        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(fileName);
 
         assertSame(BenchmarkDotNetJSONParser.class, parser.getClass());
     }
@@ -25,8 +25,8 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/Sorting1.json";
         int countOfTestInFile = 2;
-        IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(fileName);
-        List<IMeasurement> measurements = parser.GetTestsFromFile(fileName);
+        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(fileName);
+        List<IMeasurement> measurements = parser.getTestsFromFile(fileName);
 
         assertEquals(2, measurements.size());
     }
@@ -35,7 +35,7 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/resultJMH.json";
 
-        IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(fileName);
+        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(fileName);
 
         assertSame(JMHJSONParser.class, parser.getClass());
     }
@@ -44,7 +44,7 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/unknownFileType";
 
-        IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(fileName);
+        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(fileName);
 
         assertNull(parser);
     }

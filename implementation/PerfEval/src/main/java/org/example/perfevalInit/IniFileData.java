@@ -16,13 +16,13 @@ public class IniFileData {
 
     public IniFileData(boolean readFromFile) {
         if (readFromFile) {
-            ReadDataFromIniFile();
+            readDataFromIniFile();
         } else {
-            SetDefaultData();
+            setDefaultData();
         }
     }
 
-    private void ReadDataFromIniFile() {
+    private void readDataFromIniFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.workingDirectory + "/" + GlobalVars.IniFileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -74,13 +74,13 @@ public class IniFileData {
             validConfig = false;
             return;
         }
-        if (maxTimeOnTest == null || maxTimeOnTest.GetNanoSeconds() < 0) validConfig = false;
+        if (maxTimeOnTest == null || maxTimeOnTest.getNanoSeconds() < 0) validConfig = false;
         else if (version == null) validConfig = false;
         else if (!(critValue > 0 && critValue < 1)) validConfig = false;
         else validConfig = maxCIWidth > 0 && maxCIWidth < 1;
     }
 
-    private void SetDefaultData() {
+    private void setDefaultData() {
         validConfig = true;
         gitFilePresence = (new File(GlobalVars.gitFileName)).exists();
         maxTimeOnTest = GlobalVars.defaultMaxTimeOnTest;
@@ -89,7 +89,7 @@ public class IniFileData {
         version = GlobalVars.UnknownVersion;
     }
 
-    public static boolean CreateNewIniFile(IniFileData iniFileData) {
+    public static boolean createNewIniFile(IniFileData iniFileData) {
         boolean result;
         if (!iniFileData.validConfig)
             return false;
@@ -101,7 +101,7 @@ public class IniFileData {
             if (!file.createNewFile()) {
                 return false;
             }
-            result = WriteIniFileContent(iniFileData, file);
+            result = writeIniFileContent(iniFileData, file);
 
         } catch (IOException | SecurityException e) {
             return false;
@@ -109,13 +109,13 @@ public class IniFileData {
         return result;
     }
 
-    private static boolean WriteIniFileContent(IniFileData fileData, File file) {
+    private static boolean writeIniFileContent(IniFileData fileData, File file) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(GlobalVars.critValueSign + GlobalVars.ColumnDelimiter + fileData.critValue);
             writer.newLine();
             writer.write(GlobalVars.maxCIWidthSign + GlobalVars.ColumnDelimiter + fileData.maxCIWidth);
             writer.newLine();
-            writer.write(GlobalVars.maxTimeOnTestSign + GlobalVars.ColumnDelimiter + fileData.maxTimeOnTest.GetNanoSeconds());
+            writer.write(GlobalVars.maxTimeOnTestSign + GlobalVars.ColumnDelimiter + fileData.maxTimeOnTest.getNanoSeconds());
             writer.newLine();
             if (fileData.gitFilePresence)
                 writer.write(GlobalVars.gitSign + GlobalVars.ColumnDelimiter + GlobalVars.TrueString);

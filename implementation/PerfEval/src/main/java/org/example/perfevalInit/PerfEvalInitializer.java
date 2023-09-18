@@ -19,7 +19,7 @@ public class PerfEvalInitializer {
             directoryExistsOrCreate(GlobalVars.perfevalDir);
 
             IniFileData iniFileData = new IniFileData(false);
-            boolean success = IniFileData.CreateNewIniFile(iniFileData);
+            boolean success = IniFileData.createNewIniFile(iniFileData);
 
             BufferedWriter helpFile = new BufferedWriter(new FileWriter(GlobalVars.workingDirectory+"/"+GlobalVars.helpFileName));
             success = success & writeHelpFileContent(helpFile);

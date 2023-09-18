@@ -8,17 +8,17 @@ import java.util.List;
  */
 public class AlwaysDifferentComparator implements IPerformanceComparator {
     @Override
-    public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
+    public ComparisonResult compareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
         return ComparisonResult.DifferentDistribution;
     }
 
     @Override
-    public ComparisonResult GetLastComparisonResult() {
+    public ComparisonResult getLastComparisonResult() {
         return ComparisonResult.DifferentDistribution;
     }
 
     @Override
-    public int GetMinSampleCount() {
+    public int getMinSampleCount() {
         return 0;
     }
 }

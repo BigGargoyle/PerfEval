@@ -25,13 +25,13 @@ public class CacheDatabase implements IDatabase {
     final PriorityQueue<DatabaseItem> databaseCache;
 
     public CacheDatabase() {
-        databaseCache = CreatePriorityQueueFromFile(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseCacheFileName, maxCountOfItemsInCache);
+        databaseCache = createPriorityQueueFromFile(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseCacheFileName, maxCountOfItemsInCache);
     }
 
-    private void UpdateDatabaseCache() {
+    private void updateDatabaseCache() {
         try (FileWriter writer = new FileWriter(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseCacheFileName)) {
             for (DatabaseItem item : databaseCache) {
-                String line = DatabaseItemToString(item) + System.lineSeparator();
+                String line = databaseItemToString(item) + System.lineSeparator();
                 writer.write(line);
             }
             writer.flush();
@@ -41,12 +41,12 @@ public class CacheDatabase implements IDatabase {
     }
 
 
-    static private PriorityQueue<DatabaseItem> CreatePriorityQueueFromFile(String fileName, int countOfItemsInQueue) {
+    static private PriorityQueue<DatabaseItem> createPriorityQueueFromFile(String fileName, int countOfItemsInQueue) {
         PriorityQueue<DatabaseItem> maxHeap = new PriorityQueue<>(Comparator.comparing(DatabaseItem::dateOfCreation));
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                DatabaseItem item = ParseDatabaseLine(line);
+                DatabaseItem item = parseDatabaseLine(line);
                 if (item == null) continue;
                 if (maxHeap.size() <= countOfItemsInQueue)
                     maxHeap.add(item);
@@ -64,12 +64,12 @@ public class CacheDatabase implements IDatabase {
     }
 
     @Override
-    public String[] GetLastNResults(int n) {
+    public String[] getLastNResults(int n) {
         PriorityQueue<DatabaseItem> maxHeap;
         if (n > databaseCache.size())
-            maxHeap = CreatePriorityQueueFromFile(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseFileName, n);
+            maxHeap = createPriorityQueueFromFile(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseFileName, n);
         else {
-            maxHeap = GetLastNResultsFromCache(n);
+            maxHeap = getLastNResultsFromCache(n);
         }
 
         if (maxHeap == null || maxHeap.size() < n) return null;
@@ -85,7 +85,7 @@ public class CacheDatabase implements IDatabase {
         return result;
     }
 
-    private PriorityQueue<DatabaseItem> GetLastNResultsFromCache(int n) {
+    private PriorityQueue<DatabaseItem> getLastNResultsFromCache(int n) {
         PriorityQueue<DatabaseItem> result = new PriorityQueue<>(Comparator.comparing(DatabaseItem::dateOfCreation));
         DatabaseItem[] lastItems = new DatabaseItem[n];
         for (int i = 0; i < lastItems.length; i++) {
@@ -99,37 +99,37 @@ public class CacheDatabase implements IDatabase {
     }
 
     @Override
-    public boolean AddFile(String fileName) {
-        boolean result = AddFileToDatabase(fileName);
-        if (result) UpdateDatabaseCache();
+    public boolean addFile(String fileName) {
+        boolean result = addFileToDatabase(fileName);
+        if (result) updateDatabaseCache();
         return result;
     }
 
-    private boolean AddFileToDatabase(String fileName) {
+    private boolean addFileToDatabase(String fileName) {
         File file = new File(fileName);
         if (!file.exists())
             return false;
 
-        if (HasUnknownTestFormat(fileName)) {
+        if (hasUnknownTestFormat(fileName)) {
             System.err.println("Unknown file format");
             return false;
         }
-        DatabaseItem item = CreateItemFromFileName(fileName);
+        DatabaseItem item = createItemFromFileName(fileName);
         if (item == null) return false;
 
-        TryAddItemToCache(item);
-        return AddItemToDatabase(item);
+        tryAddItemToCache(item);
+        return addItemToDatabase(item);
     }
 
-    static boolean HasUnknownTestFormat(String filePath) {
-        IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(filePath);
+    static boolean hasUnknownTestFormat(String filePath) {
+        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(filePath);
         return parser == null;
     }
 
-    private boolean AddItemToDatabase(DatabaseItem item) {
+    private boolean addItemToDatabase(DatabaseItem item) {
         try {
             FileWriter database = new FileWriter(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseFileName, true);
-            database.append(DatabaseItemToString(item)).append(System.lineSeparator());
+            database.append(databaseItemToString(item)).append(System.lineSeparator());
             database.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -138,7 +138,7 @@ public class CacheDatabase implements IDatabase {
         return true;
     }
 
-    private void TryAddItemToCache(DatabaseItem item) {
+    private void tryAddItemToCache(DatabaseItem item) {
         if (databaseCache.size() < maxCountOfItemsInCache) {
             databaseCache.add(item);
             return;
@@ -150,7 +150,7 @@ public class CacheDatabase implements IDatabase {
         }
     }
 
-    private DatabaseItem CreateItemFromFileName(String fileName) {
+    private DatabaseItem createItemFromFileName(String fileName) {
         Path path = Paths.get(fileName);
         Date date;
         try {
@@ -160,15 +160,15 @@ public class CacheDatabase implements IDatabase {
             //e.printStackTrace();
             return null;
         }
-        String version = ResolveVersion(date);
+        String version = resolveVersion(date);
         return new DatabaseItem(path.toAbsolutePath().toString(), date, version);
     }
 
     @Override
-    public boolean AddFilesFromDir(String dirName) {
-        boolean result = AddFilesFromDirDFS(new File(dirName));
+    public boolean addFilesFromDir(String dirName) {
+        boolean result = addFilesFromDirDFS(new File(dirName));
         // result == false does not mean that no item was added -> ~~~if(result)~~~
-        UpdateDatabaseCache();
+        updateDatabaseCache();
         return result;
         // return false;
     }
@@ -177,7 +177,7 @@ public class CacheDatabase implements IDatabase {
      * @param fileOrDir path to a file that is meant to be added to database or to a directory inside which there are files (benchmark results) searched
      * @return true - if adding was always successful, false - otherwise
      */
-    boolean AddFilesFromDirDFS(File fileOrDir) {
+    boolean addFilesFromDirDFS(File fileOrDir) {
 
         //File file = new File(dirName);
 
@@ -186,12 +186,12 @@ public class CacheDatabase implements IDatabase {
             if (files == null) return false;
             boolean result = true;
             for (var fileInDir : files) {
-                result = result & AddFilesFromDirDFS(fileInDir);
+                result = result & addFilesFromDirDFS(fileInDir);
             }
             return result;
         }
         if (Files.isRegularFile(fileOrDir.toPath())) {
-            return AddFileToDatabase(fileOrDir.toPath().toAbsolutePath().toString());
+            return addFileToDatabase(fileOrDir.toPath().toAbsolutePath().toString());
         }
         return true;
     }
@@ -200,7 +200,7 @@ public class CacheDatabase implements IDatabase {
      * @param line line from a database file
      * @return an instance of a DatabaseItem which was created from the line
      */
-    static DatabaseItem ParseDatabaseLine(String line) {
+    static DatabaseItem parseDatabaseLine(String line) {
         String[] splittedLine = line.split(GlobalVars.ColumnDelimiter);
         if (splittedLine.length >= 4 && splittedLine[0].compareTo(GlobalVars.DatabaseItemIdentifier) != 0)
             return null;
@@ -218,7 +218,7 @@ public class CacheDatabase implements IDatabase {
      * @param databaseItem creating a database file line from an instance of DatabaseItem
      * @return database file line
      */
-    static String DatabaseItemToString(DatabaseItem databaseItem) {
+    static String databaseItemToString(DatabaseItem databaseItem) {
         String result = GlobalVars.DatabaseItemIdentifier + GlobalVars.ColumnDelimiter;
         result += databaseItem.path() + GlobalVars.ColumnDelimiter;
         result += DateFormat.format(databaseItem.dateOfCreation()) + GlobalVars.ColumnDelimiter;
@@ -229,7 +229,7 @@ public class CacheDatabase implements IDatabase {
     /**
      * @return version of software to which the new database file belongs to
      */
-    String ResolveVersion(Date dateOfCreation) {
+    String resolveVersion(Date dateOfCreation) {
         IniFileData configData = new IniFileData(true);
         if (!configData.validConfig) {
             return GlobalVars.UnknownVersion;

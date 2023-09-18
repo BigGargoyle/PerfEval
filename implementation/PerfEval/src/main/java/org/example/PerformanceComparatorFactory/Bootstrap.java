@@ -32,7 +32,7 @@ public class Bootstrap {
             for (int j = 0; j < basicSample.size(); j++) {
                 Random rand = new Random();
                 UniversalTimeUnit randomElement = basicSample.get(rand.nextInt(basicSample.size()));
-                tempStat.addValue(randomElement.GetNanoSeconds());
+                tempStat.addValue(randomElement.getNanoSeconds());
             }
             result[i] = tempStat.getMean();
         }

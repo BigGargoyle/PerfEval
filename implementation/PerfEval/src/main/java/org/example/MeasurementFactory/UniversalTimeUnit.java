@@ -37,7 +37,7 @@ public class UniversalTimeUnit {
      * @param timeUnit TimeUnit of the value
      */
     public UniversalTimeUnit(long value, TimeUnit timeUnit) {
-        SetTime(value, timeUnit);
+        setTime(value, timeUnit);
     }
 
     /**
@@ -46,15 +46,15 @@ public class UniversalTimeUnit {
      * @param value    Length of time interval that the new instance of TimeUnit will be representing
      * @param timeUnit TimeUnit of the value
      */
-    public void SetTime(long value, TimeUnit timeUnit) {
+    public void setTime(long value, TimeUnit timeUnit) {
         switch (timeUnit) {
             case NANOSECONDS -> nanoseconds = value;
-            case MICROSECONDS -> SetTime(value * ONE_THOUSAND, TimeUnit.NANOSECONDS);
-            case MILLISECONDS -> SetTime(value * ONE_THOUSAND, TimeUnit.MICROSECONDS);
-            case SECONDS -> SetTime(value * ONE_THOUSAND, TimeUnit.MILLISECONDS);
-            case MINUTES -> SetTime(value * SIXTY, TimeUnit.SECONDS);
-            case HOURS -> SetTime(value * SIXTY, TimeUnit.MINUTES);
-            case DAYS -> SetTime(value * TWENTY_FOUR, TimeUnit.HOURS);
+            case MICROSECONDS -> setTime(value * ONE_THOUSAND, TimeUnit.NANOSECONDS);
+            case MILLISECONDS -> setTime(value * ONE_THOUSAND, TimeUnit.MICROSECONDS);
+            case SECONDS -> setTime(value * ONE_THOUSAND, TimeUnit.MILLISECONDS);
+            case MINUTES -> setTime(value * SIXTY, TimeUnit.SECONDS);
+            case HOURS -> setTime(value * SIXTY, TimeUnit.MINUTES);
+            case DAYS -> setTime(value * TWENTY_FOUR, TimeUnit.HOURS);
         }
     }
 
@@ -64,28 +64,28 @@ public class UniversalTimeUnit {
      * @param timeUnit TimeUnit of returned value
      * @return length of time interval that this instance is representing in the TimeUnit time unit
      */
-    public long GetTime(TimeUnit timeUnit) {
+    public long getTime(TimeUnit timeUnit) {
         switch (timeUnit) {
             case NANOSECONDS -> {
                 return nanoseconds;
             }
             case MICROSECONDS -> {
-                return GetTime(TimeUnit.NANOSECONDS) / ONE_THOUSAND;
+                return getTime(TimeUnit.NANOSECONDS) / ONE_THOUSAND;
             }
             case MILLISECONDS -> {
-                return GetTime(TimeUnit.MICROSECONDS) / ONE_THOUSAND;
+                return getTime(TimeUnit.MICROSECONDS) / ONE_THOUSAND;
             }
             case SECONDS -> {
-                return GetTime(TimeUnit.MILLISECONDS) / ONE_THOUSAND;
+                return getTime(TimeUnit.MILLISECONDS) / ONE_THOUSAND;
             }
             case MINUTES -> {
-                return GetTime(TimeUnit.SECONDS) / SIXTY;
+                return getTime(TimeUnit.SECONDS) / SIXTY;
             }
             case HOURS -> {
-                return GetTime(TimeUnit.MINUTES) / SIXTY;
+                return getTime(TimeUnit.MINUTES) / SIXTY;
             }
             case DAYS -> {
-                return GetTime(TimeUnit.HOURS) / TWENTY_FOUR;
+                return getTime(TimeUnit.HOURS) / TWENTY_FOUR;
             }
         }
         return -1;
@@ -94,49 +94,49 @@ public class UniversalTimeUnit {
     /**
      * @return time value represented by this instance in nanoseconds
      */
-    public long GetNanoSeconds() {
-        return GetTime(TimeUnit.NANOSECONDS);
+    public long getNanoSeconds() {
+        return getTime(TimeUnit.NANOSECONDS);
     }
 
     /**
      * @return time value represented by this instance in microseconds
      */
-    public long GetMicroSeconds() {
-        return GetTime(TimeUnit.MICROSECONDS);
+    public long getMicroSeconds() {
+        return getTime(TimeUnit.MICROSECONDS);
     }
 
     /**
      * @return time value represented by this instance in milliseconds
      */
-    public long GetMilliSeconds() {
-        return GetTime(TimeUnit.MILLISECONDS);
+    public long getMilliSeconds() {
+        return getTime(TimeUnit.MILLISECONDS);
     }
 
     /**
      * @return time value represented by this instance in seconds
      */
-    public long GetSeconds() {
-        return GetTime(TimeUnit.SECONDS);
+    public long getSeconds() {
+        return getTime(TimeUnit.SECONDS);
     }
 
     /**
      * @return time value represented by this instance in minutes
      */
-    public long GetMinutes() {
-        return GetTime(TimeUnit.MINUTES);
+    public long getMinutes() {
+        return getTime(TimeUnit.MINUTES);
     }
 
     /**
      * @return time value represented by this instance in hours
      */
-    public long GetHours() {
-        return GetTime(TimeUnit.HOURS);
+    public long getHours() {
+        return getTime(TimeUnit.HOURS);
     }
 
     /**
      * @return time value represented by this instance in days
      */
-    public long GetDays() {
-        return GetTime(TimeUnit.DAYS);
+    public long getDays() {
+        return getTime(TimeUnit.DAYS);
     }
 }

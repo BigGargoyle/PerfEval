@@ -25,12 +25,12 @@ public class DumbDatabase implements IDatabase {
     static final SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
 
     @Override
-    public String[] GetLastNResults(int n) {
+    public String[] getLastNResults(int n) {
         PriorityQueue<DatabaseItem> maxHeap = new PriorityQueue<>(Comparator.comparing(DatabaseItem::dateOfCreation));
         try (BufferedReader reader = new BufferedReader(new FileReader(DatabaseFileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                DatabaseItem item = ParseDatabaseLine(line);
+                DatabaseItem item = parseDatabaseLine(line);
                 if (item == null) continue;
                 if (maxHeap.size() <= n)
                     maxHeap.add(item);
@@ -56,7 +56,7 @@ public class DumbDatabase implements IDatabase {
     }
 
     @Override
-    public boolean AddFile(String fileName) {
+    public boolean addFile(String fileName) {
         File file = new File(fileName);
         if (!file.exists())
             return false;
@@ -72,18 +72,18 @@ public class DumbDatabase implements IDatabase {
             return false;
         }
 
-        if(HasUnknownTestFormat(path.toString())){
+        if(hasUnknownTestFormat(path.toString())){
             System.err.println("Unknown file format");
             return false;
         }
 
-        String version = ResolveVersion();
+        String version = resolveVersion();
         DatabaseItem item = new DatabaseItem(path.toString(), date, version);
 
 
         try {
             FileWriter database = new FileWriter(DatabaseFileName, true);
-            database.append(DatabaseItemToString(item)).append(System.lineSeparator());
+            database.append(databaseItemToString(item)).append(System.lineSeparator());
             database.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,14 +93,14 @@ public class DumbDatabase implements IDatabase {
         return true;
     }
 
-    static boolean HasUnknownTestFormat(String filePath){
-        IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(filePath);
+    static boolean hasUnknownTestFormat(String filePath){
+        IMeasurementParser parser = ParserIndustry.recognizeParserFactory(filePath);
         return parser == null;
     }
 
     @Override
-    public boolean AddFilesFromDir(String dirName) {
-        return AddFilesFromDirDFS(new File(dirName));
+    public boolean addFilesFromDir(String dirName) {
+        return addFilesFromDirDFS(new File(dirName));
         // return false;
     }
 
@@ -109,7 +109,7 @@ public class DumbDatabase implements IDatabase {
      * @param fileOrDir path to a file that is meant to be added to database or to a directory inside which there are files (benchmark results) searched
      * @return true - if adding was always successful, false - otherwise
      */
-    boolean AddFilesFromDirDFS(File fileOrDir) {
+    boolean addFilesFromDirDFS(File fileOrDir) {
 
         //File file = new File(dirName);
 
@@ -118,12 +118,12 @@ public class DumbDatabase implements IDatabase {
             if (files == null) return false;
             boolean result = true;
             for (var fileInDir : files) {
-                result = result & AddFilesFromDirDFS(fileInDir);
+                result = result & addFilesFromDirDFS(fileInDir);
             }
             return result;
         }
         if (Files.isRegularFile(fileOrDir.toPath())) {
-            return AddFile(fileOrDir.toPath().toString());
+            return addFile(fileOrDir.toPath().toString());
         }
         return true;
     }
@@ -133,7 +133,7 @@ public class DumbDatabase implements IDatabase {
      * @param line line from a database file
      * @return an instance of a DatabaseItem which was created from the line
      */
-    DatabaseItem ParseDatabaseLine(String line) {
+    DatabaseItem parseDatabaseLine(String line) {
         String[] splittedLine = line.split("\t");
         if (splittedLine.length >= 4 && splittedLine[0].compareTo(DatabaseItemIdentifier) != 0)
             return null;
@@ -152,7 +152,7 @@ public class DumbDatabase implements IDatabase {
      * @param databaseItem creating a database file line from an instance of DatabaseItem
      * @return database file line
      */
-    String DatabaseItemToString(DatabaseItem databaseItem) {
+    String databaseItemToString(DatabaseItem databaseItem) {
         String result = DatabaseItemIdentifier + DatabaseColumnSeparator;
         result += databaseItem.path() + DatabaseColumnSeparator;
         result += DateFormat.format(databaseItem.dateOfCreation()) + DatabaseColumnSeparator;
@@ -164,7 +164,7 @@ public class DumbDatabase implements IDatabase {
      *
      * @return version of software to which the new database file belongs to
      */
-    String ResolveVersion() {
+    String resolveVersion() {
         // TODO: implementation of git Version
         String version = "1234";
 

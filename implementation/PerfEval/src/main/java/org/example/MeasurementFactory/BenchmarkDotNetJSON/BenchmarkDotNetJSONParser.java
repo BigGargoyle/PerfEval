@@ -12,7 +12,7 @@ import org.example.MeasurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.*;
  */
 public class BenchmarkDotNetJSONParser implements IMeasurementParser {
     Long timestamp = null;
-    public List<IMeasurement> GetTestsFromFile(String fileName){
+    public List<IMeasurement> getTestsFromFile(String fileName){
         List<IMeasurement> result = new ArrayList<>();
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();

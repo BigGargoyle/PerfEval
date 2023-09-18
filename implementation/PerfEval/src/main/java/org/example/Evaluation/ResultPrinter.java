@@ -16,11 +16,11 @@ public class ResultPrinter {
      * @param measurementComparisonResults list of IComparisonResults to be printed
      * @param printStream                  PrintStream to print result to
      */
-    public static void TablePrinter(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream) {
-        String[] tableHeader = CreateComparisonTableHeader();
+    public static void tablePrinter(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream) {
+        String[] tableHeader = createComparisonTableHeader();
         String[][] tableData = new String[measurementComparisonResults.size()][];
         for (int i = 0; i < measurementComparisonResults.size(); i++) {
-            tableData[i] = MeasurementComparisonToTableRow(measurementComparisonResults.get(i));
+            tableData[i] = measurementComparisonToTableRow(measurementComparisonResults.get(i));
         }
 
         TextTable table = new TextTable(tableHeader, tableData);
@@ -32,7 +32,7 @@ public class ResultPrinter {
      *
      * @return header row of the table of results
      */
-    private static String[] CreateComparisonTableHeader() {
+    private static String[] createComparisonTableHeader() {
         String[] tableRow = new String[6];
         tableRow[0] = ("Name");
         tableRow[1] = ("NewAverage");
@@ -50,7 +50,7 @@ public class ResultPrinter {
      * @param comparisonResult result of comparison
      * @return table row with info about comparisonResult
      */
-    private static String[] MeasurementComparisonToTableRow(IMeasurementComparisonResult comparisonResult) {
+    private static String[] measurementComparisonToTableRow(IMeasurementComparisonResult comparisonResult) {
         String[] tableRow = new String[8];
 
         tableRow[0] = (comparisonResult.getName());
@@ -83,7 +83,7 @@ public class ResultPrinter {
     public static void JSONPrinter(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream) {
         List<MeasurementComparisonResultView> measurementComparisonResultViews = new ArrayList<>();
         for (IMeasurementComparisonResult comparisonResult : measurementComparisonResults) {
-            var measurementComparisonResultView = ConvertIMeasurementComparisonResult(comparisonResult);
+            var measurementComparisonResultView = convertIMeasurementComparisonResult(comparisonResult);
             measurementComparisonResultViews.add(measurementComparisonResultView);
         }
         var objectMapper = new ObjectMapper();
@@ -101,7 +101,7 @@ public class ResultPrinter {
      * @param comparisonResult An instance of IMeasurementComparisonResult for which is an instance of MeasurementComparisonResultView constructed
      * @return an instance of MeasurementComparisonResultView
      */
-    public static MeasurementComparisonResultView ConvertIMeasurementComparisonResult(IMeasurementComparisonResult comparisonResult) {
+    public static MeasurementComparisonResultView convertIMeasurementComparisonResult(IMeasurementComparisonResult comparisonResult) {
         return new MeasurementComparisonResultView(comparisonResult);
     }
 
@@ -111,10 +111,10 @@ public class ResultPrinter {
      * @param measurementComparisonResults list from which are printed names and minimum sample counts of undecided tests
      * @param printStream                  PrintStream to print undecided results to
      */
-    public static void PrintUndecided(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream) {
+    public static void printUndecided(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream) {
         for (IMeasurementComparisonResult comparisonResult : measurementComparisonResults) {
             if (comparisonResult.getComparisonResult() == ComparisonResult.NotEnoughSamples) {
-                PrintUndecidedComparisonResult(comparisonResult, printStream);
+                printUndecidedComparisonResult(comparisonResult, printStream);
             }
         }
     }
@@ -125,7 +125,7 @@ public class ResultPrinter {
      * @param comparisonResult an instance of undecided test comparison result (IMeasurementComparisonResult)
      * @param printStream      PrintStream to print undecided result to
      */
-    private static void PrintUndecidedComparisonResult(IMeasurementComparisonResult comparisonResult, PrintStream printStream) {
+    private static void printUndecidedComparisonResult(IMeasurementComparisonResult comparisonResult, PrintStream printStream) {
         String name = comparisonResult.getName();
         int minSampleCount = comparisonResult.getMinSampleCount();
         printStream.println(name + GlobalVars.ColumnDelimiter + minSampleCount);

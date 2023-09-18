@@ -2,7 +2,7 @@ package org.example.perfevalGraphicalEvaluator;
 
 public class GraphicalEvaluator {
 
-    public static boolean EvaluateGraphical(String[] args){
+    public static boolean evaluateGraphical(String[] args){
 
         return false;
     }

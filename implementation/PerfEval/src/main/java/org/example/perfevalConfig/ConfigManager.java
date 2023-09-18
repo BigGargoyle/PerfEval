@@ -17,7 +17,7 @@ public class ConfigManager {
     public static final String checkGitParam = "--check-git";
     public static final String equalSign = "=";
 
-    public static boolean Config(String[] args) {
+    public static boolean config(String[] args) {
 
         if (args[2] == null) return false;
 
@@ -62,7 +62,7 @@ public class ConfigManager {
     private static boolean setVersion(String[] params, IniFileData iniFileData) {
         if (params == null || params.length < 2 || params[1] == null) return false;
         iniFileData.version = params[1];
-        return IniFileData.CreateNewIniFile(iniFileData);
+        return IniFileData.createNewIniFile(iniFileData);
     }
 
     private static boolean setCIWidth(String[] params, IniFileData iniFileData) {
@@ -75,7 +75,7 @@ public class ConfigManager {
         }
         if (CIWidth <= 0 || CIWidth >= 1) return false;
         iniFileData.maxCIWidth = CIWidth;
-        return IniFileData.CreateNewIniFile(iniFileData);
+        return IniFileData.createNewIniFile(iniFileData);
     }
 
     private static boolean setCritValue(String[] params, IniFileData iniFileData) {
@@ -88,7 +88,7 @@ public class ConfigManager {
         }
         if (critValue <= 0 || critValue >= 1) return false;
         iniFileData.critValue = critValue;
-        return IniFileData.CreateNewIniFile(iniFileData);
+        return IniFileData.createNewIniFile(iniFileData);
     }
     private static boolean setMaxTimeOnTest(String[] params, IniFileData iniFileData){
         if (params == null || params.length < 2 || params[1] == null) return false;
@@ -103,11 +103,11 @@ public class ConfigManager {
             return false;
         }
         iniFileData.maxTimeOnTest = newTime;
-        return IniFileData.CreateNewIniFile(iniFileData);
+        return IniFileData.createNewIniFile(iniFileData);
     }
 
     private static boolean checkGitPresence(IniFileData iniFileData){
         iniFileData.gitFilePresence = new File(GlobalVars.gitFileName).exists();
-        return IniFileData.CreateNewIniFile(iniFileData);
+        return IniFileData.createNewIniFile(iniFileData);
     }
 }

@@ -4,7 +4,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.example.GlobalVars;
 import org.example.MeasurementFactory.BenchmarkDotNetJSON.BenchmarkDotNetJSONParser;
 import org.example.MeasurementFactory.JMHJSON.JMHJSONParser;
 /**
@@ -19,7 +18,7 @@ public class ParserIndustry {
      * @param fileName path to the file with benchmark test results
      * @return specialized Parser for that file
      */
-    public static IMeasurementParser RecognizeParserFactory(String fileName) {
+    public static IMeasurementParser recognizeParserFactory(String fileName) {
         List<String> lines;
         try {
             lines = Files.readAllLines(Paths.get(fileName));
@@ -30,7 +29,7 @@ public class ParserIndustry {
 
         String oneLine = String.join("", lines);
         if (oneLine.contains("\"BenchmarkDotNetVersion\"") && oneLine.contains("\"BenchmarkDotNetCaption\""))
-            return BenchmarkDotNetJSONParserFactory();
+            return benchmarkDotNetJSONParserFactory();
         if (oneLine.contains("\"jmhVersion\"") && oneLine.contains("\"benchmark\""))
             return JMHJSONParserFactory();
         return null;
@@ -39,7 +38,7 @@ public class ParserIndustry {
     /**
      * @return IMeasurementParser specialized for BenchmarkDotNet framework with result in JSON format
      */
-    static IMeasurementParser BenchmarkDotNetJSONParserFactory() {
+    static IMeasurementParser benchmarkDotNetJSONParserFactory() {
         return new BenchmarkDotNetJSONParser();
     }
 

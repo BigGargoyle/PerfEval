@@ -10,7 +10,7 @@ public class ComparatorIndustry {
      * @param maxTimeToTest              maximum amount of time for doing this benchmark test
      * @return the best implementation of IPerformanceComparator
      */
-    public static IPerformanceComparator GetComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest) {
+    public static IPerformanceComparator getComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest) {
         return new BootstrapPerformanceComparator(pValue, maxConfidenceIntervalWidth, maxTimeToTest);
     }
 
@@ -23,7 +23,7 @@ public class ComparatorIndustry {
      *                                      if value ComparisonResult.None is inserted then it will return normal implementation of IPerformanceComparator
      * @return the best implementation of IPerformanceComparator
      */
-    public static IPerformanceComparator GetComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest, ComparisonResult preferredComparisonResultType) {
+    public static IPerformanceComparator getComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest, ComparisonResult preferredComparisonResultType) {
         switch (preferredComparisonResultType) {
             case SameDistribution -> {
                 return new AlwaysSameComparator();
@@ -38,7 +38,7 @@ public class ComparatorIndustry {
                 return new AlwaysBootstrapComparator();
             }
             case None -> {
-                return GetComparator(pValue, maxConfidenceIntervalWidth, maxTimeToTest);
+                return getComparator(pValue, maxConfidenceIntervalWidth, maxTimeToTest);
             }
         }
         return null;

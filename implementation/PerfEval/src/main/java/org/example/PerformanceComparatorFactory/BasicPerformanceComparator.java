@@ -21,7 +21,7 @@ public class BasicPerformanceComparator implements IPerformanceComparator {
     }
 
     @Override
-    public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
+    public ComparisonResult compareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
         if (oldSet == null || newSet == null || oldSet.size() == 0 || newSet.size() == 0) {
             // an error has occurred
             comparisonResult = ComparisonResult.None;
@@ -29,7 +29,7 @@ public class BasicPerformanceComparator implements IPerformanceComparator {
         }
 
         TTest tTest = new TTest();
-        double pValue = tTest.t(ListToStatistic(newSet), ListToStatistic(oldSet));
+        double pValue = tTest.t(listToStatistic(newSet), listToStatistic(oldSet));
         if (Math.abs(pValue) > criticalValue)
             comparisonResult = ComparisonResult.DifferentDistribution;
         else
@@ -37,21 +37,21 @@ public class BasicPerformanceComparator implements IPerformanceComparator {
         return comparisonResult;
     }
 
-    private SummaryStatistics ListToStatistic(List<UniversalTimeUnit> statSet) {
+    private SummaryStatistics listToStatistic(List<UniversalTimeUnit> statSet) {
         SummaryStatistics stats = new SummaryStatistics();
         for (UniversalTimeUnit value : statSet) {
-            stats.addValue(value.GetNanoSeconds());
+            stats.addValue(value.getNanoSeconds());
         }
         return stats;
     }
 
     @Override
-    public ComparisonResult GetLastComparisonResult() {
+    public ComparisonResult getLastComparisonResult() {
         return comparisonResult;
     }
 
     @Override
-    public int GetMinSampleCount() {
+    public int getMinSampleCount() {
         return -1;
     }
 }

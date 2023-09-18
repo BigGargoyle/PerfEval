@@ -10,17 +10,17 @@ import java.util.List;
 public class AlwaysBootstrapComparator implements IPerformanceComparator {
 
     @Override
-    public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
+    public ComparisonResult compareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
         return ComparisonResult.Bootstrap;
     }
 
     @Override
-    public ComparisonResult GetLastComparisonResult() {
+    public ComparisonResult getLastComparisonResult() {
         return ComparisonResult.Bootstrap;
     }
 
     @Override
-    public int GetMinSampleCount() {
+    public int getMinSampleCount() {
         return 0;
     }
 }

@@ -8,17 +8,17 @@ import java.util.List;
  */
 public class AlwaysNotEnoughSamplesComparator implements IPerformanceComparator {
     @Override
-    public ComparisonResult CompareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
+    public ComparisonResult compareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
         return ComparisonResult.NotEnoughSamples;
     }
 
     @Override
-    public ComparisonResult GetLastComparisonResult() {
+    public ComparisonResult getLastComparisonResult() {
         return ComparisonResult.NotEnoughSamples;
     }
 
     @Override
-    public int GetMinSampleCount() {
+    public int getMinSampleCount() {
         return 0;
     }
 }

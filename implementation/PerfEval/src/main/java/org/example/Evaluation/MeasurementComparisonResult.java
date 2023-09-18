@@ -13,7 +13,7 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
     private final double oldAverage;
     private final double performanceChange;
     // private ComparisonResult comparisonResult;
-    private final boolean TestVerdict;
+    private final boolean testVerdict;
     private final IPerformanceComparator performanceComparator;
     private final IMeasurement oldMeasurement;
     private final IMeasurement newMeasurement;
@@ -40,17 +40,17 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
 
     @Override
     public ComparisonResult getComparisonResult() {
-        return performanceComparator.GetLastComparisonResult();
+        return performanceComparator.getLastComparisonResult();
     }
 
     @Override
     public boolean getComparisonVerdict() {
-        return TestVerdict;
+        return testVerdict;
     }
 
     @Override
     public int getMinSampleCount() {
-        return performanceComparator.GetMinSampleCount();
+        return performanceComparator.getMinSampleCount();
     }
 
     @Override
@@ -78,24 +78,24 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
         newMeasurement = _newMeasurement;
         // performanceComparator = ComparatorIndustry.GetComparator(critValue, maxCIWidth, maxTestTime);
         performanceComparator = _performanceComparator;
-        performanceComparator.CompareSets(newMeasurement.getMeasuredTimes(), oldMeasurement.getMeasuredTimes());
-        newAverage = UniversalTimeAverage(newMeasurement.getMeasuredTimes());
-        oldAverage = UniversalTimeAverage(oldMeasurement.getMeasuredTimes());
+        performanceComparator.compareSets(newMeasurement.getMeasuredTimes(), oldMeasurement.getMeasuredTimes());
+        newAverage = universalTimeAverage(newMeasurement.getMeasuredTimes());
+        oldAverage = universalTimeAverage(oldMeasurement.getMeasuredTimes());
         performanceChange = 100 * oldAverage / newAverage - 100;
-        if (performanceComparator.GetLastComparisonResult() != ComparisonResult.Bootstrap)
-            TestVerdict = ResolveTestVerdict();
-        else TestVerdict = Bootstrap.Evaluate(newMeasurement.getMeasuredTimes(), oldMeasurement.getMeasuredTimes(),
-                critValue, performanceComparator.GetMinSampleCount());
+        if (performanceComparator.getLastComparisonResult() != ComparisonResult.Bootstrap)
+            testVerdict = resolveTestVerdict();
+        else testVerdict = Bootstrap.Evaluate(newMeasurement.getMeasuredTimes(), oldMeasurement.getMeasuredTimes(),
+                critValue, performanceComparator.getMinSampleCount());
     }
 
     /**
      * @param timeUnitList list of UniversalTimeUnits to compute average
      * @return average of nanoseconds of times from timeUnitList
      */
-    private static double UniversalTimeAverage(List<UniversalTimeUnit> timeUnitList) {
+    private static double universalTimeAverage(List<UniversalTimeUnit> timeUnitList) {
         long sum = 0;
         for (UniversalTimeUnit unit : timeUnitList) {
-            sum += unit.GetNanoSeconds();
+            sum += unit.getNanoSeconds();
         }
         return (double) sum / timeUnitList.size();
     }
@@ -103,11 +103,11 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
     /**
      * @return true if performance gone better or if is not significantly worse
      */
-    private boolean ResolveTestVerdict() {
+    private boolean resolveTestVerdict() {
 
         // Bootstrap state is missing because in case of bootstrap this method is not called
 
-        switch (performanceComparator.GetLastComparisonResult()) {
+        switch (performanceComparator.getLastComparisonResult()) {
             case SameDistribution -> {
                 return true;
             }
@@ -117,7 +117,7 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
             case NotEnoughSamples -> {
                 return false;
             }
-            default -> throw new IllegalStateException("Unexpected value: " + performanceComparator.GetLastComparisonResult());
+            default -> throw new IllegalStateException("Unexpected value: " + performanceComparator.getLastComparisonResult());
         }
     }
 }
