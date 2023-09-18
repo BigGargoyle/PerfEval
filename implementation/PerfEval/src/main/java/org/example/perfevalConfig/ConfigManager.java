@@ -1,6 +1,6 @@
 package org.example.perfevalConfig;
 
-import org.example.GlobalVars;
+import org.example.GlobalVariables.FileNames;
 import org.example.MeasurementFactory.UniversalTimeUnit;
 import org.example.perfevalInit.IniFileData;
 
@@ -107,7 +107,7 @@ public class ConfigManager {
     }
 
     private static boolean checkGitPresence(IniFileData iniFileData){
-        iniFileData.gitFilePresence = new File(GlobalVars.gitFileName).exists();
+        iniFileData.gitFilePresence = new File(FileNames.gitFileName).exists();
         return IniFileData.createNewIniFile(iniFileData);
     }
 }

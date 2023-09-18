@@ -3,7 +3,10 @@ package org.example.perfevalCLIEvaluator;
 import org.example.Evaluation.IMeasurementComparisonResult;
 import org.example.Evaluation.MeasurementComparisonResult;
 import org.example.Evaluation.ResultPrinter;
-import org.example.GlobalVars;
+import org.example.GlobalVariables.CLIFlags;
+import org.example.GlobalVariables.DBFlags;
+import org.example.GlobalVariables.ExitCode;
+import org.example.GlobalVariables.FileNames;
 import org.example.MeasurementFactory.IMeasurement;
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.ParserIndustry;
@@ -65,7 +68,7 @@ public class PerfEvalEvaluator {
         if (comparisonResults == null)
             return false;
 
-        if(contains(args, GlobalVars.filterParam)){
+        if(contains(args, CLIFlags.filterParam)){
             var tmp = filter(comparisonResults, args);
             if(tmp!=null)
                 comparisonResults = tmp;
@@ -73,7 +76,7 @@ public class PerfEvalEvaluator {
                 System.err.println("Unknown filter");
         }
 
-        if (contains(args, GlobalVars.jsonOutputFlag))
+        if (contains(args, CLIFlags.jsonOutputFlag))
             ResultPrinter.JSONPrinter(comparisonResults, System.out);
         else
             ResultPrinter.tablePrinter(comparisonResults, System.out);
@@ -86,7 +89,7 @@ public class PerfEvalEvaluator {
     private static List<IMeasurementComparisonResult> filter(List<IMeasurementComparisonResult> measurementComparisonResults, String[] args){
         String filterBy = null;
         for (int i = 0; i<args.length;i++){
-            if(args[i].contains(GlobalVars.filterParam)){
+            if(args[i].contains(CLIFlags.filterParam)){
                 if(args[i].contains(equalSign)){
                     String[] splitted = args[i].split(equalSign);
                     if(splitted.length<2) return null;
@@ -128,13 +131,10 @@ public class PerfEvalEvaluator {
     private static void setupExitCode(List<IMeasurementComparisonResult> comparisonResults) {
         for (IMeasurementComparisonResult comparisonResult : comparisonResults) {
             if (!comparisonResult.getComparisonVerdict()) {
-                // TODO: uncommnet
-                // System.exit(GlobalVars.atLeastOneWorseResultExitCode);
-                System.exit(GlobalVars.OKExitCode);
+                System.exit(ExitCode.atLeastOneWorseResult.getExitCode());
                 return;
             }
         }
-        System.exit(GlobalVars.OKExitCode);
     }
 
     /**
@@ -232,22 +232,22 @@ public class PerfEvalEvaluator {
      */
     private static ConfigData readConfigFromIniFile() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.workingDirectory
-                    + "/" + GlobalVars.IniFileName));
+            BufferedReader reader = new BufferedReader(new FileReader(FileNames.workingDirectory
+                    + "/" + FileNames.IniFileName));
             double critValue = 0;
             double CIWidth = 0;
             UniversalTimeUnit timeUnit = null;
 
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] splittedLine = line.split(GlobalVars.ColumnDelimiter);
-                if (splittedLine[0].compareTo(GlobalVars.critValueSign) == 0) {
+                String[] splittedLine = line.split(DBFlags.ColumnDelimiter);
+                if (splittedLine[0].compareTo(DBFlags.critValueSign) == 0) {
                     critValue = Double.parseDouble(splittedLine[1]);
                 }
-                if (splittedLine[0].compareTo(GlobalVars.maxCIWidthSign) == 0) {
+                if (splittedLine[0].compareTo(DBFlags.maxCIWidthSign) == 0) {
                     CIWidth = Double.parseDouble(splittedLine[1]);
                 }
-                if (splittedLine[0].compareTo(GlobalVars.maxTimeOnTestSign) == 0) {
+                if (splittedLine[0].compareTo(DBFlags.maxTimeOnTestSign) == 0) {
                     long nanoseconds = Long.parseLong(splittedLine[1]);
                     timeUnit = new UniversalTimeUnit(nanoseconds, TimeUnit.NANOSECONDS);
                 }

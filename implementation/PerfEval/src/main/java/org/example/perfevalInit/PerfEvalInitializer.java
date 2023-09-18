@@ -1,6 +1,6 @@
 package org.example.perfevalInit;
 
-import org.example.GlobalVars;
+import org.example.GlobalVariables.FileNames;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,17 +16,17 @@ public class PerfEvalInitializer {
     public static boolean InitPerfEval() {
         try {
 
-            directoryExistsOrCreate(GlobalVars.perfevalDir);
+            directoryExistsOrCreate(FileNames.perfevalDir);
 
             IniFileData iniFileData = new IniFileData(false);
             boolean success = IniFileData.createNewIniFile(iniFileData);
 
-            BufferedWriter helpFile = new BufferedWriter(new FileWriter(GlobalVars.workingDirectory+"/"+GlobalVars.helpFileName));
+            BufferedWriter helpFile = new BufferedWriter(new FileWriter(FileNames.workingDirectory+"/"+ FileNames.helpFileName));
             success = success & writeHelpFileContent(helpFile);
             helpFile.close();
 
-            success = success & forcefullyCreateNewFile(GlobalVars.DatabaseFileName);
-            success = success & forcefullyCreateNewFile(GlobalVars.DatabaseCacheFileName);
+            success = success & forcefullyCreateNewFile(FileNames.DatabaseFileName);
+            success = success & forcefullyCreateNewFile(FileNames.DatabaseCacheFileName);
 
             CreateGitIgnoreFile();
 
@@ -41,14 +41,14 @@ public class PerfEvalInitializer {
      * @return if dir was created
      */
     static boolean directoryExistsOrCreate(String dirName) {
-        File dir = new File(GlobalVars.workingDirectory, dirName);
+        File dir = new File(FileNames.workingDirectory, dirName);
         if (dir.exists())
             return false;
         return dir.mkdirs();
     }
 
     static boolean forcefullyCreateNewFile(String fileName) {
-        File file = new File(GlobalVars.workingDirectory, fileName);
+        File file = new File(FileNames.workingDirectory, fileName);
         try {
             if (file.exists() && !file.delete())
                 return false;
@@ -59,14 +59,14 @@ public class PerfEvalInitializer {
     }
 
     private static void CreateGitIgnoreFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(GlobalVars.workingDirectory + "/" + GlobalVars.gitIgnoreFileName))) {
-            writer.write(GlobalVars.DatabaseFileName.split("/")[1]);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FileNames.workingDirectory + "/" + FileNames.gitIgnoreFileName))) {
+            writer.write(FileNames.DatabaseFileName.split("/")[1]);
             writer.newLine();
-            writer.write(GlobalVars.DatabaseCacheFileName.split("/")[1]);
+            writer.write(FileNames.DatabaseCacheFileName.split("/")[1]);
             writer.newLine();
-            writer.write(GlobalVars.IniFileName.split("/")[1]);
+            writer.write(FileNames.IniFileName.split("/")[1]);
             writer.newLine();
-            writer.write(GlobalVars.helpFileName.split("/")[1]);
+            writer.write(FileNames.helpFileName.split("/")[1]);
             writer.newLine();
         } catch (IOException e) {
             System.err.println(".gitignore file cannot be created");

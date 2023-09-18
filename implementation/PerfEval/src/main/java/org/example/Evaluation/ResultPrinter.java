@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import dnl.utils.text.table.TextTable;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.example.GlobalVars;
+import org.example.GlobalVariables.DBFlags;
 import org.example.PerformanceComparatorFactory.ComparisonResult;
 
 public class ResultPrinter {
@@ -128,7 +128,7 @@ public class ResultPrinter {
     private static void printUndecidedComparisonResult(IMeasurementComparisonResult comparisonResult, PrintStream printStream) {
         String name = comparisonResult.getName();
         int minSampleCount = comparisonResult.getMinSampleCount();
-        printStream.println(name + GlobalVars.ColumnDelimiter + minSampleCount);
+        printStream.println(name + DBFlags.ColumnDelimiter + minSampleCount);
     }
 
 }

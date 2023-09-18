@@ -12,11 +12,11 @@ public class Bootstrap {
 
     //TODO: velmi velká čísla, UniversalTimeUnit je asi nevhodný pro tato porovnání ??? --> zmenšení rozptylu
     // nebo Bootstrap není dobře
-    public static boolean Evaluate(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet,
+    public static boolean evaluate(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet,
                                    double critValue, int minSampleCount) {
 
-        double[] sample1 = CreateBootstrapSample(newSet, minSampleCount);
-        double[] sample2 = CreateBootstrapSample(oldSet, minSampleCount);
+        double[] sample1 = createBootstrapSample(newSet, minSampleCount);
+        double[] sample2 = createBootstrapSample(oldSet, minSampleCount);
 
         TTest tTest = new TTest();
         double pValue = tTest.t(sample1, sample2);
@@ -24,7 +24,7 @@ public class Bootstrap {
         return !(Math.abs(pValue) > critValue);
     }
 
-    static double[] CreateBootstrapSample(List<UniversalTimeUnit> basicSample, int minSampleCount) {
+    static double[] createBootstrapSample(List<UniversalTimeUnit> basicSample, int minSampleCount) {
         int sampleSize = Math.max(DefaultBootstrapSampleSize, minSampleCount);
         double[] result = new double[sampleSize];
         for (int i = 0; i < sampleSize; i++) {

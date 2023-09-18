@@ -1,6 +1,9 @@
 package org.example.perfevalInit;
 
-import org.example.GlobalVars;
+import org.example.GlobalVariables.DBFlags;
+import org.example.GlobalVariables.DefaultIniValues;
+import org.example.GlobalVariables.FileNames;
+import org.example.GlobalVariables.StringConstants;
 import org.example.MeasurementFactory.UniversalTimeUnit;
 
 import java.io.*;
@@ -23,14 +26,14 @@ public class IniFileData {
     }
 
     private void readDataFromIniFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.workingDirectory + "/" + GlobalVars.IniFileName))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FileNames.workingDirectory + "/" + FileNames.IniFileName))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] splittedLine = line.split(GlobalVars.ColumnDelimiter);
+                String[] splittedLine = line.split(DBFlags.ColumnDelimiter);
                 if (splittedLine.length < 2) continue;
                 switch (splittedLine[0]) {
-                    case GlobalVars.gitSign -> gitFilePresence = splittedLine[1].compareTo(GlobalVars.TrueString) == 0;
-                    case GlobalVars.critValueSign -> {
+                    case DBFlags.gitSign -> gitFilePresence = splittedLine[1].compareTo(StringConstants.TrueString) == 0;
+                    case DBFlags.critValueSign -> {
                         try {
                             critValue = Double.parseDouble(splittedLine[1]);
                             if (critValue >= 1 || critValue <= 0) {
@@ -42,7 +45,7 @@ public class IniFileData {
                             return;
                         }
                     }
-                    case GlobalVars.maxCIWidthSign -> {
+                    case DBFlags.maxCIWidthSign -> {
                         try {
                             maxCIWidth = Double.parseDouble(splittedLine[1]);
                             if (maxCIWidth >= 1 || maxCIWidth <= 0) {
@@ -54,7 +57,7 @@ public class IniFileData {
                             return;
                         }
                     }
-                    case GlobalVars.maxTimeOnTestSign -> {
+                    case DBFlags.maxTimeOnTestSign -> {
                         try {
                             long nanoseconds = Long.parseLong(splittedLine[1]);
                             if (nanoseconds < 0) {
@@ -67,7 +70,7 @@ public class IniFileData {
                             return;
                         }
                     }
-                    case GlobalVars.versionSign -> version = splittedLine[1];
+                    case DBFlags.versionSign -> version = splittedLine[1];
                 }
             }
         } catch (IOException e) {
@@ -82,18 +85,18 @@ public class IniFileData {
 
     private void setDefaultData() {
         validConfig = true;
-        gitFilePresence = (new File(GlobalVars.gitFileName)).exists();
-        maxTimeOnTest = GlobalVars.defaultMaxTimeOnTest;
-        maxCIWidth = GlobalVars.defaultMaxCIWidth;
-        critValue = GlobalVars.defaultStatisticCritValue;
-        version = GlobalVars.UnknownVersion;
+        gitFilePresence = (new File(FileNames.gitFileName)).exists();
+        maxTimeOnTest = DefaultIniValues.defaultMaxTimeOnTest;
+        maxCIWidth = DefaultIniValues.defaultMaxCIWidth;
+        critValue = DefaultIniValues.defaultStatisticCritValue;
+        version = StringConstants.UnknownVersion;
     }
 
     public static boolean createNewIniFile(IniFileData iniFileData) {
         boolean result;
         if (!iniFileData.validConfig)
             return false;
-        File file = new File(GlobalVars.workingDirectory, GlobalVars.IniFileName);
+        File file = new File(FileNames.workingDirectory, FileNames.IniFileName);
         try {
             if (file.exists())
                 if (!file.delete())
@@ -111,18 +114,18 @@ public class IniFileData {
 
     private static boolean writeIniFileContent(IniFileData fileData, File file) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(GlobalVars.critValueSign + GlobalVars.ColumnDelimiter + fileData.critValue);
+            writer.write(DBFlags.critValueSign + DBFlags.ColumnDelimiter + fileData.critValue);
             writer.newLine();
-            writer.write(GlobalVars.maxCIWidthSign + GlobalVars.ColumnDelimiter + fileData.maxCIWidth);
+            writer.write(DBFlags.maxCIWidthSign + DBFlags.ColumnDelimiter + fileData.maxCIWidth);
             writer.newLine();
-            writer.write(GlobalVars.maxTimeOnTestSign + GlobalVars.ColumnDelimiter + fileData.maxTimeOnTest.getNanoSeconds());
+            writer.write(DBFlags.maxTimeOnTestSign + DBFlags.ColumnDelimiter + fileData.maxTimeOnTest.getNanoSeconds());
             writer.newLine();
             if (fileData.gitFilePresence)
-                writer.write(GlobalVars.gitSign + GlobalVars.ColumnDelimiter + GlobalVars.TrueString);
+                writer.write(DBFlags.gitSign + DBFlags.ColumnDelimiter + StringConstants.TrueString);
             else
-                writer.write(GlobalVars.gitSign + GlobalVars.ColumnDelimiter + GlobalVars.FalseString);
+                writer.write(DBFlags.gitSign + DBFlags.ColumnDelimiter + StringConstants.FalseString);
             writer.newLine();
-            writer.write(GlobalVars.versionSign + GlobalVars.ColumnDelimiter + fileData.version);
+            writer.write(DBFlags.versionSign + DBFlags.ColumnDelimiter + fileData.version);
             writer.newLine();
         } catch (IOException e) {
             return false;

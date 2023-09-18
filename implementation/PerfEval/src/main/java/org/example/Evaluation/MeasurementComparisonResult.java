@@ -84,7 +84,7 @@ public class MeasurementComparisonResult implements IMeasurementComparisonResult
         performanceChange = 100 * oldAverage / newAverage - 100;
         if (performanceComparator.getLastComparisonResult() != ComparisonResult.Bootstrap)
             testVerdict = resolveTestVerdict();
-        else testVerdict = Bootstrap.Evaluate(newMeasurement.getMeasuredTimes(), oldMeasurement.getMeasuredTimes(),
+        else testVerdict = Bootstrap.evaluate(newMeasurement.getMeasuredTimes(), oldMeasurement.getMeasuredTimes(),
                 critValue, performanceComparator.getMinSampleCount());
     }
 

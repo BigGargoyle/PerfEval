@@ -1,7 +1,9 @@
 package org.example.ResultDatabase;
 
 
-import org.example.GlobalVars;
+import org.example.GlobalVariables.DBFlags;
+import org.example.GlobalVariables.FileNames;
+import org.example.GlobalVariables.StringConstants;
 import org.example.MeasurementFactory.IMeasurementParser;
 import org.example.MeasurementFactory.ParserIndustry;
 import org.example.perfevalInit.IniFileData;
@@ -25,11 +27,11 @@ public class CacheDatabase implements IDatabase {
     final PriorityQueue<DatabaseItem> databaseCache;
 
     public CacheDatabase() {
-        databaseCache = createPriorityQueueFromFile(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseCacheFileName, maxCountOfItemsInCache);
+        databaseCache = createPriorityQueueFromFile(FileNames.workingDirectory+"/"+ FileNames.DatabaseCacheFileName, maxCountOfItemsInCache);
     }
 
     private void updateDatabaseCache() {
-        try (FileWriter writer = new FileWriter(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseCacheFileName)) {
+        try (FileWriter writer = new FileWriter(FileNames.workingDirectory+"/"+ FileNames.DatabaseCacheFileName)) {
             for (DatabaseItem item : databaseCache) {
                 String line = databaseItemToString(item) + System.lineSeparator();
                 writer.write(line);
@@ -67,7 +69,7 @@ public class CacheDatabase implements IDatabase {
     public String[] getLastNResults(int n) {
         PriorityQueue<DatabaseItem> maxHeap;
         if (n > databaseCache.size())
-            maxHeap = createPriorityQueueFromFile(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseFileName, n);
+            maxHeap = createPriorityQueueFromFile(FileNames.workingDirectory+"/"+ FileNames.DatabaseFileName, n);
         else {
             maxHeap = getLastNResultsFromCache(n);
         }
@@ -128,7 +130,7 @@ public class CacheDatabase implements IDatabase {
 
     private boolean addItemToDatabase(DatabaseItem item) {
         try {
-            FileWriter database = new FileWriter(GlobalVars.workingDirectory+"/"+GlobalVars.DatabaseFileName, true);
+            FileWriter database = new FileWriter(FileNames.workingDirectory+"/"+ FileNames.DatabaseFileName, true);
             database.append(databaseItemToString(item)).append(System.lineSeparator());
             database.close();
         } catch (IOException e) {
@@ -201,8 +203,8 @@ public class CacheDatabase implements IDatabase {
      * @return an instance of a DatabaseItem which was created from the line
      */
     static DatabaseItem parseDatabaseLine(String line) {
-        String[] splittedLine = line.split(GlobalVars.ColumnDelimiter);
-        if (splittedLine.length >= 4 && splittedLine[0].compareTo(GlobalVars.DatabaseItemIdentifier) != 0)
+        String[] splittedLine = line.split(DBFlags.ColumnDelimiter);
+        if (splittedLine.length >= 4 && splittedLine[0].compareTo(DBFlags.DatabaseItemIdentifier) != 0)
             return null;
         Date date;
         try {
@@ -219,9 +221,9 @@ public class CacheDatabase implements IDatabase {
      * @return database file line
      */
     static String databaseItemToString(DatabaseItem databaseItem) {
-        String result = GlobalVars.DatabaseItemIdentifier + GlobalVars.ColumnDelimiter;
-        result += databaseItem.path() + GlobalVars.ColumnDelimiter;
-        result += DateFormat.format(databaseItem.dateOfCreation()) + GlobalVars.ColumnDelimiter;
+        String result = DBFlags.DatabaseItemIdentifier + DBFlags.ColumnDelimiter;
+        result += databaseItem.path() + DBFlags.ColumnDelimiter;
+        result += DateFormat.format(databaseItem.dateOfCreation()) + DBFlags.ColumnDelimiter;
         result += databaseItem.version();
         return result;
     }
@@ -232,7 +234,7 @@ public class CacheDatabase implements IDatabase {
     String resolveVersion(Date dateOfCreation) {
         IniFileData configData = new IniFileData(true);
         if (!configData.validConfig) {
-            return GlobalVars.UnknownVersion;
+            return StringConstants.UnknownVersion;
         }
         if (!configData.gitFilePresence) {
             return configData.version;
@@ -248,7 +250,7 @@ public class CacheDatabase implements IDatabase {
             return GlobalVars.UnknownVersion;
         }*/
 
-        return GlobalVars.UnknownVersion;
+        return StringConstants.UnknownVersion;
     }
 
 }
