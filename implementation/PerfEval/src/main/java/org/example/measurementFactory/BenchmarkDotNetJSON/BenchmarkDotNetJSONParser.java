@@ -34,6 +34,9 @@ public class BenchmarkDotNetJSONParser implements IMeasurementParser {
 
         return result;
     }
+    public String GetParserType(){
+        return "framework: BenchmarkDotNet, format: JSON ";
+    }
 
     /*
      * testedIterationMode and testedIterationStage Strings are used for recognizing correct type of measured values

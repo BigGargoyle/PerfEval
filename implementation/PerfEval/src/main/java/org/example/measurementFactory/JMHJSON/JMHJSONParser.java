@@ -40,6 +40,9 @@ public class JMHJSONParser implements IMeasurementParser {
 
         return result;
     }
+    public String GetParserType(){
+        return "framework: JMH, format: JSON ";
+    }
 
     static final String[] acceptableScoreUnits = new String[] {"ns/op","us/op","ms/op","s/op"};
 

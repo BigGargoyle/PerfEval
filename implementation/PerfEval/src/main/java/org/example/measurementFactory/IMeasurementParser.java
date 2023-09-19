@@ -11,4 +11,9 @@ public interface IMeasurementParser {
      */
     List<Measurement> getTestsFromFile(String fileName);
 
+    /**
+     * @return String representation of benchmark format type (JMH, BenchmarkDotNet etc.)
+     */
+    String GetParserType();
+
 }
