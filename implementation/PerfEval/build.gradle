@@ -26,6 +26,16 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
+jar {
+    duplicatesStrategy = 'exclude'
+    manifest {
+        attributes 'Main-Class': 'org.example.Main'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 test {
     useJUnitPlatform()
 }
