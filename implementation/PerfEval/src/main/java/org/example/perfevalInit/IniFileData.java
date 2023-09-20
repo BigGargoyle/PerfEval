@@ -85,7 +85,7 @@ public class IniFileData {
 
     private void setDefaultData() {
         validConfig = true;
-        gitFilePresence = (new File(FileNames.gitFileName)).exists();
+        gitFilePresence = (new File(FileNames.workingDirectory +"/"+FileNames.gitFileName)).exists();
         maxTimeOnTest = DefaultIniValues.defaultMaxTimeOnTest;
         maxCIWidth = DefaultIniValues.defaultMaxCIWidth;
         critValue = DefaultIniValues.defaultStatisticCritValue;

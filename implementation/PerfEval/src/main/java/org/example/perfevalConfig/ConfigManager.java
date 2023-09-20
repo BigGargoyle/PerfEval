@@ -22,20 +22,25 @@ public class ConfigManager {
         if (args[2] == null) return false;
 
         String[] params = new String[2];
+        IniFileData iniData = new IniFileData(true);
         if (args[2].contains(equalSign)) {
             String[] splittedArg = args[2].split(equalSign);
             if (splittedArg.length < 2 || splittedArg[0] == null || splittedArg[1] == null) {
                 params[0] = splittedArg[0];
                 params[1] = splittedArg[1];
             } else return false;
-        } else if (args.length < 4)
+        }
+        else if(args[2].compareTo(checkGitParam)==0) {
+                return checkGitPresence(iniData);
+        }
+        else if (args.length < 4) {
             return false;
+        }
         else {
             params[0] = args[1];
             params[1] = args[2];
         }
 
-        IniFileData iniData = new IniFileData(true);
 
         switch (params[0]) {
             case setVersionParam -> {
@@ -49,9 +54,6 @@ public class ConfigManager {
             }
             case setCritValueParam -> {
                 return setCritValue(params, iniData);
-            }
-            case checkGitParam -> {
-                return checkGitPresence(iniData);
             }
             default -> {
                 return false;
@@ -107,7 +109,7 @@ public class ConfigManager {
     }
 
     private static boolean checkGitPresence(IniFileData iniFileData){
-        iniFileData.gitFilePresence = new File(FileNames.gitFileName).exists();
+        iniFileData.gitFilePresence = new File(FileNames.workingDirectory + "/" + FileNames.gitFileName).exists();
         return IniFileData.createNewIniFile(iniFileData);
     }
 }

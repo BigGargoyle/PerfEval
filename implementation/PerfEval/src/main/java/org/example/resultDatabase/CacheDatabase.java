@@ -1,6 +1,9 @@
 package org.example.resultDatabase;
 
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.example.globalVariables.DBFlags;
 import org.example.globalVariables.FileNames;
 import org.example.globalVariables.StringConstants;
@@ -15,6 +18,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.PriorityQueue;
@@ -239,18 +243,18 @@ public class CacheDatabase implements IDatabase {
         if (!configData.gitFilePresence) {
             return configData.version;
         }
-        /*try (Git git = Git.open(new File(GlobalVars.gitFileDir))) {
+        try (Git git = Git.open(new File(FileNames.workingDirectory+"/"+FileNames.gitFileName))) {
             Iterable<RevCommit> commits = git.log().all().call();
             for (RevCommit commit : commits) {
-                if (commit.getCommitterIdent().getWhen().before(dateOfCreation)) {
+                if (commit.getAuthorIdent().getWhen().before(dateOfCreation)) {
                     return commit.getName();
                 }
             }
         } catch (IOException | GitAPIException e) {
-            return GlobalVars.UnknownVersion;
-        }*/
+            return configData.version;
+        }
 
-        return StringConstants.UnknownVersion;
+        return configData.version;
     }
 
 }
