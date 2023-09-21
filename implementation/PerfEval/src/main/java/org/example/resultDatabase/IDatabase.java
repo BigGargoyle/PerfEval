@@ -9,7 +9,7 @@ public interface IDatabase {
      * @param n how many results should be returned
      * @return n most recently added benchmark test results file paths from the database
      */
-    String[] getLastNResults(int n);
+    DatabaseItem[] getLastNResults(int n);
 
     /**
      *

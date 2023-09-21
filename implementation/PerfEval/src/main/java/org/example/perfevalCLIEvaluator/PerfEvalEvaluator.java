@@ -14,6 +14,7 @@ import org.example.measurementFactory.UniversalTimeUnit;
 import org.example.performanceComparatorFactory.ComparatorFactory;
 import org.example.performanceComparatorFactory.ComparisonResult;
 import org.example.performanceComparatorFactory.IPerformanceComparator;
+import org.example.resultDatabase.DatabaseItem;
 import org.example.resultDatabase.IDatabase;
 
 import java.io.BufferedReader;
@@ -60,7 +61,8 @@ public class PerfEvalEvaluator {
      * @return true - evaluation and printing result was successful, false - otherwise
      */
     public static boolean evaluateLastResults(IDatabase database, String[] args) {
-        List<List<Measurement>> measurements = getLastTwoMeasurements(database);
+        DatabaseItem[] lastTwoItems = database.getLastNResults(2);
+        List<List<Measurement>> measurements = getMeasurementsFromFiles(lastTwoItems);
         // measurements item count is 2 and measurements[0] is older than measurements[1]
         if (measurements == null || measurements.size() < 2 || measurements.get(0) == null || measurements.get(1) == null)
             return false;
@@ -77,9 +79,9 @@ public class PerfEvalEvaluator {
         }
 
         if (contains(args, CLIFlags.jsonOutputFlag))
-            ResultPrinter.JSONPrinter(comparisonResults, System.out);
+            ResultPrinter.JSONPrinter(comparisonResults, System.out, lastTwoItems);
         else
-            ResultPrinter.tablePrinter(comparisonResults, System.out);
+            ResultPrinter.tablePrinter(comparisonResults, System.out, lastTwoItems);
 
         setupExitCode(comparisonResults);
 
@@ -144,8 +146,8 @@ public class PerfEvalEvaluator {
      * @return List of parsed files to instances of List of IMeasurements
      */
     private static List<List<Measurement>> getLastTwoMeasurements(IDatabase database) {
-        String[] lastResultsFileNames = database.getLastNResults(2);
-        return measurementsFromFiles(lastResultsFileNames);
+        DatabaseItem[] lastTwoDBItems = database.getLastNResults(2);
+        return getMeasurementsFromFiles(lastTwoDBItems);
     }
 
     /**
@@ -191,19 +193,19 @@ public class PerfEvalEvaluator {
     /**
      * Method that parses files which names were given in a fileNames parameter into a List of IMeasurements
      *
-     * @param fileNames array of Strings with relative or absolute paths to files to be parsed
+     * @param databaseItems array of DatabaseItems with relative or absolute paths to files to be parsed
      * @return list of parsed files or null if parsing had failed
      */
-    static List<List<Measurement>> measurementsFromFiles(String[] fileNames) {
+    static List<List<Measurement>> getMeasurementsFromFiles(DatabaseItem[] databaseItems) {
         List<List<Measurement>> measurements = new ArrayList<>();
-        if (fileNames==null || fileNames.length == 0) return null;
-        IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileNames[0]);
+        if (databaseItems==null || databaseItems.length == 0) return null;
+        IMeasurementParser parser = ParserFactory.recognizeParserFactory(databaseItems[0].path());
         if (parser == null) {
             System.err.println("File format was not recognized");
             return null;
         }
-        for (String fileName : fileNames) {
-            List<Measurement> measurement = parser.getTestsFromFile(fileName);
+        for (DatabaseItem databaseItem : databaseItems) {
+            List<Measurement> measurement = parser.getTestsFromFile(databaseItem.path());
             measurements.add(measurement);
         }
 

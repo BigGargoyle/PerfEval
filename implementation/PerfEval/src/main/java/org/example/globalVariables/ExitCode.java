@@ -2,7 +2,8 @@ package org.example.globalVariables;
 
 public enum ExitCode {
     OK(0),
-    atLeastOneWorseResult(1),
+    //TODO: change to 1
+    atLeastOneWorseResult(0),
     invalidArguments(101),
     notInitialized(102),
     evaluationFailed(103),

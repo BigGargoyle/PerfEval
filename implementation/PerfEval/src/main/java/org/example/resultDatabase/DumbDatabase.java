@@ -25,7 +25,7 @@ public class DumbDatabase implements IDatabase {
     static final SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
 
     @Override
-    public String[] getLastNResults(int n) {
+    public DatabaseItem[] getLastNResults(int n) {
         PriorityQueue<DatabaseItem> maxHeap = new PriorityQueue<>(Comparator.comparing(DatabaseItem::dateOfCreation));
         try (BufferedReader reader = new BufferedReader(new FileReader(DatabaseFileName))) {
             String line;
@@ -44,10 +44,10 @@ public class DumbDatabase implements IDatabase {
             return null;
         }
 
-        String[] result = new String[n];
+        DatabaseItem[] result = new DatabaseItem[n];
         for (int i = 0; i < result.length; i++) {
             if (maxHeap.size() > 0)
-                result[i] = maxHeap.poll().path();
+                result[i] = maxHeap.poll();
             else
                 break;
         }

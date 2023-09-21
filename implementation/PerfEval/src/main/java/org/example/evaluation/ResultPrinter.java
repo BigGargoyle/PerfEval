@@ -3,11 +3,13 @@ package org.example.evaluation;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import dnl.utils.text.table.TextTable;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.example.globalVariables.DBFlags;
 import org.example.performanceComparatorFactory.ComparisonResult;
+import org.example.resultDatabase.DatabaseItem;
 
 public class ResultPrinter {
     /**
@@ -15,13 +17,17 @@ public class ResultPrinter {
      *
      * @param measurementComparisonResults list of IComparisonResults to be printed
      * @param printStream                  PrintStream to print result to
+     * @param originalItems                items from which comparison results were made of
      */
-    public static void tablePrinter(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream) {
+    public static void tablePrinter(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream, DatabaseItem[] originalItems) {
         String[] tableHeader = createComparisonTableHeader();
         String[][] tableData = new String[measurementComparisonResults.size()][];
         for (int i = 0; i < measurementComparisonResults.size(); i++) {
             tableData[i] = measurementComparisonToTableRow(measurementComparisonResults.get(i));
         }
+
+        printStream.println("old version: "+originalItems[0].version());
+        printStream.println("new version: "+originalItems[1].version());
 
         TextTable table = new TextTable(tableHeader, tableData);
         table.printTable(printStream, 0);
@@ -79,8 +85,9 @@ public class ResultPrinter {
      *
      * @param measurementComparisonResults list of IComparisonResults to be printed
      * @param printStream                  PrintStream to print result to
+     * @param originalItems                items from which comparison results were made of
      */
-    public static void JSONPrinter(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream) {
+    public static void JSONPrinter(List<IMeasurementComparisonResult> measurementComparisonResults, PrintStream printStream, DatabaseItem[] originalItems) {
         List<MeasurementComparisonResultView> measurementComparisonResultViews = new ArrayList<>();
         for (IMeasurementComparisonResult comparisonResult : measurementComparisonResults) {
             var measurementComparisonResultView = convertIMeasurementComparisonResult(comparisonResult);
@@ -88,8 +95,13 @@ public class ResultPrinter {
         }
         var objectMapper = new ObjectMapper();
         try {
+            printStream.println("{");
+            printStream.println("\"oldVersion\":\""+originalItems[0].version()+"\",");
+            printStream.println("\"newVersion\":\""+originalItems[1].version()+"\",");
+            printStream.println("\"testsResult\":");
             String json = objectMapper.writeValueAsString(measurementComparisonResultViews);
             printStream.println(json);
+            printStream.println("}");
         }catch (IOException e){
             printStream.println("Cannot be formatted");
         }

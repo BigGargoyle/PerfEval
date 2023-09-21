@@ -70,7 +70,7 @@ public class CacheDatabase implements IDatabase {
     }
 
     @Override
-    public String[] getLastNResults(int n) {
+    public DatabaseItem[] getLastNResults(int n) {
         PriorityQueue<DatabaseItem> maxHeap;
         if (n > databaseCache.size())
             maxHeap = createPriorityQueueFromFile(FileNames.workingDirectory+"/"+ FileNames.DatabaseFileName, n);
@@ -80,10 +80,10 @@ public class CacheDatabase implements IDatabase {
 
         if (maxHeap == null || maxHeap.size() < n) return null;
 
-        String[] result = new String[n];
+        DatabaseItem[] result = new DatabaseItem[n];
         for (int i = 0; i < result.length; i++) {
             if (maxHeap.size() > 0)
-                result[i] = maxHeap.poll().path();
+                result[i] = maxHeap.poll();
             else
                 break;
         }
