@@ -1,7 +1,7 @@
 package org.example.perfevalConfig;
 
-import org.example.GlobalVars;
-import org.example.MeasurementFactory.UniversalTimeUnit;
+import org.example.globalVariables.FileNames;
+import org.example.measurementFactory.UniversalTimeUnit;
 import org.example.perfevalInit.IniFileData;
 
 import java.io.File;
@@ -17,25 +17,30 @@ public class ConfigManager {
     public static final String checkGitParam = "--check-git";
     public static final String equalSign = "=";
 
-    public static boolean Config(String[] args) {
+    public static boolean config(String[] args) {
 
         if (args[2] == null) return false;
 
         String[] params = new String[2];
+        IniFileData iniData = new IniFileData(true);
         if (args[2].contains(equalSign)) {
             String[] splittedArg = args[2].split(equalSign);
             if (splittedArg.length < 2 || splittedArg[0] == null || splittedArg[1] == null) {
                 params[0] = splittedArg[0];
                 params[1] = splittedArg[1];
             } else return false;
-        } else if (args.length < 4)
+        }
+        else if(args[2].compareTo(checkGitParam)==0) {
+                return checkGitPresence(iniData);
+        }
+        else if (args.length < 4) {
             return false;
+        }
         else {
             params[0] = args[1];
             params[1] = args[2];
         }
 
-        IniFileData iniData = new IniFileData(true);
 
         switch (params[0]) {
             case setVersionParam -> {
@@ -50,9 +55,6 @@ public class ConfigManager {
             case setCritValueParam -> {
                 return setCritValue(params, iniData);
             }
-            case checkGitParam -> {
-                return checkGitPresence(iniData);
-            }
             default -> {
                 return false;
             }
@@ -62,7 +64,7 @@ public class ConfigManager {
     private static boolean setVersion(String[] params, IniFileData iniFileData) {
         if (params == null || params.length < 2 || params[1] == null) return false;
         iniFileData.version = params[1];
-        return IniFileData.CreateNewIniFile(iniFileData);
+        return IniFileData.createNewIniFile(iniFileData);
     }
 
     private static boolean setCIWidth(String[] params, IniFileData iniFileData) {
@@ -75,7 +77,7 @@ public class ConfigManager {
         }
         if (CIWidth <= 0 || CIWidth >= 1) return false;
         iniFileData.maxCIWidth = CIWidth;
-        return IniFileData.CreateNewIniFile(iniFileData);
+        return IniFileData.createNewIniFile(iniFileData);
     }
 
     private static boolean setCritValue(String[] params, IniFileData iniFileData) {
@@ -88,7 +90,7 @@ public class ConfigManager {
         }
         if (critValue <= 0 || critValue >= 1) return false;
         iniFileData.critValue = critValue;
-        return IniFileData.CreateNewIniFile(iniFileData);
+        return IniFileData.createNewIniFile(iniFileData);
     }
     private static boolean setMaxTimeOnTest(String[] params, IniFileData iniFileData){
         if (params == null || params.length < 2 || params[1] == null) return false;
@@ -103,11 +105,11 @@ public class ConfigManager {
             return false;
         }
         iniFileData.maxTimeOnTest = newTime;
-        return IniFileData.CreateNewIniFile(iniFileData);
+        return IniFileData.createNewIniFile(iniFileData);
     }
 
     private static boolean checkGitPresence(IniFileData iniFileData){
-        iniFileData.gitFilePresence = new File(GlobalVars.gitFileName).exists();
-        return IniFileData.CreateNewIniFile(iniFileData);
+        iniFileData.gitFilePresence = new File(FileNames.workingDirectory + "/" + FileNames.gitFileName).exists();
+        return IniFileData.createNewIniFile(iniFileData);
     }
 }

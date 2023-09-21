@@ -1,8 +1,8 @@
-import org.example.PerformanceComparatorFactory.Bootstrap;
+import org.example.performanceComparatorFactory.Bootstrap;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import org.example.MeasurementFactory.UniversalTimeUnit;
+import org.example.measurementFactory.UniversalTimeUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +22,7 @@ public class BootstrapTest {
         oldSet.add(new UniversalTimeUnit(201, TimeUnit.NANOSECONDS));
         oldSet.add(new UniversalTimeUnit(202, TimeUnit.NANOSECONDS));
 
-        boolean result = Bootstrap.Evaluate(newSet, oldSet, 0.1, 3);
+        boolean result = Bootstrap.evaluate(newSet, oldSet, 0.05);
         assertTrue(result);
     }
 
@@ -38,7 +38,7 @@ public class BootstrapTest {
         oldSet.add(new UniversalTimeUnit(600, java.util.concurrent.TimeUnit.MILLISECONDS));
         oldSet.add(new UniversalTimeUnit(700, java.util.concurrent.TimeUnit.MILLISECONDS));
 
-        boolean result = Bootstrap.Evaluate(newSet, oldSet, 0.05, 3);
+        boolean result = Bootstrap.evaluate(newSet, oldSet, 0.05);
         assertFalse(result);
     }
 }

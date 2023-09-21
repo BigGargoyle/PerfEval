@@ -1,17 +1,21 @@
 package org.example.perfevalCLIEvaluator;
 
-import org.example.Evaluation.IMeasurementComparisonResult;
-import org.example.Evaluation.MeasurementComparisonResult;
-import org.example.Evaluation.ResultPrinter;
-import org.example.GlobalVars;
-import org.example.MeasurementFactory.IMeasurement;
-import org.example.MeasurementFactory.IMeasurementParser;
-import org.example.MeasurementFactory.ParserIndustry;
-import org.example.MeasurementFactory.UniversalTimeUnit;
-import org.example.PerformanceComparatorFactory.ComparatorIndustry;
-import org.example.PerformanceComparatorFactory.ComparisonResult;
-import org.example.PerformanceComparatorFactory.IPerformanceComparator;
-import org.example.ResultDatabase.IDatabase;
+import org.example.evaluation.IMeasurementComparisonResult;
+import org.example.evaluation.MeasurementComparisonResult;
+import org.example.evaluation.ResultPrinter;
+import org.example.globalVariables.CLIFlags;
+import org.example.globalVariables.DBFlags;
+import org.example.globalVariables.ExitCode;
+import org.example.globalVariables.FileNames;
+import org.example.measurementFactory.Measurement;
+import org.example.measurementFactory.IMeasurementParser;
+import org.example.measurementFactory.ParserFactory;
+import org.example.measurementFactory.UniversalTimeUnit;
+import org.example.performanceComparatorFactory.ComparatorFactory;
+import org.example.performanceComparatorFactory.ComparisonResult;
+import org.example.performanceComparatorFactory.IPerformanceComparator;
+import org.example.resultDatabase.DatabaseItem;
+import org.example.resultDatabase.IDatabase;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -35,16 +39,16 @@ public class PerfEvalEvaluator {
      * @param args     CLI arguments that were typed in
      * @return true - evaluation and printing result was successful, false - otherwise
      */
-    public static boolean ListUndecidedTestResults(IDatabase database, String[] args) {
-        List<List<IMeasurement>> measurements = GetLastTwoMeasurements(database);
+    public static boolean listUndecidedTestResults(IDatabase database, String[] args) {
+        List<List<Measurement>> measurements = getLastTwoMeasurements(database);
         // measurements item count is 2 and measurements[0] is older than measurements[1]
         if (measurements == null)
             return false;
-        List<IMeasurementComparisonResult> comparisonResults = CompareMeasurements(measurements);
+        List<IMeasurementComparisonResult> comparisonResults = compareMeasurements(measurements);
         if (comparisonResults == null)
             return false;
 
-        ResultPrinter.PrintUndecided(comparisonResults, System.out);
+        ResultPrinter.printUndecided(comparisonResults, System.out);
 
         return true;
     }
@@ -56,49 +60,50 @@ public class PerfEvalEvaluator {
      * @param args     CLI arguments that were typed in
      * @return true - evaluation and printing result was successful, false - otherwise
      */
-    public static boolean EvaluateLastResults(IDatabase database, String[] args) {
-        List<List<IMeasurement>> measurements = GetLastTwoMeasurements(database);
+    public static boolean evaluateLastResults(IDatabase database, String[] args) {
+        DatabaseItem[] lastTwoItems = database.getLastNResults(2);
+        List<List<Measurement>> measurements = getMeasurementsFromFiles(lastTwoItems);
         // measurements item count is 2 and measurements[0] is older than measurements[1]
         if (measurements == null || measurements.size() < 2 || measurements.get(0) == null || measurements.get(1) == null)
             return false;
-        List<IMeasurementComparisonResult> comparisonResults = CompareMeasurements(measurements);
+        List<IMeasurementComparisonResult> comparisonResults = compareMeasurements(measurements);
         if (comparisonResults == null)
             return false;
 
-        if(Contains(args, GlobalVars.filterParam)){
-            var tmp = Filter(comparisonResults, args);
+        if(contains(args, CLIFlags.filterParam)){
+            var tmp = filter(comparisonResults, args);
             if(tmp!=null)
                 comparisonResults = tmp;
             else
                 System.err.println("Unknown filter");
         }
 
-        if (Contains(args, GlobalVars.jsonOutputFlag))
-            ResultPrinter.JSONPrinter(comparisonResults, System.out);
+        if (contains(args, CLIFlags.jsonOutputFlag))
+            ResultPrinter.JSONPrinter(comparisonResults, System.out, lastTwoItems);
         else
-            ResultPrinter.TablePrinter(comparisonResults, System.out);
+            ResultPrinter.tablePrinter(comparisonResults, System.out, lastTwoItems);
 
-        SetupExitCode(comparisonResults);
+        setupExitCode(comparisonResults);
 
         return true;
     }
 
-    private static List<IMeasurementComparisonResult> Filter(List<IMeasurementComparisonResult> measurementComparisonResults, String[] args){
-        String filter = null;
+    private static List<IMeasurementComparisonResult> filter(List<IMeasurementComparisonResult> measurementComparisonResults, String[] args){
+        String filterBy = null;
         for (int i = 0; i<args.length;i++){
-            if(args[i].contains(GlobalVars.filterParam)){
+            if(args[i].contains(CLIFlags.filterParam)){
                 if(args[i].contains(equalSign)){
                     String[] splitted = args[i].split(equalSign);
                     if(splitted.length<2) return null;
-                    filter = splitted[1];
+                    filterBy = splitted[1];
                 }
                 else if(i+1< args.length){
-                    filter = args[i+1];
+                    filterBy = args[i+1];
                 }
             }
         }
-        if(filter == null) return null;
-        switch (filter){
+        if(filterBy == null) return null;
+        switch (filterBy){
             case testResultFilter -> {
                 List<IMeasurementComparisonResult> resultList = new ArrayList<>(measurementComparisonResults);
                 resultList.sort(Comparator.comparing(IMeasurementComparisonResult::getComparisonResult, Comparator.comparingInt(ComparisonResult::getResultNumber)));
@@ -125,16 +130,13 @@ public class PerfEvalEvaluator {
      *
      * @param comparisonResults list of comparison results of benchmark test comparison
      */
-    private static void SetupExitCode(List<IMeasurementComparisonResult> comparisonResults) {
+    private static void setupExitCode(List<IMeasurementComparisonResult> comparisonResults) {
         for (IMeasurementComparisonResult comparisonResult : comparisonResults) {
             if (!comparisonResult.getComparisonVerdict()) {
-                // TODO: uncommnet
-                // System.exit(GlobalVars.atLeastOneWorseResultExitCode);
-                System.exit(GlobalVars.OKExitCode);
+                System.exit(ExitCode.atLeastOneWorseResult.getExitCode());
                 return;
             }
         }
-        System.exit(GlobalVars.OKExitCode);
     }
 
     /**
@@ -143,9 +145,9 @@ public class PerfEvalEvaluator {
      * @param database database to search results in
      * @return List of parsed files to instances of List of IMeasurements
      */
-    private static List<List<IMeasurement>> GetLastTwoMeasurements(IDatabase database) {
-        String[] lastResultsFileNames = database.GetLastNResults(2);
-        return MeasurementsFromFiles(lastResultsFileNames);
+    private static List<List<Measurement>> getLastTwoMeasurements(IDatabase database) {
+        DatabaseItem[] lastTwoDBItems = database.getLastNResults(2);
+        return getMeasurementsFromFiles(lastTwoDBItems);
     }
 
     /**
@@ -155,23 +157,23 @@ public class PerfEvalEvaluator {
      * @param measurements List with two parsed files that are represented as a list of IMeasurements
      * @return list of results from each comparison or null if some step of checking input lists or reading config file failed
      */
-    private static List<IMeasurementComparisonResult> CompareMeasurements(List<List<IMeasurement>> measurements) {
-        List<IMeasurement> olderMeasurement = measurements.get(0);
-        List<IMeasurement> newerMeasurement = measurements.get(1);
+    private static List<IMeasurementComparisonResult> compareMeasurements(List<List<Measurement>> measurements) {
+        List<Measurement> olderMeasurement = measurements.get(0);
+        List<Measurement> newerMeasurement = measurements.get(1);
 
         // test if sets of measurements are the same
         if (olderMeasurement.size() != newerMeasurement.size())
             return null;
         for (int i = 0; i < olderMeasurement.size(); i++) {
-            if (olderMeasurement.get(i).getName().compareTo(newerMeasurement.get(i).getName()) != 0)
+            if (olderMeasurement.get(i).name().compareTo(newerMeasurement.get(i).name()) != 0)
                 return null;
         }
 
-        ConfigData configData = ReadConfigFromIniFile();
+        ConfigData configData = readConfigFromIniFile();
         if (configData == null)
             return null;
 
-        IPerformanceComparator performanceComparator = ComparatorIndustry.GetComparator(
+        IPerformanceComparator performanceComparator = ComparatorFactory.getComparator(
                 configData.critValue,
                 configData.maxCIWidth,
                 configData.maxTimeOnTest
@@ -191,19 +193,19 @@ public class PerfEvalEvaluator {
     /**
      * Method that parses files which names were given in a fileNames parameter into a List of IMeasurements
      *
-     * @param fileNames array of Strings with relative or absolute paths to files to be parsed
+     * @param databaseItems array of DatabaseItems with relative or absolute paths to files to be parsed
      * @return list of parsed files or null if parsing had failed
      */
-    static List<List<IMeasurement>> MeasurementsFromFiles(String[] fileNames) {
-        List<List<IMeasurement>> measurements = new ArrayList<>();
-        if (fileNames==null || fileNames.length == 0) return null;
-        IMeasurementParser parser = ParserIndustry.RecognizeParserFactory(fileNames[0]);
+    static List<List<Measurement>> getMeasurementsFromFiles(DatabaseItem[] databaseItems) {
+        List<List<Measurement>> measurements = new ArrayList<>();
+        if (databaseItems==null || databaseItems.length == 0) return null;
+        IMeasurementParser parser = ParserFactory.recognizeParserFactory(databaseItems[0].path());
         if (parser == null) {
             System.err.println("File format was not recognized");
             return null;
         }
-        for (String fileName : fileNames) {
-            List<IMeasurement> measurement = parser.GetTestsFromFile(fileName);
+        for (DatabaseItem databaseItem : databaseItems) {
+            List<Measurement> measurement = parser.getTestsFromFile(databaseItem.path());
             measurements.add(measurement);
         }
 
@@ -217,7 +219,7 @@ public class PerfEvalEvaluator {
      * @param item      String that is searched
      * @return true - if item is an element of the container, false - otherwise
      */
-    static boolean Contains(String[] container, String item) {
+    static boolean contains(String[] container, String item) {
         for (String element : container) {
             if (element.contains(item))
                 return true;
@@ -230,24 +232,24 @@ public class PerfEvalEvaluator {
      *
      * @return Instance of ConfigData read from config file or null if there was an error or some config data are missing
      */
-    private static ConfigData ReadConfigFromIniFile() {
+    private static ConfigData readConfigFromIniFile() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(GlobalVars.workingDirectory
-                    + "/" + GlobalVars.IniFileName));
+            BufferedReader reader = new BufferedReader(new FileReader(FileNames.workingDirectory
+                    + "/" + FileNames.IniFileName));
             double critValue = 0;
             double CIWidth = 0;
             UniversalTimeUnit timeUnit = null;
 
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] splittedLine = line.split(GlobalVars.ColumnDelimiter);
-                if (splittedLine[0].compareTo(GlobalVars.critValueSign) == 0) {
+                String[] splittedLine = line.split(DBFlags.ColumnDelimiter);
+                if (splittedLine[0].compareTo(DBFlags.critValueSign) == 0) {
                     critValue = Double.parseDouble(splittedLine[1]);
                 }
-                if (splittedLine[0].compareTo(GlobalVars.maxCIWidthSign) == 0) {
+                if (splittedLine[0].compareTo(DBFlags.maxCIWidthSign) == 0) {
                     CIWidth = Double.parseDouble(splittedLine[1]);
                 }
-                if (splittedLine[0].compareTo(GlobalVars.maxTimeOnTestSign) == 0) {
+                if (splittedLine[0].compareTo(DBFlags.maxTimeOnTestSign) == 0) {
                     long nanoseconds = Long.parseLong(splittedLine[1]);
                     timeUnit = new UniversalTimeUnit(nanoseconds, TimeUnit.NANOSECONDS);
                 }
