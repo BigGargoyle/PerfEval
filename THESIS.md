@@ -19,6 +19,12 @@ and environments such as GitHub or GitLab, will be analogous to that of
 using common unit testing frameworks when evaluating functionality.
 The tool should integrate with common microbenchark frameworks.
 
+Po více než dvacet let pomáhají jednotkové testy udržovat kvalitu kódu v průběhu vývoje softwaru. Knihovny jako JUnit nebo NUnit byly vyvinuty, aby pomohly s jednodušší implementací jednotkových textů, jejich spouštěním a s platformami pro kontinuální integraci jako jsou GitHub nebo GitLab, které podporují spouštění testů a umí reagovat na jejich selhání.
+
+Podobné jednotkovým testům jsou knihovny (rámce) určené k posuzování výkonu softwaru. Knihovny jako JMH nebo BenchmarkDotNet pomáhají implementovat výkonostní testy podobným způsobem jako knihovny pro implementaci jednotkových testů. Vyhodnocování výsledků výkonostních testů ale obvykle zahrnuje i ruční zhodnocení naměřených výsledků.
+
+Cílem práce je tedy implementovat nástroj, který umožní automatické hlášení a vyhodnocování výsledků výkonostních testů tak, aby práce s nástrojem byla při lokálním vývoji a v prostředích jako je GitHub nebo GitLab podobná jako běžné požívání knihoven pro práci s jednotkovými testy, když vyhodnocují funkcionalitu softwaru. Nástroj by měl být schopný interagovat s běžnými nástroji pro vyhodnocování výkonu.
+
 [1] JUnit, https://junit.org
 [2] NUnit, https://nunit.org
 [3] JMH, https://github.com/openjdk/jmh
