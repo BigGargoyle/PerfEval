@@ -1,0 +1,28 @@
+# PerfEval: Marrying Unit Testing with Performance Evaluation
+
+For more than two decades, unit testing helps maintain software quality in
+agile software development processes. Frameworks such as JUnit or NUnit were
+introduced to help implement and execute unit tests to assess software
+functionality, and continuous integration platforms such as GitHub or GitLab
+support executing the tests and reacting to failures.
+
+Similar to functional unit tests, microbenchmarks are used to assess
+software performance. Frameworks such as JMH or BenchmarkDotNet help
+implement performance microbenchmarks in a manner similar to unit tests,
+however, subsequent reporting and evaluation often involves manual
+assessment of measurement results.
+
+The goal of the thesis is to implement a tool that will automate reporting
+and evaluation of microbenchmark measurement results to the degree that the
+overall developer experience, in particular in local development activities
+and environments such as GitHub or GitLab, will be analogous to that of
+using common unit testing frameworks when evaluating functionality.
+The tool should integrate with common microbenchark frameworks.
+
+[1] JUnit, https://junit.org
+[2] NUnit, https://nunit.org
+[3] JMH, https://github.com/openjdk/jmh
+[4] BenchmarkDotNet, https://github.com/dotnet/BenchmarkDotNet
+[5] Criterion, https://docs.rs/criterion/latest/criterion
+[6] L. Bulej, T. Bureš, V. Horký, J. Kotrč, L. Marek, T. Trojánek, P. Tůma: Unit Testing Performance with Stochastic Performance Logic, in Automated Software Engineering 24(1), pp. 139-187, 2017, DOI: 10.1007/s10515-015-0188-0
+[7] P. Stefan, V. Horký, L. Bulej, P. Tůma: Unit Testing Performance in Java Projects: Are We There Yet?, in Proc. 8th ACM/SPEC Intl. Conf. on Performance Engineering (ICPE), pp. 401–412, 2017,ISBN: 978-1-4503-4404-3, DOI: 10.1145/3030207.3030226
