@@ -9,6 +9,9 @@ import org.example.measurementFactory.UniversalTimeUnit;
 import java.io.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class representing data from PerfEval system ini file.
+ */
 public class IniFileData {
     public boolean validConfig;
     public boolean gitFilePresence;

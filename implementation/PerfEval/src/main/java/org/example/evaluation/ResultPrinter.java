@@ -3,7 +3,6 @@ package org.example.evaluation;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import dnl.utils.text.table.TextTable;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -11,6 +10,9 @@ import org.example.globalVariables.DBFlags;
 import org.example.performanceComparatorFactory.ComparisonResult;
 import org.example.resultDatabase.DatabaseItem;
 
+/**
+ * Methods for printing details of performance test result comparison.
+ */
 public class ResultPrinter {
     /**
      * Method to print comparisonResults in form of simple table

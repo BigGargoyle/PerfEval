@@ -9,6 +9,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class with methods for executing config command.
+ */
 public class ConfigManager {
     public static final String setVersionParam = "--set-version";
     public static final String setTestMaxTimeParam = "--set-test-max-time";

@@ -1,5 +1,8 @@
 package org.example.globalVariables;
 
+/**
+ * Enum summarizing all possible exit codes of PerfEval system.
+ */
 public enum ExitCode {
     OK(0),
     //TODO: change to 1

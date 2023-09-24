@@ -7,9 +7,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Class for executing Perfeval init command.
+ */
 public class PerfEvalInitializer {
     /**
-     * Method that controls PerfEval System
+     * Method that controls PerfEval System initialization.
      *
      * @return true - if initialization was successful, false - otherwise
      */

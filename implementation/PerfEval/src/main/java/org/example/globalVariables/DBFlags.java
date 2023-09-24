@@ -1,5 +1,8 @@
 package org.example.globalVariables;
 
+/**
+ * Flags of meaning for database and ini file lines.
+ */
 public class DBFlags {
     public static final String commentSign = "#";
     public static final String critValueSign = "P";
