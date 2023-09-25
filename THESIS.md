@@ -1,8 +1,8 @@
-# PerfEval: Marrying Unit Testing with Performance Evaluation
+# PerfEval: Spojení unit testů s vyhodnocováním výkonu
 
-Po více než dvacet let pomáhají jednotkové testy udržovat kvalitu kódu v průběhu vývoje softwaru. Knihovny jako JUnit nebo NUnit byly vyvinuty pro usnadnění implementace a exekuce unit testů pro ověřování funkčnosti softwaru a verzovací nástroje jako GitHub a GitLab podporují spouštění těchto testu a mohou reagovat na případné neúspěchy.
+Po více než dvacet let pomáhají unit testy udržovat kvalitu kódu v průběhu vývoje softwaru. Knihovny jako JUnit nebo NUnit byly vyvinuty pro usnadnění implementace a spouštění unit testů pro ověřování funkčnosti softwaru a verzovací nástroje jako GitHub a GitLab podporují spouštění těchto testů a mohou reagovat na případné neúspěchy.
 
-Podobné unit testům jsou prostředí určené k posuzování výkonu softwaru. Prostředí jako JMH nebo BenchmarkDotNet pomáhají implementovat výkonostní testy podobným způsobem jako knihovny pro implementaci unit testů. Vyhodnocování výsledků výkonostních testů ale obvykle zahrnuje i ruční zhodnocení naměřených výsledků.
+Podobné unit testům jsou prostředí určená k posuzování výkonu softwaru. Prostředí jako JMH nebo BenchmarkDotNet pomáhají implementovat výkonostní testy podobným způsobem jako knihovny pro implementaci unit testů. Vyhodnocování výsledků výkonostních testů ale obvykle zahrnuje i ruční zhodnocení naměřených výsledků.
 
 Cílem práce bude implementovat nástroj, který umožní automatické hlášení a vyhodnocování výsledků výkonostních testů tak, aby práce s nástrojem, konkrétně při lokálním vývoji a požívání prostředí jako je GitHub a GitLab, byla analogická používání běžných unit testovacích prostředí při vyhodnocování funkčnosti softwaru. Nástroj by měl být schopný interagovat s běžnými prostředími pro vyhodnocování výkonu.
 
