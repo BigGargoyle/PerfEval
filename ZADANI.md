@@ -33,6 +33,10 @@ Preconditions: Uživatel bude mít nainstalovaný nástroj PerfEval.
 
 Triggers: Pomocí příkazu `perfeval init` spustí inicializační skript.
 
+Alternativa:
+
+Triggers: Pomocí příkazu `perfeval init --force` spustí inicializační skript, i přestože již byl PerfEval v tomto adresáři již inicializován.
+
 Basic flow:<br>
 1. Uživatel si nainstaluje nástroj PerfEval (pomocí skriptu `perfeval-installer.sh`)
 2. V kořenovém adresáři svého projektu spustí příkaz `perfeval init`
@@ -234,7 +238,8 @@ Soubory
 
 Příkazy
 -   perfeval init
--   perfeval start-tests
+-   perfeval init --force
+-   ~~perfeval start-tests~~
 -   ~~perfeval config --set-user <username>~~
 -   ~~perfeval config --set-machine <machine-name>~~
 -   ~~perfeval config --test-directory <target-dir>~~
