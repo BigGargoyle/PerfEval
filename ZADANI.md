@@ -15,8 +15,6 @@ PerfEval bude naprogramovaný v programovacím jazyce JAVA a bude doplněn o pod
 
 ### Konfigurace PerfEval
 
-TODO: Vyřešit verzování databáze a konfiguračního souboru.
-
 #### Inicializace PerfEval
 
 Use Case: Inicializace
@@ -45,8 +43,6 @@ Basic flow:<br>
 4. Obeznámí uživatele o úspěchu, nebo neúspěchu inicializace výpisem do konzole.
 
 #### Přidávání testů do PerfEval
-
-TODO: import testů na základě formátu a regexu (bude součástí konfigurace i typ benchmarku a formát?)
 
 Motivace: Jednoduché přidávání výsledků testů do systému PerfEval, udržování si základního přehledu o aktuálnosti testů
 
@@ -170,6 +166,8 @@ Triggers: Pomocí příkazu `perfeval list-undecided --max-time=1h` se spustí p
 
 TODO: Z popisu není jasné, jak bude stránka vypadat. Nutné doplnit až bude existovat reálná představa.
 
+V rámci grafického režimu budou zadaný počet testů (výsledků měření), nebo pro všechny testy zadaného maximálního stáří, k vidění graf pro každý benchmark test. Na každém grafu bude vidět vývoj naměřených hodnot a bude zde taky možné zobrazit pouze část těchto hodnot.
+
 #### Porovnání více výsledků s grafickým výstupem bez ukládání výstupu
 
 Use Case: Zobrazení dlouhodobého testování výkonu
@@ -202,7 +200,13 @@ Stručný popis: Program umožní zobrazit a uložit si změny výkonu za posled
 
 Success Guarantees: Program vypíše webovou adresu, kterou po zadání do webového prohlížeče bude možné zobrazit.
 
-Triggers: Pomocí příkazu `perfeval evaluate --graphical <target-dir>`.
+Triggers: Pomocí příkazu `perfeval evaluate --graphical --target-dir <target-dir>`.
+
+Alternativa (omezení počtu zahrnutých testů):
+
+Stručný popis: Program umožní zobrazit (případně uložit) změny výkonu, které jsou staré nanejvýš zadaný čas (ve formátu dd:hh:mm:ss, kde dd - dny, hh - hodiny, mm - minuty, ss - sekundy)
+
+Triggers: Pomocí příkazu `perfeval evaluate --graphical --max-test-age dd:hh:mm:ss`.
 
 Basic flow:<br>
 1. Uživatel zadá příkaz `perfeval evaluate --graphical <target-dir>`.
@@ -241,7 +245,8 @@ Příkazy
 -   perfeval evaluate
 -   perfeval evaluate --json-output
 -   perfeval evaluate --graphical
--   perfeval evaluate --graphical \<target-dir\>
+-   perfeval evaluate --graphical --target-dir \<target-dir\>
+-   perfeval evaluate --graphical --max-test-age dd:hh:mm:ss
 
 Podporované benchmarky (prozatím)
 -   BenchmarkDotNET
