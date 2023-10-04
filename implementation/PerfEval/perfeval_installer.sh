@@ -20,3 +20,11 @@ echo "JARFILE+=$JARFILE" >> $PERFEVAL_STARTER_FILE
 echo "java -jar \$JARFILE \$DIRECTORY \$@" >> $PERFEVAL_STARTER_FILE
 
 chmod +x $PERFEVAL_STARTER_FILE
+
+SHELL_NAME=$(basename "$SHELL")
+if [ "$SHELL_NAME" = "bash" ]; then
+    ALIAS_CONTENT="$(pwd)/$PERFEVAL_STARTER_FILE"
+    echo "alias perfeval=\"$ALIAS_CONTENT\"" >> ~/.bashrc
+    echo "Alias 'perfeval' has been added to ~/.bashrc"
+    source ~/.bashrc
+fi
