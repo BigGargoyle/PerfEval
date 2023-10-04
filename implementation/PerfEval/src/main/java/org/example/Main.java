@@ -103,7 +103,7 @@ public class Main {
 
     static void evaluateCommandHandle(String[] args) {
         if (contains(args, CLIFlags.graphicalFlag)) {
-            if (!GraphicalEvaluator.evaluateGraphical(args)) {
+            if (!GraphicalEvaluator.evaluateGraphical(args, initDatabase())) {
                 System.err.println("Graphical results cannot be evaluated");
             }
         } else if (!PerfEvalEvaluator.evaluateLastResults(initDatabase(), args)) {

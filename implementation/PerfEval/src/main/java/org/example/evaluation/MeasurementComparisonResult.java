@@ -8,6 +8,9 @@ import org.example.performanceComparatorFactory.IPerformanceComparator;
 
 import java.util.List;
 
+/**
+ * Class that implements IMeasurement comparison results and represents result of comparison for one performance test.
+ */
 public class MeasurementComparisonResult implements IMeasurementComparisonResult {
     private final double newAverage;
     private final double oldAverage;

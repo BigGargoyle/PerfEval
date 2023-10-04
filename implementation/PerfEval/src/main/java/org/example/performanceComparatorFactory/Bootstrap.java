@@ -7,9 +7,19 @@ import org.example.measurementFactory.UniversalTimeUnit;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Class with methods to execute statistical bootstrap on sets of performance measurements.
+ */
 public class Bootstrap {
     static final int DefaultBootstrapSampleSize = 10_000;
 
+    /**
+     *
+     * @param newSet first set of measurements for bootstrap
+     * @param oldSet second set of measurements for bootsrap
+     * @param critValue maximal width of confidence interval for bootstrap test
+     * @return true - if zero is inside the interval of two-sided bootstrap test, false - otherwise
+     */
     public static boolean evaluate(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet,
                                    double critValue) {
 

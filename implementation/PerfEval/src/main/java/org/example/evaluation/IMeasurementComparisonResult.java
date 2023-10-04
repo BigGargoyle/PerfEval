@@ -3,6 +3,9 @@ package org.example.evaluation;
 import org.example.measurementFactory.Measurement;
 import org.example.performanceComparatorFactory.ComparisonResult;
 
+/**
+ * Represents comparison of one performance test
+ */
 public interface IMeasurementComparisonResult {
     /**
      * @return name of benchmark test that is represented by this instance

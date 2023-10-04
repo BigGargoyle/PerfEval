@@ -20,11 +20,15 @@ import org.example.resultDatabase.IDatabase;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class with methods executing perfeval evaluate and list-undecided commands.
+ */
 public class PerfEvalEvaluator {
 
     private static final String equalSign = "=";
@@ -44,7 +48,7 @@ public class PerfEvalEvaluator {
         // measurements item count is 2 and measurements[0] is older than measurements[1]
         if (measurements == null)
             return false;
-        List<IMeasurementComparisonResult> comparisonResults = compareMeasurements(measurements);
+        List<IMeasurementComparisonResult> comparisonResults = compareMeasurements(measurements, args);
         if (comparisonResults == null)
             return false;
 
@@ -66,7 +70,7 @@ public class PerfEvalEvaluator {
         // measurements item count is 2 and measurements[0] is older than measurements[1]
         if (measurements == null || measurements.size() < 2 || measurements.get(0) == null || measurements.get(1) == null)
             return false;
-        List<IMeasurementComparisonResult> comparisonResults = compareMeasurements(measurements);
+        List<IMeasurementComparisonResult> comparisonResults = compareMeasurements(measurements, args);
         if (comparisonResults == null)
             return false;
 
@@ -157,7 +161,7 @@ public class PerfEvalEvaluator {
      * @param measurements List with two parsed files that are represented as a list of IMeasurements
      * @return list of results from each comparison or null if some step of checking input lists or reading config file failed
      */
-    private static List<IMeasurementComparisonResult> compareMeasurements(List<List<Measurement>> measurements) {
+    private static List<IMeasurementComparisonResult> compareMeasurements(List<List<Measurement>> measurements, String[] args) {
         List<Measurement> olderMeasurement = measurements.get(0);
         List<Measurement> newerMeasurement = measurements.get(1);
 
@@ -173,10 +177,14 @@ public class PerfEvalEvaluator {
         if (configData == null)
             return null;
 
+        UniversalTimeUnit maxTimeOnTest = getUniversalTimeUnitFromArgs(args);
+        if(maxTimeOnTest == null)
+            maxTimeOnTest = configData.maxTimeOnTest;
+
         IPerformanceComparator performanceComparator = ComparatorFactory.getComparator(
                 configData.critValue,
                 configData.maxCIWidth,
-                configData.maxTimeOnTest
+                maxTimeOnTest
         );
 
         List<IMeasurementComparisonResult> comparisonResults = new ArrayList<>();
@@ -188,6 +196,47 @@ public class PerfEvalEvaluator {
         }
 
         return comparisonResults;
+    }
+
+    static private UniversalTimeUnit getUniversalTimeUnitFromArgs(String[] args){
+        int index = 0;
+        while(index<args.length){
+            if(args[index].contains(CLIFlags.maxTimeForTestParameter))
+                break;
+            index++;
+        }
+        String paramValue;
+        if(index==args.length)
+            return null;
+        else if (args[index].contains(equalSign)) {
+            paramValue = args[index].split(equalSign)[1];
+        }
+        else{
+            index++;
+            if(index>=args.length) {
+                System.err.println("Value of max-time parameter cannot be parsed. Default value was used.");
+                return null;
+            }
+            paramValue = args[index];
+        }
+        UniversalTimeUnit result = parseParamToUniversalTimeUnit(paramValue);
+        if(result == null){
+            System.err.println("Value of max-time parameter cannot be parsed. Default value was used.");
+        }
+        return result;
+    }
+
+    static private UniversalTimeUnit parseParamToUniversalTimeUnit(String paramValue) {
+        String[] splitted = paramValue.split(":");
+        try {
+            if (splitted.length < 3) return null;
+            long hours = Long.parseLong(splitted[0]);
+            long minutes = Long.parseLong(splitted[1]);
+            long seconds = Long.parseLong(splitted[2]);
+            return new UniversalTimeUnit(((hours * 60) + minutes) * 60 + seconds, TimeUnit.SECONDS);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**

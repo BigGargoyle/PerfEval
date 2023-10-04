@@ -10,7 +10,6 @@ public record Measurement(String name, List<UniversalTimeUnit> measuredTimes) {
     /**
      * @return name of test
      */
-    @Override
     public String name() {
         return name;
     }
@@ -18,7 +17,6 @@ public record Measurement(String name, List<UniversalTimeUnit> measuredTimes) {
     /**
      * @return measured values
      */
-    @Override
     public List<UniversalTimeUnit> measuredTimes() {
         return measuredTimes;
     }
