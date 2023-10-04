@@ -25,7 +25,7 @@ import java.util.PriorityQueue;
 
 public class CacheDatabase implements IDatabase {
 
-    static final int maxCountOfItemsInCache = 5;
+    static final int maxCountOfItemsInCache = 100;
     static final SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
 
     final PriorityQueue<DatabaseItem> databaseCache;

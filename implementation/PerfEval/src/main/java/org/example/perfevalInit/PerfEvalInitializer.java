@@ -82,6 +82,7 @@ public class PerfEvalInitializer {
      * @return true - if writing was successful, false - otherwise
      */
     static boolean writeHelpFileContent(BufferedWriter helpFileWriter) {
+        //TODO: create help file
         /*
         try {
 
