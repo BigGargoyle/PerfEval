@@ -22,7 +22,7 @@ import java.util.*;
  * Class with methods for executing perfeval evaluate --graphical command
  */
 public class GraphicalEvaluator {
-
+/*
     static String RESULT_FILE_NAME = "benchmarkTests.json";
     static int DEFAULT_FILE_COUNT = 50;
 
@@ -240,5 +240,5 @@ public class GraphicalEvaluator {
                     "dateOfMeasuring=" + dateOfMeasuring + ']';
         }
     }
-
+*/
 }

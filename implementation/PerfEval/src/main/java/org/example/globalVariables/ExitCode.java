@@ -10,13 +10,14 @@ public enum ExitCode {
     invalidArguments(101),
     notInitialized(102),
     evaluationFailed(103),
-    databaseError(104) ;
+    databaseError(104),
+    fileSystemError(105);
     final int exitCode;
     ExitCode(int value){
         exitCode = value;
     }
 
-    public int getExitCode() {
-        return exitCode;
+    public void exit() {
+        System.exit(exitCode);
     }
 }

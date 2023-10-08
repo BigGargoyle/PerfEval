@@ -4,81 +4,92 @@ package org.example.resultDatabase;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.example.globalVariables.DBFlags;
-import org.example.globalVariables.FileNames;
-import org.example.globalVariables.StringConstants;
+import org.example.globalVariables.ExitCode;
 import org.example.measurementFactory.IMeasurementParser;
 import org.example.measurementFactory.ParserFactory;
-import org.example.perfevalInit.IniFileData;
+import org.example.perfevalInit.PerfEvalConfig;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
+import java.security.InvalidParameterException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.PriorityQueue;
+import java.util.concurrent.TimeUnit;
 
 public class CacheDatabase implements IDatabase {
 
-    static final int maxCountOfItemsInCache = 100;
-    static final SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
+    static final int maxCountOfItemsInCache = 5;
+    final Path cachePath;
+    final Path databasePath;
 
-    final PriorityQueue<DatabaseItem> databaseCache;
 
-    public CacheDatabase() {
-        databaseCache = createPriorityQueueFromFile(FileNames.workingDirectory+"/"+ FileNames.DatabaseCacheFileName, maxCountOfItemsInCache);
+    public CacheDatabase(Path databasePath, Path cachePath) {
+        this.cachePath = cachePath;
+        this.databasePath = databasePath;
     }
 
-    private void updateDatabaseCache() {
-        try (FileWriter writer = new FileWriter(FileNames.workingDirectory+"/"+ FileNames.DatabaseCacheFileName)) {
-            for (DatabaseItem item : databaseCache) {
-                String line = databaseItemToString(item) + System.lineSeparator();
+    private void updateDatabaseCache(PriorityQueue<DatabaseItem> newCacheContent) throws DatabaseException {
+        try {
+            FileWriter writer = new FileWriter(cachePath.toFile());
+            for (DatabaseItem item : newCacheContent) {
+                String line = item.toDatabaseString() + System.lineSeparator();
                 writer.write(line);
             }
             writer.flush();
+            writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            DatabaseException exception = new DatabaseException(ExitCode.databaseError);
+            exception.initCause(e);
+            throw exception;
         }
     }
 
 
-    static private PriorityQueue<DatabaseItem> createPriorityQueueFromFile(String fileName, int countOfItemsInQueue) {
+    static private PriorityQueue<DatabaseItem> createPriorityQueueFromFile(BufferedReader reader, int countOfItemsInQueue) throws IOException {
         PriorityQueue<DatabaseItem> maxHeap = new PriorityQueue<>(Comparator.comparing(DatabaseItem::dateOfCreation));
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                DatabaseItem item = parseDatabaseLine(line);
-                if (item == null) continue;
+        String line;
+        while ((line = reader.readLine()) != null) {
+            try {
+                DatabaseItem item = DatabaseItem.fromDatabaseString(line);
                 if (maxHeap.size() <= countOfItemsInQueue)
                     maxHeap.add(item);
                 else if (item.dateOfCreation().compareTo(maxHeap.peek().dateOfCreation()) > 0) {
                     maxHeap.poll();
                     maxHeap.add(item);
                 }
+            } catch (InvalidParameterException e) {
+                // in case of the line is not database item
+                // it could be a comment
+                continue;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         }
-
         return maxHeap;
     }
 
     @Override
-    public DatabaseItem[] getLastNResults(int n) {
+    public DatabaseItem[] getLastNResults(int n) throws DatabaseException {
         PriorityQueue<DatabaseItem> maxHeap;
-        if (n > databaseCache.size())
-            maxHeap = createPriorityQueueFromFile(FileNames.workingDirectory+"/"+ FileNames.DatabaseFileName, n);
-        else {
-            maxHeap = getLastNResultsFromCache(n);
+        try {
+
+            PriorityQueue<DatabaseItem> cache = LoadCache();
+            if (n > cache.size())
+                maxHeap = LoadDataFromDatabase(n);
+            else {
+                maxHeap = cache;
+                while (cache.size() > n)
+                    cache.poll();
+            }
+        } catch (IOException e) {
+            DatabaseException exception = new DatabaseException(ExitCode.databaseError);
+            exception.initCause(e);
+            throw exception;
         }
 
-        if (maxHeap == null || maxHeap.size() < n) return null;
+        //TODO: what to do with size < n ?
+
+        // if (maxHeap.size() < n) return null;
 
         DatabaseItem[] result = new DatabaseItem[n];
         for (int i = 0; i < result.length; i++) {
@@ -91,52 +102,56 @@ public class CacheDatabase implements IDatabase {
         return result;
     }
 
-    private PriorityQueue<DatabaseItem> getLastNResultsFromCache(int n) {
-        PriorityQueue<DatabaseItem> result = new PriorityQueue<>(Comparator.comparing(DatabaseItem::dateOfCreation));
-        DatabaseItem[] lastItems = new DatabaseItem[n];
-        for (int i = 0; i < lastItems.length; i++) {
-            lastItems[i] = databaseCache.poll();
-        }
-        for (DatabaseItem lastItem : lastItems) {
-            databaseCache.add(lastItem);
-            result.add(lastItem);
-        }
-        return result;
+    private PriorityQueue<DatabaseItem> LoadDataFromDatabase(int countOfItems) throws IOException {
+        BufferedReader reader = Files.newBufferedReader(databasePath);
+        return createPriorityQueueFromFile(reader, countOfItems);
+    }
+
+    private PriorityQueue<DatabaseItem> LoadCache() throws IOException {
+        BufferedReader reader = Files.newBufferedReader(cachePath);
+        return createPriorityQueueFromFile(reader, maxCountOfItemsInCache);
     }
 
     @Override
-    public boolean addFile(String fileName) {
-        boolean result = addFileToDatabase(fileName);
-        if (result) updateDatabaseCache();
-        return result;
+    public void addFile(Path filePath, Path gitFilePath, PerfEvalConfig config) throws DatabaseException {
+        try {
+            PriorityQueue<DatabaseItem> cache = createPriorityQueueFromFile(Files.newBufferedReader(cachePath), maxCountOfItemsInCache);
+            //String version = resolveVersion(filePath, gitFilePath, config.version);
+            boolean result = addFileToDatabase(filePath, gitFilePath, config.version, cache);
+            updateDatabaseCache(cache);
+        } catch (IOException e) {
+            DatabaseException exception = new DatabaseException(ExitCode.databaseError);
+            exception.initCause(e);
+            throw exception;
+        }
     }
 
-    private boolean addFileToDatabase(String fileName) {
-        File file = new File(fileName);
-        if (!file.exists())
-            return false;
+    private boolean addFileToDatabase(Path filePath, Path gitFilePath, String configVersion, PriorityQueue<DatabaseItem> cache) throws IOException {
+        if (!filePath.toFile().exists())
+            throw new IOException("File does not exist.");
 
-        if (hasUnknownTestFormat(fileName)) {
-            System.err.println("Unknown file format");
-            return false;
+        if (hasUnknownTestFormat(filePath)) {
+            throw new IOException("File format is not known.");
         }
-        DatabaseItem item = createItemFromFileName(fileName);
-        if (item == null) return false;
+        Date creationTime = new Date((Files.readAttributes(filePath, BasicFileAttributes.class)).creationTime().to(TimeUnit.MILLISECONDS));
+        String version = resolveVersion(creationTime, gitFilePath, configVersion);
+        DatabaseItem item = DatabaseItem.createFromFilePath(filePath, version);
 
-        tryAddItemToCache(item);
+        tryAddItemToCache(item, cache);
         return addItemToDatabase(item);
     }
 
-    static boolean hasUnknownTestFormat(String filePath) {
-        IMeasurementParser parser = ParserFactory.recognizeParserFactory(filePath);
+    static boolean hasUnknownTestFormat(Path filePath) {
+        //TODO: change to path
+        IMeasurementParser parser = ParserFactory.recognizeParserFactory(filePath.toString());
         return parser == null;
     }
 
     private boolean addItemToDatabase(DatabaseItem item) {
         try {
-            FileWriter database = new FileWriter(FileNames.workingDirectory+"/"+ FileNames.DatabaseFileName, true);
-            database.append(databaseItemToString(item)).append(System.lineSeparator());
-            database.close();
+            BufferedWriter writer = Files.newBufferedWriter(databasePath);
+            writer.append(item.toDatabaseString()).append(System.lineSeparator());
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -144,106 +159,64 @@ public class CacheDatabase implements IDatabase {
         return true;
     }
 
-    private void tryAddItemToCache(DatabaseItem item) {
-        if (databaseCache.size() < maxCountOfItemsInCache) {
-            databaseCache.add(item);
+    private static void tryAddItemToCache(DatabaseItem item, PriorityQueue<DatabaseItem> cache) {
+        if (cache.size() < maxCountOfItemsInCache) {
+            cache.add(item);
             return;
         }
-        if (databaseCache.peek() == null) return;
-        if (item.dateOfCreation().compareTo(databaseCache.peek().dateOfCreation()) > 0) {
-            databaseCache.poll();
-            databaseCache.add(item);
+        if (cache.peek() == null) return;
+        if (item.dateOfCreation().compareTo(cache.peek().dateOfCreation()) > 0) {
+            cache.poll();
+            cache.add(item);
         }
-    }
-
-    private DatabaseItem createItemFromFileName(String fileName) {
-        Path path = Paths.get(fileName);
-        Date date;
-        try {
-            BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
-            date = new Date(attributes.creationTime().toMillis());
-        } catch (IOException e) {
-            //e.printStackTrace();
-            return null;
-        }
-        String version = resolveVersion(date);
-        return new DatabaseItem(path.toAbsolutePath().toString(), date, version);
     }
 
     @Override
-    public boolean addFilesFromDir(String dirName) {
-        boolean result = addFilesFromDirDFS(new File(dirName));
-        // result == false does not mean that no item was added -> ~~~if(result)~~~
-        updateDatabaseCache();
-        return result;
-        // return false;
+    public boolean addFilesFromDir(Path dirPath, Path gitFilePath, PerfEvalConfig config) throws DatabaseException {
+
+        try {
+            PriorityQueue<DatabaseItem> cache = createPriorityQueueFromFile(Files.newBufferedReader(cachePath), maxCountOfItemsInCache);
+            boolean result = addFilesFromDirDFS(dirPath, gitFilePath, config.version, cache);
+            updateDatabaseCache(cache);
+            return result;
+        } catch (IOException e) {
+            DatabaseException exception = new DatabaseException(ExitCode.databaseError);
+            exception.initCause(e);
+            throw exception;
+        }
     }
 
     /**
-     * @param fileOrDir path to a file that is meant to be added to database or to a directory inside which there are files (benchmark results) searched
+     * @param path path to a file that is meant to be added to database or to a directory inside which there are files (benchmark results) searched
      * @return true - if adding was always successful, false - otherwise
      */
-    boolean addFilesFromDirDFS(File fileOrDir) {
+    boolean addFilesFromDirDFS(Path path, Path gitFilePath, String configVersion, PriorityQueue<DatabaseItem> cache) throws IOException {
 
         //File file = new File(dirName);
 
-        if (Files.isDirectory(fileOrDir.toPath())) {
-            File[] files = fileOrDir.listFiles();
-            if (files == null) return false;
+        if (Files.isDirectory(path)) {
+            DirectoryStream<Path> files = Files.newDirectoryStream(path);
             boolean result = true;
             for (var fileInDir : files) {
-                result = result & addFilesFromDirDFS(fileInDir);
+                result = result & addFilesFromDirDFS(fileInDir, gitFilePath, configVersion, cache);
             }
+            files.close();
             return result;
         }
-        if (Files.isRegularFile(fileOrDir.toPath())) {
-            return addFileToDatabase(fileOrDir.toPath().toAbsolutePath().toString());
+        if (Files.isRegularFile(path)) {
+            return addFileToDatabase(path, gitFilePath, configVersion, cache);
         }
         return true;
     }
 
     /**
-     * @param line line from a database file
-     * @return an instance of a DatabaseItem which was created from the line
-     */
-    static DatabaseItem parseDatabaseLine(String line) {
-        String[] splittedLine = line.split(DBFlags.ColumnDelimiter);
-        if (splittedLine.length >= 4 && splittedLine[0].compareTo(DBFlags.DatabaseItemIdentifier) != 0)
-            return null;
-        Date date;
-        try {
-            date = DateFormat.parse(splittedLine[2]);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return new DatabaseItem(splittedLine[1], date, splittedLine[3]);
-    }
-
-    /**
-     * @param databaseItem creating a database file line from an instance of DatabaseItem
-     * @return database file line
-     */
-    static String databaseItemToString(DatabaseItem databaseItem) {
-        String result = DBFlags.DatabaseItemIdentifier + DBFlags.ColumnDelimiter;
-        result += databaseItem.path() + DBFlags.ColumnDelimiter;
-        result += DateFormat.format(databaseItem.dateOfCreation()) + DBFlags.ColumnDelimiter;
-        result += databaseItem.version();
-        return result;
-    }
-
-    /**
      * @return version of software to which the new database file belongs to
      */
-    String resolveVersion(Date dateOfCreation) {
-        IniFileData configData = new IniFileData(true);
-        if (!configData.validConfig) {
-            return StringConstants.UnknownVersion;
+    static String resolveVersion(Date dateOfCreation, Path gitFilePath, String configVersion) {
+        if (gitFilePath == null) {
+            return configVersion;
         }
-        if (!configData.gitFilePresence) {
-            return configData.version;
-        }
-        try (Git git = Git.open(new File(FileNames.workingDirectory+"/"+FileNames.gitFileName))) {
+        try (Git git = Git.open(gitFilePath.toFile())) {
             Iterable<RevCommit> commits = git.log().all().call();
             for (RevCommit commit : commits) {
                 if (commit.getAuthorIdent().getWhen().before(dateOfCreation)) {
@@ -251,10 +224,10 @@ public class CacheDatabase implements IDatabase {
                 }
             }
         } catch (IOException | GitAPIException e) {
-            return configData.version;
+            return configVersion;
         }
 
-        return configData.version;
+        return configVersion;
     }
 
 }

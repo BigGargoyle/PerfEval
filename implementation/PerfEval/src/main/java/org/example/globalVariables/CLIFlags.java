@@ -18,10 +18,7 @@ public class CLIFlags {
      * Only for use with evaluate command. The output in JSON format will be printed.
      */
     public static final String jsonOutputFlag = "--json-output";
-    /**
-     * Only for use with init command. New PerfEval system will be initialized. Old system will be deleted.
-     */
-    public static final String forceFlag = "--force";
+
     // possible params
     /**
      * Only for use with evaluate command. Results will be printed with respect to a filtered value.
