@@ -124,8 +124,8 @@ public class Main {
         IDatabase database = new CacheDatabase(Path.of(DatabaseFileName), Path.of(DatabaseCacheFileName));
         IResultPrinter printer = new UndecidedPrinter(System.out);
         IPerformanceComparator comparator = ComparatorFactory.getComparator(config.critValue, config.maxCIWidth, config.maxTimeOnTest);
-        return new UndecidedCommand(database, printer, comparator);
-        return null;
+        // Undecided printer -> printing only undecided results
+        return new EvaluateCLICommand(database, printer, comparator);
     }
 
     private static ICommand setupIndexAllCommand(String[] args, OptionSet options, PerfEvalConfig config) {
