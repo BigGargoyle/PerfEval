@@ -19,7 +19,7 @@ import java.util.Date;
  * @param dateOfCreation date of creation of the file
  * @param version version to which the file belongs to
  */
-public record DatabaseItem(String path, Date dateOfCreation, String version) {
+public record FileWithResultsData(String path, Date dateOfCreation, String version) {
     static final SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
 
     public String toDatabaseString() {
@@ -30,7 +30,7 @@ public record DatabaseItem(String path, Date dateOfCreation, String version) {
         return result;
     }
 
-    public static DatabaseItem fromDatabaseString(String databaseString) throws InvalidParameterException {
+    public static FileWithResultsData fromDatabaseString(String databaseString) throws InvalidParameterException {
         String[] splittedLine = databaseString.split(DBFlags.ColumnDelimiter);
         if (splittedLine.length >= 4 && splittedLine[0].compareTo(DBFlags.DatabaseItemIdentifier) != 0)
             throw new InvalidParameterException();
@@ -42,13 +42,13 @@ public record DatabaseItem(String path, Date dateOfCreation, String version) {
             exception.initCause(e);
             throw exception;
         }
-        return new DatabaseItem(splittedLine[1], date, splittedLine[3]);
+        return new FileWithResultsData(splittedLine[1], date, splittedLine[3]);
     }
 
-    public static DatabaseItem createFromFilePath(Path filePath, String fileVersion) throws IOException {
+    public static FileWithResultsData createFromFilePath(Path filePath, String fileVersion) throws IOException {
         BasicFileAttributes attributes = Files.readAttributes(filePath, BasicFileAttributes.class);
         Date date = new Date(attributes.creationTime().toMillis());
-        return new DatabaseItem(filePath.toAbsolutePath().toString(), date, fileVersion);
+        return new FileWithResultsData(filePath.toAbsolutePath().toString(), date, fileVersion);
     }
 
 }

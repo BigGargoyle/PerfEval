@@ -1,23 +1,5 @@
 package org.example.perfevalGraphicalEvaluator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.example.measurementFactory.IMeasurementParser;
-import org.example.measurementFactory.Measurement;
-import org.example.measurementFactory.ParserFactory;
-import org.example.measurementFactory.UniversalTimeUnit;
-import org.example.resultDatabase.DatabaseItem;
-import org.example.resultDatabase.IDatabase;
-import org.example.globalVariables.FileNames;
-
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-
 /**
  * Class with methods for executing perfeval evaluate --graphical command
  */

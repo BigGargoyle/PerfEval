@@ -1,15 +1,29 @@
 package org.example;
 
+import java.io.PrintStream;
 import java.nio.file.Path;
+import java.util.Comparator;
 
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import org.example.evaluation.IResultPrinter;
+import org.example.evaluation.JSONPrinter;
+import org.example.evaluation.MeasurementComparisonRecord;
+import org.example.evaluation.TablePrinter;
 import org.example.globalVariables.ExitCode;
+import org.example.measurementFactory.Measurement;
+import org.example.perfevalCLIEvaluator.EvaluateCLICommand;
 import org.example.perfevalInit.InitCommand;
 import org.example.perfevalInit.PerfEvalCommandFailedException;
 import org.example.perfevalInit.PerfEvalConfig;
 import org.example.perfevalInit.PerfEvalInvalidConfigException;
+import org.example.performanceComparatorFactory.ComparatorFactory;
+import org.example.performanceComparatorFactory.ComparisonResult;
+import org.example.performanceComparatorFactory.IPerformanceComparator;
+import org.example.resultDatabase.CacheDatabase;
+import org.example.resultDatabase.IDatabase;
 
 public class Main {
     // commands
@@ -46,10 +60,32 @@ public class Main {
     public static final String DatabaseFileName = "test_results.db";
     public static final String DatabaseCacheFileName = "test_results_cache.db";
 
+    public static final String gitFileName = ".git";
+
     /**
      * Only for use with init command. New PerfEval system will be initialized. Old system will be deleted.
      */
-    public static final String forceFlag = "--force";
+    public static final String forceFlag = "force";
+    public static final String helpFlag = "flag";
+    public static final String jsonOutputFlag = "json-output";
+    public static final String graphicalFlag = "graphical";
+
+    private static final String maxTimeParameter = "max-time";
+
+    static class DefaultComparator<T> implements Comparator<T>{
+        @Override
+        public int compare(T o1, T o2) {
+            return 0;
+        }
+    }
+
+    private static final String filterParameter = "filter";
+    private static final String testResultFilter = "test-result";
+    static final Comparator<MeasurementComparisonRecord> testResultFilterComparator = Comparator.comparing(MeasurementComparisonRecord::comparisonResult, Comparator.comparingInt(ComparisonResult::getResultNumber));
+    private static final String sizeOfChangeFilter = "size-of-change";
+    static final Comparator<MeasurementComparisonRecord> sizeOfChangeFilterComparator = Comparator.comparing(MeasurementComparisonRecord::performanceChange);
+    private static final String testIDFilter = "test-id";
+    static final Comparator<MeasurementComparisonRecord> nameFilterComparator = Comparator.comparing(MeasurementComparisonRecord::newMeasurement, Comparator.comparing(Measurement::name));
 
     public static void main(String[] args) {
         ExitCode exitCode;
@@ -79,27 +115,54 @@ public class Main {
 
         for(var arg : options.nonOptionArguments()){
             if(arg==initCommand) return setupInitCommand(args, options, config);
-            if(arg==evaluateCommand) return setupEvaluateCommand(args, options, iniFilePath);
-            if(arg==indexNewCommand) return setupIndexNewCommand(args, options, iniFilePath);
-            if(arg==indexAllCommand) return setupIndexAllCommand(args, options, iniFilePath);
-            if(arg==undecidedCommand) return setupUndecidedCommand(args, options, iniFilePath);
+            if(arg==evaluateCommand) return setupEvaluateCommand(args, options, config);
+            if(arg==indexNewCommand) return setupIndexNewCommand(args, options, config);
+            if(arg==indexAllCommand) return setupIndexAllCommand(args, options, config);
+            if(arg==undecidedCommand) return setupUndecidedCommand(args, options, config);
         }
         return null;
     }
 
-    private static ICommand setupUndecidedCommand(String[] args, OptionSet options, Path config) {
+    private static ICommand setupUndecidedCommand(String[] args, OptionSet options, PerfEvalConfig config) {
         return null;
     }
 
-    private static ICommand setupIndexAllCommand(String[] args, OptionSet options, Path config) {
-        return null;
+    private static ICommand setupIndexAllCommand(String[] args, OptionSet options, PerfEvalConfig config) {
+        Path sourceDir = Path.of(args[2]);
+        Path gitFilePath = config.gitFilePresence ? Path.of(args[0]).resolve(gitFileName) : null;
+        IDatabase database = new CacheDatabase(Path.of(DatabaseFileName), Path.of(DatabaseCacheFileName));
+        return new AddFilesFromDirCommand(sourceDir, gitFilePath, database, config);
     }
 
-    private static ICommand setupIndexNewCommand(String[] args, OptionSet options, Path config) {
-        return null;
+    private static ICommand setupIndexNewCommand(String[] args, OptionSet options, PerfEvalConfig config) {
+        Path sourceDir = Path.of(args[2]);
+        Path gitFilePath = config.gitFilePresence ? Path.of(args[0]).resolve(gitFileName) : null;
+        IDatabase database = new CacheDatabase(Path.of(DatabaseFileName), Path.of(DatabaseCacheFileName));
+        return new AddFileCommand(sourceDir, gitFilePath, database, config);
     }
 
-    private static ICommand setupEvaluateCommand(String[] args, OptionSet options, Path config) {
+    private static ICommand setupEvaluateCommand(String[] args, OptionSet options, PerfEvalConfig config) {
+        if(options.has(graphicalFlag))
+            return setupGraphicalCommand(args, options, config);
+        IDatabase database = new CacheDatabase(Path.of(DatabaseFileName), Path.of(DatabaseCacheFileName));
+
+        Comparator<MeasurementComparisonRecord> filter = new DefaultComparator<MeasurementComparisonRecord>();
+        if(options.has(filterOption)){
+            switch (options.valueOf(filterOption)){
+                case testIDFilter -> filter = nameFilterComparator;
+                case sizeOfChangeFilter -> filter = sizeOfChangeFilterComparator;
+                case testResultFilter -> filter = testResultFilterComparator;
+            }
+        }
+        PrintStream printStream = System.out;
+        IResultPrinter printer = options.has(jsonOutputFlag) ? new JSONPrinter(printStream, filter) : new TablePrinter(printStream, filter);
+
+        IPerformanceComparator comparator = ComparatorFactory.getComparator(config.critValue, config.maxCIWidth, config.maxTimeOnTest);
+
+        return new EvaluateCLICommand(database, printer, comparator);
+    }
+
+    private static ICommand setupGraphicalCommand(String[] args, OptionSet options, PerfEvalConfig config) {
         return null;
     }
 
@@ -122,23 +185,26 @@ public class Main {
                 emptyFiles, gitIgnoredFiles, config, options.has(forceFlag));
     }
 
+    static ArgumentAcceptingOptionSpec<String> filterOption;
+    static ArgumentAcceptingOptionSpec<String> maxTimeOption;
+
     private static OptionParser CreateParser(){
         OptionParser parser = new OptionParser();
 
         // Define options with arguments
-        ArgumentAcceptingOptionSpec<String> filterOption = parser.accepts("filter")
+        filterOption = parser.accepts(filterParameter)
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Filter option with a parameter");
-        ArgumentAcceptingOptionSpec<String> maxTimeOption = parser.accepts("max-time")
+        maxTimeOption = parser.accepts(maxTimeParameter)
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Max time option with a duration parameter");
 
         // Define flags (options without arguments)
-        parser.accepts("help", "Print help message");
-        parser.accepts("graphical", "Enable graphical mode");
-        parser.accepts("json-output", "Enable JSON output");
+        parser.accepts(helpFlag, "Print help message");
+        parser.accepts(graphicalFlag, "Enable graphical mode");
+        parser.accepts(jsonOutputFlag, "Enable JSON output");
         parser.accepts(forceFlag, "Force the operation");
         return parser;
     }

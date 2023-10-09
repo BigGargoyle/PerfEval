@@ -5,6 +5,8 @@ import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.inference.TTest;
+import org.example.evaluation.MeasurementComparisonRecord;
+import org.example.measurementFactory.Measurement;
 import org.example.measurementFactory.UniversalTimeUnit;
 
 import java.util.List;
@@ -12,12 +14,11 @@ import java.util.concurrent.TimeUnit;
 
 public class BootstrapPerformanceComparator implements IPerformanceComparator {
 
+    static final int MINUS_ONE = -1;
     final UniversalTimeUnit maxTestTime;
     final double criticalValue;
     // maxConfidenceIntervalWidth = 0.1 means confidence interval mean+-(0.1*mean)
     final double maxConfidenceIntervalWidth;
-    int minSampleCount;
-    ComparisonResult comparisonResult;
 
     /**
      * @param pValue                  max p value for statistical tests that will be done with given data sets
@@ -30,19 +31,29 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator {
     }
 
     @Override
-    public ComparisonResult compareSets(List<UniversalTimeUnit> newSet, List<UniversalTimeUnit> oldSet) {
+    public MeasurementComparisonRecord compareSets(Measurement oldMeasurement, Measurement newMeasurement) {
+        
+        UniversalTimeUnit oldAverage;
+        UniversalTimeUnit newAverage;
+        double performanceChange;
+        int minSampleCount = MINUS_ONE;
+        
 
-        if (oldSet == null || newSet == null || oldSet.size() == 0 || newSet.size() == 0) {
-            // an error has occurred
-            comparisonResult = ComparisonResult.None;
-            return comparisonResult;
-        }
-
-        SummaryStatistics newStat = listToStatistic(newSet);
-        SummaryStatistics oldStat = listToStatistic(oldSet);
+        SummaryStatistics newStat = listToStatistic(oldMeasurement.measuredTimes());
+        SummaryStatistics oldStat = listToStatistic(newMeasurement.measuredTimes());
         if (Math.abs(pValueOfTTest(newStat, oldStat)) > criticalValue) {
-            comparisonResult = ComparisonResult.DifferentDistribution;
-            return comparisonResult;
+            ComparisonResult comparisonResult = ComparisonResult.DifferentDistribution;
+            boolean testVerdict = false;
+            return new MeasurementComparisonRecord(
+                    oldAverage,
+                    newAverage,
+                    performanceChange,
+                    comparisonResult,
+                    testVerdict,
+                    minSampleCount,
+                    oldMeasurement,
+                    newMeasurement
+            );
         }
         double newSetCIRadius = calcMeanCI(newStat, 1 - criticalValue);
         double oldSetCIRadius = calcMeanCI(oldStat, 1 - criticalValue);
@@ -52,24 +63,54 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator {
 
         if (newSetCIRadius <= newMean * maxConfidenceIntervalWidth
                 && oldSetCIRadius <= oldMean * maxConfidenceIntervalWidth) {
-            comparisonResult = ComparisonResult.SameDistribution;
-            return comparisonResult;
+            ComparisonResult comparisonResult = ComparisonResult.SameDistribution;
+            boolean testVerdict = true;
+            return new MeasurementComparisonRecord(
+                    oldAverage,
+                    newAverage,
+                    performanceChange,
+                    comparisonResult,
+                    testVerdict,
+                    minSampleCount,
+                    oldMeasurement,
+                    newMeasurement
+            );
         }
 
-        comparisonResult = ComparisonResult.NotEnoughSamples;
 
         int oldMinSampleCount = calcMinSampleCount(oldStat, 1 - criticalValue, maxConfidenceIntervalWidth);
         int newMinSampleCount = calcMinSampleCount(newStat, 1 - criticalValue, maxConfidenceIntervalWidth);
         minSampleCount = Math.max(oldMinSampleCount, newMinSampleCount);
 
         if (newMean * minSampleCount > maxTestTime.getNanoSeconds() || oldMean * minSampleCount > maxTestTime.getNanoSeconds()) {
-            comparisonResult = ComparisonResult.Bootstrap;
-            return comparisonResult;
+            ComparisonResult comparisonResult = ComparisonResult.Bootstrap;
+            boolean testVerdict = Bootstrap.evaluate(newMeasurement.measuredTimes(), oldMeasurement.measuredTimes(), criticalValue);
+            return new MeasurementComparisonRecord(
+                    oldAverage,
+                    newAverage,
+                    performanceChange,
+                    comparisonResult,
+                    testVerdict,
+                    minSampleCount,
+                    oldMeasurement,
+                    newMeasurement
+            );
         }
-
-        return comparisonResult;
+        
+        ComparisonResult comparisonResult = ComparisonResult.NotEnoughSamples;
+        boolean testVerdict = false;
+        return new MeasurementComparisonRecord(
+                oldAverage,
+                newAverage,
+                performanceChange,
+                comparisonResult,
+                testVerdict,
+                minSampleCount,
+                oldMeasurement,
+                newMeasurement
+        );
     }
-
+    
     /**
      * Calculates p value of T-test of hypothesis that values1 and values2 are from the same distribution
      *
@@ -95,17 +136,6 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator {
         return stats;
     }
 
-    @Override
-    public ComparisonResult getLastComparisonResult() {
-        return comparisonResult;
-    }
-
-    @Override
-    public int getMinSampleCount() {
-        if (comparisonResult == ComparisonResult.NotEnoughSamples || comparisonResult == ComparisonResult.Bootstrap)
-            return minSampleCount;
-        return -1;
-    }
 
     //  start of code from https://gist.github.com/gcardone/5536578
 
