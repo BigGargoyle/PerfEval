@@ -35,8 +35,7 @@ public class EvaluateCLICommand implements ICommand {
             FileWithResultsData[] filesWithResultsData = database.getLastNResults(TWO);
             List<MeasurementComparisonRecord> comparisonResults = evaluateResults(filesWithResultsData, performanceComparator);
             resultPrinter.PrintResults(comparisonResults, filesWithResultsData);
-        }
-        catch (DatabaseException | AssertionError e){
+        } catch (DatabaseException | AssertionError e) {
             PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.databaseError);
             exception.initCause(e);
             throw exception;
@@ -54,21 +53,21 @@ public class EvaluateCLICommand implements ICommand {
         return compareTestsWithStatistic(olderMeasurements, newerMeasurements, performanceComparator);
     }
 
-    private static boolean compareTestsFromListsOfMeasurements(List<Measurement> measurements1, List<Measurement> measurements2){
-        if(measurements1.size() != measurements2.size())
+    private static boolean compareTestsFromListsOfMeasurements(List<Measurement> measurements1, List<Measurement> measurements2) {
+        if (measurements1.size() != measurements2.size())
             return false;
-        for(int i =0;i<measurements1.size();i++){
-            if(measurements1.get(i).name().compareTo(measurements2.get(i).name())!=0)
+        for (int i = 0; i < measurements1.size(); i++) {
+            if (measurements1.get(i).name().compareTo(measurements2.get(i).name()) != 0)
                 return false;
         }
         return true;
     }
-    private static List<MeasurementComparisonRecord> compareTestsWithStatistic(List<Measurement> olderMeasurements, List<Measurement> newerMeasurements, IPerformanceComparator performanceComparator){
+
+    private static List<MeasurementComparisonRecord> compareTestsWithStatistic(List<Measurement> olderMeasurements, List<Measurement> newerMeasurements, IPerformanceComparator performanceComparator) {
         List<MeasurementComparisonRecord> resultsOfComparison = new ArrayList<>();
-        for(int i =0;i<newerMeasurements.size();i++){
+        for (int i = 0; i < newerMeasurements.size(); i++) {
             resultsOfComparison.add(performanceComparator.compareSets(olderMeasurements.get(i), newerMeasurements.get(i)));
         }
-
         return resultsOfComparison;
     }
 }

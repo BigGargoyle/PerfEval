@@ -17,7 +17,6 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator {
     static final int MINUS_ONE = -1;
     final UniversalTimeUnit maxTestTime;
     final double criticalValue;
-    // maxConfidenceIntervalWidth = 0.1 means confidence interval mean+-(0.1*mean)
     final double maxConfidenceIntervalWidth;
 
     /**

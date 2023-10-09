@@ -8,10 +8,7 @@ import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
-import org.example.evaluation.IResultPrinter;
-import org.example.evaluation.JSONPrinter;
-import org.example.evaluation.MeasurementComparisonRecord;
-import org.example.evaluation.TablePrinter;
+import org.example.evaluation.*;
 import org.example.globalVariables.ExitCode;
 import org.example.measurementFactory.Measurement;
 import org.example.perfevalCLIEvaluator.EvaluateCLICommand;
@@ -124,6 +121,10 @@ public class Main {
     }
 
     private static ICommand setupUndecidedCommand(String[] args, OptionSet options, PerfEvalConfig config) {
+        IDatabase database = new CacheDatabase(Path.of(DatabaseFileName), Path.of(DatabaseCacheFileName));
+        IResultPrinter printer = new UndecidedPrinter(System.out);
+        IPerformanceComparator comparator = ComparatorFactory.getComparator(config.critValue, config.maxCIWidth, config.maxTimeOnTest);
+        return new UndecidedCommand(database, printer, comparator);
         return null;
     }
 
