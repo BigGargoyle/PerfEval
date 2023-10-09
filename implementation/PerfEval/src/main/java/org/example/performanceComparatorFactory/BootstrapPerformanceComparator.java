@@ -29,12 +29,21 @@ public class BootstrapPerformanceComparator implements IPerformanceComparator {
         maxTestTime = new UniversalTimeUnit(testTime.getTime(TimeUnit.NANOSECONDS), TimeUnit.NANOSECONDS);
     }
 
+
+    UniversalTimeUnit calculateTimeAverage(List<UniversalTimeUnit> timeUnits){
+        long sum = 0;
+        for (UniversalTimeUnit timeUnit : timeUnits){
+            sum+=timeUnit.getNanoSeconds();
+        }
+        return new UniversalTimeUnit(sum/timeUnits.size(), TimeUnit.NANOSECONDS);
+    }
+
     @Override
     public MeasurementComparisonRecord compareSets(Measurement oldMeasurement, Measurement newMeasurement) {
         
-        UniversalTimeUnit oldAverage;
-        UniversalTimeUnit newAverage;
-        double performanceChange;
+        UniversalTimeUnit oldAverage = calculateTimeAverage(oldMeasurement.measuredTimes());
+        UniversalTimeUnit newAverage = calculateTimeAverage(newMeasurement.measuredTimes());
+        double performanceChange = 1 - ((double) newAverage.getNanoSeconds() /oldAverage.getNanoSeconds());
         int minSampleCount = MINUS_ONE;
         
 

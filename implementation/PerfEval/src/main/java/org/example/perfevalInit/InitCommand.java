@@ -1,29 +1,74 @@
 package org.example.perfevalInit;
 
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.example.ICommand;
 import org.example.globalVariables.ExitCode;
+import org.example.measurementFactory.UniversalTimeUnit;
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.concurrent.TimeUnit;
 
 public class InitCommand implements ICommand {
+
+    private static final String critValueKey = "critValue.key";
+    private static final String maxCIWidthKey = "maxCIWidth.key";
+    private static final String maxTimeOnTestKey = "maxTime.key";
+    private static final String versionKey = "version.key";
+    private static final String gitPresenceKey = "git.key";
+    private static final String TrueString = "TRUE";
+    private static final String FalseString = "FALSE";
+
     public static PerfEvalConfig getConfig(Path iniFilePath) throws PerfEvalInvalidConfigException {
-        if(isPerfevalInitializedInThisDirectory(iniFilePath)) {
-            return readFromIniFile(iniFilePath);
+        if (isPerfevalInitializedInThisDirectory(iniFilePath)) {
+            try {
+                return readFromIniFile(iniFilePath);
+            } catch (ConfigurationException e){
+                PerfEvalInvalidConfigException exception = new PerfEvalInvalidConfigException();
+                exception.initCause(e);
+                throw exception;
+            }
         }
         return PerfEvalConfig.getDefaultConfig();
     }
+
     public static boolean isPerfevalInitializedInThisDirectory(Path perfevalDirPath) {
         return perfevalDirPath.toFile().isDirectory();
     }
-    public static PerfEvalConfig readFromIniFile(Path iniFilePath){
-        //TODO: find library to read from ini file
-        return null;
+
+    public static PerfEvalConfig readFromIniFile(Path iniFilePath) throws ConfigurationException, PerfEvalInvalidConfigException {
+        Configurations configs = new Configurations();
+        INIConfiguration config = configs.ini(iniFilePath.toFile());
+        double critValue = Double.parseDouble(config.getString(critValueKey));
+        double maxCIWidth = Double.parseDouble(config.getString(maxCIWidthKey));
+        UniversalTimeUnit timeUnit = new UniversalTimeUnit(Long.parseLong(config.getString(maxTimeOnTestKey)), TimeUnit.NANOSECONDS);
+        String version = config.getString(versionKey);
+        boolean gitPresence = config.getString(gitPresenceKey).compareTo(TrueString) == 0;
+        return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version);
+    }
+
+    private static void createIniFile(Path iniFilePath, PerfEvalConfig perfevalConfig) throws ConfigurationException, IOException {
+        if(iniFilePath.toFile().exists() && !iniFilePath.toFile().delete())
+            throw new IOException("ini file cannot be deleted");
+        FileWriter writer = new FileWriter(iniFilePath.toFile());
+        Configurations configs = new Configurations();
+        INIConfiguration config = configs.ini(iniFilePath.toFile());
+        config.setProperty(critValueKey, perfevalConfig.critValue);
+        config.setProperty(maxCIWidthKey, perfevalConfig.maxCIWidth);
+        config.setProperty(maxTimeOnTestKey, perfevalConfig.maxTimeOnTest.getNanoSeconds());
+        String gitPresenceString = perfevalConfig.gitFilePresence ? TrueString : FalseString;
+        config.setProperty(gitPresenceKey, gitPresenceString);
+        config.setProperty(versionKey, perfevalConfig.version);
+        config.write(writer);
+        writer.close();
     }
 
     final boolean forceFlag;
@@ -62,8 +107,7 @@ public class InitCommand implements ICommand {
                 exception.initCause(e);
                 throw exception;
             }
-        }
-        else if(!forceFlag){
+        } else if (!forceFlag) {
             throw new PerfEvalCommandFailedException(ExitCode.notInitialized);
         }
         try {
@@ -78,9 +122,14 @@ public class InitCommand implements ICommand {
 
     private void createPerfEvalFiles() throws IOException {
         Path iniFilePath = this.iniFilePath;
-        createIniFile(iniFilePath, config);
-        Path gitIgnoreFilePath = this.gitIgnorePath;
-        createGitIgnoreFile(gitIgnoreFilePath, gitIgnoredFiles);
+        try {
+            createIniFile(iniFilePath, config);
+        }catch (ConfigurationException e){
+            IOException exception = new IOException("Config file cannot be created");
+            exception.initCause(e);
+            throw exception;
+        }
+        createGitIgnoreFile(this.gitIgnorePath, gitIgnoredFiles);
         Path helpFilePath = this.helpFilePath;
         createHelpFile(helpFilePath, helpFileContent);
         for (Path emptyFile : emptyFilesToCreate) {
@@ -95,22 +144,18 @@ public class InitCommand implements ICommand {
     }
 
     private static void createEmptyFile(Path emptyFilePath) throws IOException {
-        if(!emptyFilePath.toFile().createNewFile()){
-            throw new IOException("File "+emptyFilePath.getFileName()+" was not created");
+        if (!emptyFilePath.toFile().createNewFile()) {
+            throw new IOException("File " + emptyFilePath.getFileName() + " was not created");
         }
     }
 
     private static void createGitIgnoreFile(Path gitIgnoreFilePath, Path[] ignoredFiles) throws IOException {
         BufferedWriter writer = Files.newBufferedWriter(gitIgnoreFilePath, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-        for(Path ignoredFile : ignoredFiles){
+        for (Path ignoredFile : ignoredFiles) {
             writer.write(ignoredFile.getFileName().toString());
             writer.newLine();
         }
         writer.close();
-    }
-
-    private static void createIniFile(Path iniFilePath, PerfEvalConfig config) {
-        //TODO: find library to create and read from ini file
     }
 
     private static void deleteDirectory(Path dirPath) throws IOException {

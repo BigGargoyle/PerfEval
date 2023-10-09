@@ -5,9 +5,14 @@ import org.example.measurementFactory.UniversalTimeUnit;
 import java.util.concurrent.TimeUnit;
 
 public final class PerfEvalConfig {
+    private static final boolean DEFAULT_GIT_PRESENCE = false;
+    private static final UniversalTimeUnit DEFAULT_MAX_TIME_ON_TEST = new UniversalTimeUnit(1, TimeUnit.HOURS);
+    private static final double DEFAULT_CRIT_VALUE = 0.05;
+    private static final double DEFAULT_MAX_CI_WIDTH = 0.1;
+    private static final String DEFAULT_VERSION = "UNKNOWN_VERSION";
 
     public static PerfEvalConfig getDefaultConfig() throws PerfEvalInvalidConfigException {
-        return new PerfEvalConfig(false, new UniversalTimeUnit(1, TimeUnit.HOURS), 0.1,0.05, "UNKNOWN_VERSION");
+        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MAX_TIME_ON_TEST, DEFAULT_MAX_CI_WIDTH,DEFAULT_CRIT_VALUE, DEFAULT_VERSION);
     }
 
     public PerfEvalConfig(boolean gitFilePresence, UniversalTimeUnit maxTimeOnTest, double maxCIWidth, double critValue, String version) throws PerfEvalInvalidConfigException {
