@@ -1,6 +1,5 @@
 package org.example.evaluation;
 
-import org.example.globalVariables.DBFlags;
 import org.example.performanceComparatorFactory.ComparisonResult;
 import org.example.resultDatabase.FileWithResultsData;
 
@@ -9,6 +8,7 @@ import java.util.List;
 
 public class UndecidedPrinter implements IResultPrinter{
     PrintStream printStream;
+    static final String COLUMN_DELIMITER = "\t";
     public UndecidedPrinter(PrintStream printStream){
         this.printStream = printStream;
     }
@@ -31,6 +31,6 @@ public class UndecidedPrinter implements IResultPrinter{
     private static void printUndecidedComparisonResult(MeasurementComparisonRecord comparisonResult, PrintStream printStream) {
         String name = comparisonResult.oldMeasurement().name();
         int minSampleCount = comparisonResult.minSampleCount();
-        printStream.println(name + DBFlags.ColumnDelimiter + minSampleCount);
+        printStream.println(name + COLUMN_DELIMITER + minSampleCount);
     }
 }

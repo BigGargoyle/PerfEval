@@ -1,4 +1,4 @@
-package org.example.globalVariables;
+package org.example;
 
 /**
  * Enum summarizing all possible exit codes of PerfEval system.

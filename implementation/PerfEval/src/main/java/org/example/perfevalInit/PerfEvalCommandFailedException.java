@@ -1,6 +1,6 @@
 package org.example.perfevalInit;
 
-import org.example.globalVariables.ExitCode;
+import org.example.ExitCode;
 
 public class PerfEvalCommandFailedException extends Exception {
     static String message = "PerfEval command failed.";

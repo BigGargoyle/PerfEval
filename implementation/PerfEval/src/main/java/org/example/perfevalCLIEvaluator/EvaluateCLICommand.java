@@ -3,7 +3,7 @@ package org.example.perfevalCLIEvaluator;
 import org.example.ICommand;
 import org.example.evaluation.IResultPrinter;
 import org.example.evaluation.MeasurementComparisonRecord;
-import org.example.globalVariables.ExitCode;
+import org.example.ExitCode;
 import org.example.measurementFactory.IMeasurementParser;
 import org.example.measurementFactory.Measurement;
 import org.example.measurementFactory.ParserFactory;

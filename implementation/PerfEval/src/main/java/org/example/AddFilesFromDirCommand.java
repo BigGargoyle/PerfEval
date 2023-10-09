@@ -1,6 +1,5 @@
 package org.example;
 
-import org.example.globalVariables.ExitCode;
 import org.example.perfevalInit.PerfEvalCommandFailedException;
 import org.example.perfevalInit.PerfEvalConfig;
 import org.example.resultDatabase.DatabaseException;

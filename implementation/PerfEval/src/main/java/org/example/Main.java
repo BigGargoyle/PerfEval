@@ -7,9 +7,7 @@ import java.util.Comparator;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
 import org.example.evaluation.*;
-import org.example.globalVariables.ExitCode;
 import org.example.measurementFactory.Measurement;
 import org.example.perfevalCLIEvaluator.EvaluateCLICommand;
 import org.example.perfevalInit.InitCommand;
@@ -27,47 +25,43 @@ public class Main {
     /**
      * Command for PerfEval system initialization. It creates .performance directory inside current directory.
      */
-    public static final String initCommand = "init";
+    public static final String INIT_COMMAND = "init";
     /**
      * Command for evaluating last two measurement results.
      */
-    public static final String evaluateCommand = "evaluate";
+    public static final String EVALUATE_COMMAND = "evaluate";
     /**
      * Command for inserting a new measurement (single file specified as a next argument) result inside directory.
      */
-    public static final String indexNewCommand = "index-new-result";
+    public static final String INDEX_NEW_COMMAND = "index-new-result";
     /**
      * Command for inserting all files inside this directory (specified as a next argument) and its subdirectories as new measurement result files.
      */
-    public static final String indexAllCommand = "index-all-results";
+    public static final String INDEX_ALL_COMMAND = "index-all-results";
     /**
      * Command for listing all test names that has too few measurements for a statistical test.
      */
-    public static final String undecidedCommand = "list-undecided";
-    /**
-     * Command for changing configuration of PerfEval system.
-     */
-    public static final String configCommand = "config";
+    public static final String UNDECIDED_COMMAND = "list-undecided";
 
 
-    public static final String perfevalDir = ".performance";
-    public static final String gitIgnoreFileName = ".gitignore";
-    public static final String helpFileName = "help.txt";
-    public static final String iniFileName = "config.ini";
-    public static final String DatabaseFileName = "test_results.db";
-    public static final String DatabaseCacheFileName = "test_results_cache.db";
+    public static final String PERFEVAL_DIR = ".performance";
+    public static final String GIT_IGNORE_FILE_NAME = ".gitignore";
+    public static final String HELP_FILE_NAME = "help.txt";
+    public static final String INI_FILE_NAME = "config.ini";
+    public static final String DATABASE_FILE_NAME = "test_results.db";
+    public static final String DATABASE_CACHE_FILE_NAME = "test_results_cache.db";
 
-    public static final String gitFileName = ".git";
+    public static final String GIT_FILE_NAME = ".git";
 
     /**
      * Only for use with init command. New PerfEval system will be initialized. Old system will be deleted.
      */
-    public static final String forceFlag = "force";
-    public static final String helpFlag = "flag";
-    public static final String jsonOutputFlag = "json-output";
-    public static final String graphicalFlag = "graphical";
+    public static final String FORCE_FLAG = "force";
+    public static final String HELP_FLAG = "flag";
+    public static final String JSON_OUTPUT_FLAG = "json-output";
+    public static final String GRAPHICAL_FLAG = "graphical";
 
-    private static final String maxTimeParameter = "max-time";
+    private static final String MAX_TIME_PARAMETER = "max-time";
 
     static class DefaultComparator<T> implements Comparator<T>{
         @Override
@@ -76,12 +70,12 @@ public class Main {
         }
     }
 
-    private static final String filterParameter = "filter";
-    private static final String testResultFilter = "test-result";
+    private static final String FILTER_PARAMETER = "filter";
+    private static final String TEST_RESULT_FILTER = "test-result";
     static final Comparator<MeasurementComparisonRecord> testResultFilterComparator = Comparator.comparing(MeasurementComparisonRecord::comparisonResult, Comparator.comparingInt(ComparisonResult::getResultNumber));
-    private static final String sizeOfChangeFilter = "size-of-change";
+    private static final String SIZE_OF_CHANGE_FILTER = "size-of-change";
     static final Comparator<MeasurementComparisonRecord> sizeOfChangeFilterComparator = Comparator.comparing(MeasurementComparisonRecord::performanceChange);
-    private static final String testIDFilter = "test-id";
+    private static final String TEST_ID_FILTER = "test-id";
     static final Comparator<MeasurementComparisonRecord> nameFilterComparator = Comparator.comparing(MeasurementComparisonRecord::newMeasurement, Comparator.comparing(Measurement::name));
 
     public static void main(String[] args) {
@@ -101,8 +95,8 @@ public class Main {
     private static ICommand getCommand(String[] args) {
         OptionParser parser = CreateParser();
         OptionSet options = parser.parse(args);
-        Path iniFilePath = Path.of(args[0]).resolve(perfevalDir).resolve(iniFileName);
-        PerfEvalConfig config = null;
+        Path iniFilePath = Path.of(args[0]).resolve(PERFEVAL_DIR).resolve(INI_FILE_NAME);
+        PerfEvalConfig config;
         try {
             config = InitCommand.getConfig(iniFilePath);
         } catch (PerfEvalInvalidConfigException e) {
@@ -111,52 +105,52 @@ public class Main {
         }
 
         for(var arg : options.nonOptionArguments()){
-            if(arg==initCommand) return setupInitCommand(args, options, config);
-            if(arg==evaluateCommand) return setupEvaluateCommand(args, options, config);
-            if(arg==indexNewCommand) return setupIndexNewCommand(args, options, config);
-            if(arg==indexAllCommand) return setupIndexAllCommand(args, options, config);
-            if(arg==undecidedCommand) return setupUndecidedCommand(args, options, config);
+            if(arg== INIT_COMMAND) return setupInitCommand(args, options, config);
+            if(arg== EVALUATE_COMMAND) return setupEvaluateCommand(args, options, config);
+            if(arg== INDEX_NEW_COMMAND) return setupIndexNewCommand(args, config);
+            if(arg== INDEX_ALL_COMMAND) return setupIndexAllCommand(args, config);
+            if(arg== UNDECIDED_COMMAND) return setupUndecidedCommand(args, config);
         }
         return null;
     }
 
-    private static ICommand setupUndecidedCommand(String[] args, OptionSet options, PerfEvalConfig config) {
-        IDatabase database = new CacheDatabase(Path.of(DatabaseFileName), Path.of(DatabaseCacheFileName));
+    private static ICommand setupUndecidedCommand(String[] args, PerfEvalConfig config) {
+        IDatabase database = constructDatabase(Path.of(args[0]));
         IResultPrinter printer = new UndecidedPrinter(System.out);
         IPerformanceComparator comparator = ComparatorFactory.getComparator(config.critValue, config.maxCIWidth, config.maxTimeOnTest);
         // Undecided printer -> printing only undecided results
         return new EvaluateCLICommand(database, printer, comparator);
     }
 
-    private static ICommand setupIndexAllCommand(String[] args, OptionSet options, PerfEvalConfig config) {
+    private static ICommand setupIndexAllCommand(String[] args, PerfEvalConfig config) {
         Path sourceDir = Path.of(args[2]);
-        Path gitFilePath = config.gitFilePresence ? Path.of(args[0]).resolve(gitFileName) : null;
-        IDatabase database = new CacheDatabase(Path.of(DatabaseFileName), Path.of(DatabaseCacheFileName));
+        Path gitFilePath = config.gitFilePresence ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
+        IDatabase database = constructDatabase(Path.of(args[0]));
         return new AddFilesFromDirCommand(sourceDir, gitFilePath, database, config);
     }
 
-    private static ICommand setupIndexNewCommand(String[] args, OptionSet options, PerfEvalConfig config) {
+    private static ICommand setupIndexNewCommand(String[] args, PerfEvalConfig config) {
         Path sourceDir = Path.of(args[2]);
-        Path gitFilePath = config.gitFilePresence ? Path.of(args[0]).resolve(gitFileName) : null;
-        IDatabase database = new CacheDatabase(Path.of(DatabaseFileName), Path.of(DatabaseCacheFileName));
+        Path gitFilePath = config.gitFilePresence ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
+        IDatabase database = constructDatabase(Path.of(args[0]));
         return new AddFileCommand(sourceDir, gitFilePath, database, config);
     }
 
     private static ICommand setupEvaluateCommand(String[] args, OptionSet options, PerfEvalConfig config) {
-        if(options.has(graphicalFlag))
+        if(options.has(GRAPHICAL_FLAG))
             return setupGraphicalCommand(args, options, config);
-        IDatabase database = new CacheDatabase(Path.of(DatabaseFileName), Path.of(DatabaseCacheFileName));
+        IDatabase database = constructDatabase(Path.of(args[0]));
 
         Comparator<MeasurementComparisonRecord> filter = new DefaultComparator<MeasurementComparisonRecord>();
         if(options.has(filterOption)){
             switch (options.valueOf(filterOption)){
-                case testIDFilter -> filter = nameFilterComparator;
-                case sizeOfChangeFilter -> filter = sizeOfChangeFilterComparator;
-                case testResultFilter -> filter = testResultFilterComparator;
+                case TEST_ID_FILTER -> filter = nameFilterComparator;
+                case SIZE_OF_CHANGE_FILTER -> filter = sizeOfChangeFilterComparator;
+                case TEST_RESULT_FILTER -> filter = testResultFilterComparator;
             }
         }
         PrintStream printStream = System.out;
-        IResultPrinter printer = options.has(jsonOutputFlag) ? new JSONPrinter(printStream, filter) : new TablePrinter(printStream, filter);
+        IResultPrinter printer = options.has(JSON_OUTPUT_FLAG) ? new JSONPrinter(printStream, filter) : new TablePrinter(printStream, filter);
 
         IPerformanceComparator comparator = ComparatorFactory.getComparator(config.critValue, config.maxCIWidth, config.maxTimeOnTest);
 
@@ -169,13 +163,13 @@ public class Main {
 
     private static ICommand setupInitCommand(String[] args, OptionSet options, PerfEvalConfig config) {
         Path workingDir = Path.of(args[0]);
-        Path perfevalDirPath = workingDir.resolve(perfevalDir);
-        Path gitIgnorePath = perfevalDirPath.resolve(gitIgnoreFileName);
-        Path iniFilePath = perfevalDirPath.resolve(iniFileName);
-        Path helpFilePath = perfevalDirPath.resolve(helpFileName);
+        Path perfevalDirPath = workingDir.resolve(PERFEVAL_DIR);
+        Path gitIgnorePath = perfevalDirPath.resolve(GIT_IGNORE_FILE_NAME);
+        Path iniFilePath = perfevalDirPath.resolve(INI_FILE_NAME);
+        Path helpFilePath = perfevalDirPath.resolve(HELP_FILE_NAME);
         //TODO: dodat
         String helpFileContent = "";
-        Path[] emptyFiles = new Path[]{perfevalDirPath.resolve(DatabaseFileName), perfevalDirPath.resolve(DatabaseCacheFileName)};
+        Path[] emptyFiles = new Path[]{perfevalDirPath.resolve(DATABASE_FILE_NAME), perfevalDirPath.resolve(DATABASE_CACHE_FILE_NAME)};
         Path[] gitIgnoredFiles = new Path[] {
                 iniFilePath,
                 helpFilePath,
@@ -183,7 +177,7 @@ public class Main {
                 emptyFiles[1]
         };
         return new InitCommand(perfevalDirPath, gitIgnorePath, iniFilePath ,helpFilePath, helpFileContent,
-                emptyFiles, gitIgnoredFiles, config, options.has(forceFlag));
+                emptyFiles, gitIgnoredFiles, config, options.has(FORCE_FLAG));
     }
 
     static ArgumentAcceptingOptionSpec<String> filterOption;
@@ -193,21 +187,27 @@ public class Main {
         OptionParser parser = new OptionParser();
 
         // Define options with arguments
-        filterOption = parser.accepts(filterParameter)
+        filterOption = parser.accepts(FILTER_PARAMETER)
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Filter option with a parameter");
-        maxTimeOption = parser.accepts(maxTimeParameter)
+        maxTimeOption = parser.accepts(MAX_TIME_PARAMETER)
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Max time option with a duration parameter");
 
         // Define flags (options without arguments)
-        parser.accepts(helpFlag, "Print help message");
-        parser.accepts(graphicalFlag, "Enable graphical mode");
-        parser.accepts(jsonOutputFlag, "Enable JSON output");
-        parser.accepts(forceFlag, "Force the operation");
+        parser.accepts(HELP_FLAG, "Print help message");
+        parser.accepts(GRAPHICAL_FLAG, "Enable graphical mode");
+        parser.accepts(JSON_OUTPUT_FLAG, "Enable JSON output");
+        parser.accepts(FORCE_FLAG, "Force the operation");
         return parser;
+    }
+
+    private static IDatabase constructDatabase(Path workingDir){
+        Path databasePath = workingDir.resolve(DATABASE_FILE_NAME);
+        Path cachePath = workingDir.resolve(DATABASE_CACHE_FILE_NAME);
+        return new CacheDatabase(databasePath, cachePath);
     }
 
 }

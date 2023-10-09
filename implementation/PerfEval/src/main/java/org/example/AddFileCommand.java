@@ -1,7 +1,5 @@
 package org.example;
 
-import org.apache.commons.math3.analysis.function.Add;
-import org.example.globalVariables.ExitCode;
 import org.example.perfevalInit.PerfEvalCommandFailedException;
 import org.example.perfevalInit.PerfEvalConfig;
 import org.example.resultDatabase.DatabaseException;

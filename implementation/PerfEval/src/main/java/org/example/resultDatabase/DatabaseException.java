@@ -1,6 +1,6 @@
 package org.example.resultDatabase;
 
-import org.example.globalVariables.ExitCode;
+import org.example.ExitCode;
 
 public class DatabaseException extends Exception {
     static String message = "PerfEval database error.";

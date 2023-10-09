@@ -4,7 +4,7 @@ package org.example.resultDatabase;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.example.globalVariables.ExitCode;
+import org.example.ExitCode;
 import org.example.measurementFactory.IMeasurementParser;
 import org.example.measurementFactory.ParserFactory;
 import org.example.perfevalInit.PerfEvalConfig;

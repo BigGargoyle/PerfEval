@@ -4,7 +4,7 @@ import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.example.ICommand;
-import org.example.globalVariables.ExitCode;
+import org.example.ExitCode;
 import org.example.measurementFactory.UniversalTimeUnit;
 
 import java.io.BufferedWriter;
@@ -19,13 +19,13 @@ import java.util.concurrent.TimeUnit;
 
 public class InitCommand implements ICommand {
 
-    private static final String critValueKey = "critValue.key";
-    private static final String maxCIWidthKey = "maxCIWidth.key";
-    private static final String maxTimeOnTestKey = "maxTime.key";
-    private static final String versionKey = "version.key";
-    private static final String gitPresenceKey = "git.key";
-    private static final String TrueString = "TRUE";
-    private static final String FalseString = "FALSE";
+    private static final String CRIT_VALUE_KEY = "critValue.key";
+    private static final String MAX_CI_WIDTH_KEY = "maxCIWidth.key";
+    private static final String MAX_TIME_KEY = "maxTime.key";
+    private static final String VERSION_KEY = "version.key";
+    private static final String GIT_PRESENCE_KEY = "git.key";
+    private static final String TRUE_STRING = "TRUE";
+    private static final String FALSE_STRING = "FALSE";
 
     public static PerfEvalConfig getConfig(Path iniFilePath) throws PerfEvalInvalidConfigException {
         if (isPerfevalInitializedInThisDirectory(iniFilePath)) {
@@ -47,11 +47,11 @@ public class InitCommand implements ICommand {
     public static PerfEvalConfig readFromIniFile(Path iniFilePath) throws ConfigurationException, PerfEvalInvalidConfigException {
         Configurations configs = new Configurations();
         INIConfiguration config = configs.ini(iniFilePath.toFile());
-        double critValue = Double.parseDouble(config.getString(critValueKey));
-        double maxCIWidth = Double.parseDouble(config.getString(maxCIWidthKey));
-        UniversalTimeUnit timeUnit = new UniversalTimeUnit(Long.parseLong(config.getString(maxTimeOnTestKey)), TimeUnit.NANOSECONDS);
-        String version = config.getString(versionKey);
-        boolean gitPresence = config.getString(gitPresenceKey).compareTo(TrueString) == 0;
+        double critValue = Double.parseDouble(config.getString(CRIT_VALUE_KEY));
+        double maxCIWidth = Double.parseDouble(config.getString(MAX_CI_WIDTH_KEY));
+        UniversalTimeUnit timeUnit = new UniversalTimeUnit(Long.parseLong(config.getString(MAX_TIME_KEY)), TimeUnit.NANOSECONDS);
+        String version = config.getString(VERSION_KEY);
+        boolean gitPresence = config.getString(GIT_PRESENCE_KEY).compareTo(TRUE_STRING) == 0;
         return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version);
     }
 
@@ -61,12 +61,12 @@ public class InitCommand implements ICommand {
         FileWriter writer = new FileWriter(iniFilePath.toFile());
         Configurations configs = new Configurations();
         INIConfiguration config = configs.ini(iniFilePath.toFile());
-        config.setProperty(critValueKey, perfevalConfig.critValue);
-        config.setProperty(maxCIWidthKey, perfevalConfig.maxCIWidth);
-        config.setProperty(maxTimeOnTestKey, perfevalConfig.maxTimeOnTest.getNanoSeconds());
-        String gitPresenceString = perfevalConfig.gitFilePresence ? TrueString : FalseString;
-        config.setProperty(gitPresenceKey, gitPresenceString);
-        config.setProperty(versionKey, perfevalConfig.version);
+        config.setProperty(CRIT_VALUE_KEY, perfevalConfig.critValue);
+        config.setProperty(MAX_CI_WIDTH_KEY, perfevalConfig.maxCIWidth);
+        config.setProperty(MAX_TIME_KEY, perfevalConfig.maxTimeOnTest.getNanoSeconds());
+        String gitPresenceString = perfevalConfig.gitFilePresence ? TRUE_STRING : FALSE_STRING;
+        config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
+        config.setProperty(VERSION_KEY, perfevalConfig.version);
         config.write(writer);
         writer.close();
     }

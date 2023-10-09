@@ -1,7 +1,5 @@
 package org.example.resultDatabase;
 
-import org.example.globalVariables.DBFlags;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,17 +20,20 @@ import java.util.Date;
 public record FileWithResultsData(String path, Date dateOfCreation, String version) {
     static final SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
 
+    static final String DATABASE_ITEM_IDENTIFIER = "R";
+    static final String COLUMN_DELIMITER = "\t";
+
     public String toDatabaseString() {
-        String result = DBFlags.DatabaseItemIdentifier + DBFlags.ColumnDelimiter;
-        result += path + DBFlags.ColumnDelimiter;
-        result += DateFormat.format(dateOfCreation) + DBFlags.ColumnDelimiter;
+        String result = DATABASE_ITEM_IDENTIFIER + COLUMN_DELIMITER;
+        result += path + COLUMN_DELIMITER;
+        result += DateFormat.format(dateOfCreation) + COLUMN_DELIMITER;
         result += version;
         return result;
     }
 
     public static FileWithResultsData fromDatabaseString(String databaseString) throws InvalidParameterException {
-        String[] splittedLine = databaseString.split(DBFlags.ColumnDelimiter);
-        if (splittedLine.length >= 4 && splittedLine[0].compareTo(DBFlags.DatabaseItemIdentifier) != 0)
+        String[] splittedLine = databaseString.split(COLUMN_DELIMITER);
+        if (splittedLine.length >= 4 && splittedLine[0].compareTo(DATABASE_ITEM_IDENTIFIER) != 0)
             throw new InvalidParameterException();
         Date date;
         try {
