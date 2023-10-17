@@ -5,7 +5,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.example.ExitCode;
-import org.example.measurementFactory.IMeasurementParser;
+import org.example.measurementFactory.MeasurementParser;
 import org.example.measurementFactory.ParserFactory;
 import org.example.perfevalInit.PerfEvalConfig;
 
@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.PriorityQueue;
 import java.util.concurrent.TimeUnit;
 
-public class CacheDatabase implements IDatabase {
+public class CacheDatabase implements Database {
 
     static final int maxCountOfItemsInCache = 5;
     final Path cachePath;
@@ -117,7 +117,7 @@ public class CacheDatabase implements IDatabase {
         try {
             PriorityQueue<FileWithResultsData> cache = createPriorityQueueFromFile(Files.newBufferedReader(cachePath), maxCountOfItemsInCache);
             //String version = resolveVersion(filePath, gitFilePath, config.version);
-            boolean result = addFileToDatabase(filePath, gitFilePath, config.version, cache);
+            boolean result = addFileToDatabase(filePath, gitFilePath, config.getVersion(), cache);
             updateDatabaseCache(cache);
         } catch (IOException e) {
             DatabaseException exception = new DatabaseException(ExitCode.databaseError);
@@ -143,7 +143,7 @@ public class CacheDatabase implements IDatabase {
 
     static boolean hasUnknownTestFormat(Path filePath) {
         //TODO: change to path
-        IMeasurementParser parser = ParserFactory.recognizeParserFactory(filePath.toString());
+        MeasurementParser parser = ParserFactory.recognizeParserFactory(filePath.toString());
         return parser == null;
     }
 
@@ -176,7 +176,7 @@ public class CacheDatabase implements IDatabase {
 
         try {
             PriorityQueue<FileWithResultsData> cache = createPriorityQueueFromFile(Files.newBufferedReader(cachePath), maxCountOfItemsInCache);
-            boolean result = addFilesFromDirDFS(dirPath, gitFilePath, config.version, cache);
+            boolean result = addFilesFromDirDFS(dirPath, gitFilePath, config.getVersion(), cache);
             updateDatabaseCache(cache);
         } catch (IOException e) {
             DatabaseException exception = new DatabaseException(ExitCode.databaseError);

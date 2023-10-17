@@ -10,7 +10,7 @@ public class ComparatorFactory {
      * @param maxTimeToTest              maximum amount of time for doing this benchmark test
      * @return the best implementation of IPerformanceComparator
      */
-    public static IPerformanceComparator getComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest) {
+    public static PerformanceComparator getComparator(double pValue, double maxConfidenceIntervalWidth, UniversalTimeUnit maxTimeToTest) {
         return new BootstrapPerformanceComparator(pValue, maxConfidenceIntervalWidth, maxTimeToTest);
     }
 }

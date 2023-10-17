@@ -4,8 +4,8 @@ import java.util.List;
 import org.example.measurementFactory.BenchmarkDotNetJSON.BenchmarkDotNetJSONParser;
 import org.example.measurementFactory.JMHJSON.JMHJSONParser;
 import org.example.measurementFactory.ParserFactory;
-import org.example.measurementFactory.Measurement;
-import org.example.measurementFactory.IMeasurementParser;
+import org.example.measurementFactory.Samples;
+import org.example.measurementFactory.MeasurementParser;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +16,7 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/MyBenchmarks.SortingAlgorithms-report.json";
 
-        IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
+        MeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
 
         assertSame(BenchmarkDotNetJSONParser.class, parser.getClass());
     }
@@ -25,8 +25,8 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/Sorting1.json";
         int countOfTestInFile = 2;
-        IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
-        List<Measurement> measurements = parser.getTestsFromFile(fileName);
+        MeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
+        List<Samples> measurements = parser.getTestsFromFile(fileName);
 
         assertEquals(2, measurements.size());
     }
@@ -35,7 +35,7 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/resultJMH.json";
 
-        IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
+        MeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
 
         assertSame(JMHJSONParser.class, parser.getClass());
     }
@@ -44,7 +44,7 @@ public class ParserTest {
     {
         String fileName = "src/test/resources/unknownFileType";
 
-        IMeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
+        MeasurementParser parser = ParserFactory.recognizeParserFactory(fileName);
 
         assertNull(parser);
     }

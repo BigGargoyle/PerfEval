@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.example.measurementFactory.Measurement;
-import org.example.measurementFactory.IMeasurementParser;
+import org.example.Samples;
+import org.example.measurementFactory.MeasurementParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.measurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.*;
 import org.example.measurementFactory.UniversalTimeUnit;
@@ -13,10 +13,10 @@ import org.example.measurementFactory.UniversalTimeUnit;
 /**
  * Implementation of IMeasurementParser for BenchmarkDotNet framework test results in the JSON format.
  */
-public class BenchmarkDotNetJSONParser implements IMeasurementParser {
+public class BenchmarkDotNetJSONParser implements MeasurementParser {
     Long timestamp = null;
-    public List<Measurement> getTestsFromFile(String fileName){
-        List<Measurement> result = new ArrayList<>();
+    public List<Samples> getTestsFromFile(String fileName){
+        List<Samples> result = new ArrayList<>();
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
         BenchmarkDotNetJSONBase base;
@@ -53,7 +53,7 @@ public class BenchmarkDotNetJSONParser implements IMeasurementParser {
      * This class main usage is for simplifying and clarifying data package that is contained inside the
      * BenchmarkDotNetJSONBase class.
      * */
-    public static Measurement ConstructTest(Benchmark pattern){
+    public static Samples ConstructTest(Benchmark pattern){
         var name = pattern.getMethodTitle();
         List<org.example.measurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.Measurement> measurements = pattern.getMeasurements();
         List<UniversalTimeUnit> measuredTimes = new ArrayList<>();
@@ -64,7 +64,7 @@ public class BenchmarkDotNetJSONParser implements IMeasurementParser {
                 measuredTimes.add(new UniversalTimeUnit(measurement.getNanoseconds(), TimeUnit.NANOSECONDS));
             }
         }
-        return new Measurement(name, measuredTimes);
+        return new Samples(name, measuredTimes);
     }
 
 }

@@ -3,18 +3,18 @@ package org.example;
 import org.example.perfevalInit.PerfEvalCommandFailedException;
 import org.example.perfevalInit.PerfEvalConfig;
 import org.example.resultDatabase.DatabaseException;
-import org.example.resultDatabase.IDatabase;
+import org.example.resultDatabase.Database;
 
 import java.nio.file.Path;
 
-public class AddFilesFromDirCommand implements ICommand{
+public class AddFilesFromDirCommand implements Command {
 
     final PerfEvalConfig config;
     final Path sourceDirPath;
     final Path gitFilePath;
-    final IDatabase database;
+    final Database database;
 
-    public AddFilesFromDirCommand(Path sourceDirPath, Path gitFilePath, IDatabase database, PerfEvalConfig config){
+    public AddFilesFromDirCommand(Path sourceDirPath, Path gitFilePath, Database database, PerfEvalConfig config){
         this.sourceDirPath = sourceDirPath;
         this.gitFilePath = gitFilePath;
         this.database = database;

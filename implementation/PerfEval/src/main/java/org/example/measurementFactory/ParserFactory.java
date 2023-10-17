@@ -18,7 +18,7 @@ public class ParserFactory {
      * @param fileName path to the file with benchmark test results
      * @return specialized Parser for that file
      */
-    public static IMeasurementParser recognizeParserFactory(String fileName) {
+    public static MeasurementParser recognizeParserFactory(String fileName) {
         List<String> lines;
         try {
             lines = Files.readAllLines(Paths.get(fileName));
@@ -38,14 +38,14 @@ public class ParserFactory {
     /**
      * @return IMeasurementParser specialized for BenchmarkDotNet framework with result in JSON format
      */
-    static IMeasurementParser benchmarkDotNetJSONParserFactory() {
+    static MeasurementParser benchmarkDotNetJSONParserFactory() {
         return new BenchmarkDotNetJSONParser();
     }
 
     /**
      * @return IMeasurementParser specialized for JMH framework with result in JSON format
      */
-    static IMeasurementParser JMHJSONParserFactory() {
+    static MeasurementParser JMHJSONParserFactory() {
         return new JMHJSONParser();
     }
 }

@@ -8,7 +8,7 @@ import java.io.PrintStream;
 import java.util.Comparator;
 import java.util.List;
 
-public class JSONPrinter implements IResultPrinter{
+public class JSONPrinter implements ResultPrinter {
     PrintStream printStream;
     final Comparator<MeasurementComparisonRecord> filter;
     public JSONPrinter(PrintStream printStream, Comparator<MeasurementComparisonRecord> filter){

@@ -7,7 +7,7 @@ import java.nio.file.Path;
 /**
  * Interface defining behaviour of the benchmark test results database
  */
-public interface IDatabase {
+public interface Database {
     /**
      * @param n how many results should be returned
      * @return n most recently added benchmark test results file paths from the database

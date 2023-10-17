@@ -3,7 +3,7 @@ package org.example.perfevalInit;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.example.ICommand;
+import org.example.Command;
 import org.example.ExitCode;
 import org.example.measurementFactory.UniversalTimeUnit;
 
@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.TimeUnit;
 
-public class InitCommand implements ICommand {
+public class InitCommand implements Command {
 
     private static final String CRIT_VALUE_KEY = "critValue.key";
     private static final String MAX_CI_WIDTH_KEY = "maxCIWidth.key";
@@ -61,12 +61,12 @@ public class InitCommand implements ICommand {
         FileWriter writer = new FileWriter(iniFilePath.toFile());
         Configurations configs = new Configurations();
         INIConfiguration config = configs.ini(iniFilePath.toFile());
-        config.setProperty(CRIT_VALUE_KEY, perfevalConfig.critValue);
-        config.setProperty(MAX_CI_WIDTH_KEY, perfevalConfig.maxCIWidth);
-        config.setProperty(MAX_TIME_KEY, perfevalConfig.maxTimeOnTest.getNanoSeconds());
-        String gitPresenceString = perfevalConfig.gitFilePresence ? TRUE_STRING : FALSE_STRING;
+        config.setProperty(CRIT_VALUE_KEY, perfevalConfig.getCritValue());
+        config.setProperty(MAX_CI_WIDTH_KEY, perfevalConfig.getMaxCIWidth());
+        config.setProperty(MAX_TIME_KEY, perfevalConfig.getMaxTimeOnTest().getNanoSeconds());
+        String gitPresenceString = perfevalConfig.hasGitFilePresence() ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
-        config.setProperty(VERSION_KEY, perfevalConfig.version);
+        config.setProperty(VERSION_KEY, perfevalConfig.getVersion());
         config.write(writer);
         writer.close();
     }

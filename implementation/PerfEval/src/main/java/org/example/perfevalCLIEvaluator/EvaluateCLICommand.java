@@ -1,33 +1,33 @@
 package org.example.perfevalCLIEvaluator;
 
-import org.example.ICommand;
-import org.example.evaluation.IResultPrinter;
+import org.example.Command;
+import org.example.evaluation.ResultPrinter;
 import org.example.evaluation.MeasurementComparisonRecord;
 import org.example.ExitCode;
-import org.example.measurementFactory.IMeasurementParser;
-import org.example.measurementFactory.Measurement;
+import org.example.measurementFactory.MeasurementParser;
+import org.example.Samples;
 import org.example.measurementFactory.ParserFactory;
 import org.example.perfevalInit.PerfEvalCommandFailedException;
-import org.example.performanceComparatorFactory.IPerformanceComparator;
+import org.example.performanceComparatorFactory.PerformanceComparator;
 import org.example.resultDatabase.DatabaseException;
 import org.example.resultDatabase.FileWithResultsData;
-import org.example.resultDatabase.IDatabase;
+import org.example.resultDatabase.Database;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EvaluateCLICommand implements ICommand {
+public class EvaluateCLICommand implements Command {
     static final int TWO = 2;
 
-    public EvaluateCLICommand(IDatabase database, IResultPrinter resultPrinter, IPerformanceComparator performanceComparator) {
+    public EvaluateCLICommand(Database database, ResultPrinter resultPrinter, PerformanceComparator performanceComparator) {
         this.database = database;
         this.resultPrinter = resultPrinter;
         this.performanceComparator = performanceComparator;
     }
 
-    IDatabase database;
-    IResultPrinter resultPrinter;
-    IPerformanceComparator performanceComparator;
+    Database database;
+    ResultPrinter resultPrinter;
+    PerformanceComparator performanceComparator;
 
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
@@ -43,27 +43,27 @@ public class EvaluateCLICommand implements ICommand {
         return ExitCode.OK;
     }
 
-    private static List<MeasurementComparisonRecord> evaluateResults(FileWithResultsData[] filesWithResultsData, IPerformanceComparator performanceComparator) {
+    private static List<MeasurementComparisonRecord> evaluateResults(FileWithResultsData[] filesWithResultsData, PerformanceComparator performanceComparator) {
         assert filesWithResultsData.length == TWO;
-        IMeasurementParser parser = ParserFactory.recognizeParserFactory(filesWithResultsData[0].path());
+        MeasurementParser parser = ParserFactory.recognizeParserFactory(filesWithResultsData[0].path());
         assert parser != null;
-        List<Measurement> olderMeasurements = parser.getTestsFromFile(filesWithResultsData[0].path());
-        List<Measurement> newerMeasurements = parser.getTestsFromFile(filesWithResultsData[1].path());
+        List<Samples> olderMeasurements = parser.getTestsFromFile(filesWithResultsData[0].path());
+        List<Samples> newerMeasurements = parser.getTestsFromFile(filesWithResultsData[1].path());
         assert compareTestsFromListsOfMeasurements(newerMeasurements, olderMeasurements);
         return compareTestsWithStatistic(olderMeasurements, newerMeasurements, performanceComparator);
     }
 
-    private static boolean compareTestsFromListsOfMeasurements(List<Measurement> measurements1, List<Measurement> measurements2) {
+    private static boolean compareTestsFromListsOfMeasurements(List<Samples> measurements1, List<Samples> measurements2) {
         if (measurements1.size() != measurements2.size())
             return false;
         for (int i = 0; i < measurements1.size(); i++) {
-            if (measurements1.get(i).name().compareTo(measurements2.get(i).name()) != 0)
+            if (measurements1.get(i).getName().compareTo(measurements2.get(i).getName()) != 0)
                 return false;
         }
         return true;
     }
 
-    private static List<MeasurementComparisonRecord> compareTestsWithStatistic(List<Measurement> olderMeasurements, List<Measurement> newerMeasurements, IPerformanceComparator performanceComparator) {
+    private static List<MeasurementComparisonRecord> compareTestsWithStatistic(List<Samples> olderMeasurements, List<Samples> newerMeasurements, PerformanceComparator performanceComparator) {
         List<MeasurementComparisonRecord> resultsOfComparison = new ArrayList<>();
         for (int i = 0; i < newerMeasurements.size(); i++) {
             resultsOfComparison.add(performanceComparator.compareSets(olderMeasurements.get(i), newerMeasurements.get(i)));

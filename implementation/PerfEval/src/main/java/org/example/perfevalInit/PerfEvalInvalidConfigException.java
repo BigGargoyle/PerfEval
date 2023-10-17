@@ -5,6 +5,7 @@ public class PerfEvalInvalidConfigException extends Exception{
 
     @Override
     public String toString() {
-        return getCause().toString() + System.lineSeparator() + message;
+        String cause = getCause() != null ? getCause().toString() : "";
+        return cause + System.lineSeparator() + message;
     }
 }

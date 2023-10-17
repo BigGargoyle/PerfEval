@@ -4,6 +4,6 @@ import org.example.resultDatabase.FileWithResultsData;
 
 import java.util.List;
 
-public interface IResultPrinter {
+public interface ResultPrinter {
     void PrintResults(List<MeasurementComparisonRecord> results, FileWithResultsData[] originalFiles);
 }

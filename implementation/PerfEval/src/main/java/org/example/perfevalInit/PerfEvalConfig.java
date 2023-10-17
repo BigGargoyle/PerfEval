@@ -27,9 +27,28 @@ public final class PerfEvalConfig {
         if (version == null) throw new PerfEvalInvalidConfigException();
     }
 
-    public final boolean gitFilePresence;
-    public final UniversalTimeUnit maxTimeOnTest;
-    public final double maxCIWidth;
-    public final double critValue;
-    public final String version;
+    private final boolean gitFilePresence;
+    private final UniversalTimeUnit maxTimeOnTest;
+    private final double maxCIWidth;
+    private final double critValue;
+    private final String version;
+    public boolean hasGitFilePresence() {
+        return gitFilePresence;
+    }
+
+    public UniversalTimeUnit getMaxTimeOnTest() {
+        return maxTimeOnTest;
+    }
+
+    public double getMaxCIWidth() {
+        return maxCIWidth;
+    }
+
+    public double getCritValue() {
+        return critValue;
+    }
+
+    public String getVersion() {
+        return version;
+    }
 }

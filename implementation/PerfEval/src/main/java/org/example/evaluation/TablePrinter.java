@@ -7,7 +7,7 @@ import java.io.PrintStream;
 import java.util.Comparator;
 import java.util.List;
 
-public class TablePrinter implements IResultPrinter {
+public class TablePrinter implements ResultPrinter {
     final PrintStream printStream;
     final Comparator<MeasurementComparisonRecord> filter;
     public TablePrinter(PrintStream printStream, Comparator<MeasurementComparisonRecord> filter) {
@@ -64,7 +64,7 @@ public class TablePrinter implements IResultPrinter {
     private static String[] measurementComparisonToTableRow(MeasurementComparisonRecord comparisonResult) {
         String[] tableRow = new String[8];
 
-        tableRow[0] = (comparisonResult.oldMeasurement().name());
+        tableRow[0] = (comparisonResult.oldSamples().name());
         tableRow[1] = (String.valueOf(comparisonResult.newAverage()));
         tableRow[2] = (String.valueOf(comparisonResult.oldAverage()));
         tableRow[3] = (String.valueOf(comparisonResult.performanceChange()));

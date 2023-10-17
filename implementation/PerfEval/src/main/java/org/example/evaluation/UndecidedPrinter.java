@@ -6,7 +6,7 @@ import org.example.resultDatabase.FileWithResultsData;
 import java.io.PrintStream;
 import java.util.List;
 
-public class UndecidedPrinter implements IResultPrinter{
+public class UndecidedPrinter implements ResultPrinter {
     PrintStream printStream;
     static final String COLUMN_DELIMITER = "\t";
     public UndecidedPrinter(PrintStream printStream){
@@ -29,7 +29,7 @@ public class UndecidedPrinter implements IResultPrinter{
      * @param printStream      PrintStream to print undecided result to
      */
     private static void printUndecidedComparisonResult(MeasurementComparisonRecord comparisonResult, PrintStream printStream) {
-        String name = comparisonResult.oldMeasurement().name();
+        String name = comparisonResult.oldSamples().name();
         int minSampleCount = comparisonResult.minSampleCount();
         printStream.println(name + COLUMN_DELIMITER + minSampleCount);
     }

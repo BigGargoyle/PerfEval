@@ -8,7 +8,6 @@ import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.example.evaluation.*;
-import org.example.measurementFactory.Measurement;
 import org.example.perfevalCLIEvaluator.EvaluateCLICommand;
 import org.example.perfevalInit.InitCommand;
 import org.example.perfevalInit.PerfEvalCommandFailedException;
@@ -16,9 +15,9 @@ import org.example.perfevalInit.PerfEvalConfig;
 import org.example.perfevalInit.PerfEvalInvalidConfigException;
 import org.example.performanceComparatorFactory.ComparatorFactory;
 import org.example.performanceComparatorFactory.ComparisonResult;
-import org.example.performanceComparatorFactory.IPerformanceComparator;
+import org.example.performanceComparatorFactory.PerformanceComparator;
 import org.example.resultDatabase.CacheDatabase;
-import org.example.resultDatabase.IDatabase;
+import org.example.resultDatabase.Database;
 
 public class Main {
     // commands
@@ -76,11 +75,11 @@ public class Main {
     private static final String SIZE_OF_CHANGE_FILTER = "size-of-change";
     static final Comparator<MeasurementComparisonRecord> sizeOfChangeFilterComparator = Comparator.comparing(MeasurementComparisonRecord::performanceChange);
     private static final String TEST_ID_FILTER = "test-id";
-    static final Comparator<MeasurementComparisonRecord> nameFilterComparator = Comparator.comparing(MeasurementComparisonRecord::newMeasurement, Comparator.comparing(Measurement::name));
+    static final Comparator<MeasurementComparisonRecord> nameFilterComparator = Comparator.comparing(MeasurementComparisonRecord::newSamples, Comparator.comparing(Samples::getName));
 
     public static void main(String[] args) {
         ExitCode exitCode;
-        ICommand command = getCommand(args);
+        Command command = getCommand(args);
         try {
             if(command==null) exitCode=ExitCode.invalidArguments;
             else exitCode = command.execute();
@@ -92,7 +91,7 @@ public class Main {
         exitCode.exit();
     }
 
-    private static ICommand getCommand(String[] args) {
+    private static Command getCommand(String[] args) {
         OptionParser parser = CreateParser();
         OptionSet options = parser.parse(args);
         Path iniFilePath = Path.of(args[0]).resolve(PERFEVAL_DIR).resolve(INI_FILE_NAME);
@@ -114,32 +113,32 @@ public class Main {
         return null;
     }
 
-    private static ICommand setupUndecidedCommand(String[] args, PerfEvalConfig config) {
-        IDatabase database = constructDatabase(Path.of(args[0]));
-        IResultPrinter printer = new UndecidedPrinter(System.out);
-        IPerformanceComparator comparator = ComparatorFactory.getComparator(config.critValue, config.maxCIWidth, config.maxTimeOnTest);
+    private static Command setupUndecidedCommand(String[] args, PerfEvalConfig config) {
+        Database database = constructDatabase(Path.of(args[0]));
+        ResultPrinter printer = new UndecidedPrinter(System.out);
+        PerformanceComparator comparator = ComparatorFactory.getComparator(config.getCritValue(), config.getCritValue(), config.getMaxTimeOnTest());
         // Undecided printer -> printing only undecided results
         return new EvaluateCLICommand(database, printer, comparator);
     }
 
-    private static ICommand setupIndexAllCommand(String[] args, PerfEvalConfig config) {
+    private static Command setupIndexAllCommand(String[] args, PerfEvalConfig config) {
         Path sourceDir = Path.of(args[2]);
-        Path gitFilePath = config.gitFilePresence ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
-        IDatabase database = constructDatabase(Path.of(args[0]));
+        Path gitFilePath = config.hasGitFilePresence() ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
+        Database database = constructDatabase(Path.of(args[0]));
         return new AddFilesFromDirCommand(sourceDir, gitFilePath, database, config);
     }
 
-    private static ICommand setupIndexNewCommand(String[] args, PerfEvalConfig config) {
+    private static Command setupIndexNewCommand(String[] args, PerfEvalConfig config) {
         Path sourceDir = Path.of(args[2]);
-        Path gitFilePath = config.gitFilePresence ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
-        IDatabase database = constructDatabase(Path.of(args[0]));
+        Path gitFilePath = config.hasGitFilePresence() ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
+        Database database = constructDatabase(Path.of(args[0]));
         return new AddFileCommand(sourceDir, gitFilePath, database, config);
     }
 
-    private static ICommand setupEvaluateCommand(String[] args, OptionSet options, PerfEvalConfig config) {
+    private static Command setupEvaluateCommand(String[] args, OptionSet options, PerfEvalConfig config) {
         if(options.has(GRAPHICAL_FLAG))
             return setupGraphicalCommand(args, options, config);
-        IDatabase database = constructDatabase(Path.of(args[0]));
+        Database database = constructDatabase(Path.of(args[0]));
 
         Comparator<MeasurementComparisonRecord> filter = new DefaultComparator<MeasurementComparisonRecord>();
         if(options.has(filterOption)){
@@ -150,18 +149,18 @@ public class Main {
             }
         }
         PrintStream printStream = System.out;
-        IResultPrinter printer = options.has(JSON_OUTPUT_FLAG) ? new JSONPrinter(printStream, filter) : new TablePrinter(printStream, filter);
+        ResultPrinter printer = options.has(JSON_OUTPUT_FLAG) ? new JSONPrinter(printStream, filter) : new TablePrinter(printStream, filter);
 
-        IPerformanceComparator comparator = ComparatorFactory.getComparator(config.critValue, config.maxCIWidth, config.maxTimeOnTest);
+        PerformanceComparator comparator = ComparatorFactory.getComparator(config.getCritValue(), config.getMaxCIWidth(), config.getMaxTimeOnTest());
 
         return new EvaluateCLICommand(database, printer, comparator);
     }
 
-    private static ICommand setupGraphicalCommand(String[] args, OptionSet options, PerfEvalConfig config) {
+    private static Command setupGraphicalCommand(String[] args, OptionSet options, PerfEvalConfig config) {
         return null;
     }
 
-    private static ICommand setupInitCommand(String[] args, OptionSet options, PerfEvalConfig config) {
+    private static Command setupInitCommand(String[] args, OptionSet options, PerfEvalConfig config) {
         Path workingDir = Path.of(args[0]);
         Path perfevalDirPath = workingDir.resolve(PERFEVAL_DIR);
         Path gitIgnorePath = perfevalDirPath.resolve(GIT_IGNORE_FILE_NAME);
@@ -204,7 +203,7 @@ public class Main {
         return parser;
     }
 
-    private static IDatabase constructDatabase(Path workingDir){
+    private static Database constructDatabase(Path workingDir){
         Path databasePath = workingDir.resolve(DATABASE_FILE_NAME);
         Path cachePath = workingDir.resolve(DATABASE_CACHE_FILE_NAME);
         return new CacheDatabase(databasePath, cachePath);
