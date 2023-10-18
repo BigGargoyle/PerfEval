@@ -25,7 +25,7 @@ public class H2Database implements Database {
         return new H2Database(dataSource, path);
     }
 
-    private H2Database(JdbcDataSource dataSource, Path originPath) {
+    public H2Database(JdbcDataSource dataSource, Path originPath) {
         this.dataSource = dataSource;
         this.pathToDBFile = originPath;
     }
@@ -34,7 +34,7 @@ public class H2Database implements Database {
         List<String> versions = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "SELECT DISTINCT version FROM ResultMetadata ORDER BY dateOfCreation DESC LIMIT ?";
+            String query = "SELECT DISTINCT version, dateOfCreation FROM ResultMetadata ORDER BY dateOfCreation DESC LIMIT ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, n);
 
@@ -79,15 +79,12 @@ public class H2Database implements Database {
                 preparedStatement.setString(1, version);
 
                 ResultSet resultSet = preparedStatement.executeQuery();
-                int rowCount = getRowCount(resultSet);
-                FileWithResultsData[] results = new FileWithResultsData[rowCount];
-                int i = 0;
+                List<FileWithResultsData> resultsData = new ArrayList<>();
                 resultSet.beforeFirst();
                 while (resultSet.next()) {
-                    results[i] = createFileWithResultsData(resultSet);
-                    i++;
+                    resultsData.add(createFileWithResultsData(resultSet));
                 }
-                return results;
+                return resultsData.toArray(new FileWithResultsData[0]);
             }
         } catch (SQLException e) {
             throw new DatabaseException("Error retrieving results of a specific version from the database", e, ExitCode.databaseError);
@@ -135,14 +132,5 @@ public class H2Database implements Database {
         String version = resultSet.getString("version");
         //String tag = resultSet.getString("tag");
         return new FileWithResultsData(path, dateOfCreation, version);
-    }
-
-    private int getRowCount(ResultSet resultSet) throws SQLException {
-        int rowCount = 0;
-        if (resultSet.last()) {
-            rowCount = resultSet.getRow();
-            resultSet.beforeFirst();
-        }
-        return rowCount;
     }
 }
