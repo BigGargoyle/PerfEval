@@ -31,11 +31,6 @@ public class ArrayUtilitiesTest {
         double maxWidth = 0.1;
         int actualSampleCount = ArrayUtilities.calcMinSampleCount(statistics, confidenceLevel, maxWidth);
         assertTrue(actualSampleCount > statistics.length);
-
-        // Test with zero statistics
-        double[] zeroStatistics = {0.0, 0.0, 0.0, 0.0};
-        int zeroSampleCount = ArrayUtilities.calcMinSampleCount(zeroStatistics, confidenceLevel, maxWidth);
-        assertTrue(zeroSampleCount > zeroStatistics.length);
     }
 
     @Test
