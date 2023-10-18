@@ -64,7 +64,7 @@ public class TablePrinter implements ResultPrinter {
     private static String[] measurementComparisonToTableRow(MeasurementComparisonRecord comparisonResult) {
         String[] tableRow = new String[8];
 
-        tableRow[0] = (comparisonResult.oldSamples().name());
+        tableRow[0] = (comparisonResult.oldSamples().getName());
         tableRow[1] = (String.valueOf(comparisonResult.newAverage()));
         tableRow[2] = (String.valueOf(comparisonResult.oldAverage()));
         tableRow[3] = (String.valueOf(comparisonResult.performanceChange()));

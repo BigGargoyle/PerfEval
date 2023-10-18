@@ -13,11 +13,11 @@ import org.example.perfevalInit.InitCommand;
 import org.example.perfevalInit.PerfEvalCommandFailedException;
 import org.example.perfevalInit.PerfEvalConfig;
 import org.example.perfevalInit.PerfEvalInvalidConfigException;
-import org.example.performanceComparatorFactory.ComparatorFactory;
+import org.example.performanceComparatorFactory.BootstrapPerformanceComparator;
 import org.example.performanceComparatorFactory.ComparisonResult;
 import org.example.performanceComparatorFactory.PerformanceComparator;
-import org.example.resultDatabase.CacheDatabase;
 import org.example.resultDatabase.Database;
+import org.example.resultDatabase.H2Database;
 
 public class Main {
     // commands
@@ -48,8 +48,6 @@ public class Main {
     public static final String HELP_FILE_NAME = "help.txt";
     public static final String INI_FILE_NAME = "config.ini";
     public static final String DATABASE_FILE_NAME = "test_results.db";
-    public static final String DATABASE_CACHE_FILE_NAME = "test_results_cache.db";
-
     public static final String GIT_FILE_NAME = ".git";
 
     /**
@@ -61,6 +59,9 @@ public class Main {
     public static final String GRAPHICAL_FLAG = "graphical";
 
     private static final String MAX_TIME_PARAMETER = "max-time";
+    private static final String BOOTSTRAP_SAMPLE_COUNT_PARAMETER = "bootstrap-sample-count";
+    private static final int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 10_000;
+    private static final double DEFAULT_TOLERANCE = 0.01;
 
     static class DefaultComparator<T> implements Comparator<T>{
         @Override
@@ -108,15 +109,19 @@ public class Main {
             if(arg== EVALUATE_COMMAND) return setupEvaluateCommand(args, options, config);
             if(arg== INDEX_NEW_COMMAND) return setupIndexNewCommand(args, config);
             if(arg== INDEX_ALL_COMMAND) return setupIndexAllCommand(args, config);
-            if(arg== UNDECIDED_COMMAND) return setupUndecidedCommand(args, config);
+            if(arg== UNDECIDED_COMMAND) return setupUndecidedCommand(args, options, config);
         }
         return null;
     }
 
-    private static Command setupUndecidedCommand(String[] args, PerfEvalConfig config) {
+    private static Command setupUndecidedCommand(String[] args,OptionSet options,PerfEvalConfig config) {
         Database database = constructDatabase(Path.of(args[0]));
         ResultPrinter printer = new UndecidedPrinter(System.out);
-        PerformanceComparator comparator = ComparatorFactory.getComparator(config.getCritValue(), config.getCritValue(), config.getMaxTimeOnTest());
+        int bootstrapCount = options.valueOf(bootstrapSampleCount);
+        if(bootstrapCount<=0) {
+            System.err.println("Bootstrap sample count is not valid. Default value was used");
+        }
+        PerformanceComparator comparator = new BootstrapPerformanceComparator(config.getCritValue(), DEFAULT_TOLERANCE, bootstrapCount);
         // Undecided printer -> printing only undecided results
         return new EvaluateCLICommand(database, printer, comparator);
     }
@@ -125,14 +130,16 @@ public class Main {
         Path sourceDir = Path.of(args[2]);
         Path gitFilePath = config.hasGitFilePresence() ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
         Database database = constructDatabase(Path.of(args[0]));
-        return new AddFilesFromDirCommand(sourceDir, gitFilePath, database, config);
+        return null;
+        //return new AddFilesFromDirCommand(sourceDir, database, version, tag);
     }
 
     private static Command setupIndexNewCommand(String[] args, PerfEvalConfig config) {
         Path sourceDir = Path.of(args[2]);
         Path gitFilePath = config.hasGitFilePresence() ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
         Database database = constructDatabase(Path.of(args[0]));
-        return new AddFileCommand(sourceDir, gitFilePath, database, config);
+        return null;
+        //return new AddFileCommand(sourceDir, database, version, tag);
     }
 
     private static Command setupEvaluateCommand(String[] args, OptionSet options, PerfEvalConfig config) {
@@ -151,7 +158,11 @@ public class Main {
         PrintStream printStream = System.out;
         ResultPrinter printer = options.has(JSON_OUTPUT_FLAG) ? new JSONPrinter(printStream, filter) : new TablePrinter(printStream, filter);
 
-        PerformanceComparator comparator = ComparatorFactory.getComparator(config.getCritValue(), config.getMaxCIWidth(), config.getMaxTimeOnTest());
+        int bootstrapCount = options.valueOf(bootstrapSampleCount);
+        if(bootstrapCount<=0) {
+            System.err.println("Bootstrap sample count is not valid. Default value was used");
+        }
+        PerformanceComparator comparator = new BootstrapPerformanceComparator(config.getCritValue(), DEFAULT_TOLERANCE, bootstrapCount);
 
         return new EvaluateCLICommand(database, printer, comparator);
     }
@@ -168,7 +179,7 @@ public class Main {
         Path helpFilePath = perfevalDirPath.resolve(HELP_FILE_NAME);
         //TODO: dodat
         String helpFileContent = "";
-        Path[] emptyFiles = new Path[]{perfevalDirPath.resolve(DATABASE_FILE_NAME), perfevalDirPath.resolve(DATABASE_CACHE_FILE_NAME)};
+        Path[] emptyFiles = new Path[]{perfevalDirPath.resolve(DATABASE_FILE_NAME)};
         Path[] gitIgnoredFiles = new Path[] {
                 iniFilePath,
                 helpFilePath,
@@ -181,6 +192,7 @@ public class Main {
 
     static ArgumentAcceptingOptionSpec<String> filterOption;
     static ArgumentAcceptingOptionSpec<String> maxTimeOption;
+    static ArgumentAcceptingOptionSpec<Integer> bootstrapSampleCount;
 
     private static OptionParser CreateParser(){
         OptionParser parser = new OptionParser();
@@ -194,6 +206,11 @@ public class Main {
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Max time option with a duration parameter");
+        bootstrapSampleCount = parser.accepts(BOOTSTRAP_SAMPLE_COUNT_PARAMETER)
+                .withRequiredArg()
+                .ofType(Integer.class)
+                .defaultsTo(DEFAULT_BOOTSTRAP_SAMPLE_COUNT)
+                .describedAs("Count of bootstrap samples");
 
         // Define flags (options without arguments)
         parser.accepts(HELP_FLAG, "Print help message");
@@ -205,8 +222,7 @@ public class Main {
 
     private static Database constructDatabase(Path workingDir){
         Path databasePath = workingDir.resolve(DATABASE_FILE_NAME);
-        Path cachePath = workingDir.resolve(DATABASE_CACHE_FILE_NAME);
-        return new CacheDatabase(databasePath, cachePath);
+        return H2Database.getDBFromFilePath(databasePath);
     }
 
 }

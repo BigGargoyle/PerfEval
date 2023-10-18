@@ -26,7 +26,7 @@ public class HierarchicalBootstrap {
         double[] result = new double[bootstrapSampleCount];
         for (int i = 0; i < bootstrapSampleCount; i++) {
             var sampleArr1 = sampleSet1[random.nextInt(0, sampleSet1.length)];
-            var sampleArr2 = sampleSet1[random.nextInt(0, sampleSet2.length)];
+            var sampleArr2 = sampleSet2[random.nextInt(0, sampleSet2.length)];
             var sample1 = sampleArr1[random.nextInt(0, sampleArr1.length)];
             var sample2 = sampleArr2[random.nextInt(0, sampleArr2.length)];
             result[i] = sample1 - sample2;

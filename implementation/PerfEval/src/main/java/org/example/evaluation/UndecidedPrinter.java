@@ -29,7 +29,7 @@ public class UndecidedPrinter implements ResultPrinter {
      * @param printStream      PrintStream to print undecided result to
      */
     private static void printUndecidedComparisonResult(MeasurementComparisonRecord comparisonResult, PrintStream printStream) {
-        String name = comparisonResult.oldSamples().name();
+        String name = comparisonResult.oldSamples().getName();
         int minSampleCount = comparisonResult.minSampleCount();
         printStream.println(name + COLUMN_DELIMITER + minSampleCount);
     }

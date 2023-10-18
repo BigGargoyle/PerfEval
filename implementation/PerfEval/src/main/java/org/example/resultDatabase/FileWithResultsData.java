@@ -19,7 +19,6 @@ import java.util.Date;
  */
 public record FileWithResultsData(String path, Date dateOfCreation, String version) {
     static final SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd#HH:mm:ss");
-
     static final String DATABASE_ITEM_IDENTIFIER = "R";
     static final String COLUMN_DELIMITER = "\t";
 

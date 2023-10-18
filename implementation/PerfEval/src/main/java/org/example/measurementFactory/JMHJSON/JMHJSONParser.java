@@ -1,10 +1,10 @@
 package org.example.measurementFactory.JMHJSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.Metric;
 import org.example.measurementFactory.JMHJSON.pojoJMH.BenchmarkJMHJSONBase;
 import org.example.measurementFactory.MeasurementParser;
 import org.example.Samples;
 import org.example.measurementFactory.JMHJSON.pojoJMH.PrimaryMetric;
-import org.example.measurementFactory.UniversalTimeUnit;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +16,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * Implementation of IMeasurementParser for JMH framework test result in the JSON format
  */
+
 public class JMHJSONParser implements MeasurementParser {
+
+    Metric metric;
+    public JMHJSONParser(Metric metric){
+        this.metric = metric;
+    }
 
     public List<Samples> getTestsFromFile(String fileName) {
         List<Samples> result = new ArrayList<>();
@@ -29,24 +35,21 @@ public class JMHJSONParser implements MeasurementParser {
             return null;
         }
 
-        try {
+        /*try {
             for (BenchmarkJMHJSONBase benchmark : base) {
                 result.add(ConstructTest(benchmark));
             }
         }
         catch (IOException e){
             return null;
-        }
+        }*/
 
         return result;
-    }
-    public String GetParserType(){
-        return "framework: JMH, format: JSON ";
     }
 
     static final String[] acceptableScoreUnits = new String[] {"ns/op","us/op","ms/op","s/op"};
 
-    public static Samples ConstructTest(BenchmarkJMHJSONBase input) throws IOException {
+    /*public static Samples ConstructTest(BenchmarkJMHJSONBase input) throws IOException {
         String name = input.getBenchmark();
         List<UniversalTimeUnit> measuredTimes = new ArrayList<>();
         PrimaryMetric primaryMetric = input.getPrimaryMetric();
@@ -69,6 +72,10 @@ public class JMHJSONParser implements MeasurementParser {
             }
         }
         return new Samples(name, measuredTimes);
-    }
+    }*/
 
+    @Override
+    public List<Samples> getTestsFromFiles(String[] fileNames) {
+        return null;
+    }
 }

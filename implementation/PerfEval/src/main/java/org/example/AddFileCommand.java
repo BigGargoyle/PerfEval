@@ -1,7 +1,6 @@
 package org.example;
 
 import org.example.perfevalInit.PerfEvalCommandFailedException;
-import org.example.perfevalInit.PerfEvalConfig;
 import org.example.resultDatabase.DatabaseException;
 import org.example.resultDatabase.Database;
 
@@ -9,22 +8,22 @@ import java.nio.file.Path;
 
 public class AddFileCommand implements Command {
 
-    final PerfEvalConfig config;
-    final Path gitFilePath;
     final Path fileToAdd;
+    final String version;
+    final String tag;
     final Database database;
 
-    public AddFileCommand(Path fileToAdd, Path gitFilePath, Database database, PerfEvalConfig config) {
+    public AddFileCommand(Path fileToAdd, Database database,String version, String tag){
         this.fileToAdd = fileToAdd;
-        this.gitFilePath = gitFilePath;
+        this.version = version;
         this.database = database;
-        this.config = config;
+        this.tag = tag;
     }
 
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
         try {
-            database.addFile(fileToAdd, gitFilePath, config);
+            database.addFile(fileToAdd, version, tag);
         } catch (DatabaseException e) {
             PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.databaseError);
             exception.initCause(e);

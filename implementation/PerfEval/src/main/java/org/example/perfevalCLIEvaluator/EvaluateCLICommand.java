@@ -47,8 +47,8 @@ public class EvaluateCLICommand implements Command {
         assert filesWithResultsData.length == TWO;
         MeasurementParser parser = ParserFactory.recognizeParserFactory(filesWithResultsData[0].path());
         assert parser != null;
-        List<Samples> olderMeasurements = parser.getTestsFromFile(filesWithResultsData[0].path());
-        List<Samples> newerMeasurements = parser.getTestsFromFile(filesWithResultsData[1].path());
+        List<Samples> olderMeasurements = parser.getTestsFromFiles(new String[]{filesWithResultsData[0].path()});
+        List<Samples> newerMeasurements = parser.getTestsFromFiles(new String[]{filesWithResultsData[1].path()});
         assert compareTestsFromListsOfMeasurements(newerMeasurements, olderMeasurements);
         return compareTestsWithStatistic(olderMeasurements, newerMeasurements, performanceComparator);
     }

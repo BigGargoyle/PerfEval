@@ -5,7 +5,6 @@ import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.example.Command;
 import org.example.ExitCode;
-import org.example.measurementFactory.UniversalTimeUnit;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -49,10 +48,11 @@ public class InitCommand implements Command {
         INIConfiguration config = configs.ini(iniFilePath.toFile());
         double critValue = Double.parseDouble(config.getString(CRIT_VALUE_KEY));
         double maxCIWidth = Double.parseDouble(config.getString(MAX_CI_WIDTH_KEY));
-        UniversalTimeUnit timeUnit = new UniversalTimeUnit(Long.parseLong(config.getString(MAX_TIME_KEY)), TimeUnit.NANOSECONDS);
+        //UniversalTimeUnit timeUnit = new UniversalTimeUnit(Long.parseLong(config.getString(MAX_TIME_KEY)), TimeUnit.NANOSECONDS);
         String version = config.getString(VERSION_KEY);
         boolean gitPresence = config.getString(GIT_PRESENCE_KEY).compareTo(TRUE_STRING) == 0;
-        return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version);
+        //return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version);
+        return null;
     }
 
     private static void createIniFile(Path iniFilePath, PerfEvalConfig perfevalConfig) throws ConfigurationException, IOException {
@@ -63,7 +63,7 @@ public class InitCommand implements Command {
         INIConfiguration config = configs.ini(iniFilePath.toFile());
         config.setProperty(CRIT_VALUE_KEY, perfevalConfig.getCritValue());
         config.setProperty(MAX_CI_WIDTH_KEY, perfevalConfig.getMaxCIWidth());
-        config.setProperty(MAX_TIME_KEY, perfevalConfig.getMaxTimeOnTest().getNanoSeconds());
+        //config.setProperty(MAX_TIME_KEY, perfevalConfig.getMaxTimeOnTest().getNanoSeconds());
         String gitPresenceString = perfevalConfig.hasGitFilePresence() ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
         config.setProperty(VERSION_KEY, perfevalConfig.getVersion());

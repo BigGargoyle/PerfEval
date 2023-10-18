@@ -8,23 +8,22 @@ import org.example.resultDatabase.Database;
 import java.nio.file.Path;
 
 public class AddFilesFromDirCommand implements Command {
-
-    final PerfEvalConfig config;
     final Path sourceDirPath;
-    final Path gitFilePath;
+    final String version;
+    final String tag;
     final Database database;
 
-    public AddFilesFromDirCommand(Path sourceDirPath, Path gitFilePath, Database database, PerfEvalConfig config){
+    public AddFilesFromDirCommand(Path sourceDirPath, Database database,String version, String tag){
         this.sourceDirPath = sourceDirPath;
-        this.gitFilePath = gitFilePath;
+        this.version = version;
         this.database = database;
-        this.config = config;
+        this.tag = tag;
     }
 
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
         try {
-            database.addFilesFromDir(sourceDirPath, gitFilePath, config);
+            database.addFilesFromDir(sourceDirPath, version, tag);
 
         } catch (DatabaseException e){
             PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.databaseError);

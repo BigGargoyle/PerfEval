@@ -11,11 +11,6 @@ public interface MeasurementParser {
      * @param fileName a path to the file with benchmark test results
      * @return List of measurements that were in the file
      */
-    List<Samples> getTestsFromFile(String fileName);
-
-    /**
-     * @return String representation of benchmark format type (JMH, BenchmarkDotNet etc.)
-     */
-    String GetParserType();
+    List<Samples> getTestsFromFiles(String[] fileNames);
 
 }

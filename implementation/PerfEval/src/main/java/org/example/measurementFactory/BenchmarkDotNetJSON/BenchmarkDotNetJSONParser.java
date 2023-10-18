@@ -1,70 +1,76 @@
 package org.example.measurementFactory.BenchmarkDotNetJSON;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import org.example.Metric;
 import org.example.Samples;
 import org.example.measurementFactory.MeasurementParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.measurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.*;
-import org.example.measurementFactory.UniversalTimeUnit;
 
 /**
  * Implementation of IMeasurementParser for BenchmarkDotNet framework test results in the JSON format.
  */
 public class BenchmarkDotNetJSONParser implements MeasurementParser {
     Long timestamp = null;
-    public List<Samples> getTestsFromFile(String fileName){
-        List<Samples> result = new ArrayList<>();
-        File inputFile = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        BenchmarkDotNetJSONBase base;
-        try{
-            base = objectMapper.readValue(inputFile, BenchmarkDotNetJSONBase.class);
-        }catch (Exception e){
-            return null;
-        }
-
-        for(Benchmark benchmark: base.getBenchmarks()){
-            result.add(ConstructTest(benchmark));
-        }
-
-        timestamp = inputFile.lastModified();
-
-        return result;
+    Metric metric;
+    public BenchmarkDotNetJSONParser(){
+        this.metric = new Metric("Nanoseconds", false);
     }
-    public String GetParserType(){
-        return "framework: BenchmarkDotNet, format: JSON ";
+    public BenchmarkDotNetJSONParser(Metric metric){
+        this.metric = metric;
     }
-
-    /*
-     * testedIterationMode and testedIterationStage Strings are used for recognizing correct type of measured values
-     * it is needed because the BenchmarkDotNet framework is measuring also warmup, jitting, overhead etc. phases
-     * of the software running
-     * */
     static final String testedIterationMode = "Workload";
     static final String testedIterationStage = "Actual";
 
-    /*
-     * This constructor is creating an instance of BenchmarkDotNetTest class that is based on values from
-     * an instance of BenchmarkDotNetJSONBase class. This class is made from a JSON file that is a result
-     * of BenchmarkDotNet run.
-     * This class main usage is for simplifying and clarifying data package that is contained inside the
-     * BenchmarkDotNetJSONBase class.
-     * */
-    public static Samples ConstructTest(Benchmark pattern){
-        var name = pattern.getMethodTitle();
-        List<org.example.measurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.Measurement> measurements = pattern.getMeasurements();
-        List<UniversalTimeUnit> measuredTimes = new ArrayList<>();
-        for(org.example.measurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.Measurement measurement:measurements){
-            // I want to test only measurements with 'Workload' mode and 'Actual' stage
-            if(measurement.getIterationMode().equals(testedIterationMode) &&
-                    measurement.getIterationStage().equals(testedIterationStage)){
-                measuredTimes.add(new UniversalTimeUnit(measurement.getNanoseconds(), TimeUnit.NANOSECONDS));
-            }
+    @Override
+    public List<Samples> getTestsFromFiles(String[] fileNames) {
+        Dictionary<String, Samples> samplesDictionary = new Hashtable<>();
+        for (int i = 0; i < fileNames.length; i++) {
+            String fileName = fileNames[i];
+            addSamplesToDictionary(fileName, fileNames.length, i, samplesDictionary);
         }
-        return new Samples(name, measuredTimes);
+        List<Samples> samples = new ArrayList<>();
+        Enumeration<Samples> samplesEnumeration = samplesDictionary.elements();
+        while(samplesEnumeration.hasMoreElements()){
+            samples.add(samplesEnumeration.nextElement());
+        }
+        return samples;
+    }
+    
+    void addSamplesToDictionary(String fileName, int fileCount, int fileIndex, Dictionary<String, Samples> samplesDictionary){
+        BenchmarkDotNetJSONBase base = getBaseFromPath(new File(fileName));
+        assert base != null;
+        for (Benchmark benchmark: base.getBenchmarks()) {
+            var name = benchmark.getMethodTitle();
+            Metric localMetric = new Metric("Nanoseconds", false);
+            if(samplesDictionary.get(name)==null){
+                Samples samples = new Samples(new double[fileCount][], this.metric, name);
+                samplesDictionary.put(name, samples);
+            }
+            List<Double> measuredValues = new ArrayList<>();
+            for(Measurement measurement : benchmark.getMeasurements()){
+                if(measurement.getIterationMode().equals(testedIterationMode) &&
+                        measurement.getIterationStage().equals(testedIterationStage) &&
+                        this.metric.isCompatibleWith(localMetric)){
+                    measuredValues.add((double)measurement.getNanoseconds());
+                }
+            }
+            samplesDictionary.get(name).getRawData()[fileIndex] = measuredValues.stream().mapToDouble(Double::valueOf).toArray();
+        }
     }
 
+    private static BenchmarkDotNetJSONBase getBaseFromPath(File file) {
+        List<Samples> result = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        BenchmarkDotNetJSONBase base;
+        try{
+            return objectMapper.readValue(file, BenchmarkDotNetJSONBase.class);
+        }catch (Exception e){
+            //TODO: dodat výjimku
+            return null;
+        }
+    }
 }

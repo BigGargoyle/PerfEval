@@ -9,7 +9,7 @@ public class StatisticTTest {
         this.critValue = critValue;
     }
 
-    public boolean areSetsDifferent(double[][] sampleSet1, double[][] sampleSet2){
+    public boolean areSetsSame(double[][] sampleSet1, double[][] sampleSet2){
         double[] samples1 = ArrayUtilities.mergeArrays(sampleSet1);
         double[] samples2 = ArrayUtilities.mergeArrays(sampleSet2);
         TTest tTest = new TTest();
