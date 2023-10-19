@@ -93,9 +93,6 @@ public class InitCommand implements Command {
         this.forceFlag = forceFlag;
     }
 
-    /**
-     * @throws PerfEvalCommandFailedException
-     */
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
         if (isPerfevalInitializedInThisDirectory(perfevalDirPath)) {
@@ -124,9 +121,7 @@ public class InitCommand implements Command {
         try {
             createIniFile(iniFilePath, config);
         }catch (ConfigurationException e){
-            IOException exception = new IOException("Config file cannot be created");
-            exception.initCause(e);
-            throw exception;
+            throw new IOException("Config file cannot be created");
         }
         createGitIgnoreFile(this.gitIgnorePath, gitIgnoredFiles);
         Path helpFilePath = this.helpFilePath;

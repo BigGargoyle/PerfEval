@@ -9,7 +9,6 @@ import cz.cuni.mff.hrdydo.measurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDo
 import cz.cuni.mff.hrdydo.measurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.Measurement;
 import cz.cuni.mff.hrdydo.measurementFactory.MeasurementParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.measurementFactory.BenchmarkDotNetJSON.pojoBenchmarkDotNet.*;
 
 /**
  * Implementation of IMeasurementParser for BenchmarkDotNet framework test results in the JSON format.

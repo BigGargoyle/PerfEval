@@ -15,7 +15,7 @@ public class BootstrapPerformanceComparator implements PerformanceComparator {
         this.tolerance = tolerance;
     }
 
-    private MeasurementComparisonRecord constructRecord(Samples oldSamples, Samples newSamples, ComparisonResult comparisonResult, boolean bootstrapResult){
+    private MeasurementComparisonRecord constructRecord(Samples oldSamples, Samples newSamples, boolean bootstrapResult){
         double oldAvg = ArrayUtilities.calculateAverage(oldSamples.getRawData());
         double newAvg = ArrayUtilities.calculateAverage(newSamples.getRawData());
 
@@ -23,12 +23,12 @@ public class BootstrapPerformanceComparator implements PerformanceComparator {
         performanceChange = performanceChange*100 - 100;
 
         boolean testVerdict = bootstrapResult || performanceChange > 100 || Math.abs(performanceChange / 100) > 1 - tolerance;
-
-        return new MeasurementComparisonRecord(oldAvg, newAvg, performanceChange, comparisonResult, testVerdict, MINUS_ONE, oldSamples, newSamples);
+        // inlined bootstrap, because there will always be a bootstrap
+        return new MeasurementComparisonRecord(oldAvg, newAvg, performanceChange, ComparisonResult.Bootstrap, testVerdict, MINUS_ONE, oldSamples, newSamples);
     }
     @Override
     public MeasurementComparisonRecord compareSets(Samples oldSamples, Samples newSamples) {
-        return constructRecord(oldSamples, newSamples, ComparisonResult.Bootstrap,
+        return constructRecord(oldSamples, newSamples,
                 bootstrap.evaluateBootstrap(oldSamples.getRawData(), newSamples.getRawData()));
     }
 }

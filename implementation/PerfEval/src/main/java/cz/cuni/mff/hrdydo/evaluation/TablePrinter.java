@@ -1,6 +1,5 @@
 package cz.cuni.mff.hrdydo.evaluation;
 
-import cz.cuni.mff.hrdydo.performanceComparatorFactory.ComparisonResult;
 import dnl.utils.text.table.TextTable;
 
 import java.io.PrintStream;

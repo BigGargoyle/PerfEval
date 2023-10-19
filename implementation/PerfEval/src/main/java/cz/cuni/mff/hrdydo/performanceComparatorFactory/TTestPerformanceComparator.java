@@ -31,14 +31,9 @@ public class TTestPerformanceComparator implements PerformanceComparator{
         boolean testVerdict;
         switch (comparisonResult) {
             case SameDistribution -> testVerdict=true;
-            case DifferentDistribution -> {
-                if(performanceChange>=0) testVerdict=true;
-                if(Math.abs(performanceChange/100)>1-tolerance) testVerdict=true;
-                testVerdict=false;
-            }
-            case NotEnoughSamples -> {
-                testVerdict=true;
-            }
+            case DifferentDistribution ->
+                    testVerdict = performanceChange >= 0 || Math.abs(performanceChange / 100) > 1 - tolerance;
+            case NotEnoughSamples -> testVerdict=false;
             default -> testVerdict=false;
         }
 
