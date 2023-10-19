@@ -15,23 +15,17 @@ public class TablePrinter implements ResultPrinter {
         this.filter = filter;
     }
 
-    /**
-     * Method to print comparisonResults in form of simple table
-     *
-     * @param results       list of IComparisonResults to be printed
-     * @param originalFiles items from which comparison results were made of
-     */
     @Override
-    public void PrintResults(List<MeasurementComparisonRecord> results, FileWithResultsData[] originalFiles) {
-        results.sort(filter);
+    public void PrintResults(MeasurementComparisonResultCollection resultCollection) {
+        resultCollection.sort(filter);
         String[] tableHeader = createComparisonTableHeader();
-        String[][] tableData = new String[results.size()][];
-        for (int i = 0; i < results.size(); i++) {
-            tableData[i] = measurementComparisonToTableRow(results.get(i));
+        String[][] tableData = new String[resultCollection.size()][];
+        for (int i = 0; i < resultCollection.size(); i++) {
+            tableData[i] = measurementComparisonToTableRow(resultCollection.get(i));
         }
 
-        printStream.println("old version: " + originalFiles[0].version());
-        printStream.println("new version: " + originalFiles[1].version());
+        printStream.println("old version: " + resultCollection.getOldVersion());
+        printStream.println("new version: " + resultCollection.getNewVersion());
 
         TextTable table = new TextTable(tableHeader, tableData);
         table.printTable(printStream, 0);

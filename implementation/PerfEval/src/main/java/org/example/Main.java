@@ -92,7 +92,7 @@ public class Main {
             else exitCode = command.execute();
 
         } catch (PerfEvalCommandFailedException e) {
-            System.err.println(e.toString());
+            System.err.println(e.getMessage());
             exitCode = e.exitCode;
         }
         exitCode.exit();

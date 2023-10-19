@@ -1,18 +1,15 @@
 package org.example;
 
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTag;
 import org.eclipse.jgit.revwalk.RevWalk;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
 
 public class GitUtilities {
     public static boolean isRepoClean(Path pathToRepo) throws IOException {
@@ -41,13 +38,11 @@ public class GitUtilities {
 
     public static String getLastCommitTag(Path pathToRepo, String version) throws IOException {
         try (Git git = Git.open(new File(pathToRepo.toString()))){
-            Ref head = git.getRepository().exactRef("HEAD");
             ObjectId objectId = git.getRepository().resolve(version);
 
             if(objectId==null)
                 return null;
 
-            ListTagCommand listTagCommand = git.tagList();
             Ref tagRef = git.getRepository().getRefDatabase().peel(git.getRepository().getRefDatabase().findRef(objectId.getName()));
             if(tagRef != null)
                 return tagRef.getName();

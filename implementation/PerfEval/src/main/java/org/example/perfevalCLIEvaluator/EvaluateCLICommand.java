@@ -1,6 +1,7 @@
 package org.example.perfevalCLIEvaluator;
 
 import org.example.Command;
+import org.example.evaluation.MeasurementComparisonResultCollection;
 import org.example.evaluation.ResultPrinter;
 import org.example.evaluation.MeasurementComparisonRecord;
 import org.example.ExitCode;
@@ -9,33 +10,32 @@ import org.example.Samples;
 import org.example.measurementFactory.ParserFactory;
 import org.example.perfevalInit.PerfEvalCommandFailedException;
 import org.example.performanceComparatorFactory.PerformanceComparator;
-import org.example.resultDatabase.DatabaseException;
 import org.example.resultDatabase.FileWithResultsData;
-import org.example.resultDatabase.Database;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EvaluateCLICommand implements Command {
     static final int TWO = 2;
 
-    public EvaluateCLICommand(Database database, ResultPrinter resultPrinter, PerformanceComparator performanceComparator) {
-        this.database = database;
+    public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter, PerformanceComparator performanceComparator) {
+        this.inputFiles = inputFiles;
+        assert inputFiles.length == TWO;
         this.resultPrinter = resultPrinter;
         this.performanceComparator = performanceComparator;
     }
 
-    Database database;
+    FileWithResultsData[][] inputFiles;
     ResultPrinter resultPrinter;
     PerformanceComparator performanceComparator;
 
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
         try {
-            FileWithResultsData[] filesWithResultsData = database.getLastNResults(TWO);
-            List<MeasurementComparisonRecord> comparisonResults = evaluateResults(filesWithResultsData, performanceComparator);
-            resultPrinter.PrintResults(comparisonResults, filesWithResultsData);
-        } catch (DatabaseException | AssertionError e) {
+            MeasurementComparisonResultCollection comparisonResults = evaluateResults(inputFiles, performanceComparator);
+            resultPrinter.PrintResults(comparisonResults);
+        } catch (AssertionError e) {
             PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.databaseError);
             exception.initCause(e);
             throw exception;
@@ -43,14 +43,16 @@ public class EvaluateCLICommand implements Command {
         return ExitCode.OK;
     }
 
-    private static List<MeasurementComparisonRecord> evaluateResults(FileWithResultsData[] filesWithResultsData, PerformanceComparator performanceComparator) {
+    private static MeasurementComparisonResultCollection evaluateResults(FileWithResultsData[][] filesWithResultsData, PerformanceComparator performanceComparator) {
         assert filesWithResultsData.length == TWO;
-        MeasurementParser parser = ParserFactory.recognizeParserFactory(filesWithResultsData[0].path());
+        MeasurementParser parser = ParserFactory.recognizeParserFactory(filesWithResultsData[0][0].path());
         assert parser != null;
-        List<Samples> olderMeasurements = parser.getTestsFromFiles(new String[]{filesWithResultsData[0].path()});
-        List<Samples> newerMeasurements = parser.getTestsFromFiles(new String[]{filesWithResultsData[1].path()});
+        List<Samples> olderMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[0]).map(FileWithResultsData::path).toArray(String[]::new));
+        List<Samples> newerMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[1]).map(FileWithResultsData::path).toArray(String[]::new));
         assert compareTestsFromListsOfMeasurements(newerMeasurements, olderMeasurements);
-        return compareTestsWithStatistic(olderMeasurements, newerMeasurements, performanceComparator);
+        MeasurementComparisonResultCollection resultCollection = new MeasurementComparisonResultCollection(filesWithResultsData);
+        resultCollection.addAll(compareTestsWithStatistic(olderMeasurements, newerMeasurements, performanceComparator));
+        return resultCollection;
     }
 
     private static boolean compareTestsFromListsOfMeasurements(List<Samples> measurements1, List<Samples> measurements2) {

@@ -14,8 +14,8 @@ public class UndecidedPrinter implements ResultPrinter {
     }
 
     @Override
-    public void PrintResults(List<MeasurementComparisonRecord> results, FileWithResultsData[] originalFiles) {
-        for (MeasurementComparisonRecord comparisonResult : results) {
+    public void PrintResults(MeasurementComparisonResultCollection resultCollection) {
+        for (MeasurementComparisonRecord comparisonResult : resultCollection) {
             if (comparisonResult.comparisonResult() == ComparisonResult.NotEnoughSamples) {
                 printUndecidedComparisonResult(comparisonResult, printStream);
             }
