@@ -1,12 +1,10 @@
 package org.example.evaluation;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.example.resultDatabase.FileWithResultsData;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Comparator;
-import java.util.List;
 
 public class JSONPrinter implements ResultPrinter {
     PrintStream printStream;

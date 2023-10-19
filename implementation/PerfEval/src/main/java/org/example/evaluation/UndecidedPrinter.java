@@ -1,10 +1,8 @@
 package org.example.evaluation;
 
 import org.example.performanceComparatorFactory.ComparisonResult;
-import org.example.resultDatabase.FileWithResultsData;
 
 import java.io.PrintStream;
-import java.util.List;
 
 public class UndecidedPrinter implements ResultPrinter {
     PrintStream printStream;

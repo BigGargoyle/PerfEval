@@ -1,11 +1,9 @@
 package org.example.evaluation;
 
 import dnl.utils.text.table.TextTable;
-import org.example.resultDatabase.FileWithResultsData;
 
 import java.io.PrintStream;
 import java.util.Comparator;
-import java.util.List;
 
 public class TablePrinter implements ResultPrinter {
     final PrintStream printStream;
