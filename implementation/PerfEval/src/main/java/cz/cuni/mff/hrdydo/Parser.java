@@ -64,7 +64,6 @@ public class Parser {
 
     private static final String NEW_VERSION_PARAMETER = "new-version";
     private static final String OLD_VERSION_PARAMETER = "old-parameter";
-    private static final String TAG_PARAMETER = "tag";
     private static final String MAX_TIME_PARAMETER = "max-time";
     private static final String BOOTSTRAP_SAMPLE_COUNT_PARAMETER = "bootstrap-sample-count";
     private static final int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 10_000;
@@ -158,7 +157,7 @@ public class Parser {
         Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
 
         String version = resolveVersion(gitFilePath, options);
-        String tag = resolveTag(gitFilePath, options, version);
+        String tag = resolveTag(gitFilePath, version);
 
         assert version != null && tag != null;
 
@@ -171,7 +170,7 @@ public class Parser {
         Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
 
         String version = resolveVersion(gitFilePath, options);
-        String tag = resolveTag(gitFilePath, options, version);
+        String tag = resolveTag(gitFilePath, version);
 
         assert version != null && tag != null;
 
@@ -197,21 +196,18 @@ public class Parser {
 
     }
 
-    private static String resolveTag(Path gitFilePath, OptionSet options, String version) {
-        if(options.has(tagOption))
-            return options.valueOf(tagOption);
-        if(gitFilePath==null)
-            return options.valueOf(tagOption);
-        try {
-            if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
-                String lastCommitTag = GitUtilities.getLastCommitTag(gitFilePath.getParent(), version);
-                assert lastCommitTag != null;
-                return lastCommitTag;
+    private static String resolveTag(Path gitFilePath, String version) {
+        if(gitFilePath!=null)
+            try {
+                if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
+                    String lastCommitTag = GitUtilities.getLastCommitTag(gitFilePath.getParent(), version);
+                    assert lastCommitTag != null;
+                    return lastCommitTag;
+                }
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
             }
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-        return options.valueOf(tagOption);
+        return EMPTY_STRING;
     }
 
 
@@ -252,7 +248,6 @@ public class Parser {
 
     static ArgumentAcceptingOptionSpec<String> newVersionOption;
     static ArgumentAcceptingOptionSpec<String> oldVersionOption;
-    static ArgumentAcceptingOptionSpec<String> tagOption;
 
     private static OptionParser CreateParser() {
         OptionParser parser = new OptionParser();
@@ -279,11 +274,6 @@ public class Parser {
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Version of measured software");
-        tagOption = parser.accepts(TAG_PARAMETER)
-                .withRequiredArg()
-                .ofType(String.class)
-                .describedAs("Tag of measured version")
-                .defaultsTo(EMPTY_STRING);
 
         // Define flags (options without arguments)
         parser.accepts(HELP_FLAG, "Print help message");
