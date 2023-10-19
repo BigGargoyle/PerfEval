@@ -14,6 +14,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class InitCommand implements Command {
@@ -48,11 +49,10 @@ public class InitCommand implements Command {
         INIConfiguration config = configs.ini(iniFilePath.toFile());
         double critValue = Double.parseDouble(config.getString(CRIT_VALUE_KEY));
         double maxCIWidth = Double.parseDouble(config.getString(MAX_CI_WIDTH_KEY));
-        //UniversalTimeUnit timeUnit = new UniversalTimeUnit(Long.parseLong(config.getString(MAX_TIME_KEY)), TimeUnit.NANOSECONDS);
+        Duration timeUnit = Duration.ofNanos(Long.parseLong(config.getString(MAX_TIME_KEY)));
         String version = config.getString(VERSION_KEY);
         boolean gitPresence = config.getString(GIT_PRESENCE_KEY).compareTo(TRUE_STRING) == 0;
-        //return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version);
-        return null;
+        return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version);
     }
 
     private static void createIniFile(Path iniFilePath, PerfEvalConfig perfevalConfig) throws ConfigurationException, IOException {
@@ -63,7 +63,7 @@ public class InitCommand implements Command {
         INIConfiguration config = configs.ini(iniFilePath.toFile());
         config.setProperty(CRIT_VALUE_KEY, perfevalConfig.getCritValue());
         config.setProperty(MAX_CI_WIDTH_KEY, perfevalConfig.getMaxCIWidth());
-        //config.setProperty(MAX_TIME_KEY, perfevalConfig.getMaxTimeOnTest().getNanoSeconds());
+        config.setProperty(MAX_TIME_KEY, perfevalConfig.getMaxTimeOnTest().getNano());
         String gitPresenceString = perfevalConfig.hasGitFilePresence() ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
         config.setProperty(VERSION_KEY, perfevalConfig.getVersion());
