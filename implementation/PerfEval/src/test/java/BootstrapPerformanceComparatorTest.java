@@ -1,7 +1,7 @@
-import org.example.Metric;
-import org.example.Samples;
-import org.example.evaluation.MeasurementComparisonRecord;
-import org.example.performanceComparatorFactory.BootstrapPerformanceComparator;
+import cz.cuni.mff.hrdydo.Metric;
+import cz.cuni.mff.hrdydo.Samples;
+import cz.cuni.mff.hrdydo.evaluation.MeasurementComparisonRecord;
+import cz.cuni.mff.hrdydo.performanceComparatorFactory.BootstrapPerformanceComparator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

@@ -1,5 +1,4 @@
-import org.apache.commons.math3.stat.StatUtils;
-import org.example.performanceComparatorFactory.HierarchicalBootstrap;
+import cz.cuni.mff.hrdydo.performanceComparatorFactory.HierarchicalBootstrap;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

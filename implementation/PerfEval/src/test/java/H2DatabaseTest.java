@@ -1,7 +1,7 @@
-import org.example.resultDatabase.Database;
-import org.example.resultDatabase.DatabaseException;
-import org.example.resultDatabase.FileWithResultsData;
-import org.example.resultDatabase.H2Database;
+import cz.cuni.mff.hrdydo.resultDatabase.Database;
+import cz.cuni.mff.hrdydo.resultDatabase.DatabaseException;
+import cz.cuni.mff.hrdydo.resultDatabase.FileWithResultsData;
+import cz.cuni.mff.hrdydo.resultDatabase.H2Database;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

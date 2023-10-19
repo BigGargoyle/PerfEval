@@ -1,4 +1,4 @@
-import org.example.performanceComparatorFactory.ArrayUtilities;
+import cz.cuni.mff.hrdydo.performanceComparatorFactory.ArrayUtilities;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,4 +1,4 @@
-import org.example.performanceComparatorFactory.StatisticTTest;
+import cz.cuni.mff.hrdydo.performanceComparatorFactory.StatisticTTest;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.junit.jupiter.api.Test;
 
