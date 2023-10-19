@@ -35,8 +35,11 @@ public class EvaluateCLICommand implements Command {
         try {
             MeasurementComparisonResultCollection comparisonResults = evaluateResults(inputFiles, performanceComparator);
             resultPrinter.PrintResults(comparisonResults);
+            for (MeasurementComparisonRecord record: comparisonResults) {
+                if(!record.testVerdict()) return ExitCode.atLeastOneWorseResult;
+            }
         } catch (AssertionError e) {
-            PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.databaseError);
+            PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.evaluationFailed);
             exception.initCause(e);
             throw exception;
         }

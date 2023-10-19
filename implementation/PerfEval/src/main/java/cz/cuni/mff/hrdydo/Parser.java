@@ -92,7 +92,6 @@ public class Parser {
         try {
             config = InitCommand.getConfig(iniFilePath);
         } catch (PerfEvalInvalidConfigException e) {
-            //TODO: zlepšit
             return null;
         }
         try {
@@ -227,14 +226,20 @@ public class Parser {
     private static PerformanceComparator resolvePerformanceComparatorForEvaluateCommand(OptionSet options, PerfEvalConfig config){
         return options.has(TTEST_FLAG) ?
                 new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), DEFAULT_TOLERANCE) :
-                new BootstrapPerformanceComparator(config.getCritValue(), DEFAULT_TOLERANCE, DEFAULT_BOOTSTRAP_SAMPLE_COUNT);
+                new BootstrapPerformanceComparator(config.getCritValue(), DEFAULT_TOLERANCE, options.valueOf(bootstrapSampleCountOption));
     }
 
     private static FileWithResultsData[][] resolveInputFilesWithRespectToInputtedVersions(String[] args, OptionSet options) throws DatabaseException {
+        Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
         String newVersion = options.has(newVersionOption) ? options.valueOf(newVersionOption) : null;
         String oldVersion = options.has(oldVersionOption) ? options.valueOf(oldVersionOption) : null;
-
-        Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
+        if(newVersion==null && oldVersion==null){
+            String[] versions = database.getLastNVersions(2);
+            newVersion = versions[0];
+            oldVersion = versions[1];
+        }
+        if(newVersion==null) newVersion=database.getLastNVersions(1)[0];
+        assert newVersion!=null && oldVersion!=null;
         FileWithResultsData[] newFiles = database.getResultsOfVersion(newVersion);
         FileWithResultsData[] oldFiles = database.getResultsOfVersion(oldVersion);
         assert newFiles.length > 0 && oldFiles.length > 0;
@@ -245,7 +250,6 @@ public class Parser {
     static ArgumentAcceptingOptionSpec<String> filterOption;
     static ArgumentAcceptingOptionSpec<String> maxTimeOption;
     static ArgumentAcceptingOptionSpec<Integer> bootstrapSampleCountOption;
-
     static ArgumentAcceptingOptionSpec<String> newVersionOption;
     static ArgumentAcceptingOptionSpec<String> oldVersionOption;
 
