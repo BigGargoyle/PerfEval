@@ -7,7 +7,6 @@ import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -79,21 +78,17 @@ public class InitCommand implements Command {
     final Path perfevalDirPath;
     final Path gitIgnorePath;
     final Path iniFilePath;
-    final Path helpFilePath;
-    final String helpFileContent;
     final Path[] emptyFilesToCreate;
     final Path[] gitIgnoredFiles;
     final PerfEvalConfig config;
 
-    public InitCommand(Path perfevalDirPath, Path gitIgnorePath, Path iniFilePath, Path helpFilePath,
-                       String helpFileContent, Path[] emptyFilesToCreate, Path[] gitIgnoredFiles, PerfEvalConfig config, boolean forceFlag) {
+    public InitCommand(Path perfevalDirPath, Path gitIgnorePath, Path iniFilePath, Path[] emptyFilesToCreate,
+                       Path[] gitIgnoredFiles, PerfEvalConfig config, boolean forceFlag) {
         this.gitIgnorePath = gitIgnorePath;
         this.iniFilePath = iniFilePath;
         this.emptyFilesToCreate = emptyFilesToCreate;
         this.config = config;
         this.perfevalDirPath = perfevalDirPath;
-        this.helpFileContent = helpFileContent;
-        this.helpFilePath = helpFilePath;
         this.gitIgnoredFiles = gitIgnoredFiles;
         this.forceFlag = forceFlag;
     }
@@ -130,17 +125,9 @@ public class InitCommand implements Command {
             throw new IOException("Config file cannot be created");
         }
         createGitIgnoreFile(this.gitIgnorePath, gitIgnoredFiles);
-        Path helpFilePath = this.helpFilePath;
-        createHelpFile(helpFilePath, helpFileContent);
         for (Path emptyFile : emptyFilesToCreate) {
             createEmptyFile(emptyFile);
         }
-    }
-
-    private static void createHelpFile(Path helpFilePath, String helpFileContent) throws IOException {
-        BufferedWriter writer = Files.newBufferedWriter(helpFilePath, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-        writer.write(helpFileContent);
-        writer.close();
     }
 
     private static void createEmptyFile(Path emptyFilePath) throws IOException {

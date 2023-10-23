@@ -58,12 +58,12 @@ public class CommandTest {
         "list-undecided --old-version version1 --new-version version2",
         "list-undecided --new-version version1 --old-version version2",
         "list-undecided --old-version version1 --filter test-result",
-        "list-undecided --old-version version1 --filter test-result2" // unknown filter -> valid line no filter will be used
+        "list-undecided --old-version version1 --filter test-result2", // unknown filter -> valid line no filter will be used
+        "list-undecided --max-time-on-test 30x30x", // not valid duration -> error message
+        "list-undecided --max-time-on-test 30x" // not valid duration -> error message
     };
 
     static String[] testListUndecidedInvalidLines = new String[] {
-        "list-undecided --max-time-on-test 30x30x", // not valid -> null
-        "list-undecided --max-time-on-test 30x", // not valid -> null
         "list-undecided --old-version version3", // unknown version -> null
     };
 
@@ -81,7 +81,7 @@ public class CommandTest {
         db.addFile(Path.of("file2"), "version2", "tag2");
     }
     @AfterEach
-    void cleanup() throws DatabaseException, SQLException {
+    void cleanup() throws SQLException {
         ((H2Database)db).dropTable();
     }
 

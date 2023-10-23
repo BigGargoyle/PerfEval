@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Parser {
     private static final String EMPTY_STRING = "";
@@ -48,7 +51,7 @@ public class Parser {
 
     private static final String PERFEVAL_DIR = ".performance";
     private static final String GIT_IGNORE_FILE_NAME = ".gitignore";
-    private static final String HELP_FILE_NAME = "help.txt";
+    //private static final String HELP_FILE_NAME = "help.txt";
     private static final String INI_FILE_NAME = "config.ini";
     private static final String DATABASE_FILE_NAME = "test_results.db";
     private static final String GIT_FILE_NAME = ".git";
@@ -119,16 +122,12 @@ public class Parser {
         Path perfevalDirPath = workingDir.resolve(PERFEVAL_DIR);
         Path gitIgnorePath = perfevalDirPath.resolve(GIT_IGNORE_FILE_NAME);
         Path iniFilePath = perfevalDirPath.resolve(INI_FILE_NAME);
-        Path helpFilePath = perfevalDirPath.resolve(HELP_FILE_NAME);
-        //TODO: dodat
-        String helpFileContent = "";
         Path[] emptyFiles = new Path[]{perfevalDirPath.resolve(DATABASE_FILE_NAME)};
         Path[] gitIgnoredFiles = new Path[]{
                 iniFilePath,
-                helpFilePath,
                 emptyFiles[0]
         };
-        return new InitCommand(perfevalDirPath, gitIgnorePath, iniFilePath, helpFilePath, helpFileContent,
+        return new InitCommand(perfevalDirPath, gitIgnorePath, iniFilePath,
                 emptyFiles, gitIgnoredFiles, config, options.has(FORCE_FLAG));
     }
     private static Command setupEvaluateCommand(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
@@ -150,10 +149,43 @@ public class Parser {
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = new UndecidedPrinter(System.out);
         // tTest is able to response that there are not enough samples
+        Duration maxTestDuration = resolveDuration(options, config);
         PerformanceComparator comparator = new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), DEFAULT_TOLERANCE);
         // Undecided printer -> printing only undecided results
         return new EvaluateCLICommand(inputFiles, printer, comparator);
     }
+
+    private static Duration resolveDuration(OptionSet options, PerfEvalConfig config) {
+        if(!options.has(maxTimeOption))
+            return config.getMaxTimeOnTest();
+        Pattern pattern = Pattern.compile("(?:(\\d+)h)?(?:(\\d+)m)?(?:(\\d+)s)?");
+        Matcher matcher = pattern.matcher(options.valueOf(maxTimeOption));
+        int hours = 0;
+        int minutes = 0;
+        int seconds = 0;
+
+        if (matcher.find()) {
+            // Extract and parse the matched groups
+            if (matcher.group(1) != null) {
+                hours = Integer.parseInt(matcher.group(1));
+            }
+            if (matcher.group(2) != null) {
+                minutes = Integer.parseInt(matcher.group(2));
+            }
+            if (matcher.group(3) != null) {
+                seconds = Integer.parseInt(matcher.group(3));
+            }
+        }
+
+        if(Duration.ofHours(hours).plusMinutes(minutes).plusSeconds(seconds).toNanos()==0){
+            System.err.println("Max time on test has invalid value. Default value will be used.");
+            return config.getMaxTimeOnTest();
+        }
+
+        // Create a Duration object using the parsed values
+        return Duration.ofHours(hours).plusMinutes(minutes).plusSeconds(seconds);
+    }
+
     private static Command setupIndexNewCommand(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
         Path sourceDir = Path.of(options.valueOf(pathOption));
         Path gitFilePath = config.hasGitFilePresence() ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
