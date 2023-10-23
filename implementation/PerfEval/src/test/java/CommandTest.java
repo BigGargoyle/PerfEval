@@ -25,11 +25,11 @@ public class CommandTest {
         "evaluate --old-version version1 --json-output",
         "evaluate --old-version version1 --t-test --json-output",
         "evaluate --old-version version1 --filter test-result",
+        "evaluate --old-version version1 --filter test-result2" // unknown filter -> null
     };
 
     static String[] testEvaluateCLIInvalidLines = new String[]{
         "evaluate --old-version version3", // unknown version -> null
-        "evaluate --old-version version1 --filter test-result2" // unknown filter -> null
     };
     static String[] testInitLines = new String[]{
         "init",
@@ -58,13 +58,13 @@ public class CommandTest {
         "list-undecided --old-version version1 --new-version version2",
         "list-undecided --new-version version1 --old-version version2",
         "list-undecided --old-version version1 --filter test-result",
+        "list-undecided --old-version version1 --filter test-result2" // unknown filter -> valid line no filter will be used
     };
 
     static String[] testListUndecidedInvalidLines = new String[] {
         "list-undecided --max-time-on-test 30x30x", // not valid -> null
         "list-undecided --max-time-on-test 30x", // not valid -> null
         "list-undecided --old-version version3", // unknown version -> null
-        "list-undecided --old-version version1 --filter test-result2" // unknown filter -> null
     };
 
     static String[] assemblyCLIArgs(String CLIExample){
@@ -141,6 +141,7 @@ public class CommandTest {
         for (String CLILine : testListUndecidedInvalidLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
+            //TODO: zpracovat max-time-on-test argument
             assertNull(command);
         }
     }

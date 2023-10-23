@@ -65,7 +65,7 @@ public class Parser {
 
     private static final String NEW_VERSION_PARAMETER = "new-version";
     private static final String OLD_VERSION_PARAMETER = "old-version";
-    private static final String MAX_TIME_PARAMETER = "max-time";
+    private static final String MAX_TIME_PARAMETER = "max-time-on-test";
     private static final String BOOTSTRAP_SAMPLE_COUNT_PARAMETER = "bootstrap-sample-count";
     private static final int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 10_000;
     private static final double DEFAULT_TOLERANCE = 0.01;
@@ -224,6 +224,7 @@ public class Parser {
                 case TEST_ID_FILTER -> filter = nameFilterComparator;
                 case SIZE_OF_CHANGE_FILTER -> filter = sizeOfChangeFilterComparator;
                 case TEST_RESULT_FILTER -> filter = testResultFilterComparator;
+                default -> System.err.println("Unknown filter. Default filter will be used.");
             }
         }
         PrintStream printStream = System.out;
