@@ -18,6 +18,7 @@ import cz.cuni.mff.hrdydo.resultDatabase.Database;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.Comparator;
 
 public class Parser {
@@ -63,7 +64,7 @@ public class Parser {
 
 
     private static final String NEW_VERSION_PARAMETER = "new-version";
-    private static final String OLD_VERSION_PARAMETER = "old-parameter";
+    private static final String OLD_VERSION_PARAMETER = "old-version";
     private static final String MAX_TIME_PARAMETER = "max-time";
     private static final String BOOTSTRAP_SAMPLE_COUNT_PARAMETER = "bootstrap-sample-count";
     private static final int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 10_000;
@@ -77,6 +78,9 @@ public class Parser {
         }
     }
 
+    private static final String PATH_PARAMETER = "path";
+    private static final String TAG_PARAMETER = "tag";
+    private static final String VERSION_PARAMETER = "version";
     private static final String FILTER_PARAMETER = "filter";
     private static final String TEST_RESULT_FILTER = "test-result";
     static final Comparator<MeasurementComparisonRecord> testResultFilterComparator = Comparator.comparing(MeasurementComparisonRecord::comparisonResult, Comparator.comparingInt(ComparisonResult::getResultNumber));
@@ -96,11 +100,11 @@ public class Parser {
         }
         try {
             for (var arg : options.nonOptionArguments()) {
-                if (arg == INIT_COMMAND) return setupInitCommand(args, options, config);
-                if (arg == EVALUATE_COMMAND) return setupEvaluateCommand(args, options, config);
-                if (arg == INDEX_NEW_COMMAND) return setupIndexNewCommand(args, options, config);
-                if (arg == INDEX_ALL_COMMAND) return setupIndexAllCommand(args, options, config);
-                if (arg == UNDECIDED_COMMAND) return setupUndecidedCommand(args, options, config);
+                if (INIT_COMMAND.equals(arg)) return setupInitCommand(args, options, config);
+                if (EVALUATE_COMMAND.equals(arg)) return setupEvaluateCommand(args, options, config);
+                if (INDEX_NEW_COMMAND.equals(arg)) return setupIndexNewCommand(args, options, config);
+                if (INDEX_ALL_COMMAND.equals(arg)) return setupIndexAllCommand(args, options, config);
+                if (UNDECIDED_COMMAND.equals(arg)) return setupUndecidedCommand(args, options, config);
             }
         } catch (DatabaseException e){
             System.err.println(e.getMessage());
@@ -150,34 +154,34 @@ public class Parser {
         // Undecided printer -> printing only undecided results
         return new EvaluateCLICommand(inputFiles, printer, comparator);
     }
-    private static Command setupIndexNewCommand(String[] args, OptionSet options, PerfEvalConfig config) {
-        Path sourceDir = Path.of(args[2]);
+    private static Command setupIndexNewCommand(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
+        Path sourceDir = Path.of(options.valueOf(pathOption));
         Path gitFilePath = config.hasGitFilePresence() ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
         Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
 
         String version = resolveVersion(gitFilePath, options);
-        String tag = resolveTag(gitFilePath, version);
+        String tag = resolveTag(gitFilePath, options,version);
 
         assert version != null && tag != null;
 
         return new AddFileCommand(sourceDir, database, version, tag);
     }
 
-    private static Command setupIndexAllCommand(String[] args, OptionSet options, PerfEvalConfig config) {
-        Path sourceDir = Path.of(args[2]);
+    private static Command setupIndexAllCommand(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
+        Path sourceDir = Path.of(options.valueOf(pathOption));
         Path gitFilePath = config.hasGitFilePresence() ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
         Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
 
         String version = resolveVersion(gitFilePath, options);
-        String tag = resolveTag(gitFilePath, version);
+        String tag = resolveTag(gitFilePath,options,  version);
 
         assert version != null && tag != null;
 
         return new AddFilesFromDirCommand(sourceDir, database, version, tag);
     }
     private static String resolveVersion(Path gitFilePath, OptionSet options) {
-        if(options.has(newVersionOption))
-            return options.valueOf(newVersionOption);
+        if(options.has(versionOption))
+            return options.valueOf(versionOption);
         if(gitFilePath==null)
             return null;
 
@@ -195,7 +199,9 @@ public class Parser {
 
     }
 
-    private static String resolveTag(Path gitFilePath, String version) {
+    private static String resolveTag(Path gitFilePath, OptionSet options,String version) {
+        if(options.has(tagOption))
+            return options.valueOf(tagOption);
         if(gitFilePath!=null)
             try {
                 if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
@@ -235,6 +241,7 @@ public class Parser {
         String oldVersion = options.has(oldVersionOption) ? options.valueOf(oldVersionOption) : null;
         if(newVersion==null && oldVersion==null){
             String[] versions = database.getLastNVersions(2);
+            assert versions.length==2;
             newVersion = versions[0];
             oldVersion = versions[1];
         }
@@ -252,6 +259,9 @@ public class Parser {
     static ArgumentAcceptingOptionSpec<Integer> bootstrapSampleCountOption;
     static ArgumentAcceptingOptionSpec<String> newVersionOption;
     static ArgumentAcceptingOptionSpec<String> oldVersionOption;
+    static ArgumentAcceptingOptionSpec<String> pathOption;
+    static ArgumentAcceptingOptionSpec<String> versionOption;
+    static ArgumentAcceptingOptionSpec<String> tagOption;
 
     private static OptionParser CreateParser() {
         OptionParser parser = new OptionParser();
@@ -278,6 +288,18 @@ public class Parser {
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Version of measured software");
+        pathOption = parser.accepts(PATH_PARAMETER)
+                .withRequiredArg()
+                .ofType(String.class)
+                .describedAs("Path option with a parameter");
+        versionOption = parser.accepts(VERSION_PARAMETER)
+                .withRequiredArg()
+                .ofType(String.class)
+                .describedAs("version option with a parameter");
+        tagOption = parser.accepts(TAG_PARAMETER)
+                .withRequiredArg()
+                .ofType(String.class)
+                .describedAs("tag option with a parameter");
 
         // Define flags (options without arguments)
         parser.accepts(HELP_FLAG, "Print help message");
@@ -288,8 +310,16 @@ public class Parser {
         return parser;
     }
 
-    private static Database constructDatabase(Path perfevalDir) {
+    public static Database constructDatabase(Path perfevalDir) throws DatabaseException {
         Path databasePath = perfevalDir.resolve(DATABASE_FILE_NAME);
-        return H2Database.getDBFromFilePath(databasePath);
+        try {
+            return H2Database.getDBFromFilePath(databasePath);
+
+        }catch (SQLException e)
+        {
+            DatabaseException exception = new DatabaseException(ExitCode.databaseError);
+            exception.initCause(e);
+            throw exception;
+        }
     }
 }

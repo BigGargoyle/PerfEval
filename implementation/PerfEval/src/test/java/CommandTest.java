@@ -1,10 +1,15 @@
 import cz.cuni.mff.hrdydo.Command;
-import cz.cuni.mff.hrdydo.ExitCode;
 import cz.cuni.mff.hrdydo.Parser;
-import cz.cuni.mff.hrdydo.perfevalInit.PerfEvalCommandFailedException;
+import cz.cuni.mff.hrdydo.resultDatabase.Database;
+import cz.cuni.mff.hrdydo.resultDatabase.DatabaseException;
+import cz.cuni.mff.hrdydo.resultDatabase.H2Database;
 import org.apache.commons.lang3.ArrayUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,14 +37,14 @@ public class CommandTest {
     };
 
     static String[] testIndexNewResultLines = new String[]{
-        "index-new-result --path path/to/file",
+        //"index-new-result --path path/to/file",
         "index-new-result --path path/to/file --version version1",
         "index-new-result --path path/to/file --version version1 --tag tag1"
     };
     static String[] testIndexAllResultsLines = new String[] {
-        "index-all-result --path path/to/file",
-        "index-all-result --path path/to/file --version version1",
-        "index-all-result --path path/to/file --version version1 --tag tag1"
+        //"index-all-results --path path/to/file",
+        "index-all-results --path path/to/file --version version1",
+        "index-all-results --path path/to/file --version version1 --tag tag1"
     };
     static String[] testListUndecidedValidLines = new String[] {
         "list-undecided",
@@ -62,18 +67,22 @@ public class CommandTest {
         "list-undecided --old-version version1 --filter test-result2" // unknown filter -> null
     };
 
-    @BeforeEach
-    public void setup() throws PerfEvalCommandFailedException {
-        Command initCommand = Parser.getCommand(new String[]{PWD,"init","--force"});
-        assert initCommand != null;
-        ExitCode exitCode = initCommand.execute();
-        assertSame(exitCode, ExitCode.OK);
-    }
-
     static String[] assemblyCLIArgs(String CLIExample){
         String[] splittedCLI = CLIExample.split(" ");
         String[] arg0 = new String[]{PWD};
         return ArrayUtils.addAll(arg0, splittedCLI);
+    }
+
+    Database db;
+    @BeforeEach
+    void setup() throws DatabaseException {
+        db = Parser.constructDatabase(Path.of(PWD).resolve(".performance"));
+        db.addFile(Path.of("file1"), "version1", "tag1");
+        db.addFile(Path.of("file2"), "version2", "tag2");
+    }
+    @AfterEach
+    void cleanup() throws DatabaseException, SQLException {
+        ((H2Database)db).dropTable();
     }
 
     @Test

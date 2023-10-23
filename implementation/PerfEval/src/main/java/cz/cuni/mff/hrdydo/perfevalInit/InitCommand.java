@@ -7,6 +7,7 @@ import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -57,15 +58,19 @@ public class InitCommand implements Command {
     private static void createIniFile(Path iniFilePath, PerfEvalConfig perfevalConfig) throws ConfigurationException, IOException {
         if(iniFilePath.toFile().exists() && !iniFilePath.toFile().delete())
             throw new IOException("ini file cannot be deleted");
-        FileWriter writer = new FileWriter(iniFilePath.toFile());
-        Configurations configs = new Configurations();
-        INIConfiguration config = configs.ini(iniFilePath.toFile());
+
+        INIConfiguration config = new INIConfiguration();
+
+        // Set INI properties
         config.setProperty(CRIT_VALUE_KEY, perfevalConfig.getCritValue());
         config.setProperty(MAX_CI_WIDTH_KEY, perfevalConfig.getMaxCIWidth());
         config.setProperty(MAX_TIME_KEY, perfevalConfig.getMaxTimeOnTest().getNano());
         String gitPresenceString = perfevalConfig.hasGitFilePresence() ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
         config.setProperty(VERSION_KEY, perfevalConfig.getVersion());
+
+        // Save to the INI file
+        FileWriter writer = new FileWriter(iniFilePath.toFile());
         config.write(writer);
         writer.close();
     }
@@ -118,6 +123,7 @@ public class InitCommand implements Command {
 
     private void createPerfEvalFiles() throws IOException {
         Path iniFilePath = this.iniFilePath;
+        Files.createDirectory(perfevalDirPath);
         try {
             createIniFile(iniFilePath, config);
         }catch (ConfigurationException e){

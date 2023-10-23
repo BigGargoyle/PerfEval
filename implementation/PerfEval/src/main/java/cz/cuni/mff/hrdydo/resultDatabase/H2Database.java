@@ -17,12 +17,26 @@ public class H2Database implements Database {
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "sa";
     private static final String DB_PREFIX = "jdbc:h2:";
-    public static Database getDBFromFilePath(Path path){
+    public static Database getDBFromFilePath(Path path) throws SQLException {
         JdbcDataSource dataSource = new JdbcDataSource();
         dataSource.setURL(DB_PREFIX+path.toString());
         dataSource.setUser(DB_USER);
         dataSource.setPassword(DB_PASSWORD);
+        Connection connection = dataSource.getConnection();
+        String createTableQuery = "CREATE TABLE IF NOT EXISTS ResultMetadata ("
+                + "id INT AUTO_INCREMENT PRIMARY KEY, "
+                + "path VARCHAR(255), "
+                + "dateOfCreation TIMESTAMP, "
+                + "version VARCHAR(255), "
+                + "tag VARCHAR(255))";
+        connection.createStatement().executeUpdate(createTableQuery);
+
         return new H2Database(dataSource, path);
+    }
+    public void dropTable() throws SQLException {
+        Connection connection = dataSource.getConnection();
+        String createTableQuery = "DROP TABLE IF EXISTS ResultMetadata";
+        connection.createStatement().executeUpdate(createTableQuery);
     }
 
     public H2Database(JdbcDataSource dataSource, Path originPath) {
