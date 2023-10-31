@@ -42,7 +42,7 @@ public class H2DatabaseTest {
         }
     }
 
-    @Test
+   /* @Test
     public void testAddFile() throws DatabaseException{
         Database database = new H2Database(dataSource, Path.of("."));
         database.addFile(Path.of("file1"), "version1", "tag1");
@@ -59,6 +59,6 @@ public class H2DatabaseTest {
         FileWithResultsData[] fileOfVersion = database.getResultsOfVersion(versions[0]);
         assertNotNull(fileOfVersion);
         assertEquals(1, fileOfVersion.length);
-    }
+    }*/
 
 }

@@ -149,6 +149,7 @@ public class Parser {
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = new UndecidedPrinter(System.out);
         // tTest is able to response that there are not enough samples
+        //TODO: zpracovat maxTestDuration
         Duration maxTestDuration = resolveDuration(options, config);
         PerformanceComparator comparator = new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), DEFAULT_TOLERANCE);
         // Undecided printer -> printing only undecided results
@@ -270,7 +271,7 @@ public class Parser {
 
     private static FileWithResultsData[][] resolveInputFilesWithRespectToInputtedVersions(String[] args, OptionSet options) throws DatabaseException {
         Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
-        String newVersion = options.has(newVersionOption) ? options.valueOf(newVersionOption) : null;
+        /*String newVersion = options.has(newVersionOption) ? options.valueOf(newVersionOption) : null;
         String oldVersion = options.has(oldVersionOption) ? options.valueOf(oldVersionOption) : null;
         if(newVersion==null && oldVersion==null){
             String[] versions = database.getLastNVersions(2);
@@ -283,7 +284,8 @@ public class Parser {
         FileWithResultsData[] newFiles = database.getResultsOfVersion(newVersion);
         FileWithResultsData[] oldFiles = database.getResultsOfVersion(oldVersion);
         assert newFiles.length > 0 && oldFiles.length > 0;
-        return new FileWithResultsData[][]{oldFiles, newFiles};
+        return new FileWithResultsData[][]{oldFiles, newFiles};*/
+        return null;
     }
 
 
@@ -350,7 +352,7 @@ public class Parser {
 
         }catch (SQLException e)
         {
-            DatabaseException exception = new DatabaseException(ExitCode.databaseError);
+            DatabaseException exception = new DatabaseException("DB cannot be instantiated", null, ExitCode.databaseError);
             exception.initCause(e);
             throw exception;
         }

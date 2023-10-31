@@ -15,10 +15,10 @@ public class MeasurementComparisonResultCollection implements Collection<Measure
     }
 
     public String getOldVersion(){
-        return originalFilesMetadata[0][0].version();
+        return originalFilesMetadata[0][0].version().commitVersionHash();
     }
     public String getNewVersion(){
-        return originalFilesMetadata[1][0].version();
+        return originalFilesMetadata[1][0].version().commitVersionHash();
     }
     @Override
     public int size() {

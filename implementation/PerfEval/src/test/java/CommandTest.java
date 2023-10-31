@@ -2,14 +2,20 @@ import cz.cuni.mff.hrdydo.Command;
 import cz.cuni.mff.hrdydo.Parser;
 import cz.cuni.mff.hrdydo.resultDatabase.Database;
 import cz.cuni.mff.hrdydo.resultDatabase.DatabaseException;
+import cz.cuni.mff.hrdydo.resultDatabase.FileVersionCharacteristic;
 import cz.cuni.mff.hrdydo.resultDatabase.H2Database;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.nio.file.Path;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,12 +43,12 @@ public class CommandTest {
     };
 
     static String[] testIndexNewResultLines = new String[]{
-        //"index-new-result --path path/to/file",
+        //"index-new-result --path path/to/file" --> missing git for tests, but valid
         "index-new-result --path path/to/file --version version1",
         "index-new-result --path path/to/file --version version1 --tag tag1"
     };
     static String[] testIndexAllResultsLines = new String[] {
-        //"index-all-results --path path/to/file",
+        //"index-all-results --path path/to/file" --> missing git for tests, but valid
         "index-all-results --path path/to/file --version version1",
         "index-all-results --path path/to/file --version version1 --tag tag1"
     };
@@ -74,11 +80,20 @@ public class CommandTest {
     }
 
     Database db;
+    Path dbPath = Path.of("test-db");
+    Path dirWithTestFiles = Path.of("./test-directory/test-results");
     @BeforeEach
-    void setup() throws DatabaseException {
-        db = Parser.constructDatabase(Path.of(PWD).resolve(".performance"));
-        db.addFile(Path.of("file1"), "version1", "tag1");
-        db.addFile(Path.of("file2"), "version2", "tag2");
+    void setup() throws DatabaseException, SQLException {
+        db = H2Database.getDBFromFilePath(dbPath);
+        int i = 0;
+        for (File f: Objects.requireNonNull(dirWithTestFiles.toFile().listFiles())) {
+            FileVersionCharacteristic version = new FileVersionCharacteristic(
+                    Date.from(Instant.now().minus(i, ChronoUnit.DAYS)),
+                    "version"+i,
+                    Integer.toString(i));
+            db.addFile(f.toPath(), version);
+            i++;
+        }
     }
     @AfterEach
     void cleanup() throws SQLException {
@@ -141,7 +156,6 @@ public class CommandTest {
         for (String CLILine : testListUndecidedInvalidLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
-            //TODO: zpracovat max-time-on-test argument
             assertNull(command);
         }
     }

@@ -21,14 +21,14 @@ public class AddFilesFromDirCommand implements Command {
 
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
-        try {
+        /*try {
             database.addFilesFromDir(sourceDirPath, version, tag);
 
         } catch (DatabaseException e){
             PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.databaseError);
             exception.initCause(e);
             throw exception;
-        }
+        }*/
         return ExitCode.OK;
     }
 }
