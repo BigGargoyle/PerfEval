@@ -17,7 +17,7 @@ import org.h2.jdbcx.JdbcDataSource;
 public class H2Database implements Database {
     private final JdbcDataSource dataSource;
     private final Path pathToDBFile;
-    //TODO: this is the path to which are relative paths of inserted files computed to
+    //this is the path to which are relative paths of inserted files computed to
     private final Path pathRelativesTo=Path.of("");
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "sa";
@@ -116,11 +116,8 @@ public class H2Database implements Database {
             String whereClause = generatePatternWhereClause(version);
             String query = "SELECT path, dateOfCreation, tag, dateOfCommit FROM ResultMetadata "+whereClause;
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                int index = 0;
-                if(version.commitVersionHash()!=null) preparedStatement.setString(++index, version.commitVersionHash());
-                if(version.dateOfCommit()!=null) preparedStatement.setTimestamp(++index, new Timestamp(version.dateOfCommit().getTime()));
-                if(version.tag()!=null) preparedStatement.setString(++index, version.tag());
+            try (PreparedStatement preparedStatement = generateStatementFromVersionPatternQuery(connection, query, version)) {
+
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     List<FileWithResultsData> results = new ArrayList<>();
 
@@ -154,6 +151,15 @@ public class H2Database implements Database {
         return whereClauseBuilder.toString();
     }
 
+    private PreparedStatement generateStatementFromVersionPatternQuery(Connection connection, String query, FileVersionCharacteristic pattern) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        int index = 0;
+        if(pattern.commitVersionHash()!=null) preparedStatement.setString(++index, pattern.commitVersionHash());
+        if(pattern.dateOfCommit()!=null) preparedStatement.setTimestamp(++index, new Timestamp(pattern.dateOfCommit().getTime()));
+        if(pattern.tag()!=null) preparedStatement.setString(++index, pattern.tag());
+        return preparedStatement;
+    }
+
 
     @Override
     public void addFile(Path filePath, FileVersionCharacteristic version) throws DatabaseException {
@@ -180,7 +186,7 @@ public class H2Database implements Database {
     @Override
     public void addFilesFromDir(Path dirPath, FileVersionCharacteristic version) throws DatabaseException {
         try {
-            Files.walkFileTree(dirPath, new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(dirPath, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     try {
@@ -192,7 +198,7 @@ public class H2Database implements Database {
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -207,7 +213,7 @@ public class H2Database implements Database {
         try (Connection connection = dataSource.getConnection()) {
             String innerQuery = "SELECT dateOfCommit FROM ResultMetadata WHERE version = ? ORDER BY dateOfCommit DESC LIMIT 1";
             String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata WHERE dateOfCommit < ("+innerQuery+") ORDER BY dateOfCommit DESC";
-            //TODO: another select in WHERE clause
+
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, version.commitVersionHash());
 
@@ -262,11 +268,7 @@ public class H2Database implements Database {
             String whereClause = generatePatternWhereClause(pattern);
             String query = "SELECT version, dateOfCommit, tag, dateOfCommit FROM ResultMetadata "+whereClause;
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                int index = 0;
-                if(pattern.commitVersionHash()!=null) preparedStatement.setString(++index, pattern.commitVersionHash());
-                if(pattern.dateOfCommit()!=null) preparedStatement.setTimestamp(++index, new Timestamp(pattern.dateOfCommit().getTime()));
-                if(pattern.tag()!=null) preparedStatement.setString(++index, pattern.tag());
+            try (PreparedStatement preparedStatement = generateStatementFromVersionPatternQuery(connection, query, pattern)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     List<FileVersionCharacteristic> results = new ArrayList<>();
 
@@ -318,23 +320,24 @@ public class H2Database implements Database {
     @Override
     public FileVersionCharacteristic findClosestVersionToDate(Date date) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()){
-            String query = "SELECT *\n" +
-                    "FROM (\n" +
-                    "    SELECT *\n" +
-                    "    FROM ResultMetadata\n" +
-                    "    WHERE dateOfCommit < ?\n" +
-                    "    ORDER BY dateOfCommit DESC\n" +
-                    "    LIMIT 1\n" +
-                    ") AS older\n" +
-                    "UNION ALL\n" +
-                    "SELECT *\n" +
-                    "FROM (\n" +
-                    "    SELECT *\n" +
-                    "    FROM ResultMetadata\n" +
-                    "    WHERE dateOfCommit > ?\n" +
-                    "    ORDER BY dateOfCommit ASC\n" +
-                    "    LIMIT 1\n" +
-                    ") AS newer;";
+            String query = """
+                    SELECT *
+                    FROM (
+                        SELECT *
+                        FROM ResultMetadata
+                        WHERE dateOfCommit < ?
+                        ORDER BY dateOfCommit DESC
+                        LIMIT 1
+                    ) AS older
+                    UNION ALL
+                    SELECT *
+                    FROM (
+                        SELECT *
+                        FROM ResultMetadata
+                        WHERE dateOfCommit > ?
+                        ORDER BY dateOfCommit ASC
+                        LIMIT 1
+                    ) AS newer;""";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setTimestamp(1, new Timestamp(date.getTime()));
