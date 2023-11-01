@@ -22,6 +22,13 @@ public class H2Database implements Database {
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "sa";
     private static final String DB_PREFIX = "jdbc:h2:";
+
+    /**
+     * Creates new PerfEval database with the given path
+     * @param path              path to the database file
+     * @return                  instance of Database with usage of H2 database and JDBC
+     * @throws SQLException     SQLException could be thrown if file cannot be created or there is another error with access to H2 database
+     */
     public static Database getDBFromFilePath(Path path) throws SQLException {
         JdbcDataSource dataSource = new JdbcDataSource();
         dataSource.setURL(DB_PREFIX+path.toString());
@@ -39,20 +46,37 @@ public class H2Database implements Database {
 
         return new H2Database(dataSource, path);
     }
+
+    /**
+     * method used just for testing, drops database table
+     * @throws SQLException throws SQLException if table cannot be dropped
+     */
     public void dropTable() throws SQLException {
         Connection connection = dataSource.getConnection();
         String createTableQuery = "DROP TABLE IF EXISTS ResultMetadata";
         connection.createStatement().executeUpdate(createTableQuery);
     }
 
+    /**
+     * initializes private members
+     * @param dataSource    JDBCDataSource that represents metadata about database connection
+     * @param originPath    path to db file, used for adding relative paths to that file to database
+     */
     public H2Database(JdbcDataSource dataSource, Path originPath) {
         this.dataSource = dataSource;
         this.pathToDBFile = originPath;
     }
 
+    /**
+     *
+     * @param n                     how many results should be returned
+     * @return                      array of last n FileVersionCharacteristic that the database knows
+     * @throws DatabaseException    if query is not valid, or there is another SQL error
+     */
     @Override
     public FileVersionCharacteristic[] getLastNVersions(int n) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
+            //db query for getting info about newest N versions
             String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata ORDER BY dateOfCommit DESC LIMIT ?";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -78,6 +102,12 @@ public class H2Database implements Database {
         }
     }
 
+    /**
+     *
+     * @param n                     how many results should be returned
+     * @return                      the n newest (by their dateOfCreation) files in database
+     * @throws DatabaseException    if query is not valid, or there is another SQL error
+     */
     @Override
     public FileWithResultsData[] getLastNResults(int n) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
@@ -90,7 +120,7 @@ public class H2Database implements Database {
                     List<FileWithResultsData> results = new ArrayList<>();
 
                     while (resultSet.next()) {
-                        String path =pathToDBFile.resolve(resultSet.getString("path")).toString();
+                        String path =pathToDBFile.resolve(resultSet.getString("path")).toAbsolutePath().toString();
                         Date dateOfCreation = resultSet.getTimestamp("dateOfCreation");
                         String versionHash = resultSet.getString("version");
                         String tag = resultSet.getString("tag");
@@ -108,6 +138,12 @@ public class H2Database implements Database {
         }
     }
 
+    /**
+     *
+     * @param version               files from this version are wanted
+     * @return                      all files of the specified version (commitHash needed in this case)
+     * @throws DatabaseException    if query is not valid, or there is another SQL error
+     */
     @Override
     public FileWithResultsData[] getResultsOfVersion(FileVersionCharacteristic version) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
@@ -122,7 +158,7 @@ public class H2Database implements Database {
                     List<FileWithResultsData> results = new ArrayList<>();
 
                     while (resultSet.next()) {
-                        String path = pathToDBFile.resolve(resultSet.getString("path")).toString();
+                        String path = pathToDBFile.resolve(resultSet.getString("path")).toAbsolutePath().toString();
                         Date dateOfCreation = resultSet.getTimestamp("dateOfCreation");
                         String tag = resultSet.getString("tag");
                         Date dateOfCommit = resultSet.getTimestamp("dateOfCommit");
@@ -139,6 +175,11 @@ public class H2Database implements Database {
         }
     }
 
+    /**
+     *
+     * @param pattern   non-null values of this FileVersionCharacteristic instance are wanted
+     * @return          String representation of SQL WHERE clause
+     */
     private String generatePatternWhereClause(FileVersionCharacteristic pattern){
         StringBuilder whereClauseBuilder = new StringBuilder("WHERE ");
         if(pattern.commitVersionHash()!=null) whereClauseBuilder.append("version = ?");
@@ -151,6 +192,14 @@ public class H2Database implements Database {
         return whereClauseBuilder.toString();
     }
 
+    /**
+     *
+     * @param connection        connection to PerfEval database
+     * @param query             String representation of database query to be prepared
+     * @param pattern           pattern from which WHERE clause was generated
+     * @return                  SQL PreparedStatement ready for execution
+     * @throws SQLException     thrown if preparing PreparedStatement fails
+     */
     private PreparedStatement generateStatementFromVersionPatternQuery(Connection connection, String query, FileVersionCharacteristic pattern) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         int index = 0;
@@ -160,7 +209,12 @@ public class H2Database implements Database {
         return preparedStatement;
     }
 
-
+    /**
+     *
+     * @param filePath              path to file that is meant to be added to database
+     * @param version               version of measured values of file that is meant to be added
+     * @throws DatabaseException    if query is not valid, or there is another SQL error
+     */
     @Override
     public void addFile(Path filePath, FileVersionCharacteristic version) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
@@ -183,6 +237,12 @@ public class H2Database implements Database {
         }
     }
 
+    /**
+     *
+     * @param dirPath               path to dir that its files are meant to be added to database
+     * @param version               version of measured values of files that is meant to be added
+     * @throws DatabaseException    if query is not valid, or there is another SQL error
+     */
     @Override
     public void addFilesFromDir(Path dirPath, FileVersionCharacteristic version) throws DatabaseException {
         try {
@@ -207,7 +267,12 @@ public class H2Database implements Database {
         }
     }
 
-
+    /**
+     *
+     * @param version               version of which older neighbour is wanted
+     * @return                      the youngest older neighbour of version
+     * @throws DatabaseException    if query is not valid, or there is another SQL error
+     */
     @Override
     public FileVersionCharacteristic findOlderNeighbourVersion(FileVersionCharacteristic version) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
@@ -234,6 +299,12 @@ public class H2Database implements Database {
         }
     }
 
+    /**
+     *
+     * @param version               version of which younger neighbour is wanted
+     * @return                      the oldest younger neighbour of version
+     * @throws DatabaseException    if query is not valid, or there is another SQL error
+     */
     @Override
     public FileVersionCharacteristic findNewerNeighbourVersion(FileVersionCharacteristic version) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()){
@@ -260,7 +331,12 @@ public class H2Database implements Database {
         }
     }
 
-
+    /**
+     *
+     * @param pattern               non-null members are declaring how does the wanted versions looks like
+     * @return                      versions that are matching the pattern
+     * @throws DatabaseException    if query is not valid, or there is another SQL error
+     */
     @Override
     public FileVersionCharacteristic[] findVersionsOfPattern(FileVersionCharacteristic pattern) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
@@ -289,6 +365,12 @@ public class H2Database implements Database {
         }
     }
 
+    /**
+     *
+     * @param date                  date from which are versions finding
+     * @return                      versions that are newer than date (their dateOfCommit is higher -> timestamp)
+     * @throws DatabaseException    if query is not valid, or there is another SQL error
+     */
     @Override
     public FileVersionCharacteristic[] findVersionsNewerThan(Date date) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
@@ -317,9 +399,16 @@ public class H2Database implements Database {
         }
     }
 
+    /**
+     *
+     * @param date                  date from which are versions finding
+     * @return                      the closest (by time distance) version to the date
+     * @throws DatabaseException    if query is not valid, or there is another SQL error
+     */
     @Override
     public FileVersionCharacteristic findClosestVersionToDate(Date date) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()){
+            //query for first newer and first older version -> then will be searched the closer one from both
             String query = """
                     SELECT *
                     FROM (
