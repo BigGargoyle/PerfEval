@@ -11,17 +11,17 @@ public interface Database {
      * @param n how many results should be returned
      * @return n most recently added benchmark test results file paths from the database
      */
-    FileVersionCharacteristic[] getLastNVersions(int n) throws DatabaseException;
+    ProjectVersion[] getLastNVersions(int n) throws DatabaseException;
     FileWithResultsData[] getLastNResults(int n) throws DatabaseException;
-    FileWithResultsData[] getResultsOfVersion(FileVersionCharacteristic version) throws DatabaseException;
+    FileWithResultsData[] getResultsOfVersion(ProjectVersion version) throws DatabaseException;
 
-    void addFile(Path filePath, FileVersionCharacteristic version) throws DatabaseException;
+    void addFile(Path filePath, ProjectVersion version) throws DatabaseException;
 
-    void addFilesFromDir(Path dirPath, FileVersionCharacteristic version) throws DatabaseException;
+    void addFilesFromDir(Path dirPath, ProjectVersion version) throws DatabaseException;
 
-    FileVersionCharacteristic findOlderNeighbourVersion(FileVersionCharacteristic version) throws DatabaseException;
-    FileVersionCharacteristic findNewerNeighbourVersion(FileVersionCharacteristic version) throws DatabaseException;
-    FileVersionCharacteristic[] findVersionsOfPattern(FileVersionCharacteristic pattern) throws DatabaseException;
-    FileVersionCharacteristic[] findVersionsNewerThan(Date date) throws DatabaseException;
-    FileVersionCharacteristic findClosestVersionToDate(Date date) throws DatabaseException;
+    ProjectVersion findOlderNeighbourVersion(ProjectVersion version) throws DatabaseException;
+    ProjectVersion findNewerNeighbourVersion(ProjectVersion version) throws DatabaseException;
+    ProjectVersion[] findVersionsOfPattern(ProjectVersion pattern) throws DatabaseException;
+    ProjectVersion[] findVersionsNewerThan(Date date) throws DatabaseException;
+    ProjectVersion findClosestVersionToDate(Date date) throws DatabaseException;
 }

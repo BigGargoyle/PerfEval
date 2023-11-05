@@ -2,7 +2,7 @@ import cz.cuni.mff.hrdydo.Command;
 import cz.cuni.mff.hrdydo.Parser;
 import cz.cuni.mff.hrdydo.resultDatabase.Database;
 import cz.cuni.mff.hrdydo.resultDatabase.DatabaseException;
-import cz.cuni.mff.hrdydo.resultDatabase.FileVersionCharacteristic;
+import cz.cuni.mff.hrdydo.resultDatabase.ProjectVersion;
 import cz.cuni.mff.hrdydo.resultDatabase.H2Database;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +20,7 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandTest {
-    static String PWD = "./test-directory";
+    static String PWD = "test-directory";
     static String[] testEvaluateCLIValidLines = new String[]{
         "evaluate",
         "evaluate --old-version version1",
@@ -81,13 +81,13 @@ public class CommandTest {
 
     Database db;
     Path dbPath = Path.of("test-db");
-    Path dirWithTestFiles = Path.of("./test-directory/test-results");
+    Path dirWithTestFiles = Path.of("test-directory/test-results");
     @BeforeEach
     void setup() throws DatabaseException, SQLException {
         db = H2Database.getDBFromFilePath(dbPath);
         int i = 0;
         for (File f: Objects.requireNonNull(dirWithTestFiles.toFile().listFiles())) {
-            FileVersionCharacteristic version = new FileVersionCharacteristic(
+            ProjectVersion version = new ProjectVersion(
                     Date.from(Instant.now().minus(i, ChronoUnit.DAYS)),
                     "version"+i,
                     Integer.toString(i));

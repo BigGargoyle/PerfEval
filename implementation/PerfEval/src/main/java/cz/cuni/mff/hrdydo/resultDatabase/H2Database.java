@@ -18,7 +18,7 @@ public class H2Database implements Database {
     private final JdbcDataSource dataSource;
     private final Path pathToDBFile;
     //this is the path to which are relative paths of inserted files computed to
-    private final Path pathRelativesTo=Path.of("");
+    //private final Path pathRelativesTo=Path.of("");
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "sa";
     private static final String DB_PREFIX = "jdbc:h2:";
@@ -74,7 +74,7 @@ public class H2Database implements Database {
      * @throws DatabaseException    if query is not valid, or there is another SQL error
      */
     @Override
-    public FileVersionCharacteristic[] getLastNVersions(int n) throws DatabaseException {
+    public ProjectVersion[] getLastNVersions(int n) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
             //db query for getting info about newest N versions
             String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata ORDER BY dateOfCommit DESC LIMIT ?";
@@ -83,18 +83,18 @@ public class H2Database implements Database {
                 preparedStatement.setInt(1, n);
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    List<FileVersionCharacteristic> versions = new ArrayList<>();
+                    List<ProjectVersion> versions = new ArrayList<>();
 
                     while (resultSet.next()) {
                         String versionHash = resultSet.getString("version");
                         Date commitDate = resultSet.getTimestamp("dateOfCommit");
                         String tag = resultSet.getString("tag");
 
-                        FileVersionCharacteristic version = new FileVersionCharacteristic(commitDate, versionHash, tag);
+                        ProjectVersion version = new ProjectVersion(commitDate, versionHash, tag);
                         versions.add(version);
                     }
 
-                    return versions.toArray(new FileVersionCharacteristic[0]);
+                    return versions.toArray(new ProjectVersion[0]);
                 }
             }
         } catch (SQLException e) {
@@ -126,7 +126,7 @@ public class H2Database implements Database {
                         String tag = resultSet.getString("tag");
                         Date dateOfCommit = resultSet.getTimestamp("dateOfCommit");
 
-                        FileWithResultsData resultData = new FileWithResultsData(path, dateOfCreation, new FileVersionCharacteristic(dateOfCommit, versionHash, tag));
+                        FileWithResultsData resultData = new FileWithResultsData(path, dateOfCreation, new ProjectVersion(dateOfCommit, versionHash, tag));
                         results.add(resultData);
                     }
 
@@ -145,7 +145,7 @@ public class H2Database implements Database {
      * @throws DatabaseException    if query is not valid, or there is another SQL error
      */
     @Override
-    public FileWithResultsData[] getResultsOfVersion(FileVersionCharacteristic version) throws DatabaseException {
+    public FileWithResultsData[] getResultsOfVersion(ProjectVersion version) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
 
             if(version.commitVersionHash()==null) throw new DatabaseException("No versionHash provided", null, ExitCode.databaseError);
@@ -163,7 +163,7 @@ public class H2Database implements Database {
                         String tag = resultSet.getString("tag");
                         Date dateOfCommit = resultSet.getTimestamp("dateOfCommit");
 
-                        FileWithResultsData resultData = new FileWithResultsData(path, dateOfCreation, new FileVersionCharacteristic(dateOfCommit, version.commitVersionHash(), tag));
+                        FileWithResultsData resultData = new FileWithResultsData(path, dateOfCreation, new ProjectVersion(dateOfCommit, version.commitVersionHash(), tag));
                         results.add(resultData);
                     }
 
@@ -180,7 +180,7 @@ public class H2Database implements Database {
      * @param pattern   non-null values of this FileVersionCharacteristic instance are wanted
      * @return          String representation of SQL WHERE clause
      */
-    private String generatePatternWhereClause(FileVersionCharacteristic pattern){
+    private String generatePatternWhereClause(ProjectVersion pattern){
         StringBuilder whereClauseBuilder = new StringBuilder("WHERE ");
         if(pattern.commitVersionHash()!=null) whereClauseBuilder.append("version = ?");
         if(pattern.commitVersionHash()!=null && pattern.dateOfCommit()!=null) whereClauseBuilder.append(" AND ");
@@ -200,7 +200,7 @@ public class H2Database implements Database {
      * @return                  SQL PreparedStatement ready for execution
      * @throws SQLException     thrown if preparing PreparedStatement fails
      */
-    private PreparedStatement generateStatementFromVersionPatternQuery(Connection connection, String query, FileVersionCharacteristic pattern) throws SQLException {
+    private PreparedStatement generateStatementFromVersionPatternQuery(Connection connection, String query, ProjectVersion pattern) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         int index = 0;
         if(pattern.commitVersionHash()!=null) preparedStatement.setString(++index, pattern.commitVersionHash());
@@ -216,7 +216,7 @@ public class H2Database implements Database {
      * @throws DatabaseException    if query is not valid, or there is another SQL error
      */
     @Override
-    public void addFile(Path filePath, FileVersionCharacteristic version) throws DatabaseException {
+    public void addFile(Path filePath, ProjectVersion version) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
             String insertQuery = "INSERT INTO ResultMetadata (path, dateOfCreation, dateOfCommit, version, tag) VALUES (?, ?, ?, ?, ?)";
 
@@ -224,7 +224,7 @@ public class H2Database implements Database {
             Date creationDate = new Date(fileAttributes.creationTime().toMillis());
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
-                preparedStatement.setString(1, pathRelativesTo.relativize(filePath).toString());
+                preparedStatement.setString(1, pathToDBFile.relativize(filePath).toString());
                 preparedStatement.setTimestamp(2, new Timestamp(creationDate.getTime())); // Current date for dateOfCreation
                 preparedStatement.setTimestamp(3, new Timestamp(version.dateOfCommit().getTime()));
                 preparedStatement.setString(4, version.commitVersionHash());
@@ -244,7 +244,7 @@ public class H2Database implements Database {
      * @throws DatabaseException    if query is not valid, or there is another SQL error
      */
     @Override
-    public void addFilesFromDir(Path dirPath, FileVersionCharacteristic version) throws DatabaseException {
+    public void addFilesFromDir(Path dirPath, ProjectVersion version) throws DatabaseException {
         try {
             Files.walkFileTree(dirPath, new SimpleFileVisitor<>() {
                 @Override
@@ -274,7 +274,7 @@ public class H2Database implements Database {
      * @throws DatabaseException    if query is not valid, or there is another SQL error
      */
     @Override
-    public FileVersionCharacteristic findOlderNeighbourVersion(FileVersionCharacteristic version) throws DatabaseException {
+    public ProjectVersion findOlderNeighbourVersion(ProjectVersion version) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
             String innerQuery = "SELECT dateOfCommit FROM ResultMetadata WHERE version = ? ORDER BY dateOfCommit DESC LIMIT 1";
             String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata WHERE dateOfCommit < ("+innerQuery+") ORDER BY dateOfCommit DESC";
@@ -288,7 +288,7 @@ public class H2Database implements Database {
                         Date commitDate = resultSet.getTimestamp("dateOfCommit");
                         String tag = resultSet.getString("tag");
 
-                        return new FileVersionCharacteristic(commitDate, versionHash, tag);
+                        return new ProjectVersion(commitDate, versionHash, tag);
                     }
                 }
             }
@@ -306,7 +306,7 @@ public class H2Database implements Database {
      * @throws DatabaseException    if query is not valid, or there is another SQL error
      */
     @Override
-    public FileVersionCharacteristic findNewerNeighbourVersion(FileVersionCharacteristic version) throws DatabaseException {
+    public ProjectVersion findNewerNeighbourVersion(ProjectVersion version) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()){
             String innerQuery = "SELECT dateOfCommit FROM ResultMetadata WHERE version = ? ORDER BY dateOfCommit DESC LIMIT 1";
             String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata WHERE dateOfCommit > ("+innerQuery+") ORDER BY dateOfCommit ASC LIMIT 1";
@@ -320,7 +320,7 @@ public class H2Database implements Database {
                         Date commitDate = resultSet.getTimestamp("dateOfCommit");
                         String tag = resultSet.getString("tag");
 
-                        return new FileVersionCharacteristic(commitDate, versionHash, tag);
+                        return new ProjectVersion(commitDate, versionHash, tag);
                     }
                 }
             }
@@ -338,7 +338,7 @@ public class H2Database implements Database {
      * @throws DatabaseException    if query is not valid, or there is another SQL error
      */
     @Override
-    public FileVersionCharacteristic[] findVersionsOfPattern(FileVersionCharacteristic pattern) throws DatabaseException {
+    public ProjectVersion[] findVersionsOfPattern(ProjectVersion pattern) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
 
             String whereClause = generatePatternWhereClause(pattern);
@@ -346,18 +346,18 @@ public class H2Database implements Database {
 
             try (PreparedStatement preparedStatement = generateStatementFromVersionPatternQuery(connection, query, pattern)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    List<FileVersionCharacteristic> results = new ArrayList<>();
+                    List<ProjectVersion> results = new ArrayList<>();
 
                     while (resultSet.next()) {
                         String version = resultSet.getString("version");
                         Date commitDate = resultSet.getTimestamp("dateOfCommit");
                         String tag = resultSet.getString("tag");
 
-                        FileVersionCharacteristic resultData = new FileVersionCharacteristic(commitDate, version, tag);
+                        ProjectVersion resultData = new ProjectVersion(commitDate, version, tag);
                         results.add(resultData);
                     }
 
-                    return results.toArray(new FileVersionCharacteristic[0]);
+                    return results.toArray(new ProjectVersion[0]);
                 }
             }
         } catch (SQLException e) {
@@ -372,7 +372,7 @@ public class H2Database implements Database {
      * @throws DatabaseException    if query is not valid, or there is another SQL error
      */
     @Override
-    public FileVersionCharacteristic[] findVersionsNewerThan(Date date) throws DatabaseException {
+    public ProjectVersion[] findVersionsNewerThan(Date date) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
             String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata WHERE dateOfCommit > ? ORDER BY dateOfCommit ASC";
 
@@ -380,18 +380,18 @@ public class H2Database implements Database {
                 preparedStatement.setTimestamp(1, new Timestamp(date.getTime()));
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    List<FileVersionCharacteristic> versions = new ArrayList<>();
+                    List<ProjectVersion> versions = new ArrayList<>();
 
                     while (resultSet.next()) {
                         String versionHash = resultSet.getString("version");
                         Date commitDate = resultSet.getTimestamp("dateOfCommit");
                         String tag = resultSet.getString("tag");
 
-                        FileVersionCharacteristic version = new FileVersionCharacteristic(commitDate, versionHash, tag);
+                        ProjectVersion version = new ProjectVersion(commitDate, versionHash, tag);
                         versions.add(version);
                     }
 
-                    return versions.toArray(new FileVersionCharacteristic[0]);
+                    return versions.toArray(new ProjectVersion[0]);
                 }
             }
         } catch (SQLException e) {
@@ -406,7 +406,7 @@ public class H2Database implements Database {
      * @throws DatabaseException    if query is not valid, or there is another SQL error
      */
     @Override
-    public FileVersionCharacteristic findClosestVersionToDate(Date date) throws DatabaseException {
+    public ProjectVersion findClosestVersionToDate(Date date) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()){
             //query for first newer and first older version -> then will be searched the closer one from both
             String query = """
@@ -438,13 +438,13 @@ public class H2Database implements Database {
                         Date commitDate = resultSet.getTimestamp("dateOfCommit");
                         String tag = resultSet.getString("tag");
                         if(!resultSet.next())
-                            return new FileVersionCharacteristic(commitDate, versionHash, tag);
+                            return new ProjectVersion(commitDate, versionHash, tag);
                         Date newerCommitDate = resultSet.getTimestamp("dateOfCommit");
                         if(Math.abs(newerCommitDate.getTime() - date.getTime()) > Math.abs(commitDate.getTime()-date.getTime()))
-                            return new FileVersionCharacteristic(commitDate, versionHash, tag);
+                            return new ProjectVersion(commitDate, versionHash, tag);
                         versionHash = resultSet.getString("version");
                         tag = resultSet.getString("tag");
-                        return new FileVersionCharacteristic(commitDate, versionHash, tag);
+                        return new ProjectVersion(commitDate, versionHash, tag);
                     }
                 }
             }
