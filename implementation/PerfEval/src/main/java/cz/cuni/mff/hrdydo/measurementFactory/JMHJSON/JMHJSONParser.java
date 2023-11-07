@@ -6,8 +6,7 @@ import cz.cuni.mff.hrdydo.measurementFactory.JMHJSON.pojoJMH.BenchmarkJMHJSONBas
 import cz.cuni.mff.hrdydo.Samples;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Implementation of IMeasurementParser for JMH framework test result in the JSON format
@@ -15,63 +14,63 @@ import java.util.List;
 
 public class JMHJSONParser implements MeasurementParser {
 
-    Metric metric;
-    public JMHJSONParser(Metric metric){
-        this.metric = metric;
-    }
+    //Metric metric;
+    public JMHJSONParser(){}
 
-    public List<Samples> getTestsFromFile(String fileName) {
-        List<Samples> result = new ArrayList<>();
+    static final String[] timeScoreUnits = new String[] {"ns/op","us/op","ms/op","s/op"};
+    static final String[] frequencyScoreUnits = new String[] {"ops/s","ops/ms","ops/us","ops/ns"};
+    @Override
+    public List<Samples> getTestsFromFiles(String[] fileNames) {
+        Dictionary<String, Samples> samplesDictionary = new Hashtable<>();
+        for (int i = 0; i < fileNames.length; i++) {
+            String fileName = fileNames[i];
+            addSamplesToDictionary(fileName, fileNames.length, i, samplesDictionary);
+        }
+        List<Samples> samples = new ArrayList<>();
+        Enumeration<Samples> samplesEnumeration = samplesDictionary.elements();
+        while(samplesEnumeration.hasMoreElements()){
+            samples.add(samplesEnumeration.nextElement());
+        }
+        return samples;
+    }
+    void addSamplesToDictionary(String fileName, int fileCount, int fileIndex, Dictionary<String, Samples> samplesDictionary){
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
         BenchmarkJMHJSONBase[] base;
         try{
             base = objectMapper.readValue(inputFile, BenchmarkJMHJSONBase[].class);
         }catch (Exception e){
-            return null;
+            return;
         }
-
-        /*try {
-            for (BenchmarkJMHJSONBase benchmark : base) {
-                result.add(ConstructTest(benchmark));
+        assert base != null;
+        for (BenchmarkJMHJSONBase benchmark: base) {
+            var name = benchmark.getBenchmark();
+            var primaryMetric = benchmark.getPrimaryMetric();
+            Metric metric = null;
+            for(String scoreUnit : frequencyScoreUnits){
+                if(primaryMetric.getScoreUnit().compareTo(scoreUnit)==0){
+                    metric = new Metric(scoreUnit, true);
+                    break;
+                }
             }
+            if(metric==null)
+                metric = new Metric(primaryMetric.getScoreUnit(), false);
+
+            if(samplesDictionary.get(name)==null){
+                Samples samples = new Samples(new double[fileCount][], metric, name);
+                samplesDictionary.put(name, samples);
+                for(int i = 0; i < fileCount; i++){
+                    samples.getRawData()[i] = new double[0];
+                }
+            }
+            List<List<Double>> measuredValues = benchmark.getPrimaryMetric().getRawData();
+            List<Double> measuredValues1D = new ArrayList<>();
+            for (List<Double> measuredValue : measuredValues) {
+                measuredValues1D.addAll(measuredValue);
+            }
+            if(metric.isCompatibleWith(samplesDictionary.get(name).getMetric()))
+                samplesDictionary.get(name).getRawData()[fileIndex] = measuredValues1D.stream().mapToDouble(Double::valueOf).toArray();
+            else throw new IllegalArgumentException("Incompatible metrics");
         }
-        catch (IOException e){
-            return null;
-        }*/
-
-        return result;
-    }
-
-    static final String[] acceptableScoreUnits = new String[] {"ns/op","us/op","ms/op","s/op"};
-
-    /*public static Samples ConstructTest(BenchmarkJMHJSONBase input) throws IOException {
-        String name = input.getBenchmark();
-        List<UniversalTimeUnit> measuredTimes = new ArrayList<>();
-        PrimaryMetric primaryMetric = input.getPrimaryMetric();
-        // !!! adding average of each measuredData, because rawData is a field of list of lists of Doubles
-        for (List<Double> measuredData: primaryMetric.getRawData()){
-            String scoreUnit = primaryMetric.getScoreUnit();
-            if(!Arrays.asList(acceptableScoreUnits).contains(scoreUnit)){
-                throw new IOException("Unexpected scoreUnit type. Acceptable types are: ns/op, us/op, ms/op, s/op");
-            }
-
-            switch (scoreUnit){
-                case "ns/op"-> measuredTimes.add(new UniversalTimeUnit(Math.round(measuredData.stream().mapToDouble(Double::doubleValue)
-                        .average().orElse(0.0)), TimeUnit.NANOSECONDS));
-                case "us/op"-> measuredTimes.add(new UniversalTimeUnit(Math.round(measuredData.stream().mapToDouble(Double::doubleValue)
-                        .average().orElse(0.0)), TimeUnit.MICROSECONDS));
-                case "ms/op"-> measuredTimes.add(new UniversalTimeUnit(Math.round(measuredData.stream().mapToDouble(Double::doubleValue)
-                        .average().orElse(0.0)), TimeUnit.MILLISECONDS));
-                case "s/op"-> measuredTimes.add(new UniversalTimeUnit(Math.round(measuredData.stream().mapToDouble(Double::doubleValue)
-                        .average().orElse(0.0)), TimeUnit.SECONDS));
-            }
-        }
-        return new Samples(name, measuredTimes);
-    }*/
-
-    @Override
-    public List<Samples> getTestsFromFiles(String[] fileNames) {
-        return null;
     }
 }

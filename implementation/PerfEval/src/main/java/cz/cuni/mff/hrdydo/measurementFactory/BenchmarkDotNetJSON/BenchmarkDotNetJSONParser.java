@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Implementation of IMeasurementParser for BenchmarkDotNet framework test results in the JSON format.
  */
 public class BenchmarkDotNetJSONParser implements MeasurementParser {
-    Long timestamp = null;
+    //TODO: upravit metriku, funguje tak jako jsem si původně myslel
     Metric metric;
     public BenchmarkDotNetJSONParser(){
         this.metric = new Metric("Nanoseconds", false);
@@ -49,6 +49,9 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
             if(samplesDictionary.get(name)==null){
                 Samples samples = new Samples(new double[fileCount][], this.metric, name);
                 samplesDictionary.put(name, samples);
+                for(int i = 0; i < fileCount; i++){
+                    samples.getRawData()[i] = new double[0];
+                }
             }
             List<Double> measuredValues = new ArrayList<>();
             for(Measurement measurement : benchmark.getMeasurements()){

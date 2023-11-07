@@ -10,7 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -20,7 +22,7 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandTest {
-    static String PWD = "test-directory";
+    //static String PWD = "test-directory";
     static String[] testEvaluateCLIValidLines = new String[]{
         "evaluate",
         "evaluate --old-version version1",
@@ -73,15 +75,16 @@ public class CommandTest {
         "list-undecided --old-version version3", // unknown version -> null
     };
 
-    static String[] assemblyCLIArgs(String CLIExample){
+    static String[] assemblyCLIArgs(String CLIExample) throws URISyntaxException {
         String[] splittedCLI = CLIExample.split(" ");
-        String[] arg0 = new String[]{PWD};
+        Path actualDirectory = Paths.get(CommandTest.class.getClassLoader().getResource(".").toURI());
+        String[] arg0 = new String[]{actualDirectory.toAbsolutePath().toString()};
         return ArrayUtils.addAll(arg0, splittedCLI);
     }
 
     Database db;
     Path dbPath = Path.of("test-db");
-    Path dirWithTestFiles = Path.of("test-directory/test-results");
+    Path dirWithTestFiles = Path.of("test-results");
     @BeforeEach
     void setup() throws DatabaseException, SQLException {
         db = H2Database.getDBFromFilePath(dbPath);
@@ -101,7 +104,7 @@ public class CommandTest {
     }
 
     @Test
-    public void validCLIEvaluateLines(){
+    public void validCLIEvaluateLines() throws URISyntaxException {
         for (String CLILine : testEvaluateCLIValidLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
@@ -109,7 +112,7 @@ public class CommandTest {
         }
     }
     @Test
-    public void invalidCLIEvaluateLines(){
+    public void invalidCLIEvaluateLines() throws URISyntaxException {
         for (String CLILine : testEvaluateCLIInvalidLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
@@ -118,7 +121,7 @@ public class CommandTest {
     }
 
     @Test
-    public void validInitLines(){
+    public void validInitLines() throws URISyntaxException {
         for (String CLILine : testInitLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
@@ -126,7 +129,7 @@ public class CommandTest {
         }
     }
     @Test
-    public void validIndexNewLines(){
+    public void validIndexNewLines() throws URISyntaxException {
         for (String CLILine : testIndexNewResultLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
@@ -134,7 +137,7 @@ public class CommandTest {
         }
     }
     @Test
-    public void validIndexAllLines(){
+    public void validIndexAllLines() throws URISyntaxException {
         for (String CLILine : testIndexAllResultsLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
@@ -143,7 +146,7 @@ public class CommandTest {
     }
 
     @Test
-    public void validUndecidedLines(){
+    public void validUndecidedLines() throws URISyntaxException {
         for (String CLILine : testListUndecidedValidLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
@@ -152,7 +155,7 @@ public class CommandTest {
     }
 
     @Test
-    public void invalidUndecidedLines(){
+    public void invalidUndecidedLines() throws URISyntaxException {
         for (String CLILine : testListUndecidedInvalidLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);

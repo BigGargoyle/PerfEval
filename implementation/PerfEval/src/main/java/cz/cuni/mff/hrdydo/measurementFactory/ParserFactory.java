@@ -47,6 +47,6 @@ public class ParserFactory {
      * @return IMeasurementParser specialized for JMH framework with result in JSON format
      */
     static MeasurementParser JMHJSONParserFactory() {
-        return new JMHJSONParser(null);
+        return new JMHJSONParser();
     }
 }
