@@ -66,4 +66,21 @@ public class ResultParserTest {
         assertEquals(2, result.size());
     }
 
+    @Test
+    public void parseMultipleCorrectJMHJSONFiles(){
+        ClassLoader classLoader = getClass().getClassLoader();
+        File[] file = new File[]{new File(classLoader.getResource("resultJMH.json").getFile()),
+                new File(classLoader.getResource("jmh-result2.json").getFile()),
+                new File(classLoader.getResource("jmh-result3.json").getFile())};
+
+        MeasurementParser parser = ParserFactory.recognizeParserFactory(file[0].getAbsolutePath());
+        assert parser != null;
+        String[] fileNames = new String[file.length];
+        for (int i = 0; i < file.length; i++) {
+            fileNames[i] = file[i].getAbsolutePath();
+        }
+        List<Samples> result = parser.getTestsFromFiles(fileNames);
+        assertEquals(1, result.size());
+    }
+
 }
