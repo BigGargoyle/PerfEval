@@ -1,4 +1,4 @@
-import cz.cuni.mff.hrdydo.performanceComparatorFactory.HierarchicalBootstrap;
+import cz.cuni.mff.d3s.perfeval.performanceComparatorFactory.HierarchicalBootstrap;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
