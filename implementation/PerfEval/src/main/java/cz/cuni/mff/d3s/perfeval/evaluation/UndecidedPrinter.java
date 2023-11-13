@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.perfeval.evaluation;
 
-import cz.cuni.mff.d3s.perfeval.performanceComparatorFactory.ComparisonResult;
+import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.ComparisonResult;
 
 import java.io.PrintStream;
 

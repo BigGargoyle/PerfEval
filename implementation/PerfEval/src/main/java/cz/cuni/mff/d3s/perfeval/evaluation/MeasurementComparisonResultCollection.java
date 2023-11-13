@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.perfeval.evaluation;
 
-import cz.cuni.mff.d3s.perfeval.resultDatabase.FileWithResultsData;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 
 import java.util.*;
 

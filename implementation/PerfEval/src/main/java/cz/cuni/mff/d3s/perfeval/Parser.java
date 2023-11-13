@@ -1,24 +1,22 @@
 package cz.cuni.mff.d3s.perfeval;
 
 import cz.cuni.mff.d3s.perfeval.evaluation.*;
-import cz.cuni.mff.d3s.perfeval.performanceComparatorFactory.BootstrapPerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.performanceComparatorFactory.ComparisonResult;
-import cz.cuni.mff.d3s.perfeval.performanceComparatorFactory.PerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.performanceComparatorFactory.TTestPerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.resultDatabase.Database;
-import cz.cuni.mff.d3s.perfeval.resultDatabase.DatabaseException;
-import cz.cuni.mff.d3s.perfeval.resultDatabase.FileWithResultsData;
-import cz.cuni.mff.d3s.perfeval.resultDatabase.H2Database;
-import cz.cuni.mff.hrdydo.evaluation.*;
-import cz.cuni.mff.d3s.perfeval.perfevalCLIEvaluator.EvaluateCLICommand;
-import cz.cuni.mff.hrdydo.performanceComparatorFactory.*;
+import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.BootstrapPerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.ComparisonResult;
+import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.PerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.TTestPerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.H2Database;
+import cz.cuni.mff.d3s.perfeval.clievaluator.EvaluateCLICommand;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.eclipse.jgit.revwalk.RevCommit;
-import cz.cuni.mff.d3s.perfeval.perfevalInit.InitCommand;
-import cz.cuni.mff.d3s.perfeval.perfevalInit.PerfEvalConfig;
-import cz.cuni.mff.d3s.perfeval.perfevalInit.PerfEvalInvalidConfigException;
+import cz.cuni.mff.d3s.perfeval.init.InitCommand;
+import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
+import cz.cuni.mff.d3s.perfeval.init.PerfEvalInvalidConfigException;
 
 import java.io.IOException;
 import java.io.PrintStream;

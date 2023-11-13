@@ -1,8 +1,8 @@
 import cz.cuni.mff.d3s.perfeval.Samples;
-import cz.cuni.mff.d3s.perfeval.measurementFactory.BenchmarkDotNetJSON.BenchmarkDotNetJSONParser;
-import cz.cuni.mff.d3s.perfeval.measurementFactory.JMHJSON.JMHJSONParser;
-import cz.cuni.mff.d3s.perfeval.measurementFactory.MeasurementParser;
-import cz.cuni.mff.d3s.perfeval.measurementFactory.ParserFactory;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.BenchmarkDotNetJSONParser;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.JMHJSONParser;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

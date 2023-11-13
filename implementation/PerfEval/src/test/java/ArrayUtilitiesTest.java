@@ -1,4 +1,4 @@
-import cz.cuni.mff.d3s.perfeval.performanceComparatorFactory.ArrayUtilities;
+import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.ArrayUtilities;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

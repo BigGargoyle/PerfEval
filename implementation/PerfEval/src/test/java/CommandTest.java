@@ -1,9 +1,9 @@
 import cz.cuni.mff.d3s.perfeval.Command;
 import cz.cuni.mff.d3s.perfeval.Parser;
-import cz.cuni.mff.d3s.perfeval.resultDatabase.Database;
-import cz.cuni.mff.d3s.perfeval.resultDatabase.DatabaseException;
-import cz.cuni.mff.d3s.perfeval.resultDatabase.ProjectVersion;
-import cz.cuni.mff.d3s.perfeval.resultDatabase.H2Database;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.ProjectVersion;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.H2Database;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

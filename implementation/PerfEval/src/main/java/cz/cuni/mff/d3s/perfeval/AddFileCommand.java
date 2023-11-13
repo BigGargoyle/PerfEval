@@ -1,7 +1,7 @@
 package cz.cuni.mff.d3s.perfeval;
 
-import cz.cuni.mff.d3s.perfeval.perfevalInit.PerfEvalCommandFailedException;
-import cz.cuni.mff.d3s.perfeval.resultDatabase.Database;
+import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
 
 import java.nio.file.Path;
 

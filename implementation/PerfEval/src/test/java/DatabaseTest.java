@@ -1,4 +1,4 @@
-import cz.cuni.mff.d3s.perfeval.resultDatabase.*;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
