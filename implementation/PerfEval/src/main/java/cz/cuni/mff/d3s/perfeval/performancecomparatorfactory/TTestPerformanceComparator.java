@@ -46,7 +46,7 @@ public class TTestPerformanceComparator implements PerformanceComparator{
             return constructRecord(oldMeasurement, newMeasurement, ComparisonResult.SameDistribution, MINUS_ONE);
         }
         double[] newArr = ArrayUtilities.mergeArrays(newMeasurement.getRawData());
-        double[] oldArr = ArrayUtilities.mergeArrays(newMeasurement.getRawData());
+        double[] oldArr = ArrayUtilities.mergeArrays(oldMeasurement.getRawData());
         double[] newCI = HierarchicalBootstrap.calcCIInterval(newArr, 1-critValue);
         double[] oldCI = HierarchicalBootstrap.calcCIInterval(oldArr, 1-critValue);
         double newMean = StatUtils.mean(newArr);
@@ -54,7 +54,7 @@ public class TTestPerformanceComparator implements PerformanceComparator{
         if (newCI[1]-newCI[0] <= newMean * maxCIWidth && oldCI[1]-oldCI[0] <= oldMean * maxCIWidth) {
             return constructRecord(oldMeasurement, newMeasurement, ComparisonResult.DifferentDistribution, MINUS_ONE);
         }
-        int minSampleCount = Math.max(ArrayUtilities.calcMinSampleCount(newArr,critValue, maxCIWidth), ArrayUtilities.calcMinSampleCount(oldArr,critValue, maxCIWidth));
-        return constructRecord(oldMeasurement, newMeasurement, ComparisonResult.SameDistribution, minSampleCount);
+        int minSampleCount = Math.max(ArrayUtilities.calcMinSampleCount(newArr,1-critValue, maxCIWidth), ArrayUtilities.calcMinSampleCount(oldArr,1-critValue, maxCIWidth));
+        return constructRecord(oldMeasurement, newMeasurement, ComparisonResult.NotEnoughSamples, minSampleCount);
     }
 }
