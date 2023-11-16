@@ -1,8 +1,4 @@
 package cz.cuni.mff.d3s.perfeval.measurementfactory;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.BenchmarkDotNetJSONParser;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.JMHJSONParser;
@@ -12,41 +8,23 @@ import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.JMHJSONParser;
  */
 public class ParserFactory {
     // construct parser according to file structure
+    public static final String jmhJSONParserDescription = "JMHJSON";
+    public static final String benchmarkDotNetJSONParserDescription = "BenchmarkDotNetJSON";
 
     /**
-     * Method that recognizes Benchmark framework and construct Parser for that file
-     *
-     * @param fileName path to the file with benchmark test results
-     * @return specialized Parser for that file
+     * Recognize parser according to description
+     * @param parserDescription description of parser (type and name of benchmark)
+     * @return parser
      */
-    public static MeasurementParser recognizeParserFactory(String fileName) {
-        List<String> lines;
-        try {
-            lines = Files.readAllLines(Paths.get(fileName));
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static MeasurementParser getParser(String parserDescription){
+        if(parserDescription == null)
             return null;
+        if(parserDescription.compareTo(jmhJSONParserDescription)==0){
+            return new JMHJSONParser();
         }
-
-        String oneLine = String.join("", lines);
-        if (oneLine.contains("\"BenchmarkDotNetVersion\"") && oneLine.contains("\"BenchmarkDotNetCaption\""))
-            return benchmarkDotNetJSONParserFactory();
-        if (oneLine.contains("\"jmhVersion\"") && oneLine.contains("\"benchmark\""))
-            return JMHJSONParserFactory();
+        if(parserDescription.compareTo(benchmarkDotNetJSONParserDescription)==0){
+            return new BenchmarkDotNetJSONParser();
+        }
         return null;
-    }
-
-    /**
-     * @return IMeasurementParser specialized for BenchmarkDotNet framework with result in JSON format
-     */
-    static MeasurementParser benchmarkDotNetJSONParserFactory() {
-        return new BenchmarkDotNetJSONParser();
-    }
-
-    /**
-     * @return IMeasurementParser specialized for JMH framework with result in JSON format
-     */
-    static MeasurementParser JMHJSONParserFactory() {
-        return new JMHJSONParser();
     }
 }

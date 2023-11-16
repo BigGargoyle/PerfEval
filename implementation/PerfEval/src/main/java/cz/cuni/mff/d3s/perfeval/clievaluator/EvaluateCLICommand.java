@@ -19,16 +19,19 @@ import java.util.List;
 public class EvaluateCLICommand implements Command {
     static final int TWO = 2;
 
-    public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter, PerformanceComparator performanceComparator) {
+    public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter, PerformanceComparator performanceComparator, MeasurementParser parser) {
         this.inputFiles = inputFiles;
         assert inputFiles.length == TWO;
         this.resultPrinter = resultPrinter;
         this.performanceComparator = performanceComparator;
+        this.parser = parser;
     }
 
     FileWithResultsData[][] inputFiles;
     ResultPrinter resultPrinter;
     PerformanceComparator performanceComparator;
+
+    MeasurementParser parser;
 
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
@@ -46,9 +49,8 @@ public class EvaluateCLICommand implements Command {
         return ExitCode.OK;
     }
 
-    private static MeasurementComparisonResultCollection evaluateResults(FileWithResultsData[][] filesWithResultsData, PerformanceComparator performanceComparator) {
+    private MeasurementComparisonResultCollection evaluateResults(FileWithResultsData[][] filesWithResultsData, PerformanceComparator performanceComparator) {
         assert filesWithResultsData.length == TWO;
-        MeasurementParser parser = ParserFactory.recognizeParserFactory(filesWithResultsData[0][0].path());
         assert parser != null;
         List<Samples> olderMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[0]).map(FileWithResultsData::path).toArray(String[]::new));
         List<Samples> newerMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[1]).map(FileWithResultsData::path).toArray(String[]::new));

@@ -141,7 +141,8 @@ public class Parser {
         ResultPrinter printer = resolvePrinterForEvaluateCommand(options);
         PerformanceComparator comparator = resolvePerformanceComparatorForEvaluateCommand(options, config);
 
-        return new EvaluateCLICommand(inputFiles, printer, comparator);
+        //return new EvaluateCLICommand(inputFiles, printer, comparator);
+        return null;
     }
 
     private static Command setupGraphicalCommand(String[] args, OptionSet options, PerfEvalConfig config) {
@@ -156,7 +157,8 @@ public class Parser {
         Duration maxTestDuration = resolveDuration(options, config);
         PerformanceComparator comparator = new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), DEFAULT_TOLERANCE);
         // Undecided printer -> printing only undecided results
-        return new EvaluateCLICommand(inputFiles, printer, comparator);
+        //return new EvaluateCLICommand(inputFiles, printer, comparator);
+        return null;
     }
 
     private static Duration resolveDuration(OptionSet options, PerfEvalConfig config) {

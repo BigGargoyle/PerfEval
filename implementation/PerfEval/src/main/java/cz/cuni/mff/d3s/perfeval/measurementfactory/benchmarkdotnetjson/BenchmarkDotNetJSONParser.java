@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Stream;
 
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
@@ -14,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Implementation of IMeasurementParser for BenchmarkDotNet framework test results in the JSON format.
  */
 public class BenchmarkDotNetJSONParser implements MeasurementParser {
-    //TODO: upravit metriku, funguje tak jako jsem si původně myslel
     Metric metric;
     public BenchmarkDotNetJSONParser(){
         this.metric = new Metric("Nanoseconds", false);
@@ -27,42 +27,56 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
 
     @Override
     public List<Samples> getTestsFromFiles(String[] fileNames) {
-        Dictionary<String, Samples> samplesDictionary = new Hashtable<>();
+        Map<String, Samples> samplesToTestName = new HashMap<>();
         for (int i = 0; i < fileNames.length; i++) {
             String fileName = fileNames[i];
-            addSamplesToDictionary(fileName, fileNames.length, i, samplesDictionary);
+            var samplesMetadata = getSamplesMetadataFromFile(fileName, metric);
+            // finalI because of lambda and compiler
+            int finalI = i;
+            samplesMetadata.forEach(sampleMetadata -> {
+                if(samplesToTestName.get(sampleMetadata.name)==null){
+                    Samples samples = new Samples(new double[fileNames.length][], this.metric, sampleMetadata.name);
+                    samplesToTestName.put(sampleMetadata.name, samples);
+                    for(int j = 0; j < fileNames.length; j++){
+                        samples.getRawData()[j] = new double[0];
+                    }
+                }
+                samplesToTestName.get(sampleMetadata.name).getRawData()[finalI] = sampleMetadata.rawData;
+            });
         }
-        List<Samples> samples = new ArrayList<>();
-        Enumeration<Samples> samplesEnumeration = samplesDictionary.elements();
-        while(samplesEnumeration.hasMoreElements()){
-            samples.add(samplesEnumeration.nextElement());
-        }
-        return samples;
+        return new ArrayList<>(samplesToTestName.values());
     }
-    
-    void addSamplesToDictionary(String fileName, int fileCount, int fileIndex, Dictionary<String, Samples> samplesDictionary){
+
+    static class SampleMetadata{
+        public String name;
+        public double[] rawData;
+    }
+
+    Stream<SampleMetadata> getSamplesMetadataFromFile(String fileName, Metric metric){
         BenchmarkDotNetJSONBase base = getBaseFromPath(new File(fileName));
+        Stream.Builder<SampleMetadata> streamBuilder = new Stream.Builder<>() {
+            final ArrayList<SampleMetadata> samples = new ArrayList<>();
+            @Override
+            public void accept(SampleMetadata sampleMetadata) {
+                samples.add(sampleMetadata);
+            }
+
+            @Override
+            public Stream<SampleMetadata> build() {
+                return samples.stream();
+            }
+        };
         assert base != null;
-        for (Benchmark benchmark: base.getBenchmarks()) {
-            var name = benchmark.getMethodTitle();
-            Metric localMetric = new Metric("Nanoseconds", false);
-            if(samplesDictionary.get(name)==null){
-                Samples samples = new Samples(new double[fileCount][], this.metric, name);
-                samplesDictionary.put(name, samples);
-                for(int i = 0; i < fileCount; i++){
-                    samples.getRawData()[i] = new double[0];
-                }
-            }
-            List<Double> measuredValues = new ArrayList<>();
-            for(Measurement measurement : benchmark.getMeasurements()){
-                if(measurement.getIterationMode().equals(testedIterationMode) &&
-                        measurement.getIterationStage().equals(testedIterationStage) &&
-                        this.metric.isCompatibleWith(localMetric)){
-                    measuredValues.add((double)measurement.getNanoseconds());
-                }
-            }
-            samplesDictionary.get(name).getRawData()[fileIndex] = measuredValues.stream().mapToDouble(Double::valueOf).toArray();
+        for(Benchmark benchmark : base.getBenchmarks()){
+            SampleMetadata sampleMetadata = new SampleMetadata();
+            sampleMetadata.name = benchmark.getMethodTitle();
+            sampleMetadata.rawData = benchmark.getMeasurements().stream()
+                    .filter(measurement -> measurement.getIterationMode().equals(testedIterationMode) &&
+                            measurement.getIterationStage().equals(testedIterationStage))
+                    .mapToDouble(Measurement::getNanoseconds).toArray();
+            streamBuilder.accept(sampleMetadata);
         }
+        return streamBuilder.build();
     }
 
     private static BenchmarkDotNetJSONBase getBaseFromPath(File file) {

@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.pojoJMH.BenchmarkJMHJ
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Implementation of IMeasurementParser for JMH framework test result in the JSON format
@@ -14,36 +15,62 @@ import java.util.*;
 
 public class JMHJSONParser implements MeasurementParser {
 
-    //Metric metric;
     public JMHJSONParser(){}
-
     static final String[] timeScoreUnits = new String[] {"ns/op","us/op","ms/op","s/op"};
     static final String[] frequencyScoreUnits = new String[] {"ops/s","ops/ms","ops/us","ops/ns"};
     @Override
     public List<Samples> getTestsFromFiles(String[] fileNames) {
-        Dictionary<String, Samples> samplesDictionary = new Hashtable<>();
+        Map<String, Samples> samplesDictionary = new HashMap<>();
         for (int i = 0; i < fileNames.length; i++) {
             String fileName = fileNames[i];
-            addSamplesToDictionary(fileName, fileNames.length, i, samplesDictionary);
+            var samplesMetadata = getSamplesMetadataFromFile(fileName);
+            // finalI because of lambda and compiler
+            int finalI = i;
+            samplesMetadata.forEach(sampleMetadata -> {
+                if(samplesDictionary.get(sampleMetadata.name)==null){
+                    Samples samples = new Samples(new double[fileNames.length][], sampleMetadata.metric, sampleMetadata.name);
+                    samplesDictionary.put(sampleMetadata.name, samples);
+                    for(int j = 0; j < fileNames.length; j++){
+                        samples.getRawData()[j] = new double[0];
+                    }
+                }
+                if(sampleMetadata.metric.isCompatibleWith(samplesDictionary.get(sampleMetadata.name).getMetric()))
+                    samplesDictionary.get(sampleMetadata.name).getRawData()[finalI] = sampleMetadata.rawData;
+                // else nothing added
+            });
         }
-        List<Samples> samples = new ArrayList<>();
-        Enumeration<Samples> samplesEnumeration = samplesDictionary.elements();
-        while(samplesEnumeration.hasMoreElements()){
-            samples.add(samplesEnumeration.nextElement());
-        }
-        return samples;
+        return new ArrayList<>(samplesDictionary.values());
     }
-    void addSamplesToDictionary(String fileName, int fileCount, int fileIndex, Dictionary<String, Samples> samplesDictionary){
+
+    static class SampleMetadata{
+        public String name;
+        public double[] rawData;
+        Metric metric;
+    }
+
+    Stream<SampleMetadata> getSamplesMetadataFromFile(String fileName){
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
         BenchmarkJMHJSONBase[] base;
-        try{
+        try {
             base = objectMapper.readValue(inputFile, BenchmarkJMHJSONBase[].class);
-        }catch (Exception e){
-            return;
+        } catch (Exception e) {
+            return null;
         }
         assert base != null;
-        for (BenchmarkJMHJSONBase benchmark: base) {
+        Stream.Builder<SampleMetadata> streamBuilder = new Stream.Builder<>() {
+            final ArrayList<SampleMetadata> samples = new ArrayList<>();
+            @Override
+            public void accept(SampleMetadata sampleMetadata) {
+                samples.add(sampleMetadata);
+            }
+            @Override
+            public Stream<SampleMetadata> build() {
+                return samples.stream();
+            }
+        };
+
+        for(BenchmarkJMHJSONBase benchmark : base){
             var name = benchmark.getBenchmark();
             var primaryMetric = benchmark.getPrimaryMetric();
             Metric metric = null;
@@ -55,22 +82,17 @@ public class JMHJSONParser implements MeasurementParser {
             }
             if(metric==null)
                 metric = new Metric(primaryMetric.getScoreUnit(), false);
-
-            if(samplesDictionary.get(name)==null){
-                Samples samples = new Samples(new double[fileCount][], metric, name);
-                samplesDictionary.put(name, samples);
-                for(int i = 0; i < fileCount; i++){
-                    samples.getRawData()[i] = new double[0];
-                }
-            }
+            SampleMetadata sampleMetadata = new SampleMetadata();
+            sampleMetadata.name = name;
+            sampleMetadata.metric = metric;
             List<List<Double>> measuredValues = benchmark.getPrimaryMetric().getRawData();
             List<Double> measuredValues1D = new ArrayList<>();
             for (List<Double> measuredValue : measuredValues) {
                 measuredValues1D.addAll(measuredValue);
             }
-            if(metric.isCompatibleWith(samplesDictionary.get(name).getMetric()))
-                samplesDictionary.get(name).getRawData()[fileIndex] = measuredValues1D.stream().mapToDouble(Double::valueOf).toArray();
-            else throw new IllegalArgumentException("Incompatible metrics");
+            sampleMetadata.rawData = measuredValues1D.stream().mapToDouble(Double::valueOf).toArray();
+            streamBuilder.accept(sampleMetadata);
         }
+        return streamBuilder.build();
     }
 }
