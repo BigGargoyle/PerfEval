@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.perfeval.resultdatabase.*;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import cz.cuni.mff.d3s.perfeval.init.InitCommand;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
@@ -24,6 +25,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static jdk.jfr.consumer.EventStream.openRepository;
 
 public class Parser {
     private static final String EMPTY_STRING = "";
@@ -220,7 +223,7 @@ public class Parser {
 
     }
 
-    private static String resolveTag(Path gitFilePath, OptionSet options,String version) {
+    private static String resolveTag(Path gitFilePath, OptionSet options, String version) {
         if(options.has(tagOption))
             return options.valueOf(tagOption);
         if(gitFilePath!=null)
@@ -236,7 +239,19 @@ public class Parser {
         return EMPTY_STRING;
     }
 
-
+    private static Date resolveDate(Path gitFilePath, String versionHash){
+        if(gitFilePath==null)
+            return null;
+        try {
+            if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
+                return GitUtilities.getCommitDate(gitFilePath.getParent(), versionHash);
+            }
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+        System.err.println("Date cannot be resolved");
+        return null;
+    }
 
     private static ResultPrinter resolvePrinterForEvaluateCommand(OptionSet options){
         Comparator<MeasurementComparisonRecord> filter = new DefaultComparator<>();

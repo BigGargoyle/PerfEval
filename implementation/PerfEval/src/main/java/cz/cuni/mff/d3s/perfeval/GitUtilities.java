@@ -10,6 +10,7 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Date;
 
 public class GitUtilities {
     public static boolean isRepoClean(Path pathToRepo) throws IOException {
@@ -53,4 +54,20 @@ public class GitUtilities {
             throw new IOException("No git file founded.");
         }
     }
+
+    public static Date getCommitDate(Path pathToRepo, String commitHash){
+        try (Git git = Git.open(new File(pathToRepo.toString()))){
+            ObjectId objectId = git.getRepository().resolve(commitHash);
+
+            if(objectId==null)
+                return null;
+
+            RevCommit commit = new RevWalk(git.getRepository()).parseCommit(objectId);
+            return commit.getAuthorIdent().getWhen();
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }
