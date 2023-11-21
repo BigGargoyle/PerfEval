@@ -3,7 +3,6 @@ package cz.cuni.mff.d3s.perfeval.clievaluator;
 import cz.cuni.mff.d3s.perfeval.Command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
-import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonResultCollection;
 import cz.cuni.mff.d3s.perfeval.evaluation.ResultPrinter;
@@ -17,6 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EvaluateCLICommand implements Command {
+
+    public static final String COMMAND = "evaluate";
+    public static final String UNDECIDED_COMMAND = "list-undecided";
     static final int TWO = 2;
 
     public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter, PerformanceComparator performanceComparator, MeasurementParser parser) {

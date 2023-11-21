@@ -17,7 +17,7 @@ import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 
 public class InitCommand implements Command {
-
+    public static final String COMMAND = "init";
     private static final String CRIT_VALUE_KEY = "critValue.key";
     private static final String MAX_CI_WIDTH_KEY = "maxCIWidth.key";
     private static final String MAX_TIME_KEY = "maxTime.key";
