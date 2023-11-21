@@ -95,4 +95,8 @@ public class JMHJSONParser implements MeasurementParser {
         }
         return streamBuilder.build();
     }
+    @Override
+    public String getParserName() {
+        return "JMHJSONParser";
+    }
 }

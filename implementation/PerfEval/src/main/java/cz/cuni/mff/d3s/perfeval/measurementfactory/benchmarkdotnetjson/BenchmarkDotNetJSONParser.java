@@ -90,4 +90,8 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
             return null;
         }
     }
+    @Override
+    public String getParserName() {
+        return "BenchmarkDotNetJSONParser";
+    }
 }

@@ -10,7 +10,6 @@ import cz.cuni.mff.d3s.perfeval.resultdatabase.*;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import cz.cuni.mff.d3s.perfeval.init.InitCommand;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
@@ -25,8 +24,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static jdk.jfr.consumer.EventStream.openRepository;
 
 public class Parser {
     private static final String EMPTY_STRING = "";
@@ -121,8 +118,7 @@ public class Parser {
         ResultPrinter printer = resolvePrinterForEvaluateCommand(options);
         PerformanceComparator comparator = resolvePerformanceComparatorForEvaluateCommand(options, config);
 
-        return new EvaluateCLICommand(inputFiles, printer, comparator);
-        return null;
+        return new EvaluateCLICommand(inputFiles, printer, comparator, config.getMeasurementParser());
     }
 
     private static Command setupGraphicalCommand(String[] args, OptionSet options, PerfEvalConfig config) {
@@ -137,8 +133,7 @@ public class Parser {
         //Duration maxTestDuration = resolveDuration(options, config);
         PerformanceComparator comparator = new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), DEFAULT_TOLERANCE);
         // Undecided printer -> printing only undecided results
-        return new EvaluateCLICommand(inputFiles, printer, comparator);
-        return null;
+        return new EvaluateCLICommand(inputFiles, printer, comparator, config.getMeasurementParser());
     }
 
     private static Duration resolveDuration(OptionSet options, PerfEvalConfig config) {

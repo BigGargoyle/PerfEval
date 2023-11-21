@@ -12,5 +12,5 @@ public interface MeasurementParser {
      * @return List of measurements that were in the file
      */
     List<Samples> getTestsFromFiles(String[] fileNames);
-
+    String getParserName();
 }

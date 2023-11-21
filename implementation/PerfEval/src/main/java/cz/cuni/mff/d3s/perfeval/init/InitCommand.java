@@ -2,6 +2,8 @@ package cz.cuni.mff.d3s.perfeval.init;
 
 import cz.cuni.mff.d3s.perfeval.Command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -25,6 +27,7 @@ public class InitCommand implements Command {
     private static final String GIT_PRESENCE_KEY = "git.key";
     private static final String TRUE_STRING = "TRUE";
     private static final String FALSE_STRING = "FALSE";
+    private static final String PARSER_NAME_KEY = "parserName.key";
 
     public static PerfEvalConfig getConfig(Path iniFilePath) throws PerfEvalInvalidConfigException {
         if (isPerfevalInitializedInThisDirectory(iniFilePath)) {
@@ -51,7 +54,9 @@ public class InitCommand implements Command {
         Duration timeUnit = Duration.ofNanos(Long.parseLong(config.getString(MAX_TIME_KEY)));
         String version = config.getString(VERSION_KEY);
         boolean gitPresence = config.getString(GIT_PRESENCE_KEY).compareTo(TRUE_STRING) == 0;
-        return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version);
+        String parserName = config.getString(PARSER_NAME_KEY);
+        MeasurementParser parser = ParserFactory.getParser(parserName);
+        return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version, parser);
     }
 
     private static void createIniFile(Path iniFilePath, PerfEvalConfig perfevalConfig) throws ConfigurationException, IOException {
@@ -67,6 +72,7 @@ public class InitCommand implements Command {
         String gitPresenceString = perfevalConfig.hasGitFilePresence() ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
         config.setProperty(VERSION_KEY, perfevalConfig.getVersion());
+        config.setProperty(PARSER_NAME_KEY, perfevalConfig.getMeasurementParser().getParserName());
 
         // Save to the INI file
         FileWriter writer = new FileWriter(iniFilePath.toFile());
