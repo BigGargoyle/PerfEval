@@ -1,9 +1,11 @@
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.ComparisonResult;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.TTestPerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.TTestPerformanceComparator;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -19,7 +21,7 @@ public class TTestPerformanceComparatorTest {
         Samples oldSamples = new Samples(rawData, metric, name);
         Samples newSamples = new Samples(rawData, metric, name);
 
-        TTestPerformanceComparator comparator = new TTestPerformanceComparator(0.05, 0.2, 0.1);
+        TTestPerformanceComparator comparator = new TTestPerformanceComparator(0.05, 0.2, 0.1, Duration.ofHours(1));
 
         MeasurementComparisonRecord record = comparator.compareSets(oldSamples, newSamples);
 
@@ -37,7 +39,7 @@ public class TTestPerformanceComparatorTest {
         Samples oldSamples = new Samples(oldRawData, metric, name);
         Samples newSamples = new Samples(newRawData, metric, name);
 
-        TTestPerformanceComparator comparator = new TTestPerformanceComparator(0.05, 0.2, 0.1);
+        TTestPerformanceComparator comparator = new TTestPerformanceComparator(0.05, 0.2, 0.1, Duration.ofHours(1));
 
         MeasurementComparisonRecord record = comparator.compareSets(oldSamples, newSamples);
 
@@ -55,7 +57,7 @@ public class TTestPerformanceComparatorTest {
         Samples oldSamples = new Samples(oldRawData, metric, name);
         Samples newSamples = new Samples(newRawData, metric, name);
 
-        TTestPerformanceComparator comparator = new TTestPerformanceComparator(0.05, 0.2, 0.1);
+        TTestPerformanceComparator comparator = new TTestPerformanceComparator(0.05, 0.2, 0.1, Duration.ofHours(1));
 
         MeasurementComparisonRecord record = comparator.compareSets(oldSamples, newSamples);
 

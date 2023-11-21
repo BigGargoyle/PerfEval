@@ -11,23 +11,27 @@ public final class PerfEvalConfig {
     private static final double DEFAULT_CRIT_VALUE = 0.05;
     private static final double DEFAULT_MAX_CI_WIDTH = 0.1;
     private static final String DEFAULT_VERSION = "UNKNOWN_VERSION";
+    private static final MeasurementParser DEFAULT_PARSER = new BenchmarkDotNetJSONParser();
+    private static final double DEFAULT_TOLERANCE = 0.05;
 
     public static PerfEvalConfig getDefaultConfig() throws PerfEvalInvalidConfigException {
-        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MAX_TIME_ON_TEST, DEFAULT_MAX_CI_WIDTH,DEFAULT_CRIT_VALUE, DEFAULT_VERSION, new BenchmarkDotNetJSONParser());
+        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MAX_TIME_ON_TEST, DEFAULT_MAX_CI_WIDTH,DEFAULT_CRIT_VALUE, DEFAULT_VERSION, DEFAULT_PARSER, DEFAULT_TOLERANCE);
     }
 
-    public PerfEvalConfig(boolean gitFilePresence, Duration maxTimeOnTest, double maxCIWidth, double critValue, String version, MeasurementParser parser) throws PerfEvalInvalidConfigException {
+    public PerfEvalConfig(boolean gitFilePresence, Duration maxTimeOnTest, double maxCIWidth, double critValue, String version, MeasurementParser parser, double tolerance) throws PerfEvalInvalidConfigException {
         this.gitFilePresence = gitFilePresence;
         this.maxTimeOnTest = maxTimeOnTest;
         this.maxCIWidth = maxCIWidth;
         this.critValue = critValue;
         this.version = version;
         this.measurementParser = parser;
+        this.tolerance = tolerance;
         if (critValue <= 0 || critValue >= 1) throw new PerfEvalInvalidConfigException();
         if (maxTimeOnTest.toNanos() < 0) throw new PerfEvalInvalidConfigException();
         if (maxCIWidth <= 0 || maxCIWidth >= 1) throw new PerfEvalInvalidConfigException();
         if (version == null) throw new PerfEvalInvalidConfigException();
         if (measurementParser == null) throw new PerfEvalInvalidConfigException();
+        if (tolerance <= 0 || tolerance >= 1) throw new PerfEvalInvalidConfigException();
     }
 
     private final boolean gitFilePresence;
@@ -36,6 +40,7 @@ public final class PerfEvalConfig {
     private final double critValue;
     private final String version;
     private final MeasurementParser measurementParser;
+    private final double tolerance;
     public boolean hasGitFilePresence() {
         return gitFilePresence;
     }
@@ -57,5 +62,8 @@ public final class PerfEvalConfig {
     }
     public MeasurementParser getMeasurementParser() {
         return measurementParser;
+    }
+    public double getTolerance() {
+        return tolerance;
     }
 }

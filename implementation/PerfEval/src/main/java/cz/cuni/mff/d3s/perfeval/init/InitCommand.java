@@ -28,6 +28,7 @@ public class InitCommand implements Command {
     private static final String TRUE_STRING = "TRUE";
     private static final String FALSE_STRING = "FALSE";
     private static final String PARSER_NAME_KEY = "parserName.key";
+    private static final String TOLERANCE_KEY = "tolerance.key";
 
     public static PerfEvalConfig getConfig(Path iniFilePath) throws PerfEvalInvalidConfigException {
         if (isPerfevalInitializedInThisDirectory(iniFilePath)) {
@@ -56,7 +57,8 @@ public class InitCommand implements Command {
         boolean gitPresence = config.getString(GIT_PRESENCE_KEY).compareTo(TRUE_STRING) == 0;
         String parserName = config.getString(PARSER_NAME_KEY);
         MeasurementParser parser = ParserFactory.getParser(parserName);
-        return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version, parser);
+        double tolerance = Double.parseDouble(config.getString(TOLERANCE_KEY));
+        return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version, parser, tolerance);
     }
 
     private static void createIniFile(Path iniFilePath, PerfEvalConfig perfevalConfig) throws ConfigurationException, IOException {
@@ -73,6 +75,7 @@ public class InitCommand implements Command {
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
         config.setProperty(VERSION_KEY, perfevalConfig.getVersion());
         config.setProperty(PARSER_NAME_KEY, perfevalConfig.getMeasurementParser().getParserName());
+        config.setProperty(TOLERANCE_KEY, perfevalConfig.getTolerance());
 
         // Save to the INI file
         FileWriter writer = new FileWriter(iniFilePath.toFile());

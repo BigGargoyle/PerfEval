@@ -9,7 +9,7 @@ import cz.cuni.mff.d3s.perfeval.evaluation.ResultPrinter;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.PerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceComparator;
 
 import java.util.ArrayList;
 import java.util.Arrays;

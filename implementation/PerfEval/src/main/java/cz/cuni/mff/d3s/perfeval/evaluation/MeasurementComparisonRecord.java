@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.perfeval.evaluation;
 
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.ComparisonResult;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
 import cz.cuni.mff.d3s.perfeval.Samples;
 
 public record MeasurementComparisonRecord(

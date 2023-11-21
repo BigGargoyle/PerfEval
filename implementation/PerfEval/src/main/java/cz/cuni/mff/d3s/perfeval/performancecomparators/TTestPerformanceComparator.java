@@ -1,20 +1,23 @@
-package cz.cuni.mff.d3s.perfeval.performancecomparatorfactory;
+package cz.cuni.mff.d3s.perfeval.performancecomparators;
 
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
 import org.apache.commons.math3.stat.StatUtils;
+
+import java.time.Duration;
 
 public class TTestPerformanceComparator implements PerformanceComparator{
     static final int MINUS_ONE = -1;
     double critValue;
     double maxCIWidth;
     double tolerance;
-
+    Duration maxTestTime;
     StatisticTTest statisticTTest;
-    public TTestPerformanceComparator(double critValue, double maxCIWidth, double tolerance) {
+    public TTestPerformanceComparator(double critValue, double maxCIWidth, double tolerance, Duration maxTestTime) {
         this.critValue = critValue;
         this.maxCIWidth = maxCIWidth;
         this.tolerance = tolerance;
+        this.maxTestTime = maxTestTime;
         statisticTTest = new StatisticTTest(critValue);
         assert tolerance >= 0 && tolerance <= 1;
         assert critValue > 0 && critValue < 1;

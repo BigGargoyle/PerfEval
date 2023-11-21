@@ -2,10 +2,12 @@ package cz.cuni.mff.d3s.perfeval;
 
 import cz.cuni.mff.d3s.perfeval.clievaluator.EvaluateCLICommand;
 import cz.cuni.mff.d3s.perfeval.evaluation.*;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.BootstrapPerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.ComparisonResult;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.PerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.TTestPerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.BootstrapPerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.TTestPerformanceComparator;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.*;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
@@ -30,7 +32,6 @@ public class Parser {
 
     private static final String PERFEVAL_DIR = ".performance";
     private static final String GIT_IGNORE_FILE_NAME = ".gitignore";
-    //private static final String HELP_FILE_NAME = "help.txt";
     private static final String INI_FILE_NAME = "config.ini";
     private static final String DATABASE_FILE_NAME = "test_results.db";
     private static final String GIT_FILE_NAME = ".git";
@@ -50,7 +51,6 @@ public class Parser {
     private static final String MAX_TIME_PARAMETER = "max-time-on-test";
     private static final String BOOTSTRAP_SAMPLE_COUNT_PARAMETER = "bootstrap-sample-count";
     private static final int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 10_000;
-    private static final double DEFAULT_TOLERANCE = 0.01;
 
     //used as an empty filter, order of elements will not be changed
     static class DefaultComparator<T> implements Comparator<T> {
@@ -64,6 +64,7 @@ public class Parser {
     private static final String TAG_PARAMETER = "tag";
     private static final String VERSION_PARAMETER = "version";
     private static final String FILTER_PARAMETER = "filter";
+    private static final String BENCHMARK_PARSER_PARAMETER = "benchmark-parser";
     private static final String TEST_RESULT_FILTER = "test-result";
     static final Comparator<MeasurementComparisonRecord> testResultFilterComparator = Comparator.comparing(MeasurementComparisonRecord::comparisonResult, Comparator.comparingInt(ComparisonResult::getResultNumber));
     private static final String SIZE_OF_CHANGE_FILTER = "size-of-change";
@@ -107,12 +108,24 @@ public class Parser {
                 iniFilePath,
                 emptyFiles[0]
         };
+        MeasurementParser parser = null;
+        if(options.has(BENCHMARK_PARSER_PARAMETER)){
+            parser = ParserFactory.getParser(benchmarkParserOption.value(options));
+        }
+
+        if(parser==null){
+            System.err.println("Parser cannot be resolved. Default parser will be used.");
+            System.err.println("Possible parsers are: " + ParserFactory.getPossibleNames());
+            System.err.println("PerfEval cannot be initialized.");
+            return null;
+        }
+
         return new InitCommand(perfevalDirPath, gitIgnorePath, iniFilePath,
                 emptyFiles, gitIgnoredFiles, config, options.has(FORCE_FLAG));
     }
     private static Command setupEvaluateCommand(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
-        if (options.has(GRAPHICAL_FLAG))
-            return setupGraphicalCommand(args, options, config);
+        /*if (options.has(GRAPHICAL_FLAG))
+            return setupGraphicalCommand(args, options, config);*/
 
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = resolvePrinterForEvaluateCommand(options);
@@ -121,17 +134,13 @@ public class Parser {
         return new EvaluateCLICommand(inputFiles, printer, comparator, config.getMeasurementParser());
     }
 
-    private static Command setupGraphicalCommand(String[] args, OptionSet options, PerfEvalConfig config) {
-        return null;
-    }
-
     private static Command setupUndecidedCommand(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = new UndecidedPrinter(System.out);
         // tTest is able to response that there are not enough samples
-        //TODO: zpracovat maxTestDuration
-        //Duration maxTestDuration = resolveDuration(options, config);
-        PerformanceComparator comparator = new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), DEFAULT_TOLERANCE);
+        Duration maxTestDuration = resolveDuration(options, config);
+        // TTestPerformanceComparator only, because it is the only one that can return undecided result -> too few samples
+        PerformanceComparator comparator = new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), config.getTolerance(), maxTestDuration);
         // Undecided printer -> printing only undecided results
         return new EvaluateCLICommand(inputFiles, printer, comparator, config.getMeasurementParser());
     }
@@ -263,8 +272,8 @@ public class Parser {
     }
     private static PerformanceComparator resolvePerformanceComparatorForEvaluateCommand(OptionSet options, PerfEvalConfig config){
         return options.has(TTEST_FLAG) ?
-                new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), DEFAULT_TOLERANCE) :
-                new BootstrapPerformanceComparator(config.getCritValue(), DEFAULT_TOLERANCE, options.valueOf(bootstrapSampleCountOption));
+                new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), config.getTolerance(), config.getMaxTimeOnTest()) :
+                new BootstrapPerformanceComparator(config.getCritValue(), config.getTolerance(), options.valueOf(bootstrapSampleCountOption));
     }
 
     private static FileWithResultsData[][] resolveInputFilesWithRespectToInputtedVersions(String[] args, OptionSet options) throws DatabaseException {
@@ -295,6 +304,7 @@ public class Parser {
     static ArgumentAcceptingOptionSpec<String> pathOption;
     static ArgumentAcceptingOptionSpec<String> versionOption;
     static ArgumentAcceptingOptionSpec<String> tagOption;
+    static ArgumentAcceptingOptionSpec<String> benchmarkParserOption;
 
     private static OptionParser CreateParser() {
         OptionParser parser = new OptionParser();
@@ -333,6 +343,10 @@ public class Parser {
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("tag option with a parameter");
+        benchmarkParserOption = parser.accepts(BENCHMARK_PARSER_PARAMETER)
+                .withRequiredArg()
+                .ofType(String.class)
+                .describedAs("benchmark parser option with a parameter");
 
         // Define flags (options without arguments)
         parser.accepts(HELP_FLAG, "Print help message");

@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.perfeval.performancecomparatorfactory;
+package cz.cuni.mff.d3s.perfeval.performancecomparators;
 
 import org.apache.commons.math3.stat.inference.TTest;
 

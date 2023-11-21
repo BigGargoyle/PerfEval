@@ -29,4 +29,12 @@ public class ParserFactory {
         }
         return null;
     }
+
+    public static List<String> getPossibleNames(){
+        List<String> result = new ArrayList<>();
+        for(MeasurementParser parser : possibleParsers){
+            result.add(parser.getParserName());
+        }
+        return result;
+    }
 }

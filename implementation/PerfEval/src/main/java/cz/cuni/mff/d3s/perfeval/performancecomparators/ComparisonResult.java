@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.perfeval.performancecomparatorfactory;
+package cz.cuni.mff.d3s.perfeval.performancecomparators;
 
 public enum ComparisonResult {
     SameDistribution(1),
