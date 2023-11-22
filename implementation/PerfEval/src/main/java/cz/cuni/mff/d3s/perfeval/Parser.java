@@ -220,7 +220,8 @@ public class Parser {
                 return lastCommit.getName();
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            //TODO: zpracovat výjimku
+            //System.err.println(e.getMessage());
         }
         System.err.println("Version cannot be resolved");
         return null;
@@ -238,6 +239,7 @@ public class Parser {
                     return lastCommitTag;
                 }
             } catch (IOException e) {
+                //TODO: zpracovat výjimku
                 System.err.println(e.getMessage());
             }
         return EMPTY_STRING;
@@ -251,6 +253,7 @@ public class Parser {
                 return GitUtilities.getCommitDate(gitFilePath.getParent(), versionHash);
             }
         } catch (IOException e) {
+            //TODO: zpracovat výjimku
             System.err.println(e.getMessage());
         }
         System.err.println("Date cannot be resolved");
@@ -260,6 +263,7 @@ public class Parser {
     private static ResultPrinter resolvePrinterForEvaluateCommand(OptionSet options){
         Comparator<MeasurementComparisonRecord> filter = new DefaultComparator<>();
         if (options.has(filterOption)) {
+            //TODO: zbavit se println (všude)
             switch (options.valueOf(filterOption)) {
                 case TEST_ID_FILTER -> filter = nameFilterComparator;
                 case SIZE_OF_CHANGE_FILTER -> filter = sizeOfChangeFilterComparator;

@@ -4,7 +4,9 @@ import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.Benchmark
 import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.JMHJSONParser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Factory for creating parsers and getting their names
@@ -13,11 +15,13 @@ public class ParserFactory {
     /**
      * List of possible parsers
      */
-    private static final List<MeasurementParser> possibleParsers = new ArrayList<>();
+    private static final Map<String, MeasurementParser> registeredParsers = new HashMap<>();
 
     static {
-        possibleParsers.add(new JMHJSONParser());
-        possibleParsers.add(new BenchmarkDotNetJSONParser());
+        // constructed parsers of all possible types
+        // factory can be extended by adding new parsers here
+        registeredParsers.put(new JMHJSONParser().getParserName(), new JMHJSONParser());
+        registeredParsers.put(new BenchmarkDotNetJSONParser().getParserName(), new BenchmarkDotNetJSONParser());
     }
 
     /**
@@ -27,11 +31,7 @@ public class ParserFactory {
      * @return parser with given name
      */
     public static MeasurementParser getParser(String parserName) {
-        for (MeasurementParser parser : possibleParsers) {
-            if (parser.getParserName().equals(parserName))
-                return parser;
-        }
-        return null;
+        return registeredParsers.get(parserName);
     }
 
     /**
@@ -40,10 +40,6 @@ public class ParserFactory {
      * @return list of possible names of parsers
      */
     public static List<String> getPossibleNames() {
-        List<String> result = new ArrayList<>();
-        for (MeasurementParser parser : possibleParsers) {
-            result.add(parser.getParserName());
-        }
-        return result;
+        return new ArrayList<>(registeredParsers.keySet());
     }
 }

@@ -33,26 +33,27 @@ public class JMHJSONParser implements MeasurementParser {
 
     @Override
     public List<Samples> getTestsFromFiles(String[] fileNames) {
-        Map<String, Samples> samplesDictionary = new HashMap<>();
+        Map<String, Samples> samplesPerTestName = new HashMap<>();
+        //TODO: zbavit se for cyklů -> práce se streamem
         for (int i = 0; i < fileNames.length; i++) {
             String fileName = fileNames[i];
             var samplesMetadata = getSamplesMetadataFromFile(fileName);
             // finalI because of lambda and compiler
             int finalI = i;
             samplesMetadata.forEach(sampleMetadata -> {
-                if (samplesDictionary.get(sampleMetadata.name) == null) {
+                if (samplesPerTestName.get(sampleMetadata.name) == null) {
                     Samples samples = new Samples(new double[fileNames.length][], sampleMetadata.metric, sampleMetadata.name);
-                    samplesDictionary.put(sampleMetadata.name, samples);
+                    samplesPerTestName.put(sampleMetadata.name, samples);
                     for (int j = 0; j < fileNames.length; j++) {
                         samples.getRawData()[j] = new double[0];
                     }
                 }
-                if (sampleMetadata.metric.isCompatibleWith(samplesDictionary.get(sampleMetadata.name).getMetric()))
-                    samplesDictionary.get(sampleMetadata.name).getRawData()[finalI] = sampleMetadata.rawData;
+                if (sampleMetadata.metric.isCompatibleWith(samplesPerTestName.get(sampleMetadata.name).getMetric()))
+                    samplesPerTestName.get(sampleMetadata.name).getRawData()[finalI] = sampleMetadata.rawData;
                 // else nothing added
             });
         }
-        return new ArrayList<>(samplesDictionary.values());
+        return new ArrayList<>(samplesPerTestName.values());
     }
 
     /**
@@ -81,19 +82,7 @@ public class JMHJSONParser implements MeasurementParser {
             return null;
         }
         assert base != null;
-        Stream.Builder<SampleMetadata> streamBuilder = new Stream.Builder<>() {
-            final ArrayList<SampleMetadata> samples = new ArrayList<>();
-
-            @Override
-            public void accept(SampleMetadata sampleMetadata) {
-                samples.add(sampleMetadata);
-            }
-
-            @Override
-            public Stream<SampleMetadata> build() {
-                return samples.stream();
-            }
-        };
+        Stream.Builder<SampleMetadata> streamBuilder = Stream.builder();
 
         for (BenchmarkJMHJSONBase benchmark : base) {
             var name = benchmark.getBenchmark();

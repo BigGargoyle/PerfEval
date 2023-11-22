@@ -54,24 +54,24 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
      */
     @Override
     public List<Samples> getTestsFromFiles(String[] fileNames) {
-        Map<String, Samples> samplesToTestName = new HashMap<>();
+        Map<String, Samples> samplesPerTestName = new HashMap<>();
         for (int i = 0; i < fileNames.length; i++) {
             String fileName = fileNames[i];
             var samplesMetadata = getSamplesMetadataFromFile(fileName);
             // finalI because of lambda and compiler
             int finalI = i;
             samplesMetadata.forEach(sampleMetadata -> {
-                if (samplesToTestName.get(sampleMetadata.name) == null) {
+                if (samplesPerTestName.get(sampleMetadata.name) == null) {
                     Samples samples = new Samples(new double[fileNames.length][], this.metric, sampleMetadata.name);
-                    samplesToTestName.put(sampleMetadata.name, samples);
+                    samplesPerTestName.put(sampleMetadata.name, samples);
                     for (int j = 0; j < fileNames.length; j++) {
                         samples.getRawData()[j] = new double[0];
                     }
                 }
-                samplesToTestName.get(sampleMetadata.name).getRawData()[finalI] = sampleMetadata.rawData;
+                samplesPerTestName.get(sampleMetadata.name).getRawData()[finalI] = sampleMetadata.rawData;
             });
         }
-        return new ArrayList<>(samplesToTestName.values());
+        return new ArrayList<>(samplesPerTestName.values());
     }
 
     /**
@@ -90,19 +90,7 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
      */
     static Stream<SampleMetadata> getSamplesMetadataFromFile(String fileName) {
         BenchmarkDotNetJSONBase base = getBaseFromPath(new File(fileName));
-        Stream.Builder<SampleMetadata> streamBuilder = new Stream.Builder<>() {
-            final ArrayList<SampleMetadata> samples = new ArrayList<>();
-
-            @Override
-            public void accept(SampleMetadata sampleMetadata) {
-                samples.add(sampleMetadata);
-            }
-
-            @Override
-            public Stream<SampleMetadata> build() {
-                return samples.stream();
-            }
-        };
+        Stream.Builder<SampleMetadata> streamBuilder = Stream.builder();
         assert base != null;
         for (Benchmark benchmark : base.getBenchmarks()) {
             SampleMetadata sampleMetadata = new SampleMetadata();
