@@ -1,15 +1,14 @@
 package cz.cuni.mff.d3s.perfeval;
 
-import cz.cuni.mff.d3s.perfeval.evaluation.*;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.BootstrapPerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.ComparisonResult;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.PerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.TTestPerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
-import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
-import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
-import cz.cuni.mff.d3s.perfeval.resultdatabase.H2Database;
 import cz.cuni.mff.d3s.perfeval.clievaluator.EvaluateCLICommand;
+import cz.cuni.mff.d3s.perfeval.evaluation.*;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.BootstrapPerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.TTestPerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.*;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -24,37 +23,15 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Parser {
     private static final String EMPTY_STRING = "";
-    // commands
-    /**
-     * Command for PerfEval system initialization. It creates .performance directory inside current directory.
-     */
-    private static final String INIT_COMMAND = "init";
-    /**
-     * Command for evaluating last two measurement results.
-     */
-    private static final String EVALUATE_COMMAND = "evaluate";
-    /**
-     * Command for inserting a new measurement (single file specified as a next argument) result inside directory.
-     */
-    private static final String INDEX_NEW_COMMAND = "index-new-result";
-    /**
-     * Command for inserting all files inside this directory (specified as a next argument) and its subdirectories as new measurement result files.
-     */
-    private static final String INDEX_ALL_COMMAND = "index-all-results";
-    /**
-     * Command for listing all test names that has too few measurements for a statistical test.
-     */
-    private static final String UNDECIDED_COMMAND = "list-undecided";
-
 
     private static final String PERFEVAL_DIR = ".performance";
     private static final String GIT_IGNORE_FILE_NAME = ".gitignore";
-    //private static final String HELP_FILE_NAME = "help.txt";
     private static final String INI_FILE_NAME = "config.ini";
     private static final String DATABASE_FILE_NAME = "test_results.db";
     private static final String GIT_FILE_NAME = ".git";
@@ -74,7 +51,6 @@ public class Parser {
     private static final String MAX_TIME_PARAMETER = "max-time-on-test";
     private static final String BOOTSTRAP_SAMPLE_COUNT_PARAMETER = "bootstrap-sample-count";
     private static final int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 10_000;
-    private static final double DEFAULT_TOLERANCE = 0.01;
 
     //used as an empty filter, order of elements will not be changed
     static class DefaultComparator<T> implements Comparator<T> {
@@ -88,6 +64,7 @@ public class Parser {
     private static final String TAG_PARAMETER = "tag";
     private static final String VERSION_PARAMETER = "version";
     private static final String FILTER_PARAMETER = "filter";
+    private static final String BENCHMARK_PARSER_PARAMETER = "benchmark-parser";
     private static final String TEST_RESULT_FILTER = "test-result";
     static final Comparator<MeasurementComparisonRecord> testResultFilterComparator = Comparator.comparing(MeasurementComparisonRecord::comparisonResult, Comparator.comparingInt(ComparisonResult::getResultNumber));
     private static final String SIZE_OF_CHANGE_FILTER = "size-of-change";
@@ -105,12 +82,13 @@ public class Parser {
             return null;
         }
         try {
+            //TODO: foreach ICommand that exists?
             for (var arg : options.nonOptionArguments()) {
-                if (INIT_COMMAND.equals(arg)) return setupInitCommand(args, options, config);
-                if (EVALUATE_COMMAND.equals(arg)) return setupEvaluateCommand(args, options, config);
-                if (INDEX_NEW_COMMAND.equals(arg)) return setupIndexNewCommand(args, options, config);
-                if (INDEX_ALL_COMMAND.equals(arg)) return setupIndexAllCommand(args, options, config);
-                if (UNDECIDED_COMMAND.equals(arg)) return setupUndecidedCommand(args, options, config);
+                if (InitCommand.COMMAND.equals(arg)) return setupInitCommand(args, options, config);
+                if (EvaluateCLICommand.COMMAND.equals(arg)) return setupEvaluateCommand(args, options, config);
+                if (AddFileCommand.COMMAND.equals(arg)) return setupIndexNewCommand(args, options, config);
+                if (AddFilesFromDirCommand.COMMAND.equals(arg)) return setupIndexAllCommand(args, options, config);
+                if (EvaluateCLICommand.UNDECIDED_COMMAND.equals(arg)) return setupUndecidedCommand(args, options, config);
             }
         } catch (DatabaseException e){
             System.err.println(e.getMessage());
@@ -130,35 +108,41 @@ public class Parser {
                 iniFilePath,
                 emptyFiles[0]
         };
+        MeasurementParser parser = null;
+        if(options.has(BENCHMARK_PARSER_PARAMETER)){
+            parser = ParserFactory.getParser(benchmarkParserOption.value(options));
+        }
+
+        if(parser==null){
+            System.err.println("Parser cannot be resolved. Default parser will be used.");
+            System.err.println("Possible parsers are: " + ParserFactory.getPossibleNames());
+            System.err.println("PerfEval cannot be initialized.");
+            return null;
+        }
+
         return new InitCommand(perfevalDirPath, gitIgnorePath, iniFilePath,
                 emptyFiles, gitIgnoredFiles, config, options.has(FORCE_FLAG));
     }
     private static Command setupEvaluateCommand(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
-        if (options.has(GRAPHICAL_FLAG))
-            return setupGraphicalCommand(args, options, config);
+        /*if (options.has(GRAPHICAL_FLAG))
+            return setupGraphicalCommand(args, options, config);*/
 
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = resolvePrinterForEvaluateCommand(options);
         PerformanceComparator comparator = resolvePerformanceComparatorForEvaluateCommand(options, config);
 
-        //return new EvaluateCLICommand(inputFiles, printer, comparator);
-        return null;
-    }
-
-    private static Command setupGraphicalCommand(String[] args, OptionSet options, PerfEvalConfig config) {
-        return null;
+        return new EvaluateCLICommand(inputFiles, printer, comparator, config.getMeasurementParser());
     }
 
     private static Command setupUndecidedCommand(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = new UndecidedPrinter(System.out);
         // tTest is able to response that there are not enough samples
-        //TODO: zpracovat maxTestDuration
         Duration maxTestDuration = resolveDuration(options, config);
-        PerformanceComparator comparator = new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), DEFAULT_TOLERANCE);
+        // TTestPerformanceComparator only, because it is the only one that can return undecided result -> too few samples
+        PerformanceComparator comparator = new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), config.getTolerance(), maxTestDuration);
         // Undecided printer -> printing only undecided results
-        //return new EvaluateCLICommand(inputFiles, printer, comparator);
-        return null;
+        return new EvaluateCLICommand(inputFiles, printer, comparator, config.getMeasurementParser());
     }
 
     private static Duration resolveDuration(OptionSet options, PerfEvalConfig config) {
@@ -198,11 +182,14 @@ public class Parser {
         Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
 
         String version = resolveVersion(gitFilePath, options);
-        String tag = resolveTag(gitFilePath, options,version);
+        String tag = resolveTag(gitFilePath, options, version);
+        Date date = resolveDate(gitFilePath, version);
+
+        ProjectVersion projectVersion = new ProjectVersion(date, version, tag);
 
         assert version != null && tag != null;
 
-        return new AddFileCommand(sourceDir, database, version, tag);
+        return new AddFileCommand(sourceDir, database, projectVersion);
     }
 
     private static Command setupIndexAllCommand(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
@@ -212,10 +199,13 @@ public class Parser {
 
         String version = resolveVersion(gitFilePath, options);
         String tag = resolveTag(gitFilePath,options,  version);
+        Date date = resolveDate(gitFilePath, version);
+
+        ProjectVersion projectVersion = new ProjectVersion(date, version, tag);
 
         assert version != null && tag != null;
 
-        return new AddFilesFromDirCommand(sourceDir, database, version, tag);
+        return new AddFilesFromDirCommand(sourceDir, database, projectVersion);
     }
     private static String resolveVersion(Path gitFilePath, OptionSet options) {
         if(options.has(versionOption))
@@ -230,14 +220,15 @@ public class Parser {
                 return lastCommit.getName();
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            //TODO: zpracovat výjimku
+            //System.err.println(e.getMessage());
         }
         System.err.println("Version cannot be resolved");
         return null;
 
     }
 
-    private static String resolveTag(Path gitFilePath, OptionSet options,String version) {
+    private static String resolveTag(Path gitFilePath, OptionSet options, String version) {
         if(options.has(tagOption))
             return options.valueOf(tagOption);
         if(gitFilePath!=null)
@@ -248,16 +239,31 @@ public class Parser {
                     return lastCommitTag;
                 }
             } catch (IOException e) {
+                //TODO: zpracovat výjimku
                 System.err.println(e.getMessage());
             }
         return EMPTY_STRING;
     }
 
-
+    private static Date resolveDate(Path gitFilePath, String versionHash){
+        if(gitFilePath==null)
+            return null;
+        try {
+            if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
+                return GitUtilities.getCommitDate(gitFilePath.getParent(), versionHash);
+            }
+        } catch (IOException e) {
+            //TODO: zpracovat výjimku
+            System.err.println(e.getMessage());
+        }
+        System.err.println("Date cannot be resolved");
+        return null;
+    }
 
     private static ResultPrinter resolvePrinterForEvaluateCommand(OptionSet options){
         Comparator<MeasurementComparisonRecord> filter = new DefaultComparator<>();
         if (options.has(filterOption)) {
+            //TODO: zbavit se println (všude)
             switch (options.valueOf(filterOption)) {
                 case TEST_ID_FILTER -> filter = nameFilterComparator;
                 case SIZE_OF_CHANGE_FILTER -> filter = sizeOfChangeFilterComparator;
@@ -270,16 +276,17 @@ public class Parser {
     }
     private static PerformanceComparator resolvePerformanceComparatorForEvaluateCommand(OptionSet options, PerfEvalConfig config){
         return options.has(TTEST_FLAG) ?
-                new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), DEFAULT_TOLERANCE) :
-                new BootstrapPerformanceComparator(config.getCritValue(), DEFAULT_TOLERANCE, options.valueOf(bootstrapSampleCountOption));
+                new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), config.getTolerance(), config.getMaxTimeOnTest()) :
+                new BootstrapPerformanceComparator(config.getCritValue(), config.getTolerance(), options.valueOf(bootstrapSampleCountOption));
     }
 
     private static FileWithResultsData[][] resolveInputFilesWithRespectToInputtedVersions(String[] args, OptionSet options) throws DatabaseException {
         Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
-        /*String newVersion = options.has(newVersionOption) ? options.valueOf(newVersionOption) : null;
-        String oldVersion = options.has(oldVersionOption) ? options.valueOf(oldVersionOption) : null;
+        //fields that are null will not be used in WHERE clause of SQL query
+        ProjectVersion newVersion = options.has(newVersionOption) ? new ProjectVersion(null, options.valueOf(newVersionOption),null) : null;
+        ProjectVersion oldVersion = options.has(oldVersionOption) ? new ProjectVersion(null, options.valueOf(oldVersionOption),null) : null;
         if(newVersion==null && oldVersion==null){
-            String[] versions = database.getLastNVersions(2);
+            ProjectVersion[] versions = database.getLastNVersions(2);
             assert versions.length==2;
             newVersion = versions[0];
             oldVersion = versions[1];
@@ -289,8 +296,7 @@ public class Parser {
         FileWithResultsData[] newFiles = database.getResultsOfVersion(newVersion);
         FileWithResultsData[] oldFiles = database.getResultsOfVersion(oldVersion);
         assert newFiles.length > 0 && oldFiles.length > 0;
-        return new FileWithResultsData[][]{oldFiles, newFiles};*/
-        return null;
+        return new FileWithResultsData[][]{oldFiles, newFiles};
     }
 
 
@@ -302,6 +308,7 @@ public class Parser {
     static ArgumentAcceptingOptionSpec<String> pathOption;
     static ArgumentAcceptingOptionSpec<String> versionOption;
     static ArgumentAcceptingOptionSpec<String> tagOption;
+    static ArgumentAcceptingOptionSpec<String> benchmarkParserOption;
 
     private static OptionParser CreateParser() {
         OptionParser parser = new OptionParser();
@@ -340,6 +347,10 @@ public class Parser {
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("tag option with a parameter");
+        benchmarkParserOption = parser.accepts(BENCHMARK_PARSER_PARAMETER)
+                .withRequiredArg()
+                .ofType(String.class)
+                .describedAs("benchmark parser option with a parameter");
 
         // Define flags (options without arguments)
         parser.accepts(HELP_FLAG, "Print help message");

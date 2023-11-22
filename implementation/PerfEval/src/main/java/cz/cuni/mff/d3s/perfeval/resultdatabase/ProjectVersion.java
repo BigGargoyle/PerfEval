@@ -3,6 +3,12 @@ package cz.cuni.mff.d3s.perfeval.resultdatabase;
 import java.util.Date;
 import java.util.Objects;
 
+/**
+ * Represents a version of a project.
+ * @param dateOfCommit Date of the commit.
+ * @param commitVersionHash Hash of the commit.
+ * @param tag Tag of the commit.
+ */
 public record ProjectVersion(Date dateOfCommit, String commitVersionHash, String tag) {
     @Override
     public boolean equals(Object o) {

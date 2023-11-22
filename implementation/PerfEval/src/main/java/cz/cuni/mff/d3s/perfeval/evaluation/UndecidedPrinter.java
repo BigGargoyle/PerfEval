@@ -1,16 +1,38 @@
 package cz.cuni.mff.d3s.perfeval.evaluation;
 
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.ComparisonResult;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
 
 import java.io.PrintStream;
 
+/**
+ * Printer for list-undecided command
+ */
 public class UndecidedPrinter implements ResultPrinter {
-    PrintStream printStream;
+    /**
+     * PrintStream where the results will be printed
+     */
+    final PrintStream printStream;
+    /**
+     * Delimiter for printing results
+     */
     static final String COLUMN_DELIMITER = "\t";
-    public UndecidedPrinter(PrintStream printStream){
+
+    /**
+     * Constructor for UndecidedPrinter
+     *
+     * @param printStream PrintStream where the results will be printed
+     */
+    public UndecidedPrinter(PrintStream printStream) {
         this.printStream = printStream;
     }
 
+    /**
+     * Prints content of MeasurementComparisonResultCollection object
+     * in format: name of test \t minimal sample count
+     *
+     * @param resultCollection collection of results to be printed
+     * @see MeasurementComparisonResultCollection
+     */
     @Override
     public void PrintResults(MeasurementComparisonResultCollection resultCollection) {
         for (MeasurementComparisonRecord comparisonResult : resultCollection) {

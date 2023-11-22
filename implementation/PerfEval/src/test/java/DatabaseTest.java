@@ -30,7 +30,7 @@ public class DatabaseTest {
         // Load the test results directory from resources
         String resourceDir = "test-results";
         dirWithTestFiles = Files.createTempDirectory("test-results");
-        for(File f : Objects.requireNonNull(new File(classLoader.getResource(resourceDir).getFile()).listFiles())) {
+        for(File f : Objects.requireNonNull(new File(Objects.requireNonNull(classLoader.getResource(resourceDir)).getFile()).listFiles())) {
             Path newFilePath = Path.of(dirWithTestFiles.toString(), f.getName());
             Files.copy(f.toPath(), newFilePath);
         }

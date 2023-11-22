@@ -1,26 +1,55 @@
-package cz.cuni.mff.d3s.perfeval.performancecomparatorfactory;
+package cz.cuni.mff.d3s.perfeval.performancecomparators;
 
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.Random;
 
+/**
+ * Class for performing hierarchical bootstrap
+ */
 public class HierarchicalBootstrap {
+    /**
+     * Critical value for bootstrap statistical test
+     */
     double critValue;
+    /**
+     * Count of samples used for bootstrap
+     */
     int bootstrapSampleCount;
 
+    /**
+     * Constructor for HierarchicalBootstrap
+     *
+     * @param critValue            critical value for bootstrap statistical test
+     * @param bootstrapSampleCount count of samples used for bootstrap
+     */
     public HierarchicalBootstrap(double critValue, int bootstrapSampleCount) {
         this.critValue = critValue;
         this.bootstrapSampleCount = bootstrapSampleCount;
     }
 
+    /**
+     * Performs hierarchical bootstrap
+     *
+     * @param sampleSet1 first set of samples
+     * @param sampleSet2 second set of samples
+     * @return true if performance of second set of samples did not get worse, false otherwise
+     */
     public boolean evaluateBootstrap(double[][] sampleSet1, double[][] sampleSet2) {
         double[] bootstrapSample = createBootstrapSample(sampleSet1, sampleSet2);
-        double[] bootstrapInterval = calcCIInterval(bootstrapSample, 1-critValue);
+        double[] bootstrapInterval = calcCIInterval(bootstrapSample, 1 - critValue);
         assert bootstrapInterval.length == 2;
         return bootstrapInterval[0] <= 0 && bootstrapInterval[1] >= 0;
     }
 
+    /**
+     * Creates bootstrap sample from two sets of samples (difference of two random samples)
+     *
+     * @param sampleSet1 first set of samples
+     * @param sampleSet2 second set of samples
+     * @return bootstrap sample
+     */
     private double[] createBootstrapSample(double[][] sampleSet1, double[][] sampleSet2) {
         Random random = new Random();
         double[] result = new double[bootstrapSampleCount];
@@ -34,7 +63,14 @@ public class HierarchicalBootstrap {
         return result;
     }
 
-    public static double[] calcCIInterval(double[] data, double confidenceLevel){
+    /**
+     * Calculates confidence interval for given data and confidence level
+     *
+     * @param data            data
+     * @param confidenceLevel confidence level
+     * @return confidence interval for given data and confidence level
+     */
+    public static double[] calcCIInterval(double[] data, double confidenceLevel) {
         // Create a SummaryStatistics object to compute mean and standard deviation
         SummaryStatistics stats = new SummaryStatistics();
         for (double value : data) {
@@ -61,7 +97,7 @@ public class HierarchicalBootstrap {
         double lowerBound = sampleMean - marginOfError;
         double upperBound = sampleMean + marginOfError;
 
-        return new double[] {lowerBound, upperBound};
+        return new double[]{lowerBound, upperBound};
     }
 
 }

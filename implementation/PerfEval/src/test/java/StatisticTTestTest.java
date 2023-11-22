@@ -1,4 +1,4 @@
-import cz.cuni.mff.d3s.perfeval.performancecomparatorfactory.StatisticTTest;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.StatisticTTest;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.junit.jupiter.api.Test;
 

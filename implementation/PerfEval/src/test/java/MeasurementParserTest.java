@@ -15,23 +15,19 @@ public class MeasurementParserTest {
 
     @Test
     public void recognizeCorrectJMHJSONOutputFile(){
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(Objects.requireNonNull(classLoader.getResource("resultJMH.json")).getFile());
-        var parser = ParserFactory.getParser(ParserFactory.jmhJSONParserDescription);
+        var parser = ParserFactory.getParser(new JMHJSONParser().getParserName());
         assertTrue(parser instanceof JMHJSONParser);
     }
     @Test
     public void recognizeCorrectBenchmarkDotNetJSONOutputFile(){
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(Objects.requireNonNull(classLoader.getResource("Sorting1.json")).getFile());
-        var parser = ParserFactory.getParser(ParserFactory.benchmarkDotNetJSONParserDescription);
+        var parser = ParserFactory.getParser(new BenchmarkDotNetJSONParser().getParserName());
         assertTrue(parser instanceof BenchmarkDotNetJSONParser);
     }
     @Test
     public void parseCorrectJMHJSONOutputFile(){
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(Objects.requireNonNull(classLoader.getResource("resultJMH.json")).getFile());
-        MeasurementParser parser = ParserFactory.getParser(ParserFactory.jmhJSONParserDescription);
+        MeasurementParser parser = new JMHJSONParser();
         assertNotNull(parser);
         List<Samples> result = parser.getTestsFromFiles(new String[]{file.getAbsolutePath()});
         assertEquals(1, result.size());
@@ -42,8 +38,7 @@ public class MeasurementParserTest {
     public void parseCorrectBenchmarkDotNetJSONOutputFile(){
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(Objects.requireNonNull(classLoader.getResource("Sorting1.json")).getFile());
-        MeasurementParser parser = ParserFactory.getParser(ParserFactory.benchmarkDotNetJSONParserDescription);
-        assertNotNull(parser);
+        MeasurementParser parser = new BenchmarkDotNetJSONParser();
         List<Samples> result = parser.getTestsFromFiles(new String[]{file.getAbsolutePath()});
         assertEquals(2, result.size());
         assertTrue(result.get(0).getRawData().length > 0);
@@ -56,8 +51,7 @@ public class MeasurementParserTest {
                 new File(Objects.requireNonNull(classLoader.getResource("Sorting2.json")).getFile()),
                 new File(Objects.requireNonNull(classLoader.getResource("Sorting3.json")).getFile()),
                 new File(Objects.requireNonNull(classLoader.getResource("Sorting4.json")).getFile())};
-        MeasurementParser parser = ParserFactory.getParser(ParserFactory.benchmarkDotNetJSONParserDescription);
-        assert parser != null;
+        MeasurementParser parser = new BenchmarkDotNetJSONParser();
         String[] fileNames = new String[file.length];
         for (int i = 0; i < file.length; i++) {
             fileNames[i] = file[i].getAbsolutePath();
@@ -73,8 +67,7 @@ public class MeasurementParserTest {
                 new File(Objects.requireNonNull(classLoader.getResource("jmh-result2.json")).getFile()),
                 new File(Objects.requireNonNull(classLoader.getResource("jmh-result3.json")).getFile())};
 
-        MeasurementParser parser = ParserFactory.getParser(ParserFactory.jmhJSONParserDescription);
-        assertNotNull(parser);
+        MeasurementParser parser = new JMHJSONParser();
         String[] fileNames = new String[file.length];
         for (int i = 0; i < file.length; i++) {
             fileNames[i] = file[i].getAbsolutePath();
