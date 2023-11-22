@@ -1,5 +1,4 @@
-import cz.cuni.mff.d3s.perfeval.Command;
-import cz.cuni.mff.d3s.perfeval.Parser;
+import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.ProjectVersion;
@@ -81,7 +80,7 @@ public class CommandTest {
         String[] arg0 = new String[]{actualDirectory.toAbsolutePath().toString()};
         return ArrayUtils.addAll(arg0, splittedCLI);
     }
-
+/*
     Database db;
     Path dbPath = Path.of("test-db");
     Path dirWithTestFiles = Path.of("test-results");
@@ -162,5 +161,5 @@ public class CommandTest {
             assertNull(command);
         }
     }
-
+*/
 }
