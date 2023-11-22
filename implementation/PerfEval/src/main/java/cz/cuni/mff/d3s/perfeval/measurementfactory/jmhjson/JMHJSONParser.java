@@ -75,16 +75,16 @@ public class JMHJSONParser implements MeasurementParser {
     static Stream<SampleMetadata> getSamplesMetadataFromFile(String fileName) {
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
-        BenchmarkJMHJSONRoot[] base;
+        BenchmarkJMHJSONRoot[] roots;
         try {
-            base = objectMapper.readValue(inputFile, BenchmarkJMHJSONRoot[].class);
+            roots = objectMapper.readValue(inputFile, BenchmarkJMHJSONRoot[].class);
         } catch (Exception e) {
             return null;
         }
-        assert base != null;
+        assert roots != null;
         Stream.Builder<SampleMetadata> streamBuilder = Stream.builder();
 
-        for (BenchmarkJMHJSONRoot benchmark : base) {
+        for (BenchmarkJMHJSONRoot benchmark : roots) {
             var name = benchmark.getBenchmark();
             var primaryMetric = benchmark.getPrimaryMetric();
             Metric metric = null;
