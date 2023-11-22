@@ -10,14 +10,27 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * Implementation of IMeasurementParser for JMH framework test result in the JSON format
+ * Implementation of MeasurementParser for JMH framework test result in the JSON format
+ * @see MeasurementParser
  */
 
 public class JMHJSONParser implements MeasurementParser {
 
-    public JMHJSONParser(){}
-    static final String[] timeScoreUnits = new String[] {"ns/op","us/op","ms/op","s/op"};
-    static final String[] frequencyScoreUnits = new String[] {"ops/s","ops/ms","ops/us","ops/ns"};
+    /**
+     * Constructor for JMHJSONParser
+     */
+    public JMHJSONParser() {
+    }
+
+    /**
+     * Possible units of metric when measuring time
+     */
+    static final String[] timeScoreUnits = new String[]{"ns/op", "us/op", "ms/op", "s/op"};
+    /**
+     * Possible units of metric when measuring frequency (throughput)
+     */
+    static final String[] frequencyScoreUnits = new String[]{"ops/s", "ops/ms", "ops/us", "ops/ns"};
+
     @Override
     public List<Samples> getTestsFromFiles(String[] fileNames) {
         Map<String, Samples> samplesDictionary = new HashMap<>();
@@ -27,14 +40,14 @@ public class JMHJSONParser implements MeasurementParser {
             // finalI because of lambda and compiler
             int finalI = i;
             samplesMetadata.forEach(sampleMetadata -> {
-                if(samplesDictionary.get(sampleMetadata.name)==null){
+                if (samplesDictionary.get(sampleMetadata.name) == null) {
                     Samples samples = new Samples(new double[fileNames.length][], sampleMetadata.metric, sampleMetadata.name);
                     samplesDictionary.put(sampleMetadata.name, samples);
-                    for(int j = 0; j < fileNames.length; j++){
+                    for (int j = 0; j < fileNames.length; j++) {
                         samples.getRawData()[j] = new double[0];
                     }
                 }
-                if(sampleMetadata.metric.isCompatibleWith(samplesDictionary.get(sampleMetadata.name).getMetric()))
+                if (sampleMetadata.metric.isCompatibleWith(samplesDictionary.get(sampleMetadata.name).getMetric()))
                     samplesDictionary.get(sampleMetadata.name).getRawData()[finalI] = sampleMetadata.rawData;
                 // else nothing added
             });
@@ -42,13 +55,23 @@ public class JMHJSONParser implements MeasurementParser {
         return new ArrayList<>(samplesDictionary.values());
     }
 
-    static class SampleMetadata{
+    /**
+     * Class for storing metadata of one sample
+     */
+    // duplicate of BenchmarkDotNetJSONParser.SampleMetadata, but it is not possible to use it because of different benchmark framework
+    static class SampleMetadata {
         public String name;
         public double[] rawData;
         Metric metric;
     }
 
-    Stream<SampleMetadata> getSamplesMetadataFromFile(String fileName){
+    /**
+     * Gets metadata of samples from one file
+     *
+     * @param fileName name of file with results of performance tests
+     * @return stream of SampleMetadata objects
+     */
+    static Stream<SampleMetadata> getSamplesMetadataFromFile(String fileName) {
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
         BenchmarkJMHJSONBase[] base;
@@ -60,27 +83,29 @@ public class JMHJSONParser implements MeasurementParser {
         assert base != null;
         Stream.Builder<SampleMetadata> streamBuilder = new Stream.Builder<>() {
             final ArrayList<SampleMetadata> samples = new ArrayList<>();
+
             @Override
             public void accept(SampleMetadata sampleMetadata) {
                 samples.add(sampleMetadata);
             }
+
             @Override
             public Stream<SampleMetadata> build() {
                 return samples.stream();
             }
         };
 
-        for(BenchmarkJMHJSONBase benchmark : base){
+        for (BenchmarkJMHJSONBase benchmark : base) {
             var name = benchmark.getBenchmark();
             var primaryMetric = benchmark.getPrimaryMetric();
             Metric metric = null;
-            for(String scoreUnit : frequencyScoreUnits){
-                if(primaryMetric.getScoreUnit().compareTo(scoreUnit)==0){
+            for (String scoreUnit : frequencyScoreUnits) {
+                if (primaryMetric.getScoreUnit().compareTo(scoreUnit) == 0) {
                     metric = new Metric(scoreUnit, true);
                     break;
                 }
             }
-            if(metric==null)
+            if (metric == null)
                 metric = new Metric(primaryMetric.getScoreUnit(), false);
             SampleMetadata sampleMetadata = new SampleMetadata();
             sampleMetadata.name = name;
@@ -95,6 +120,7 @@ public class JMHJSONParser implements MeasurementParser {
         }
         return streamBuilder.build();
     }
+
     @Override
     public String getParserName() {
         return "JMHJSONParser";

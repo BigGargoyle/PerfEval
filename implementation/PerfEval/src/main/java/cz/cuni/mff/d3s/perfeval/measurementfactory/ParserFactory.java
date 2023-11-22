@@ -7,32 +7,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents place where methods for constructing Parsers are stored
+ * Factory for creating parsers and getting their names
  */
 public class ParserFactory {
-    // construct parser according to file structure
+    /**
+     * List of possible parsers
+     */
     private static final List<MeasurementParser> possibleParsers = new ArrayList<>();
+
     static {
         possibleParsers.add(new JMHJSONParser());
         possibleParsers.add(new BenchmarkDotNetJSONParser());
     }
 
     /**
-     * Recognize parser according to description
-     * @param parserName description of parser (name of parser)
-     * @return parser
+     * Returns parser with given name
+     *
+     * @param parserName name of parser
+     * @return parser with given name
      */
-    public static MeasurementParser getParser(String parserName){
-        for(MeasurementParser parser : possibleParsers){
-            if(parser.getParserName().equals(parserName))
+    public static MeasurementParser getParser(String parserName) {
+        for (MeasurementParser parser : possibleParsers) {
+            if (parser.getParserName().equals(parserName))
                 return parser;
         }
         return null;
     }
 
-    public static List<String> getPossibleNames(){
+    /**
+     * Returns list of possible names of parsers
+     *
+     * @return list of possible names of parsers
+     */
+    public static List<String> getPossibleNames() {
         List<String> result = new ArrayList<>();
-        for(MeasurementParser parser : possibleParsers){
+        for (MeasurementParser parser : possibleParsers) {
             result.add(parser.getParserName());
         }
         return result;

@@ -14,13 +14,32 @@ import java.util.List;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
 import org.h2.jdbcx.JdbcDataSource;
 
+/**
+ * Class representing a database of the benchmark test results.
+ * The database is implemented using H2 database and JDBC.
+ */
 public class H2Database implements Database {
+    /**
+     * JDBCDataSource that represents metadata about database connection
+     */
     private final JdbcDataSource dataSource;
+    /**
+     * path to the database file
+     */
     private final Path pathToDBFile;
     //this is the path to which are relative paths of inserted files computed to
     //private final Path pathRelativesTo=Path.of("");
+    /**
+     * username for accessing the database
+     */
     private static final String DB_USER = "sa";
+    /**
+     * password for accessing the database
+     */
     private static final String DB_PASSWORD = "sa";
+    /**
+     * prefix of the database URL
+     */
     private static final String DB_PREFIX = "jdbc:h2:";
 
     /**

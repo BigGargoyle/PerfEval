@@ -4,22 +4,52 @@ import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 
 import java.util.*;
 
+/**
+ * Collection of results of comparison of two sets of samples and their versions
+ */
 public class MeasurementComparisonResultCollection implements Collection<MeasurementComparisonRecord> {
-
+    /**
+     * 2D array of file with results of performance tests metadata
+     * First dimension is for versions of performance tests
+     * Second dimension is for files with results of performance tests of one version
+     */
     FileWithResultsData[][] originalFilesMetadata;
+    /**
+     * List of results of comparison of two sets of samples
+     *
+     * @see MeasurementComparisonRecord
+     */
     List<MeasurementComparisonRecord> records;
-    public MeasurementComparisonResultCollection(FileWithResultsData[][] originalFiles){
+
+    /**
+     * Constructor for MeasurementComparisonResultCollection
+     *
+     * @param originalFiles 2D array of file metadata that are compared
+     */
+    public MeasurementComparisonResultCollection(FileWithResultsData[][] originalFiles) {
         records = new ArrayList<>();
         this.originalFilesMetadata = originalFiles;
-        assert originalFiles.length==2;
+        assert originalFiles.length == 2;
     }
 
-    public String getOldVersion(){
+    /**
+     * Getter for old version of performance tests
+     *
+     * @return old version of performance tests
+     */
+    public String getOldVersion() {
         return originalFilesMetadata[0][0].version().commitVersionHash();
     }
-    public String getNewVersion(){
+
+    /**
+     * Getter for new version of performance tests
+     *
+     * @return new version of performance tests
+     */
+    public String getNewVersion() {
         return originalFilesMetadata[1][0].version().commitVersionHash();
     }
+
     @Override
     public int size() {
         return records.size();
@@ -50,7 +80,7 @@ public class MeasurementComparisonResultCollection implements Collection<Measure
         return records.toArray(a);
     }
 
-    public void sort(Comparator<MeasurementComparisonRecord> cmp){
+    public void sort(Comparator<MeasurementComparisonRecord> cmp) {
         records.sort(cmp);
     }
 
