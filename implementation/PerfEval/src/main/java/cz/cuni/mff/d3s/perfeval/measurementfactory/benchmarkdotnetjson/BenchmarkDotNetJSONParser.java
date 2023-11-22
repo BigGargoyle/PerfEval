@@ -44,10 +44,41 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
      */
     @Override
     public List<Samples> getTestsFromFiles(String[] fileNames) {
-        Map<String, List<SampleMetadataKey>> samplesMetadataKeysPerTestName = new HashMap<>();
+        Map<String, List<double[]>> samplesPerTestName = new HashMap<>();
+
+        for(var fileName : fileNames){
+            Map<String, List<double[]>> samplesPerTestNameFromFile = getTestsFromOneFile(fileName);
+            for(var key : samplesPerTestNameFromFile.keySet()){
+                samplesPerTestName.computeIfAbsent(key, k -> new ArrayList<>());
+                samplesPerTestName.get(key).addAll(samplesPerTestNameFromFile.get(key));
+            }
+        }
+
+        return finishSamples(samplesPerTestName);
+    }
+
+    @Override
+    public List<Samples> getTestsFromFile(String fileName) {
+        Map<String, List<double[]>> samplesPerTestName = getTestsFromOneFile(fileName);
+        return finishSamples(samplesPerTestName);
+    }
+
+    List<Samples> finishSamples(Map<String, List<double[]>> samplesPerTestName) {
+        List<Samples> result = new ArrayList<>();
+        for(var key : samplesPerTestName.keySet()){
+            // new double[0][] because of compiler
+            Samples samples = new Samples(samplesPerTestName.get(key).toArray(new double[0][]), metric, key);
+            result.add(samples);
+        }
+        return result;
+    }
+
+    //@Override
+    private Map<String, List<double[]>> getTestsFromOneFile(String fileName) {
+        Map<String, List<double[]>> rawDataPerTestName = new HashMap<>();
         Map<SampleMetadataKey, List<SampleMetadata>> samplesMetadataPerKey = new HashMap<>();
-        Stream<SampleMetadata> samples = Arrays.stream(fileNames)
-                .map(this::mapStringToFile)
+        var iniStream = Stream.of(fileName);
+        Stream<SampleMetadata> samples = iniStream.map(this::mapStringToFile)
                 .map(this::mapFileToBenchmarkDotNetJSONRoot)
                 .flatMap(this::mapBenchmarkDotNetJSONRootToBenchmark)
                 .flatMap(this::mapBenchmarkToMeasurement);
@@ -58,27 +89,18 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
             SampleMetadataKey key = new SampleMetadataKey();
             key.name = sampleMetadata.name;
             key.launchIndex = sampleMetadata.launchIndex;
-            samplesMetadataKeysPerTestName.computeIfAbsent(sampleMetadata.name, k -> new ArrayList<>());
-            samplesMetadataKeysPerTestName.get(sampleMetadata.name).add(key);
             samplesMetadataPerKey.computeIfAbsent(key, k -> new ArrayList<>());
             samplesMetadataPerKey.get(key).add(sampleMetadata);
         });
 
-        List<Samples> result = new ArrayList<>();
-        for(var key : samplesMetadataKeysPerTestName.keySet()){
-            double[][] rawData = new double[samplesMetadataKeysPerTestName.get(key).size()][];
-            int i = 0;
-            for(var key2 : samplesMetadataKeysPerTestName.get(key)){
-                rawData[i] = samplesMetadataPerKey.get(key2).stream().mapToDouble(sampleMetadata -> sampleMetadata.rawData).toArray();
-                i++;
-            }
-            result.add(new Samples(rawData,
-                    metric,
-                    key
-            ));
+        //convert data to rawDataPerTestName
+        for(var key : samplesMetadataPerKey.keySet()){
+            double[] data = samplesMetadataPerKey.get(key).stream().mapToDouble(sampleMetadata -> sampleMetadata.rawData).toArray();
+            rawDataPerTestName.computeIfAbsent(key.name, k -> new ArrayList<>());
+            rawDataPerTestName.get(key.name).add(data);
         }
 
-        return result;
+        return rawDataPerTestName;
     }
 
     private File mapStringToFile(String fileName) {

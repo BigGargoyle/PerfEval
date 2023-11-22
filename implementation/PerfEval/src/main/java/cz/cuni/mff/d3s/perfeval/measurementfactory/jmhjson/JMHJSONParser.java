@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.pojoJMH.BenchmarkJMHJ
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -33,27 +34,83 @@ public class JMHJSONParser implements MeasurementParser {
 
     @Override
     public List<Samples> getTestsFromFiles(String[] fileNames) {
-        Map<String, Samples> samplesPerTestName = new HashMap<>();
-        //TODO: zbavit se for cyklů -> práce se streamem
-        for (int i = 0; i < fileNames.length; i++) {
-            String fileName = fileNames[i];
-            var samplesMetadata = getSamplesMetadataFromFile(fileName);
-            // finalI because of lambda and compiler
-            int finalI = i;
-            samplesMetadata.forEach(sampleMetadata -> {
-                if (samplesPerTestName.get(sampleMetadata.name) == null) {
-                    Samples samples = new Samples(new double[fileNames.length][], sampleMetadata.metric, sampleMetadata.name);
-                    samplesPerTestName.put(sampleMetadata.name, samples);
-                    for (int j = 0; j < fileNames.length; j++) {
-                        samples.getRawData()[j] = new double[0];
-                    }
-                }
-                if (sampleMetadata.metric.isCompatibleWith(samplesPerTestName.get(sampleMetadata.name).getMetric()))
-                    samplesPerTestName.get(sampleMetadata.name).getRawData()[finalI] = sampleMetadata.rawData;
-                // else nothing added
-            });
+        Map<String, List<SampleMetadata>> samplesPerTestName = new HashMap<>();
+
+        for(var fileName : fileNames){
+            Map<String, List<SampleMetadata>> samplesPerTestNameFromFile = getSamplesFromOneFile(fileName);
+            for(var key : samplesPerTestNameFromFile.keySet()){
+                samplesPerTestName.computeIfAbsent(key, k -> new ArrayList<>());
+                samplesPerTestName.get(key).addAll(samplesPerTestNameFromFile.get(key));
+            }
         }
-        return new ArrayList<>(samplesPerTestName.values());
+
+        return finishSamples(samplesPerTestName);
+    }
+    List<Samples> finishSamples(Map<String, List<SampleMetadata>> samplesPerTestName) {
+        List<Samples> result = new ArrayList<>();
+        for(var key : samplesPerTestName.keySet()){
+            List<List<Double>> rawData = new ArrayList<>();
+            for(var sample : samplesPerTestName.get(key)){
+                rawData.addAll(sample.rawData);
+            }
+            double[][] rawDataArray = new double[rawData.size()][];
+            for(int i = 0; i < rawData.size(); i++){
+                rawDataArray[i] = new double[rawData.get(i).size()];
+                for(int j = 0; j < rawData.get(i).size(); j++){
+                    rawDataArray[i][j] = rawData.get(i).get(j);
+                }
+            }
+            result.add(new Samples(rawDataArray, samplesPerTestName.get(key).get(0).metric, key));
+        }
+        return result;
+    }
+
+    @Override
+    public List<Samples> getTestsFromFile(String fileName) {
+        Map<String, List<SampleMetadata>> samplesPerTestName = getSamplesFromOneFile(fileName);
+        return finishSamples(samplesPerTestName);
+    }
+
+    Map<String, List<SampleMetadata>> getSamplesFromOneFile(String fileName){
+        Stream<String> iniStream = Arrays.stream(new String[] {fileName});
+        Stream<SampleMetadata> samplesFromFile = iniStream.map(this::mapFileFromString).flatMap(this::mapRootFromJSON).map(this::mapMetadataFromRoot);
+        Map<String, List<SampleMetadata>> samplesPerTestName = new HashMap<>();
+        samplesFromFile.forEach(sampleMetadata -> {
+            samplesPerTestName.computeIfAbsent(sampleMetadata.name, k -> new ArrayList<>());
+            samplesPerTestName.get(sampleMetadata.name).add(sampleMetadata);
+        });
+        return samplesPerTestName;
+    }
+
+    File mapFileFromString(String fileName){
+        return new File(fileName);
+    }
+
+    Stream<BenchmarkJMHJSONRoot> mapRootFromJSON(File file){
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            BenchmarkJMHJSONRoot[] root = mapper.readValue(file, BenchmarkJMHJSONRoot[].class);
+            return Arrays.stream(root);
+        } catch (Exception e) {
+            // TODO: dodat výjimku
+            throw new RuntimeException();
+        }
+    }
+
+    SampleMetadata mapMetadataFromRoot(BenchmarkJMHJSONRoot root){
+        SampleMetadata metadata = new SampleMetadata();
+        metadata.name = root.getBenchmark();
+        String scoreUnit = root.getPrimaryMetric().getScoreUnit();
+        if (Arrays.asList(timeScoreUnits).contains(scoreUnit)) {
+            metadata.metric = new Metric(scoreUnit, false);
+        } else if (Arrays.asList(frequencyScoreUnits).contains(scoreUnit)) {
+            metadata.metric = new Metric(scoreUnit, true);
+        } else {
+            //TODO: dodat výjimku
+            throw new RuntimeException();
+        }
+        metadata.rawData = root.getPrimaryMetric().getRawData();
+        return metadata;
     }
 
     /**
@@ -62,52 +119,8 @@ public class JMHJSONParser implements MeasurementParser {
     // duplicate of BenchmarkDotNetJSONParser.SampleMetadata, but it is not possible to use it because of different benchmark framework
     static class SampleMetadata {
         public String name;
-        public double[] rawData;
+        public List<List<Double>> rawData;
         Metric metric;
-    }
-
-    /**
-     * Gets metadata of samples from one file
-     *
-     * @param fileName name of file with results of performance tests
-     * @return stream of SampleMetadata objects
-     */
-    static Stream<SampleMetadata> getSamplesMetadataFromFile(String fileName) {
-        File inputFile = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        BenchmarkJMHJSONRoot[] roots;
-        try {
-            roots = objectMapper.readValue(inputFile, BenchmarkJMHJSONRoot[].class);
-        } catch (Exception e) {
-            return null;
-        }
-        assert roots != null;
-        Stream.Builder<SampleMetadata> streamBuilder = Stream.builder();
-
-        for (BenchmarkJMHJSONRoot benchmark : roots) {
-            var name = benchmark.getBenchmark();
-            var primaryMetric = benchmark.getPrimaryMetric();
-            Metric metric = null;
-            for (String scoreUnit : frequencyScoreUnits) {
-                if (primaryMetric.getScoreUnit().compareTo(scoreUnit) == 0) {
-                    metric = new Metric(scoreUnit, true);
-                    break;
-                }
-            }
-            if (metric == null)
-                metric = new Metric(primaryMetric.getScoreUnit(), false);
-            SampleMetadata sampleMetadata = new SampleMetadata();
-            sampleMetadata.name = name;
-            sampleMetadata.metric = metric;
-            List<List<Double>> measuredValues = benchmark.getPrimaryMetric().getRawData();
-            List<Double> measuredValues1D = new ArrayList<>();
-            for (List<Double> measuredValue : measuredValues) {
-                measuredValues1D.addAll(measuredValue);
-            }
-            sampleMetadata.rawData = measuredValues1D.stream().mapToDouble(Double::valueOf).toArray();
-            streamBuilder.accept(sampleMetadata);
-        }
-        return streamBuilder.build();
     }
 
     @Override
