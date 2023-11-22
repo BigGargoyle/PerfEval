@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.Benchmark;
-import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.BenchmarkDotNetJSONBase;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.BenchmarkDotNetJSONRoot;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.Measurement;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -89,7 +89,7 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
      * @return stream of SampleMetadata objects
      */
     static Stream<SampleMetadata> getSamplesMetadataFromFile(String fileName) {
-        BenchmarkDotNetJSONBase base = getBaseFromPath(new File(fileName));
+        BenchmarkDotNetJSONRoot base = getBaseFromPath(new File(fileName));
         Stream.Builder<SampleMetadata> streamBuilder = Stream.builder();
         assert base != null;
         for (Benchmark benchmark : base.getBenchmarks()) {
@@ -110,10 +110,10 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
      * @param file file with results of performance tests
      * @return BenchmarkDotNetJSONBase object (it represents the whole JSON file)
      */
-    private static BenchmarkDotNetJSONBase getBaseFromPath(File file) {
+    private static BenchmarkDotNetJSONRoot getBaseFromPath(File file) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(file, BenchmarkDotNetJSONBase.class);
+            return objectMapper.readValue(file, BenchmarkDotNetJSONRoot.class);
         } catch (Exception e) {
             //TODO: dodat výjimku
             return null;

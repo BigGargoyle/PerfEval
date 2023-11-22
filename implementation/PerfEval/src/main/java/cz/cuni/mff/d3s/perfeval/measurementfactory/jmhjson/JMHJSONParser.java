@@ -3,7 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
-import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.pojoJMH.BenchmarkJMHJSONBase;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.pojoJMH.BenchmarkJMHJSONRoot;
 
 import java.io.File;
 import java.util.*;
@@ -75,16 +75,16 @@ public class JMHJSONParser implements MeasurementParser {
     static Stream<SampleMetadata> getSamplesMetadataFromFile(String fileName) {
         File inputFile = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
-        BenchmarkJMHJSONBase[] base;
+        BenchmarkJMHJSONRoot[] base;
         try {
-            base = objectMapper.readValue(inputFile, BenchmarkJMHJSONBase[].class);
+            base = objectMapper.readValue(inputFile, BenchmarkJMHJSONRoot[].class);
         } catch (Exception e) {
             return null;
         }
         assert base != null;
         Stream.Builder<SampleMetadata> streamBuilder = Stream.builder();
 
-        for (BenchmarkJMHJSONBase benchmark : base) {
+        for (BenchmarkJMHJSONRoot benchmark : base) {
             var name = benchmark.getBenchmark();
             var primaryMetric = benchmark.getPrimaryMetric();
             Metric metric = null;
