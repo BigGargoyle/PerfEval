@@ -37,7 +37,7 @@ public class Parser {
         }
         try {
             for (var arg : options.nonOptionArguments()) {
-                CommandSetup commandSetup = commandPerSetup.get(arg);
+                CommandSetup commandSetup = commandPerSetup.get(arg.toString());
                 if (commandSetup != null) {
                     return commandSetup.setup(args, options, config);
                 }

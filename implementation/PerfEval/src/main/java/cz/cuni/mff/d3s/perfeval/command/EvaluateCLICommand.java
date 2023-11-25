@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.perfeval.clievaluator;
+package cz.cuni.mff.d3s.perfeval.command;
 
 import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;

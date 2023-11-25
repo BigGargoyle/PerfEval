@@ -15,15 +15,15 @@ public class AddFileCommand implements Command {
     /**
      * Path to the file to add.
      */
-    final Path fileToAdd;
+    private final Path fileToAdd;
     /**
      * Database to add the file to.
      */
-    final Database database;
+    private final Database database;
     /**
      * Version of the project to add the file to.
      */
-    final ProjectVersion version;
+    private final ProjectVersion version;
 
     /**
      * Creates a new instance of the command.
@@ -32,7 +32,7 @@ public class AddFileCommand implements Command {
      * @param database  Database to add the file to.
      * @param version   Version of the project to add the file to.
      */
-    public AddFileCommand(Path fileToAdd, Database database, ProjectVersion version) {
+    public AddFileCommand(final Path fileToAdd, final Database database, final ProjectVersion version) {
         this.fileToAdd = fileToAdd;
         this.database = database;
         this.version = version;
@@ -49,7 +49,7 @@ public class AddFileCommand implements Command {
         try {
             database.addFile(fileToAdd, version);
         } catch (DatabaseException e) {
-            PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.databaseError);
+            final PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.databaseError);
             exception.initCause(e);
             throw exception;
         }
