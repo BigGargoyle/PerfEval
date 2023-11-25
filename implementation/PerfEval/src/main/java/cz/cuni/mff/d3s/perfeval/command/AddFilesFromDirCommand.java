@@ -1,5 +1,6 @@
-package cz.cuni.mff.d3s.perfeval;
+package cz.cuni.mff.d3s.perfeval.command;
 
+import cz.cuni.mff.d3s.perfeval.ExitCode;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
@@ -11,10 +12,6 @@ import java.nio.file.Path;
  * Command for adding all files from a directory to the database.
  */
 public class AddFilesFromDirCommand implements Command {
-    /**
-     * String representation of the command.
-     */
-    public static final String COMMAND = "index-all-results";
     /**
      * Directory from which to add files.
      */

@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.perfeval.init;
 
-import cz.cuni.mff.d3s.perfeval.Command;
+import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
@@ -22,10 +22,6 @@ import java.time.Duration;
  * Command for initializing perfeval in directory
  */
 public class InitCommand implements Command {
-    /**
-     * String representation of init command
-     */
-    public static final String COMMAND = "init";
     /**
      * String representation of key for critical value in ini file
      */

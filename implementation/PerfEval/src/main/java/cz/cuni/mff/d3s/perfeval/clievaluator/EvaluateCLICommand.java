@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.perfeval.clievaluator;
 
-import cz.cuni.mff.d3s.perfeval.Command;
+import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
@@ -19,15 +19,6 @@ import java.util.List;
  * Command for evaluating results of performance tests
  */
 public class EvaluateCLICommand implements Command {
-
-    /**
-     * String representation of evaluate command
-     */
-    public static final String COMMAND = "evaluate";
-    /**
-     * String representation of list-undecided command
-     */
-    public static final String UNDECIDED_COMMAND = "list-undecided";
     /**
      * Number of input files for evaluation (two versions of performance tests)
      */
