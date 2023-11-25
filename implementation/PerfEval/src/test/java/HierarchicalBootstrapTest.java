@@ -7,30 +7,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HierarchicalBootstrapTest {
 
+    double DEFAULT_CRIT_VALUE = 0.05;
+    int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 10_000;
+
     @Test
     public void testEvaluateBootstrapDifferentSets() {
-        HierarchicalBootstrap bootstrap = new HierarchicalBootstrap(0.05, 10_000);
 
         // Test evaluateBootstrap with sampleSet1 and sampleSet2
         double[][] sampleSet1 = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
         double[][] sampleSet2 = {{7.0, 8.0, 9.0}, {10.0, 11.0, 12.0}};
-        boolean result = bootstrap.evaluateBootstrap(sampleSet1, sampleSet2);
+        boolean result = HierarchicalBootstrap.evaluateBootstrap(sampleSet1, sampleSet2, DEFAULT_CRIT_VALUE, DEFAULT_BOOTSTRAP_SAMPLE_COUNT);
         assertFalse(result);
+        boolean result2 = HierarchicalBootstrap.evaluateBootstrap(sampleSet1, sampleSet2, DEFAULT_CRIT_VALUE);
+        assertFalse(result2);
     }
     @Test
     public void testEvaluateBootstrapSimilarSets() {
-        HierarchicalBootstrap bootstrap = new HierarchicalBootstrap(0.05, 10_000);
 
         // Test evaluateBootstrap with different data that should not satisfy the condition
         double[][] sampleSet3 = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
         double[][] sampleSet4 = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
-        boolean result2 = bootstrap.evaluateBootstrap(sampleSet3, sampleSet4);
+        boolean result = HierarchicalBootstrap.evaluateBootstrap(sampleSet3, sampleSet4, DEFAULT_CRIT_VALUE, DEFAULT_BOOTSTRAP_SAMPLE_COUNT);
+        assertTrue(result);
+        boolean result2 = HierarchicalBootstrap.evaluateBootstrap(sampleSet3, sampleSet4, DEFAULT_CRIT_VALUE);
         assertTrue(result2);
     }
 
     @Test
     public void testEvaluateBootstrapDifferentSetsLargeArrays() {
-        HierarchicalBootstrap bootstrap = new HierarchicalBootstrap(0.05, 10_000);
 
         // Test evaluateBootstrap with larger sampleSet1 and sampleSet2
         int size = 100; // Adjust size as needed
@@ -45,12 +49,13 @@ public class HierarchicalBootstrapTest {
             }
         }
 
-        boolean result = bootstrap.evaluateBootstrap(sampleSet1, sampleSet2);
+        boolean result = HierarchicalBootstrap.evaluateBootstrap(sampleSet1, sampleSet2, DEFAULT_CRIT_VALUE, DEFAULT_BOOTSTRAP_SAMPLE_COUNT);
         assertFalse(result);
+        boolean result2 = HierarchicalBootstrap.evaluateBootstrap(sampleSet1, sampleSet2, DEFAULT_CRIT_VALUE);
+        assertFalse(result2);
     }
     @Test
     public void testEvaluateBootstrapSimilarSetsLargeArrays() {
-        HierarchicalBootstrap bootstrap = new HierarchicalBootstrap(0.05, 10_000);
 
         // Test evaluateBootstrap with larger sampleSet3 and sampleSet4
         int size = 100; // Adjust size as needed
@@ -65,8 +70,8 @@ public class HierarchicalBootstrapTest {
             }
         }
 
-        boolean result2 = bootstrap.evaluateBootstrap(sampleSet3, sampleSet4);
-        assertTrue(result2);
+        boolean result = HierarchicalBootstrap.evaluateBootstrap(sampleSet3, sampleSet4, DEFAULT_CRIT_VALUE, DEFAULT_BOOTSTRAP_SAMPLE_COUNT);
+        assertTrue(result);
     }
 
 

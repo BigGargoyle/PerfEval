@@ -12,10 +12,6 @@ public class BootstrapPerformanceComparator implements PerformanceComparator {
      */
     static int MINUS_ONE = -1;
     /**
-     * Bootstrap object
-     */
-    HierarchicalBootstrap bootstrap;
-    /**
      * Critical value for bootstrap
      */
     double critValue;
@@ -24,6 +20,19 @@ public class BootstrapPerformanceComparator implements PerformanceComparator {
      */
     double tolerance;
 
+    int bootstrapSampleCount;
+
+    /**
+     * Constructor for BootstrapPerformanceComparator
+     *
+     * @param critValue            critical value for bootstrap
+     * @param tolerance            tolerance, how much can the performance get worse
+     */
+    public BootstrapPerformanceComparator(double critValue, double tolerance) {
+        this.critValue = critValue;
+        this.tolerance = tolerance;
+        bootstrapSampleCount = HierarchicalBootstrap.DEFAULT_BOOTSTRAP_SAMPLE_COUNT;
+    }
     /**
      * Constructor for BootstrapPerformanceComparator
      *
@@ -32,9 +41,9 @@ public class BootstrapPerformanceComparator implements PerformanceComparator {
      * @param bootstrapSampleCount count of samples used for bootstrap
      */
     public BootstrapPerformanceComparator(double critValue, double tolerance, int bootstrapSampleCount) {
-        bootstrap = new HierarchicalBootstrap(critValue, bootstrapSampleCount);
         this.critValue = critValue;
         this.tolerance = tolerance;
+        this.bootstrapSampleCount = bootstrapSampleCount;
     }
 
     /**
@@ -60,6 +69,6 @@ public class BootstrapPerformanceComparator implements PerformanceComparator {
     @Override
     public MeasurementComparisonRecord compareSets(Samples oldSamples, Samples newSamples) {
         return constructRecord(oldSamples, newSamples,
-                bootstrap.evaluateBootstrap(oldSamples.getRawData(), newSamples.getRawData()));
+                HierarchicalBootstrap.evaluateBootstrap(oldSamples.getRawData(), newSamples.getRawData(), critValue, bootstrapSampleCount));
     }
 }

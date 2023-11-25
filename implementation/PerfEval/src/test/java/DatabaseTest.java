@@ -109,7 +109,7 @@ public class DatabaseTest {
         // Ensure the results are in descending order (newest first)
         /*for (int i = 0; i < lastNResults.length - 1; i++) {
             assertTrue(lastNResults[i].version().dateOfCommit().after(lastNResults[i + 1].version().dateOfCommit()));
-        }*/
+        } --> just for local tests, on GitLab CI fails*/
     }
 
     @Test
