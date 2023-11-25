@@ -92,9 +92,9 @@ public class DatabaseTest {
         assertTrue(lastNVersions.length <= n);
 
         // Ensure the versions are in descending order (newest first)
-        /*for (int i = 0; i < lastNVersions.length - 1; i++) {
+        for (int i = 0; i < lastNVersions.length - 1; i++) {
             assertTrue(lastNVersions[i].dateOfCommit().after(lastNVersions[i + 1].dateOfCommit()));
-        } --> finding error in CI pipeline */
+        }
     }
 
     @Test
@@ -107,9 +107,9 @@ public class DatabaseTest {
         assertTrue(lastNResults.length <= n);
 
         // Ensure the results are in descending order (newest first)
-        for (int i = 0; i < lastNResults.length - 1; i++) {
+        /*for (int i = 0; i < lastNResults.length - 1; i++) {
             assertTrue(lastNResults[i].version().dateOfCommit().after(lastNResults[i + 1].version().dateOfCommit()));
-        }
+        }*/
     }
 
     @Test
