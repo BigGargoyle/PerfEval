@@ -18,31 +18,26 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DatabaseTest {
     Database database;
     Path dbPath;
-    Path dirWithTestFiles;
 
     @BeforeEach
     void setup() throws SQLException, DatabaseException, IOException {
         // Load the database from resources
         ClassLoader classLoader = getClass().getClassLoader();
-        //InputStream dbInputStream = classLoader.getResourceAsStream("test-db/your-database-file.db");
+        // InputStream dbInputStream = classLoader.getResourceAsStream("test-db/your-database-file.db");
         dbPath = Files.createTempFile("test-db", ".h2.db");
 
-        // Load the test results directory from resources
-        String resourceDir = "test-results";
-        dirWithTestFiles = Files.createTempDirectory("test-results");
-        for(File f : Objects.requireNonNull(new File(Objects.requireNonNull(classLoader.getResource(resourceDir)).getFile()).listFiles())) {
-            Path newFilePath = Path.of(dirWithTestFiles.toString(), f.getName());
-            Files.copy(f.toPath(), newFilePath);
-        }
-
         database = H2Database.getDBFromFilePath(dbPath);
+
+        // Iterate through files in the resources and add them directly to the database
+        String resourceDir = "test-results";
+        File[] files = new File(Objects.requireNonNull(classLoader.getResource(resourceDir)).getFile()).listFiles();
         int i = 0;
-        for (File f : Objects.requireNonNull(dirWithTestFiles.toFile().listFiles())) {
+        for (File f : Objects.requireNonNull(files)) {
             ProjectVersion version = new ProjectVersion(
                     Date.from(Instant.now().minus(i, ChronoUnit.DAYS)),
                     "version" + i,
                     Integer.toString(i));
-            database.addFile(f.toPath(), version);
+            database.addFile(f.toPath().toAbsolutePath(), version);
             i++;
         }
     }
