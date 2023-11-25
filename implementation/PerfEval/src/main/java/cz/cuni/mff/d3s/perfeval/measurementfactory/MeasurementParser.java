@@ -17,6 +17,13 @@ public interface MeasurementParser {
     List<Samples> getTestsFromFiles(String[] fileNames);
 
     /**
+     * Parses file with results of performance tests
+     * @param fileName name of file with results of performance tests
+     * @return list of Samples objects
+     */
+    List<Samples> getTestsFromFile(String fileName);
+
+    /**
      * Returns name of parser
      *
      * @return name of parser
