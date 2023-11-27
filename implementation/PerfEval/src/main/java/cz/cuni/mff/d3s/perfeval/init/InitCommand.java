@@ -105,7 +105,7 @@ public class InitCommand implements Command {
         double maxCIWidth = Double.parseDouble(config.getString(MAX_CI_WIDTH_KEY));
         Duration timeUnit = Duration.ofNanos(Long.parseLong(config.getString(MAX_TIME_KEY)));
         String version = config.getString(VERSION_KEY);
-        boolean gitPresence = config.getString(GIT_PRESENCE_KEY).compareTo(TRUE_STRING) == 0;
+        boolean gitPresence = TRUE_STRING.compareTo(config.getString(GIT_PRESENCE_KEY)) == 0;
         String parserName = config.getString(PARSER_NAME_KEY);
         MeasurementParser parser = ParserFactory.getParser(parserName);
         double tolerance = Double.parseDouble(config.getString(TOLERANCE_KEY));

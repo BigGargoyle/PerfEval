@@ -12,7 +12,11 @@ import cz.cuni.mff.d3s.perfeval.performancecomparators.BootstrapPerformanceCompa
 import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
 import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceComparator;
 import cz.cuni.mff.d3s.perfeval.performancecomparators.TTestPerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.resultdatabase.*;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.H2Database;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.ProjectVersion;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -72,7 +76,7 @@ public class SetupUtilities {
     static final Comparator<MeasurementComparisonRecord> sizeOfChangeFilterComparator = Comparator.comparing(MeasurementComparisonRecord::performanceChange);
     private static final String TEST_ID_FILTER = "test-id";
     static final Comparator<MeasurementComparisonRecord> nameFilterComparator = Comparator.comparing(MeasurementComparisonRecord::newSamples, Comparator.comparing(Samples::getName));
-    static Duration resolveDuration(OptionSet options, PerfEvalConfig config) {
+    static Duration resolveDuration(OptionSet options, PerfEvalConfig config) throws ParserException {
         if(!options.has(maxTimeOption))
             return config.getMaxTimeOnTest();
         Pattern pattern = Pattern.compile("(?:(\\d+)h)?(?:(\\d+)m)?(?:(\\d+)s)?");
@@ -95,67 +99,53 @@ public class SetupUtilities {
         }
 
         if(Duration.ofHours(hours).plusMinutes(minutes).plusSeconds(seconds).toNanos()==0){
-            System.err.println("Max time on test has invalid value. Default value will be used.");
-            return config.getMaxTimeOnTest();
+            //System.err.println("Max time on test has invalid value. Default value will be used.");
+            throw new ParserException("Max time on test has invalid value. Default value will be used.");
         }
 
         // Create a Duration object using the parsed values
         return Duration.ofHours(hours).plusMinutes(minutes).plusSeconds(seconds);
     }
-    static String resolveVersion(Path gitFilePath, OptionSet options) {
+    static String resolveVersion(Path gitFilePath, OptionSet options) throws IOException {
         if(options.has(versionOption))
             return options.valueOf(versionOption);
         if(gitFilePath==null)
             return null;
 
-        try {
-            if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
-                RevCommit lastCommit = GitUtilities.getLastCommit(gitFilePath.getParent());
-                assert lastCommit != null;
-                return lastCommit.getName();
-            }
-        } catch (IOException e) {
-            //TODO: zpracovat výjimku
-            //System.err.println(e.getMessage());
+        if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
+            RevCommit lastCommit = GitUtilities.getLastCommit(gitFilePath.getParent());
+            assert lastCommit != null;
+            return lastCommit.getName();
         }
-        System.err.println("Version cannot be resolved");
+        //System.err.println("Version cannot be resolved");
         return null;
 
     }
 
-    static String resolveTag(Path gitFilePath, OptionSet options, String version) {
+    static String resolveTag(Path gitFilePath, OptionSet options, String version) throws IOException {
         if(options.has(tagOption))
             return options.valueOf(tagOption);
         if(gitFilePath!=null)
-            try {
-                if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
-                    String lastCommitTag = GitUtilities.getLastCommitTag(gitFilePath.getParent(), version);
-                    assert lastCommitTag != null;
-                    return lastCommitTag;
-                }
-            } catch (IOException e) {
-                //TODO: zpracovat výjimku
-                System.err.println(e.getMessage());
+            if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
+                String lastCommitTag = GitUtilities.getLastCommitTag(gitFilePath.getParent(), version);
+                assert lastCommitTag != null;
+                return lastCommitTag;
             }
         return EMPTY_STRING;
     }
 
-    static Date resolveDate(Path gitFilePath, String versionHash){
+    static Date resolveDate(Path gitFilePath, String versionHash) throws IOException {
         if(gitFilePath==null)
             return null;
-        try {
-            if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
-                return GitUtilities.getCommitDate(gitFilePath.getParent(), versionHash);
-            }
-        } catch (IOException e) {
-            //TODO: zpracovat výjimku
-            System.err.println(e.getMessage());
+        if(GitUtilities.isRepoClean(gitFilePath.getParent())) {
+            return GitUtilities.getCommitDate(gitFilePath.getParent(), versionHash);
         }
-        System.err.println("Date cannot be resolved");
+
+        //System.err.println("Date cannot be resolved");
         return null;
     }
 
-    static ResultPrinter resolvePrinterForEvaluateCommand(OptionSet options){
+    static ResultPrinter resolvePrinterForEvaluateCommand(OptionSet options) throws ParserException {
         Comparator<MeasurementComparisonRecord> filter = new DefaultComparator<>();
         if (options.has(filterOption)) {
             //TODO: zbavit se println (všude)
@@ -163,7 +153,7 @@ public class SetupUtilities {
                 case TEST_ID_FILTER -> filter = nameFilterComparator;
                 case SIZE_OF_CHANGE_FILTER -> filter = sizeOfChangeFilterComparator;
                 case TEST_RESULT_FILTER -> filter = testResultFilterComparator;
-                default -> System.err.println("Unknown filter. Default filter will be used.");
+                default -> throw new ParserException("Unknown filter option: " + options.valueOf(filterOption));
             }
         }
         PrintStream printStream = System.out;
