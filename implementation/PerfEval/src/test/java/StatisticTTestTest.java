@@ -6,39 +6,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StatisticTTestTest {
 
+    double DEFAULT_CRIT_VALUE = 0.05;
     @Test
     public void testDifferentSets() {
-        StatisticTTest tTest = new StatisticTTest(0.05);
 
         // Test when sampleSet1 and sampleSet2 are significantly different
         double[][] sampleSet1 = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
         double[][] sampleSet2 = {{7.0, 8.0, 9.0}, {10.0, 11.0, 12.0}};
-        boolean result = tTest.areSetsSame(sampleSet1, sampleSet2);
+        boolean result = StatisticTTest.areSetsSame(sampleSet1, sampleSet2, DEFAULT_CRIT_VALUE);
         assertFalse(result);
     }
     @Test
     public void testSimilarSets() {
-        StatisticTTest tTest = new StatisticTTest(0.05);
 
         // Test when sampleSet1 and sampleSet2 are not significantly different
         double[][] sampleSet3 = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
         double[][] sampleSet4 = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
-        boolean result2 = tTest.areSetsSame(sampleSet3, sampleSet4);
+        boolean result2 = StatisticTTest.areSetsSame(sampleSet3, sampleSet4, DEFAULT_CRIT_VALUE);
         assertTrue(result2);
     }
     @Test
     public void testEmptySets() {
-        StatisticTTest tTest = new StatisticTTest(0.05);
 
         // Test when the sample sets are empty, which should throw a MathIllegalArgumentException
         double[][] emptySampleSet1 = {};
         double[][] emptySampleSet2 = {};
 
-        assertThrows(MathIllegalArgumentException.class, () -> tTest.areSetsSame(emptySampleSet1, emptySampleSet2));
+        assertThrows(MathIllegalArgumentException.class, () -> StatisticTTest.areSetsSame(emptySampleSet1, emptySampleSet2, DEFAULT_CRIT_VALUE));
     }
     @Test
     public void testDifferentSetsLargeCount() {
-        StatisticTTest tTest = new StatisticTTest(0.05);
 
         // Test when sampleSet1 and sampleSet2 are significantly different with a large count of elements
         double[][] sampleSet1 = new double[2][1000];
@@ -53,13 +50,12 @@ public class StatisticTTestTest {
             sampleSet2[1][i] = i + 3001;  // Values from 3001 to 4000
         }
 
-        boolean result = tTest.areSetsSame(sampleSet1, sampleSet2);
+        boolean result = StatisticTTest.areSetsSame(sampleSet1, sampleSet2, DEFAULT_CRIT_VALUE);
         assertFalse(result);
     }
 
     @Test
     public void testSimilarSetsLargeCount() {
-        StatisticTTest tTest = new StatisticTTest(0.05);
 
         // Test when sampleSet1 and sampleSet2 are not significantly different with a large count of elements
         double[][] sampleSet3 = new double[2][1000];
@@ -74,7 +70,7 @@ public class StatisticTTestTest {
             sampleSet4[1][i] = i + 1001;  // Values from 1001 to 2000
         }
 
-        boolean result2 = tTest.areSetsSame(sampleSet3, sampleSet4);
+        boolean result2 = StatisticTTest.areSetsSame(sampleSet3, sampleSet4, DEFAULT_CRIT_VALUE);
         assertTrue(result2);
     }
 
