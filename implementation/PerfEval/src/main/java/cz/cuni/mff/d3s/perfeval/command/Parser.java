@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
-import cz.cuni.mff.d3s.perfeval.resultdatabase.*;
+import cz.cuni.mff.d3s.perfeval.ExitCode;
+import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import cz.cuni.mff.d3s.perfeval.init.InitCommand;
@@ -11,7 +13,9 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.CreateParser;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.INI_FILE_NAME;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.PERFEVAL_DIR;
 
 public class Parser {
 
@@ -44,9 +48,17 @@ public class Parser {
                 }
             }
         } catch (DatabaseException e){
-            System.err.println(e.getMessage());
+            ParserException exception = new ParserException("Database error: " + e.getMessage());
+            exception.exitCode = ExitCode.databaseError;
+            exception.initCause(e);
+            throw exception;
         } catch (AssertionError e){
-            System.err.println("One of versions has no known measurement results.");
+            throw new ParserException("One of versions has no known measurement results."+
+                    System.lineSeparator()+"Assertion error: " + e.getMessage(), e);
+        } catch (PerfEvalCommandFailedException e) {
+            ParserException exception = new ParserException(e.getMessage(), e.exitCode);
+            exception.initCause(e);
+            throw exception;
         }
         return null;
     }

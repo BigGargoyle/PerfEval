@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.perfeval.command;
+package cz.cuni.mff.d3s.perfeval;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
@@ -29,9 +29,7 @@ public class GitUtilities {
             Status status = git.status().call();
             return status.isClean();
         } catch (Exception e) {
-            IOException exception = new IOException("No git file founded.");
-            exception.initCause(e);
-            throw exception;
+            throw new IOException("No git file founded.", e);
         }
     }
 
@@ -52,9 +50,7 @@ public class GitUtilities {
             return new RevWalk(git.getRepository()).parseCommit(objectId);
 
         } catch (Exception e) {
-            IOException exception = new IOException("No git file founded.");
-            exception.initCause(e);
-            throw exception;
+            throw new IOException("No git file founded.", e);
         }
     }
 
@@ -79,9 +75,7 @@ public class GitUtilities {
                 return "";
 
         } catch (Exception e) {
-            IOException exception = new IOException("No git file founded.");
-            exception.initCause(e);
-            throw exception;
+            throw new IOException("No git file founded.", e);
         }
     }
 

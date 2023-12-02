@@ -133,7 +133,8 @@ public class InitCommand implements Command {
         String gitPresenceString = perfevalConfig.hasGitFilePresence() ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
         config.setProperty(VERSION_KEY, perfevalConfig.getVersion());
-        config.setProperty(PARSER_NAME_KEY, perfevalConfig.getMeasurementParser().getParserName());
+        //TODO: solve parser name
+        //config.setProperty(PARSER_NAME_KEY, perfevalConfig.getMeasurementParser().getParserName());
         config.setProperty(TOLERANCE_KEY, perfevalConfig.getTolerance());
 
         // Save to the INI file
@@ -233,9 +234,7 @@ public class InitCommand implements Command {
         try {
             createIniFile(iniFilePath, config);
         } catch (ConfigurationException e) {
-            IOException exception = new IOException("ini file cannot be created");
-            exception.initCause(e);
-            throw exception;
+            throw new IOException("Config file cannot be created", e);
         }
         createGitIgnoreFile(this.gitIgnorePath, gitIgnoredFiles);
         for (Path emptyFile : emptyFilesToCreate) {

@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.perfeval;
 
 import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.command.Parser;
+import cz.cuni.mff.d3s.perfeval.command.ParserException;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
 
 /**
@@ -17,7 +18,13 @@ public class Main {
      */
     public static void main(String[] args) {
         ExitCode exitCode;
-        Command command = Parser.getCommand(args);
+        Command command = null;
+        try {
+            command = Parser.getCommand(args);
+        } catch (ParserException e) {
+            System.err.println(e.getMessage());
+            e.exitCode.exit();
+        }
         try {
             if (command == null) exitCode = ExitCode.invalidArguments;
             else exitCode = command.execute();

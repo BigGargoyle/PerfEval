@@ -28,7 +28,9 @@ public enum ExitCode {
     /**
      * Exit code for unsuccessful execution due to database error.
      */
-    databaseError(104);
+    databaseError(104),
+
+    parserError(105);
     /**
      * Integer value of the exit code.
      */

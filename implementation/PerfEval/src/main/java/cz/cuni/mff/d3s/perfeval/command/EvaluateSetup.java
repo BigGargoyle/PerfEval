@@ -7,14 +7,16 @@ import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 import joptsimple.OptionSet;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveInputFilesWithRespectToInputtedVersions;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolvePerformanceComparatorForEvaluateCommand;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolvePrinterForEvaluateCommand;
 
 public class EvaluateSetup implements  CommandSetup{
 
     static final String commandName = "evaluate";
 
     @Override
-    public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
+    public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException, ParserException {
 
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = resolvePrinterForEvaluateCommand(options);

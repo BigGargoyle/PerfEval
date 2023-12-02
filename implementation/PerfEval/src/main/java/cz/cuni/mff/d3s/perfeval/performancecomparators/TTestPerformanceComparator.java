@@ -30,10 +30,6 @@ public class TTestPerformanceComparator implements PerformanceComparator {
      * Maximal time of the test.
      */
     Duration maxTestTime;
-    /**
-     * Instance of the t-test.
-     */
-    StatisticTTest statisticTTest;
 
     /**
      * Constructor of the class.
@@ -48,7 +44,6 @@ public class TTestPerformanceComparator implements PerformanceComparator {
         this.maxCIWidth = maxCIWidth;
         this.tolerance = tolerance;
         this.maxTestTime = maxTestTime;
-        statisticTTest = new StatisticTTest(critValue);
         assert tolerance >= 0 && tolerance <= 1;
         assert critValue > 0 && critValue < 1;
         assert maxCIWidth > 0 && maxCIWidth < 1;
@@ -75,7 +70,7 @@ public class TTestPerformanceComparator implements PerformanceComparator {
             case SameDistribution -> testVerdict = true;
             case DifferentDistribution ->
                     testVerdict = performanceChange >= 0 || Math.abs(performanceChange / 100) > 1 - tolerance;
-            case NotEnoughSamples -> testVerdict = false;
+            // --> to default case NotEnoughSamples -> testVerdict = false;
             default -> testVerdict = false;
         }
 
@@ -91,7 +86,7 @@ public class TTestPerformanceComparator implements PerformanceComparator {
      */
     @Override
     public MeasurementComparisonRecord compareSets(Samples oldMeasurement, Samples newMeasurement) {
-        if (statisticTTest.areSetsSame(oldMeasurement.getRawData(), newMeasurement.getRawData())) {
+        if (StatisticTTest.areSetsSame(oldMeasurement.getRawData(), newMeasurement.getRawData(), critValue)) {
             return constructRecord(oldMeasurement, newMeasurement, ComparisonResult.SameDistribution, MINUS_ONE);
         }
         double[] newArr = ArrayUtilities.mergeArrays(newMeasurement.getRawData());

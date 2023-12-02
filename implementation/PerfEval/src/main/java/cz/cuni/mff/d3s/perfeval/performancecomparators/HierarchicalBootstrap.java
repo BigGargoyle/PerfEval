@@ -18,6 +18,8 @@ public class HierarchicalBootstrap {
      */
     int bootstrapSampleCount;
 
+    static int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 10_000;
+
     /**
      * Constructor for HierarchicalBootstrap
      *
@@ -36,8 +38,12 @@ public class HierarchicalBootstrap {
      * @param sampleSet2 second set of samples
      * @return true if performance of second set of samples did not get worse, false otherwise
      */
-    public boolean evaluateBootstrap(double[][] sampleSet1, double[][] sampleSet2) {
-        double[] bootstrapSample = createBootstrapSample(sampleSet1, sampleSet2);
+    public static boolean evaluateBootstrap(double[][] sampleSet1, double[][] sampleSet2, double critValue) {
+        return evaluateBootstrap(sampleSet1, sampleSet2, critValue, DEFAULT_BOOTSTRAP_SAMPLE_COUNT);
+    }
+
+    public static boolean evaluateBootstrap(double[][] sampleSet1, double[][] sampleSet2, double critValue, int bootstrapSampleCount) {
+        double[] bootstrapSample = createBootstrapSample(sampleSet1, sampleSet2, bootstrapSampleCount);
         double[] bootstrapInterval = calcCIInterval(bootstrapSample, 1 - critValue);
         assert bootstrapInterval.length == 2;
         return bootstrapInterval[0] <= 0 && bootstrapInterval[1] >= 0;
@@ -50,10 +56,13 @@ public class HierarchicalBootstrap {
      * @param sampleSet2 second set of samples
      * @return bootstrap sample
      */
-    private double[] createBootstrapSample(double[][] sampleSet1, double[][] sampleSet2) {
+    private static double[] createBootstrapSample(double[][] sampleSet1, double[][] sampleSet2, int bootstrapSampleCount) {
         Random random = new Random();
         double[] result = new double[bootstrapSampleCount];
         for (int i = 0; i < bootstrapSampleCount; i++) {
+            //vybrat nové pole polí
+            //prvky pole polí budou bootstrap vzorky sebe sama
+
             var sampleArr1 = sampleSet1[random.nextInt(0, sampleSet1.length)];
             var sampleArr2 = sampleSet2[random.nextInt(0, sampleSet2.length)];
             var sample1 = sampleArr1[random.nextInt(0, sampleArr1.length)];

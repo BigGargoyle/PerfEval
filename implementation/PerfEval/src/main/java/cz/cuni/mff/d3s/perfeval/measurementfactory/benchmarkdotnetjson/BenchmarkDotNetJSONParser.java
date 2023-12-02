@@ -121,8 +121,8 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
     private Stream<SampleMetadata> mapBenchmarkToMeasurement(Benchmark benchmark) {
         String methodName = benchmark.getMethodTitle();
         return benchmark.getMeasurements().stream()
-                .filter(measurement -> measurement.getIterationMode().equals(testedIterationMode) &&
-                        measurement.getIterationStage().equals(testedIterationStage))
+                .filter(measurement -> testedIterationMode.compareTo(measurement.getIterationMode())==0 &&
+                        testedIterationStage.compareTo(measurement.getIterationStage())==0)
                 .map(measurement -> {
                     SampleMetadata sampleMetadata = new SampleMetadata();
                     sampleMetadata.name = methodName;
@@ -165,8 +165,7 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
         }
     }
 
-    @Override
-    public String getParserName() {
+    public static String getParserName() {
         return "BenchmarkDotNetJSONParser";
     }
 }
