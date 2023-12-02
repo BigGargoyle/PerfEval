@@ -123,8 +123,7 @@ public class JMHJSONParser implements MeasurementParser {
         Metric metric;
     }
 
-    @Override
-    public String getParserName() {
+    public static String getParserName() {
         return "JMHJSONParser";
     }
 }

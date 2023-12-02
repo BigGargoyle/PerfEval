@@ -7,31 +7,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Factory for creating parsers and getting their names
  */
 public class ParserFactory {
     /**
-     * List of possible parsers
+     * Map of registered parsers
      */
-    private static final Map<String, MeasurementParser> registeredParsers = new HashMap<>();
+    private static final Map<String, Supplier<MeasurementParser>> registeredParsers = new HashMap<>();
 
     static {
         // constructed parsers of all possible types
         // factory can be extended by adding new parsers here
-        registeredParsers.put(new JMHJSONParser().getParserName(), new JMHJSONParser());
-        registeredParsers.put(new BenchmarkDotNetJSONParser().getParserName(), new BenchmarkDotNetJSONParser());
-    }
-
-    /**
-     * Returns parser with given name
-     *
-     * @param parserName name of parser
-     * @return parser with given name
-     */
-    public static MeasurementParser getParser(String parserName) {
-        return registeredParsers.get(parserName);
+        registeredParsers.put(JMHJSONParser.getParserName(), JMHJSONParser::new);
+        registeredParsers.put(BenchmarkDotNetJSONParser.getParserName(), BenchmarkDotNetJSONParser::new);
     }
 
     /**
@@ -41,5 +32,9 @@ public class ParserFactory {
      */
     public static List<String> getPossibleNames() {
         return new ArrayList<>(registeredParsers.keySet());
+    }
+
+    public static MeasurementParser getParser(String value) {
+        return registeredParsers.get(value).get();
     }
 }

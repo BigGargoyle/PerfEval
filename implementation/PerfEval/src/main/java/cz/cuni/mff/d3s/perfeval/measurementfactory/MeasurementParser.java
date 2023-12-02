@@ -23,10 +23,4 @@ public interface MeasurementParser {
      */
     List<Samples> getTestsFromFile(String fileName);
 
-    /**
-     * Returns name of parser
-     *
-     * @return name of parser
-     */
-    String getParserName();
 }

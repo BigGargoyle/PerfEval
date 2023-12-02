@@ -165,8 +165,7 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
         }
     }
 
-    @Override
-    public String getParserName() {
+    public static String getParserName() {
         return "BenchmarkDotNetJSONParser";
     }
 }

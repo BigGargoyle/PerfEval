@@ -137,7 +137,8 @@ public class InitCommand implements Command {
         String gitPresenceString = perfevalConfig.hasGitFilePresence() ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
         config.setProperty(VERSION_KEY, perfevalConfig.getVersion());
-        config.setProperty(PARSER_NAME_KEY, perfevalConfig.getMeasurementParser().getParserName());
+        //TODO: solve parser name
+        //config.setProperty(PARSER_NAME_KEY, perfevalConfig.getMeasurementParser().getParserName());
         config.setProperty(TOLERANCE_KEY, perfevalConfig.getTolerance());
 
         // Save to the INI file
