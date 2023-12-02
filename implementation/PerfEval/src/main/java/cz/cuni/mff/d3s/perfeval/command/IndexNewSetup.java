@@ -32,8 +32,7 @@ public class IndexNewSetup implements CommandSetup{
         return new AddFileCommand(sourceDir, database, projectVersion);
     }
 
-    @Override
-    public String getCommandName() {
+    public static String getCommandName() {
         return commandName;
     }
 }

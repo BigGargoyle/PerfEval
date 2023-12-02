@@ -9,19 +9,20 @@ import cz.cuni.mff.d3s.perfeval.init.PerfEvalInvalidConfigException;
 
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
 
 public class Parser {
 
-    static Map<String, CommandSetup> commandPerSetup;
+    static Map<String, Supplier<CommandSetup>> commandPerSetup;
     static {
         commandPerSetup = Map.of(
-                new InitSetup().getCommandName(), new InitSetup(),
-                new EvaluateSetup().getCommandName(), new EvaluateSetup(),
-                new IndexNewSetup().getCommandName(), new IndexNewSetup(),
-                new IndexAllSetup().getCommandName(), new IndexAllSetup(),
-                new UndecidedSetup().getCommandName(), new UndecidedSetup()
+                InitSetup.getCommandName(), InitSetup::new,
+                EvaluateSetup.getCommandName(), EvaluateSetup::new,
+                IndexNewSetup.getCommandName(), IndexNewSetup::new,
+                IndexAllSetup.getCommandName(),IndexAllSetup::new,
+                UndecidedSetup.getCommandName(), UndecidedSetup::new
         );
     }
 
@@ -37,7 +38,7 @@ public class Parser {
         }
         try {
             for (var arg : options.nonOptionArguments()) {
-                CommandSetup commandSetup = commandPerSetup.get(arg.toString());
+                CommandSetup commandSetup = commandPerSetup.get(arg.toString()).get();
                 if (commandSetup != null) {
                     return commandSetup.setup(args, options, config);
                 }

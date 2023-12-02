@@ -40,8 +40,7 @@ public class InitSetup implements CommandSetup{
                 emptyFiles, gitIgnoredFiles, config, options.has(FORCE_FLAG));
     }
 
-    @Override
-    public String getCommandName() {
+    public static String getCommandName() {
         return commandName;
     }
 }

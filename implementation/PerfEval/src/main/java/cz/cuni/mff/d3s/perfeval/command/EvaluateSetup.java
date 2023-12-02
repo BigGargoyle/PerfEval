@@ -24,8 +24,7 @@ public class EvaluateSetup implements  CommandSetup{
 
     }
 
-    @Override
-    public String getCommandName() {
+    public static String getCommandName() {
         return commandName;
     }
 }

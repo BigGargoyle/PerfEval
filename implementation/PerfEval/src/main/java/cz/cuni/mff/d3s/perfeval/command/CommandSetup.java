@@ -6,5 +6,4 @@ import joptsimple.OptionSet;
 
 public interface CommandSetup {
     Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException;
-    String getCommandName();
 }

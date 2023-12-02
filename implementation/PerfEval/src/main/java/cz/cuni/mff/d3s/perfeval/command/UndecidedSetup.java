@@ -32,8 +32,7 @@ public class UndecidedSetup implements  CommandSetup{
         return new EvaluateCLICommand(inputFiles, printer, comparator, config.getMeasurementParser());
     }
 
-    @Override
-    public String getCommandName() {
+    public static String getCommandName() {
         return commandName;
     }
 }
