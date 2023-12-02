@@ -1,6 +1,8 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
-import cz.cuni.mff.d3s.perfeval.resultdatabase.*;
+import cz.cuni.mff.d3s.perfeval.ExitCode;
+import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
+import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import cz.cuni.mff.d3s.perfeval.init.InitCommand;
@@ -10,7 +12,9 @@ import cz.cuni.mff.d3s.perfeval.init.PerfEvalInvalidConfigException;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.CreateParser;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.INI_FILE_NAME;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.PERFEVAL_DIR;
 
 public class Parser {
 
@@ -25,7 +29,7 @@ public class Parser {
         );
     }
 
-    public static Command getCommand(String[] args) {
+    public static Command getCommand(String[] args) throws ParserException {
         OptionParser parser = CreateParser();
         OptionSet options = parser.parse(args);
         Path iniFilePath = Path.of(args[0]).resolve(PERFEVAL_DIR).resolve(INI_FILE_NAME);
@@ -43,9 +47,14 @@ public class Parser {
                 }
             }
         } catch (DatabaseException e){
-            System.err.println(e.getMessage());
+            ParserException exception = new ParserException("Database error: " + e.getMessage());
+            exception.exitCode = ExitCode.databaseError;
+            throw exception;
         } catch (AssertionError e){
-            System.err.println("One of versions has no known measurement results.");
+            throw new ParserException("One of versions has no known measurement results."+
+                    System.lineSeparator()+"Assertion error: " + e.getMessage());
+        } catch (PerfEvalCommandFailedException e) {
+            throw new ParserException(e.getMessage(), e.exitCode);
         }
         return null;
     }
