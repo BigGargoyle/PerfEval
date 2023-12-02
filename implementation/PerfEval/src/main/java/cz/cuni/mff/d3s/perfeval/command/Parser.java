@@ -30,7 +30,7 @@ public class Parser {
         );
     }
 
-    public static Command getCommand(String[] args) {
+    public static Command getCommand(String[] args) throws ParserException {
         OptionParser parser = CreateParser();
         OptionSet options = parser.parse(args);
         Path iniFilePath = Path.of(args[0]).resolve(PERFEVAL_DIR).resolve(INI_FILE_NAME);
@@ -55,10 +55,6 @@ public class Parser {
         } catch (AssertionError e){
             throw new ParserException("One of versions has no known measurement results."+
                     System.lineSeparator()+"Assertion error: " + e.getMessage(), e);
-        } catch (PerfEvalCommandFailedException e) {
-            ParserException exception = new ParserException(e.getMessage(), e.exitCode);
-            exception.initCause(e);
-            throw exception;
         }
         return null;
     }

@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.perfeval.command;
 
 import cz.cuni.mff.d3s.perfeval.ExitCode;
 import cz.cuni.mff.d3s.perfeval.init.InitCommand;
-import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
@@ -22,7 +21,7 @@ public class InitSetup implements CommandSetup{
 
     static final String commandName = "init";
     @Override
-    public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws PerfEvalCommandFailedException {
+    public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws ParserException {
         Path workingDir = Path.of(args[0]);
         Path perfevalDirPath = workingDir.resolve(PERFEVAL_DIR);
         Path gitIgnorePath = perfevalDirPath.resolve(GIT_IGNORE_FILE_NAME);
@@ -38,7 +37,7 @@ public class InitSetup implements CommandSetup{
         }
 
         if(parser==null)
-            throw new PerfEvalCommandFailedException(
+            throw new ParserException(
                     "Parser cannot be resolved. Default parser will be used."+System.lineSeparator()+
                             "Possible parsers are: " + ParserFactory.getPossibleNames(),
                     ExitCode.invalidArguments);

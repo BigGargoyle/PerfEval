@@ -18,7 +18,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;*/
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandTest {
     //static String PWD = "test-directory";
