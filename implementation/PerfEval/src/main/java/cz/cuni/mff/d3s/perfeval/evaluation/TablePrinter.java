@@ -93,7 +93,7 @@ public class TablePrinter implements ResultPrinter {
             case NotEnoughSamples -> tableRow[5] = ("not enough samples (" + comparisonResult.minSampleCount()
                     + " samples needed)");
             case Bootstrap -> tableRow[5] = ("note enough samples (bootstrap was made)");
-            case None -> tableRow[5] = ("NONE???");
+            default -> tableRow[5] = ("NONE???");
         }
 
         return tableRow;

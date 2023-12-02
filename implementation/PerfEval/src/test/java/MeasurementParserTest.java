@@ -14,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MeasurementParserTest {
 
     @Test
-    public void recognizeCorrectJMHJSONOutputFile(){
+    public void getJMHJSONParser(){
         var parser = ParserFactory.getParser(new JMHJSONParser().getParserName());
         assertTrue(parser instanceof JMHJSONParser);
     }
     @Test
-    public void recognizeCorrectBenchmarkDotNetJSONOutputFile(){
+    public void getBenchmarkDotNetJSONParser(){
         var parser = ParserFactory.getParser(new BenchmarkDotNetJSONParser().getParserName());
         assertTrue(parser instanceof BenchmarkDotNetJSONParser);
     }

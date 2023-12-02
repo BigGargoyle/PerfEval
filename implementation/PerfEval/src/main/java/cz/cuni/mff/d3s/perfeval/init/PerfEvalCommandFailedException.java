@@ -24,6 +24,11 @@ public class PerfEvalCommandFailedException extends Exception {
         this.exitCode = exitCode;
     }
 
+    public PerfEvalCommandFailedException(String message, ExitCode exitCode) {
+        super(message);
+        this.exitCode = exitCode;
+    }
+
     /**
      * @return message of exception
      */

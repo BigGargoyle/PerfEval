@@ -1,6 +1,6 @@
 package cz.cuni.mff.d3s.perfeval.init;
 
-import cz.cuni.mff.d3s.perfeval.Command;
+import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
@@ -22,10 +22,6 @@ import java.time.Duration;
  * Command for initializing perfeval in directory
  */
 public class InitCommand implements Command {
-    /**
-     * String representation of init command
-     */
-    public static final String COMMAND = "init";
     /**
      * String representation of key for critical value in ini file
      */
@@ -109,7 +105,7 @@ public class InitCommand implements Command {
         double maxCIWidth = Double.parseDouble(config.getString(MAX_CI_WIDTH_KEY));
         Duration timeUnit = Duration.ofNanos(Long.parseLong(config.getString(MAX_TIME_KEY)));
         String version = config.getString(VERSION_KEY);
-        boolean gitPresence = config.getString(GIT_PRESENCE_KEY).compareTo(TRUE_STRING) == 0;
+        boolean gitPresence = TRUE_STRING.compareTo(config.getString(GIT_PRESENCE_KEY)) == 0;
         String parserName = config.getString(PARSER_NAME_KEY);
         MeasurementParser parser = ParserFactory.getParser(parserName);
         double tolerance = Double.parseDouble(config.getString(TOLERANCE_KEY));
@@ -238,7 +234,7 @@ public class InitCommand implements Command {
         try {
             createIniFile(iniFilePath, config);
         } catch (ConfigurationException e) {
-            throw new IOException("Config file cannot be created");
+            throw new IOException("Config file cannot be created", e);
         }
         createGitIgnoreFile(this.gitIgnorePath, gitIgnoredFiles);
         for (Path emptyFile : emptyFilesToCreate) {
