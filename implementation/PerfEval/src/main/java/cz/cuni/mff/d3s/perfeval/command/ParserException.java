@@ -11,4 +11,8 @@ public class ParserException extends Exception {
         super(message);
         this.exitCode = exitCode;
     }
+
+    public ParserException(String message, AssertionError e) {
+        super(message, e);
+    }
 }

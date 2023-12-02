@@ -49,12 +49,15 @@ public class Parser {
         } catch (DatabaseException e){
             ParserException exception = new ParserException("Database error: " + e.getMessage());
             exception.exitCode = ExitCode.databaseError;
+            exception.initCause(e);
             throw exception;
         } catch (AssertionError e){
             throw new ParserException("One of versions has no known measurement results."+
-                    System.lineSeparator()+"Assertion error: " + e.getMessage());
+                    System.lineSeparator()+"Assertion error: " + e.getMessage(), e);
         } catch (PerfEvalCommandFailedException e) {
-            throw new ParserException(e.getMessage(), e.exitCode);
+            ParserException exception = new ParserException(e.getMessage(), e.exitCode);
+            exception.initCause(e);
+            throw exception;
         }
         return null;
     }

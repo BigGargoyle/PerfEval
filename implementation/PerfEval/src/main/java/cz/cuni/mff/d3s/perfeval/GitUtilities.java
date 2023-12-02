@@ -29,7 +29,7 @@ public class GitUtilities {
             Status status = git.status().call();
             return status.isClean();
         } catch (Exception e) {
-            throw new IOException("No git file founded.");
+            throw new IOException("No git file founded.", e);
         }
     }
 
@@ -50,7 +50,7 @@ public class GitUtilities {
             return new RevWalk(git.getRepository()).parseCommit(objectId);
 
         } catch (Exception e) {
-            throw new IOException("No git file founded.");
+            throw new IOException("No git file founded.", e);
         }
     }
 
@@ -75,7 +75,7 @@ public class GitUtilities {
                 return "";
 
         } catch (Exception e) {
-            throw new IOException("No git file founded.");
+            throw new IOException("No git file founded.", e);
         }
     }
 

@@ -233,7 +233,7 @@ public class InitCommand implements Command {
         try {
             createIniFile(iniFilePath, config);
         } catch (ConfigurationException e) {
-            throw new IOException("Config file cannot be created");
+            throw new IOException("Config file cannot be created", e);
         }
         createGitIgnoreFile(this.gitIgnorePath, gitIgnoredFiles);
         for (Path emptyFile : emptyFilesToCreate) {
