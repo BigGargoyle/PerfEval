@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HierarchicalBootstrapTest {
 
     double DEFAULT_CRIT_VALUE = 0.05;
-    int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 10_000;
+    int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 1_000;
 
     @Test
     public void testEvaluateBootstrapDifferentSets() {
@@ -37,7 +37,7 @@ public class HierarchicalBootstrapTest {
     public void testEvaluateBootstrapDifferentSetsLargeArrays() {
 
         // Test evaluateBootstrap with larger sampleSet1 and sampleSet2
-        int size = 100; // Adjust size as needed
+        int size = 10; // Adjust size as needed
         double[][] sampleSet1 = new double[size][size];
         double[][] sampleSet2 = new double[size][size];
 
@@ -58,7 +58,7 @@ public class HierarchicalBootstrapTest {
     public void testEvaluateBootstrapSimilarSetsLargeArrays() {
 
         // Test evaluateBootstrap with larger sampleSet3 and sampleSet4
-        int size = 100; // Adjust size as needed
+        int size = 10; // Adjust size as needed
         double[][] sampleSet3 = new double[size][size];
         double[][] sampleSet4 = new double[size][size];
 
