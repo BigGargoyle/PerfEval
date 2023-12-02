@@ -43,8 +43,7 @@ public class IndexNewSetup implements CommandSetup{
         }
     }
 
-    @Override
-    public String getCommandName() {
+    public static String getCommandName() {
         return commandName;
     }
 }

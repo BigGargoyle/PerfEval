@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
 import cz.cuni.mff.d3s.perfeval.ExitCode;
-import cz.cuni.mff.d3s.perfeval.GitUtilities;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.evaluation.JSONPrinter;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
