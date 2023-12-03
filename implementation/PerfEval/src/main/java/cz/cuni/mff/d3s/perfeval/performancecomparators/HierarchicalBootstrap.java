@@ -70,7 +70,7 @@ public class HierarchicalBootstrap {
 
     private static double calcBoostrapValue(double[][] sampleSet, int bootstrapSampleCount) {
         Random random = new Random();
-        double[] result = new double[bootstrapSampleCount];
+        double[] result = new double[sampleSet.length];
         //create bootstrapSampleCount of bootstrap samples
         for (int i = 0; i < sampleSet.length; i++) {
             //create 1 bootstrap sample of sampleSet
