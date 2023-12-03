@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBench
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.BenchmarkDotNetJSONRoot;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.Measurement;
 
 /**
  * Implementation of MeasurementParser for BenchmarkDotNet framework test results in the JSON format.
@@ -44,63 +45,33 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
      */
     @Override
     public List<Samples> getTestsFromFiles(String[] fileNames) {
-        Map<String, List<double[]>> samplesPerTestName = new HashMap<>();
-
-        for(var fileName : fileNames){
-            Map<String, List<double[]>> samplesPerTestNameFromFile = getTestsFromOneFile(fileName);
-            for(var key : samplesPerTestNameFromFile.keySet()){
-                samplesPerTestName.computeIfAbsent(key, k -> new ArrayList<>());
-                samplesPerTestName.get(key).addAll(samplesPerTestNameFromFile.get(key));
-            }
-        }
-
-        return finishSamples(samplesPerTestName);
+        Map<String, Samples> samplesPerTestName = getTestsFromFiles(Arrays.stream(fileNames));
+        return new ArrayList<>(samplesPerTestName.values());
     }
+    private Map<String, Samples> getTestsFromFiles(Stream<String> fileNames) {
+        Map<String, Samples> samplesPerTestName = new HashMap<>();
+        //generating File objects from file names
+        fileNames.map(this::mapStringToFile)
+            //parsing JSON files to POJOs
+            .map(this::mapFileToBenchmarkDotNetJSONRoot)
+            //mapping POJOs to Stream of Benchmarks
+            .flatMap(this::mapBenchmarkDotNetJSONRootToBenchmark)
+            //mapping Benchmarks to Stream of Samples
+            .forEach(sample -> {
+                //if sample of that name doesn't exist, create it
+                samplesPerTestName.computeIfAbsent(sample.getMethod(), k -> new Samples(metric, sample.getMethod()));
+                //add sample to the Samples object
+                samplesPerTestName.get(sample.getMethod()).addSample(
+                    //getting measurement times from the sample
+                    sample.getMeasurements().stream()
+                        //filtering only the measurements that have the tested iteration mode and stage
+                        .filter(sampleForFilter -> testedIterationMode.compareTo(sampleForFilter.getIterationMode())==0
+                                && testedIterationStage.compareTo(sampleForFilter.getIterationStage())==0)
+                        //mapping the measurements to doubles and storing them in an array
+                        .mapToDouble(Measurement::getNanoseconds).toArray());
+            });
 
-    @Override
-    public List<Samples> getTestsFromFile(String fileName) {
-        Map<String, List<double[]>> samplesPerTestName = getTestsFromOneFile(fileName);
-        return finishSamples(samplesPerTestName);
-    }
-
-    List<Samples> finishSamples(Map<String, List<double[]>> samplesPerTestName) {
-        List<Samples> result = new ArrayList<>();
-        for(var key : samplesPerTestName.keySet()){
-            // new double[0][] because of compiler
-            Samples samples = new Samples(samplesPerTestName.get(key).toArray(new double[0][]), metric, key);
-            result.add(samples);
-        }
-        return result;
-    }
-
-    //@Override
-    private Map<String, List<double[]>> getTestsFromOneFile(String fileName) {
-        Map<String, List<double[]>> rawDataPerTestName = new HashMap<>();
-        Map<SampleMetadataKey, List<SampleMetadata>> samplesMetadataPerKey = new HashMap<>();
-        var iniStream = Stream.of(fileName);
-        Stream<SampleMetadata> samples = iniStream.map(this::mapStringToFile)
-                .map(this::mapFileToBenchmarkDotNetJSONRoot)
-                .flatMap(this::mapBenchmarkDotNetJSONRootToBenchmark)
-                .flatMap(this::mapBenchmarkToMeasurement);
-
-
-        //collect data from stream
-        samples.forEach(sampleMetadata -> {
-            SampleMetadataKey key = new SampleMetadataKey();
-            key.name = sampleMetadata.name;
-            key.launchIndex = sampleMetadata.launchIndex;
-            samplesMetadataPerKey.computeIfAbsent(key, k -> new ArrayList<>());
-            samplesMetadataPerKey.get(key).add(sampleMetadata);
-        });
-
-        //convert data to rawDataPerTestName
-        for(var key : samplesMetadataPerKey.keySet()){
-            double[] data = samplesMetadataPerKey.get(key).stream().mapToDouble(sampleMetadata -> sampleMetadata.rawData).toArray();
-            rawDataPerTestName.computeIfAbsent(key.name, k -> new ArrayList<>());
-            rawDataPerTestName.get(key.name).add(data);
-        }
-
-        return rawDataPerTestName;
+        return samplesPerTestName;
     }
 
     private File mapStringToFile(String fileName) {
@@ -118,53 +89,6 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
     private Stream<Benchmark> mapBenchmarkDotNetJSONRootToBenchmark(BenchmarkDotNetJSONRoot root) {
         return root.getBenchmarks().stream();
     }
-    private Stream<SampleMetadata> mapBenchmarkToMeasurement(Benchmark benchmark) {
-        String methodName = benchmark.getMethodTitle();
-        return benchmark.getMeasurements().stream()
-                .filter(measurement -> testedIterationMode.compareTo(measurement.getIterationMode())==0 &&
-                        testedIterationStage.compareTo(measurement.getIterationStage())==0)
-                .map(measurement -> {
-                    SampleMetadata sampleMetadata = new SampleMetadata();
-                    sampleMetadata.name = methodName;
-                    sampleMetadata.launchIndex = measurement.getLaunchIndex();
-                    sampleMetadata.rawData = measurement.getNanoseconds();
-                    return sampleMetadata;
-                });
-    }
-
-    static class SampleMetadataKey{
-        public String name;
-        public int launchIndex;
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof SampleMetadataKey that)) return false;
-            return launchIndex == that.launchIndex &&
-                    Objects.equals(name, that.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, launchIndex);
-        }
-    }
-
-    /**
-     * Class for storing metadata of one sample
-     */
-    static class SampleMetadata {
-        public String name;
-        public int launchIndex;
-        public double rawData;
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof SampleMetadata that)) return false;
-            return launchIndex == that.launchIndex &&
-                    Objects.equals(name, that.name);
-        }
-    }
-
     public static String getParserName() {
         return "BenchmarkDotNetJSONParser";
     }

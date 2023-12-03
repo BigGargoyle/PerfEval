@@ -1,5 +1,9 @@
 package cz.cuni.mff.d3s.perfeval;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Class for storing samples of performance measurement.
  */
@@ -11,7 +15,7 @@ public class Samples {
     /**
      * Raw data of the samples.
      */
-    double[][] rawData;
+    List<double[]> rawData;
     /**
      * Metric used for the samples.
      */
@@ -25,9 +29,18 @@ public class Samples {
      * @param name    Name of the method that data belongs to.
      */
     public Samples(double[][] rawData, Metric metric, String name) {
-        this.rawData = rawData;
+        this.rawData = Arrays.stream(rawData).toList();
         this.metric = metric;
         this.name = name;
+    }
+
+    public Samples(Metric metric, String name) {
+        this.metric = metric;
+        this.name = name;
+        this.rawData = new ArrayList<>();
+    }
+    public void addSample(double[] sample) {
+        rawData.add(sample);
     }
 
     /**
@@ -36,7 +49,7 @@ public class Samples {
      * @return Raw data of the samples.
      */
     public double[][] getRawData() {
-        return rawData;
+        return rawData.toArray(new double[0][0]);
     }
 
     /**
