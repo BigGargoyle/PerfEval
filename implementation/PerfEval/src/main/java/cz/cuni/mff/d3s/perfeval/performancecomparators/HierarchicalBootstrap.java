@@ -58,7 +58,9 @@ public class HierarchicalBootstrap {
      */
     private static double[] createBootstrapSample(double[][] sampleSet1, double[][] sampleSet2, int bootstrapSampleCount) {
         double[] result = new double[bootstrapSampleCount];
+        //create bootstrapSampleCount of bootstrap samples
         for (int i = 0; i < bootstrapSampleCount; i++) {
+            //create bootstrap sample of sampleSet1 and sampleSet2
             double sample1 = calcBoostrapValue(sampleSet1, bootstrapSampleCount);
             double sample2 = calcBoostrapValue(sampleSet2, bootstrapSampleCount);
             result[i] = sample1 - sample2;
@@ -66,11 +68,15 @@ public class HierarchicalBootstrap {
         return result;
     }
 
-    private static double calcBoostrapValue(double[][] sampleSet1, int bootstrapSampleCount) {
+    private static double calcBoostrapValue(double[][] sampleSet, int bootstrapSampleCount) {
         Random random = new Random();
         double[] result = new double[bootstrapSampleCount];
-        for (int i = 0; i < sampleSet1.length; i++) {
-            result[i] = createBootstrapOf1DArray(sampleSet1[random.nextInt(0, sampleSet1.length)], bootstrapSampleCount);
+        //create bootstrapSampleCount of bootstrap samples
+        for (int i = 0; i < sampleSet.length; i++) {
+            //create 1 bootstrap sample of sampleSet
+            //randomly select array from sampleSet
+            //then calculate mean of bootstrapped dataset of that array
+            result[i] = createBootstrapOf1DArray(sampleSet[random.nextInt(0, sampleSet.length)], bootstrapSampleCount);
         }
         return CalculateMean(result);
     }
@@ -78,6 +84,7 @@ public class HierarchicalBootstrap {
     private static double createBootstrapOf1DArray(double[] sampleSet, int bootstrapSampleCount) {
         double[] result = new double[bootstrapSampleCount];
         for (int i = 0; i < bootstrapSampleCount; i++) {
+            //create bootstrapped dataset
             double[] bootstrappedDataset = createBootstrappedDataset(sampleSet);
             result[i] = CalculateMean(bootstrappedDataset);
         }
