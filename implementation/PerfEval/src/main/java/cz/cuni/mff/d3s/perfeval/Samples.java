@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.perfeval;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,19 +19,6 @@ public class Samples {
      * Metric used for the samples.
      */
     Metric metric;
-
-    /**
-     * Constructor for the Samples class.
-     *
-     * @param rawData Raw data of the samples.
-     * @param metric  Metric used for the samples.
-     * @param name    Name of the method that data belongs to.
-     */
-    public Samples(double[][] rawData, Metric metric, String name) {
-        this.rawData = Arrays.stream(rawData).toList();
-        this.metric = metric;
-        this.name = name;
-    }
 
     public Samples(Metric metric, String name) {
         this.metric = metric;
