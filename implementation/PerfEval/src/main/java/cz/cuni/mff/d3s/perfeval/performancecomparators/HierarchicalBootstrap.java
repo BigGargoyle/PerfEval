@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.perfeval.performancecomparators;
 
 import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.Random;
@@ -58,54 +59,45 @@ public class HierarchicalBootstrap {
      */
     private static double[] createBootstrapSample(double[][] sampleSet1, double[][] sampleSet2, int bootstrapSampleCount) {
         double[] result = new double[bootstrapSampleCount];
+        Random random = new Random();
         //create bootstrapSampleCount of bootstrap samples
         for (int i = 0; i < bootstrapSampleCount; i++) {
             //create bootstrap sample of sampleSet1 and sampleSet2
-            double sample1 = calcBoostrapValue(sampleSet1, bootstrapSampleCount);
-            double sample2 = calcBoostrapValue(sampleSet2, bootstrapSampleCount);
+            double sample1 = calcBoostrapValue(sampleSet1, bootstrapSampleCount, random);
+            double sample2 = calcBoostrapValue(sampleSet2, bootstrapSampleCount, random);
             result[i] = sample1 - sample2;
         }
         return result;
     }
 
-    private static double calcBoostrapValue(double[][] sampleSet, int bootstrapSampleCount) {
-        Random random = new Random();
+    private static double calcBoostrapValue(double[][] sampleSet, int bootstrapSampleCount, Random random) {
         double[] result = new double[sampleSet.length];
         //create bootstrapSampleCount of bootstrap samples
         for (int i = 0; i < sampleSet.length; i++) {
             //create 1 bootstrap sample of sampleSet
             //randomly select array from sampleSet
             //then calculate mean of bootstrapped dataset of that array
-            result[i] = createBootstrapOf1DArray(sampleSet[random.nextInt(0, sampleSet.length)], bootstrapSampleCount);
+            result[i] = createBootstrapOf1DArray(sampleSet[random.nextInt(0, sampleSet.length)], bootstrapSampleCount, random);
         }
-        return CalculateMean(result);
+        return StatUtils.mean(result);
     }
 
-    private static double createBootstrapOf1DArray(double[] sampleSet, int bootstrapSampleCount) {
+    private static double createBootstrapOf1DArray(double[] sampleSet, int bootstrapSampleCount, Random random) {
         double[] result = new double[bootstrapSampleCount];
         for (int i = 0; i < bootstrapSampleCount; i++) {
             //create bootstrapped dataset
-            double[] bootstrappedDataset = createBootstrappedDataset(sampleSet);
-            result[i] = CalculateMean(bootstrappedDataset);
+            double[] bootstrappedDataset = createBootstrappedDataset(sampleSet, random);
+            result[i] = StatUtils.mean(bootstrappedDataset);
         }
-        return CalculateMean(result);
+        return StatUtils.mean(result);
     }
 
-    private static double[] createBootstrappedDataset(double[] sampleSet){
-        Random random = new Random();
+    private static double[] createBootstrappedDataset(double[] sampleSet, Random random){
         double[] result = new double[sampleSet.length];
         for (int i = 0; i < sampleSet.length; i++) {
             result[i] = sampleSet[random.nextInt(0, sampleSet.length)];
         }
         return result;
-    }
-
-    private static double CalculateMean(double[] sampleSet){
-        double sum = 0;
-        for (double v : sampleSet) {
-            sum += v;
-        }
-        return sum / sampleSet.length;
     }
 
 
