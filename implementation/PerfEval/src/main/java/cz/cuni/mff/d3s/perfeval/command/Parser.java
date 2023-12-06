@@ -1,7 +1,6 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
 import cz.cuni.mff.d3s.perfeval.ExitCode;
-import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
