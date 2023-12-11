@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.perfeval.performancecomparators;
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import java.util.Random;
 
@@ -109,32 +110,10 @@ public class HierarchicalBootstrap {
      * @return confidence interval for given data and confidence level
      */
     public static double[] calcCIInterval(double[] data, double confidenceLevel) {
-        // Create a SummaryStatistics object to compute mean and standard deviation
-        SummaryStatistics stats = new SummaryStatistics();
-        for (double value : data) {
-            stats.addValue(value);
-        }
-
+        Percentile percentile = new Percentile();
+        double lowerBound = percentile.evaluate(data, confidenceLevel/2);
+        double upperBound = percentile.evaluate(data, 100 - confidenceLevel/2);
         // Calculate the sample mean and standard deviation
-        double sampleMean = stats.getMean();
-        double sampleStdDev = stats.getStandardDeviation();
-
-        // Calculate the degrees of freedom for a t-distribution
-        int degreesOfFreedom = data.length - 1;
-
-        // Create a t-distribution with the specified degrees of freedom
-        TDistribution tDistribution = new TDistribution(degreesOfFreedom);
-
-        // Calculate the critical value for the confidence level
-        double criticalValue = tDistribution.inverseCumulativeProbability(1.0 - (1.0 - confidenceLevel) / 2.0);
-
-        // Calculate the margin of error
-        double marginOfError = criticalValue * (sampleStdDev / Math.sqrt(data.length));
-
-        // Calculate the lower and upper bounds of the confidence interval
-        double lowerBound = sampleMean - marginOfError;
-        double upperBound = sampleMean + marginOfError;
-
         return new double[]{lowerBound, upperBound};
     }
 
