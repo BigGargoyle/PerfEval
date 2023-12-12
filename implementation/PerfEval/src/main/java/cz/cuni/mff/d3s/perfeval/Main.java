@@ -22,7 +22,7 @@ public class Main {
         try {
             command = Parser.getCommand(args);
         } catch (ParserException e) {
-            System.err.println(e.getMessage());
+            System.err.println(e.getMessage()); //NOPMD - suppressed SystemPrintln - only used for error messages, there is no other way to print them
             e.exitCode.exit();
         }
         try {
@@ -30,7 +30,7 @@ public class Main {
             else exitCode = command.execute();
 
         } catch (PerfEvalCommandFailedException e) {
-            System.err.println(e.getMessage());
+            System.err.println(e.getMessage()); //NOPMD - suppressed SystemPrintln - only used for error messages, there is no other way to print them
             exitCode = e.exitCode;
         }
         exitCode.exit();

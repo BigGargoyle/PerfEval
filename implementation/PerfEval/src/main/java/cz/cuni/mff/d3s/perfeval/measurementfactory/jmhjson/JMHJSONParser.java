@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParserException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.pojoJMH.BenchmarkJMHJSONRoot;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
