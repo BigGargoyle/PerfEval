@@ -60,6 +60,8 @@ public class MeasurementParserTest {
         }
         List<Samples> result = parser.getTestsFromFiles(fileNames);
         assertEquals(2, result.size());
+        assertEquals(2, result.get(0).getRawData().length);
+        assertEquals(4, result.get(1).getRawData().length);
     }
 
     @Test

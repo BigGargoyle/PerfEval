@@ -83,12 +83,14 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
 
     private Stream<Samples> mapBenchmarkToSamples(Benchmark benchmark) {
         //add sample to map if not present yet
-        Samples samples = new Samples(metric, benchmark.getFullName());
+        Samples samples = new Samples(metric, benchmark.getMethod());
         //add raw data to sample
+        List<Integer> rawData = new ArrayList<>();
         for (Measurement measurement : benchmark.getMeasurements()) {
             if (measurement.getIterationMode().equals(testedIterationMode) && measurement.getIterationStage().equals(testedIterationStage))
-                samples.addSample(new double[]{measurement.getNanoseconds()});
+                rawData.add(measurement.getNanoseconds());
         }
+        samples.addSample(rawData.stream().mapToDouble(i -> i).toArray());
         return Stream.of(samples);
     }
 
