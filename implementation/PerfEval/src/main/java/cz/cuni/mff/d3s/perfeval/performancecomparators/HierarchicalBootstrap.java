@@ -123,7 +123,7 @@ public class HierarchicalBootstrap {
 
     public int getMinSampleCount(double[][] sampleSet1, double[][] sampleSet2, double confidenceLevel, double maxCIWidth) {
         double[][] functionPoints = calcFunctionPoints(sampleSet1, sampleSet2, confidenceLevel);
-        // y = b * sqrt(a * x) + c
+        // y = b * 1 / sqrt(a * x) + c
         double[] abcParameters = calcFunctionParameters(functionPoints);
         return calcMinSampleCountFromFunction(abcParameters, maxCIWidth);
     }
@@ -133,9 +133,9 @@ public class HierarchicalBootstrap {
         double b = abcParameters[1];
         double c = abcParameters[2];
 
-        // y = b * sqrt(a * x) + c
-        // x = ((y - c) / b) ^ 2 / a
-        double x = Math.pow((maxCIWidth - c) / b, 2) / a;
+        // y = b *  1 / sqrt(a * x) + c
+        // x = 1 / (a * (y - c) ^ 2 / b ^ 2)
+        double x = 1 / (a * (maxCIWidth - c) * (maxCIWidth - c) / (b * b));
         return (int) Math.ceil(x);
     }
 
@@ -171,7 +171,7 @@ public class HierarchicalBootstrap {
         // Initial guess for parameters a, b, and c
         double[] initialGuess = {1.0, 1.0, 1.0}; // You can adjust these initial values
 
-        // Define the function y = b * sqrt(a * x) + c
+        // Define the function y = b * (1 / sqrt(a * x)) + c
         MultivariateVectorFunction func = params -> {
             double a = params[0];
             double b = params[1];
@@ -182,16 +182,16 @@ public class HierarchicalBootstrap {
 
             for (int i = 0; i < xData.length; i++) {
                 double sqrtTerm = Math.sqrt(a * xData[i]);
-                double yModel = b * sqrtTerm + c;
+                double yModel = b / sqrtTerm + c; // Corrected yModel calculation
                 residuals[i] = yData[i] - yModel;
 
                 // Jacobian matrix calculation
-                jacobian.setEntry(i, 0, -0.5 * b * sqrtTerm / a);
-                jacobian.setEntry(i, 1, sqrtTerm);
-                jacobian.setEntry(i, 2, 1.0);
+                jacobian.setEntry(i, 0, -b / (2 * a * sqrtTerm)); // Derivative with respect to 'a'
+                jacobian.setEntry(i, 1, 1 / sqrtTerm); // Derivative with respect to 'b'
+                jacobian.setEntry(i, 2, 1.0); // Derivative with respect to 'c'
             }
 
-            return new ArrayRealVector(residuals).toArray();
+            return residuals;
         };
 
         LeastSquaresOptimizer optimizer = new LevenbergMarquardtOptimizer();
