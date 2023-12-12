@@ -1,10 +1,12 @@
 package cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParserException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.Benchmark;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.BenchmarkDotNetJSONRoot;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
@@ -48,48 +50,66 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
         Map<String, Samples> samplesPerTestName = getTestsFromFiles(Arrays.stream(fileNames));
         return new ArrayList<>(samplesPerTestName.values());
     }
-    private Map<String, Samples> getTestsFromFiles(Stream<String> fileNames) {
-        Map<String, Samples> samplesPerTestName = new HashMap<>();
-        //generating File objects from file names
-        fileNames.map(this::mapStringToFile)
-            //parsing JSON files to POJOs
-            .map(this::mapFileToBenchmarkDotNetJSONRoot)
-            //mapping POJOs to Stream of Benchmarks
-            .flatMap(this::mapBenchmarkDotNetJSONRootToBenchmark)
-            //mapping Benchmarks to Stream of Samples
-            .forEach(sample -> {
-                //if sample of that name doesn't exist, create it
-                samplesPerTestName.computeIfAbsent(sample.getMethod(), k -> new Samples(metric, sample.getMethod()));
-                //add sample to the Samples object
-                samplesPerTestName.get(sample.getMethod()).addSample(
-                    //getting measurement times from the sample
-                    sample.getMeasurements().stream()
-                        //filtering only the measurements that have the tested iteration mode and stage
-                        .filter(sampleForFilter -> testedIterationMode.compareTo(sampleForFilter.getIterationMode())==0
-                                && testedIterationStage.compareTo(sampleForFilter.getIterationStage())==0)
-                        //mapping the measurements to doubles and storing them in an array
-                        .mapToDouble(Measurement::getNanoseconds).toArray());
-            });
 
-        return samplesPerTestName;
+    private Map<String, Samples> getTestsFromFiles(Stream<String> fileNames) {
+        //Map<String, Samples> samplesPerTestName = new HashMap<>();
+        //generating File objects from file names
+        return fileNames.map(this::mapStringToFile)
+                //parsing JSON files to POJOs
+                .map(this::mapFileToBenchmarkDotNetJSONRoot)
+                //mapping POJOs to Stream of Benchmarks
+                .flatMap(this::mapBenchmarkDotNetJSONRootToBenchmark)
+                //mapping Benchmarks to Stream of Samples
+                .flatMap(this::mapBenchmarkToSamples)
+                .collect(collectToMap());
     }
 
     private File mapStringToFile(String fileName) {
         return new File(fileName);
     }
+
     private BenchmarkDotNetJSONRoot mapFileToBenchmarkDotNetJSONRoot(File file) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.readValue(file, BenchmarkDotNetJSONRoot.class);
         } catch (Exception e) {
-            //TODO: dodat výjimku
-            throw new RuntimeException(e);
+            throw new MeasurementParserException("BenchmarkDotNetJSONParser, error while processing file: " + file.getName(), e);
         }
     }
+
     private Stream<Benchmark> mapBenchmarkDotNetJSONRootToBenchmark(BenchmarkDotNetJSONRoot root) {
         return root.getBenchmarks().stream();
     }
+
+    private Stream<Samples> mapBenchmarkToSamples(Benchmark benchmark) {
+        //add sample to map if not present yet
+        Samples samples = new Samples(metric, benchmark.getFullName());
+        //add raw data to sample
+        for (Measurement measurement : benchmark.getMeasurements()) {
+            if (measurement.getIterationMode().equals(testedIterationMode) && measurement.getIterationStage().equals(testedIterationStage))
+                samples.addSample(new double[]{measurement.getNanoseconds()});
+        }
+        return Stream.of(samples);
+    }
+
     public static String getParserName() {
         return "BenchmarkDotNetJSONParser";
+    }
+
+    /**
+     * Collects stream of sample containers into a map indexed by benchmark.
+     * <p>
+     * The map aggregates all samples from the stream that belong to the same benchmark.
+     * The collector assumes only single metric is used with all runs of each benchmark.
+     */
+    public static Collector<Samples, Map<String, Samples>, Map<String, Samples>> collectToMap() {
+        return Collector.of(
+                HashMap::new,
+                (accumulator, item) -> accumulator.merge(item.getName(), item, Samples::mergeSamples),
+                (left, right) -> {
+                    right.forEach((name, item) -> left.merge(name, item, Samples::mergeSamples));
+                    return left;
+                }
+        );
     }
 }
