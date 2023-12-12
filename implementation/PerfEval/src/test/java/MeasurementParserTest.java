@@ -15,12 +15,14 @@ public class MeasurementParserTest {
 
     @Test
     public void getJMHJSONParser(){
-        var parser = ParserFactory.getParser(new JMHJSONParser().getParserName());
+        new JMHJSONParser();
+        var parser = ParserFactory.getParser(JMHJSONParser.getParserName());
         assertTrue(parser instanceof JMHJSONParser);
     }
     @Test
     public void getBenchmarkDotNetJSONParser(){
-        var parser = ParserFactory.getParser(new BenchmarkDotNetJSONParser().getParserName());
+        new BenchmarkDotNetJSONParser();
+        var parser = ParserFactory.getParser(BenchmarkDotNetJSONParser.getParserName());
         assertTrue(parser instanceof BenchmarkDotNetJSONParser);
     }
     @Test

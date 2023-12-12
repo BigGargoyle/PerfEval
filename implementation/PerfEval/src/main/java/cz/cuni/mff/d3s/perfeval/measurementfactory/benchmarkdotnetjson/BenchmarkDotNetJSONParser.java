@@ -1,14 +1,17 @@
 package cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParserException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.Benchmark;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.BenchmarkDotNetJSONRoot;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.Measurement;
 
 /**
  * Implementation of MeasurementParser for BenchmarkDotNet framework test results in the JSON format.
@@ -44,128 +47,69 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
      */
     @Override
     public List<Samples> getTestsFromFiles(String[] fileNames) {
-        Map<String, List<double[]>> samplesPerTestName = new HashMap<>();
-
-        for(var fileName : fileNames){
-            Map<String, List<double[]>> samplesPerTestNameFromFile = getTestsFromOneFile(fileName);
-            for(var key : samplesPerTestNameFromFile.keySet()){
-                samplesPerTestName.computeIfAbsent(key, k -> new ArrayList<>());
-                samplesPerTestName.get(key).addAll(samplesPerTestNameFromFile.get(key));
-            }
-        }
-
-        return finishSamples(samplesPerTestName);
+        Map<String, Samples> samplesPerTestName = getTestsFromFiles(Arrays.stream(fileNames));
+        return new ArrayList<>(samplesPerTestName.values());
     }
 
-    @Override
-    public List<Samples> getTestsFromFile(String fileName) {
-        Map<String, List<double[]>> samplesPerTestName = getTestsFromOneFile(fileName);
-        return finishSamples(samplesPerTestName);
-    }
-
-    List<Samples> finishSamples(Map<String, List<double[]>> samplesPerTestName) {
-        List<Samples> result = new ArrayList<>();
-        for(var key : samplesPerTestName.keySet()){
-            // new double[0][] because of compiler
-            Samples samples = new Samples(samplesPerTestName.get(key).toArray(new double[0][]), metric, key);
-            result.add(samples);
-        }
-        return result;
-    }
-
-    //@Override
-    private Map<String, List<double[]>> getTestsFromOneFile(String fileName) {
-        Map<String, List<double[]>> rawDataPerTestName = new HashMap<>();
-        Map<SampleMetadataKey, List<SampleMetadata>> samplesMetadataPerKey = new HashMap<>();
-        var iniStream = Stream.of(fileName);
-        Stream<SampleMetadata> samples = iniStream.map(this::mapStringToFile)
+    private Map<String, Samples> getTestsFromFiles(Stream<String> fileNames) {
+        //Map<String, Samples> samplesPerTestName = new HashMap<>();
+        //generating File objects from file names
+        return fileNames.map(this::mapStringToFile)
+                //parsing JSON files to POJOs
                 .map(this::mapFileToBenchmarkDotNetJSONRoot)
+                //mapping POJOs to Stream of Benchmarks
                 .flatMap(this::mapBenchmarkDotNetJSONRootToBenchmark)
-                .flatMap(this::mapBenchmarkToMeasurement);
-
-
-        //collect data from stream
-        samples.forEach(sampleMetadata -> {
-            SampleMetadataKey key = new SampleMetadataKey();
-            key.name = sampleMetadata.name;
-            key.launchIndex = sampleMetadata.launchIndex;
-            samplesMetadataPerKey.computeIfAbsent(key, k -> new ArrayList<>());
-            samplesMetadataPerKey.get(key).add(sampleMetadata);
-        });
-
-        //convert data to rawDataPerTestName
-        for(var key : samplesMetadataPerKey.keySet()){
-            double[] data = samplesMetadataPerKey.get(key).stream().mapToDouble(sampleMetadata -> sampleMetadata.rawData).toArray();
-            rawDataPerTestName.computeIfAbsent(key.name, k -> new ArrayList<>());
-            rawDataPerTestName.get(key.name).add(data);
-        }
-
-        return rawDataPerTestName;
+                //mapping Benchmarks to Stream of Samples
+                .flatMap(this::mapBenchmarkToSamples)
+                .collect(collectToMap());
     }
 
     private File mapStringToFile(String fileName) {
         return new File(fileName);
     }
+
     private BenchmarkDotNetJSONRoot mapFileToBenchmarkDotNetJSONRoot(File file) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.readValue(file, BenchmarkDotNetJSONRoot.class);
         } catch (Exception e) {
-            //TODO: dodat výjimku
-            throw new RuntimeException(e);
+            throw new MeasurementParserException("BenchmarkDotNetJSONParser, error while processing file: " + file.getName(), e);
         }
     }
+
     private Stream<Benchmark> mapBenchmarkDotNetJSONRootToBenchmark(BenchmarkDotNetJSONRoot root) {
         return root.getBenchmarks().stream();
     }
-    private Stream<SampleMetadata> mapBenchmarkToMeasurement(Benchmark benchmark) {
-        String methodName = benchmark.getMethodTitle();
-        return benchmark.getMeasurements().stream()
-                .filter(measurement -> testedIterationMode.compareTo(measurement.getIterationMode())==0 &&
-                        testedIterationStage.compareTo(measurement.getIterationStage())==0)
-                .map(measurement -> {
-                    SampleMetadata sampleMetadata = new SampleMetadata();
-                    sampleMetadata.name = methodName;
-                    sampleMetadata.launchIndex = measurement.getLaunchIndex();
-                    sampleMetadata.rawData = measurement.getNanoseconds();
-                    return sampleMetadata;
-                });
-    }
 
-    static class SampleMetadataKey{
-        public String name;
-        public int launchIndex;
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof SampleMetadataKey that)) return false;
-            return launchIndex == that.launchIndex &&
-                    Objects.equals(name, that.name);
+    private Stream<Samples> mapBenchmarkToSamples(Benchmark benchmark) {
+        //add sample to map if not present yet
+        Samples samples = new Samples(metric, benchmark.getFullName());
+        //add raw data to sample
+        for (Measurement measurement : benchmark.getMeasurements()) {
+            if (measurement.getIterationMode().equals(testedIterationMode) && measurement.getIterationStage().equals(testedIterationStage))
+                samples.addSample(new double[]{measurement.getNanoseconds()});
         }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, launchIndex);
-        }
-    }
-
-    /**
-     * Class for storing metadata of one sample
-     */
-    static class SampleMetadata {
-        public String name;
-        public int launchIndex;
-        public double rawData;
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof SampleMetadata that)) return false;
-            return launchIndex == that.launchIndex &&
-                    Objects.equals(name, that.name);
-        }
+        return Stream.of(samples);
     }
 
     public static String getParserName() {
         return "BenchmarkDotNetJSONParser";
+    }
+
+    /**
+     * Collects stream of sample containers into a map indexed by benchmark.
+     * <p>
+     * The map aggregates all samples from the stream that belong to the same benchmark.
+     * The collector assumes only single metric is used with all runs of each benchmark.
+     */
+    public static Collector<Samples, Map<String, Samples>, Map<String, Samples>> collectToMap() {
+        return Collector.of(
+                HashMap::new,
+                (accumulator, item) -> accumulator.merge(item.getName(), item, Samples::mergeSamples),
+                (left, right) -> {
+                    right.forEach((name, item) -> left.merge(name, item, Samples::mergeSamples));
+                    return left;
+                }
+        );
     }
 }

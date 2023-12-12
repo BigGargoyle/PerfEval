@@ -13,13 +13,16 @@ public class TTestPerformanceComparatorTest {
 
     @Test
     void testCompareSetsSameDistribution() {
-        // Assuming Metric and ArrayUtilities are properly implemented
-        double[][] rawData = {{1.0, 2.0}, {3.0, 4.0}};
         Metric metric = new Metric("metric", true);
         String name = "TestSamples";
 
-        Samples oldSamples = new Samples(rawData, metric, name);
-        Samples newSamples = new Samples(rawData, metric, name);
+        Samples oldSamples = new Samples(metric, name);
+        oldSamples.addSample(new double[]{1.0, 2.0});
+        oldSamples.addSample(new double[]{3.0, 4.0});
+
+        Samples newSamples = new Samples(metric, name);
+        newSamples.addSample(new double[]{1.0, 2.0});
+        newSamples.addSample(new double[]{3.0, 4.0});
 
         TTestPerformanceComparator comparator = new TTestPerformanceComparator(0.05, 0.2, 0.1, Duration.ofHours(1));
 
@@ -30,14 +33,16 @@ public class TTestPerformanceComparatorTest {
 
     @Test
     void testCompareSetsNotEnoughSamplesDistribution() {
-        // Assuming Metric and ArrayUtilities are properly implemented
-        double[][] oldRawData = {{1.0, 2.0}, {3.0, 4.0}};
-        double[][] newRawData = {{5.0, 6.0}, {7.0, 8.0}};
         Metric metric = new Metric("metric", false);
         String name = "TestSamples";
 
-        Samples oldSamples = new Samples(oldRawData, metric, name);
-        Samples newSamples = new Samples(newRawData, metric, name);
+        Samples oldSamples = new Samples(metric, name);
+        oldSamples.addSample(new double[]{1.0, 2.0});
+        oldSamples.addSample(new double[]{3.0, 4.0});
+
+        Samples newSamples = new Samples(metric, name);
+        newSamples.addSample(new double[]{5.0, 6.0});
+        newSamples.addSample(new double[]{7.0, 8.0});
 
         TTestPerformanceComparator comparator = new TTestPerformanceComparator(0.05, 0.2, 0.1, Duration.ofHours(1));
 
@@ -48,14 +53,14 @@ public class TTestPerformanceComparatorTest {
 
     @Test
     void testCompareDifferentDistributionDistribution() {
-        // Assuming Metric and ArrayUtilities are properly implemented
-        double[][] oldRawData = {{3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3}};
-        double[][] newRawData = {{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}};
         Metric metric = new Metric("metric", false);
         String name = "TestSamples";
 
-        Samples oldSamples = new Samples(oldRawData, metric, name);
-        Samples newSamples = new Samples(newRawData, metric, name);
+        Samples oldSamples = new Samples(metric, name);
+        oldSamples.addSample(new double[]{3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3});
+
+        Samples newSamples = new Samples(metric, name);
+        newSamples.addSample(new double[]{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2});
 
         TTestPerformanceComparator comparator = new TTestPerformanceComparator(0.05, 0.2, 0.1, Duration.ofHours(1));
 
