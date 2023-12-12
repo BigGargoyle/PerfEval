@@ -78,6 +78,7 @@ public class MeasurementParserTest {
         }
         List<Samples> result = parser.getTestsFromFiles(fileNames);
         assertEquals(1, result.size());
+        assertTrue(result.get(0).getRawData().length >= 3);
     }
 
 }
