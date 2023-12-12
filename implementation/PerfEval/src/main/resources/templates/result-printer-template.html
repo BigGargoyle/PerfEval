@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Measurement Comparison Results</title>
+</head>
+<body>
+<h1>Measurement Comparison Results</h1>
+
+<!-- Display Old and New Versions -->
+<h2>Versions:</h2>
+<p>Old Version: {{ oldVersion }}</p>
+<p>New Version: {{ newVersion }}</p>
+
+<!-- Display Records -->
+<h2>Records:</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Old Average</th>
+        <th>New Average</th>
+        <th>Performance Change</th>
+        <th>Comparison Result</th>
+        <th>Test Verdict</th>
+        <th>Min Sample Count</th>
+        <!-- Add more table headers based on MeasurementComparisonRecord fields -->
+    </tr>
+    </thead>
+    <tbody>
+    {{#each records}}
+    <tr>
+        <td>{{ oldAverage }}</td>
+        <td>{{ newAverage }}</td>
+        <td>{{ performanceChange }}</td>
+        <td>{{ comparisonResult }}</td>
+        <td>{{ testVerdict }}</td>
+        <td>{{ minSampleCount }}</td>
+        <!-- Add more table cells based on MeasurementComparisonRecord fields -->
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
+</body>
+</html>

@@ -1,7 +1,7 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
-import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
+import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementPrinterException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonResultCollection;
@@ -74,7 +74,7 @@ public class EvaluateCLICommand implements Command {
             for (MeasurementComparisonRecord record : comparisonResults) {
                 if (!record.testVerdict()) return ExitCode.atLeastOneWorseResult;
             }
-        } catch (AssertionError e) {
+        } catch (AssertionError | MeasurementPrinterException e) {
             PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.evaluationFailed);
             exception.initCause(e);
             throw exception;
