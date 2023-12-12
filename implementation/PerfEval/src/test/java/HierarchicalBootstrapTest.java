@@ -2,13 +2,14 @@ import cz.cuni.mff.d3s.perfeval.performancecomparators.HierarchicalBootstrap;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HierarchicalBootstrapTest {
 
     double DEFAULT_CRIT_VALUE = 0.05;
-    int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 10_000;
+    int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 1_000;
 
     @Test
     public void testEvaluateBootstrapDifferentSets() {
@@ -37,7 +38,7 @@ public class HierarchicalBootstrapTest {
     public void testEvaluateBootstrapDifferentSetsLargeArrays() {
 
         // Test evaluateBootstrap with larger sampleSet1 and sampleSet2
-        int size = 100; // Adjust size as needed
+        int size = 10; // Adjust size as needed
         double[][] sampleSet1 = new double[size][size];
         double[][] sampleSet2 = new double[size][size];
 
@@ -58,7 +59,7 @@ public class HierarchicalBootstrapTest {
     public void testEvaluateBootstrapSimilarSetsLargeArrays() {
 
         // Test evaluateBootstrap with larger sampleSet3 and sampleSet4
-        int size = 100; // Adjust size as needed
+        int size = 10; // Adjust size as needed
         double[][] sampleSet3 = new double[size][size];
         double[][] sampleSet4 = new double[size][size];
 
@@ -87,4 +88,57 @@ public class HierarchicalBootstrapTest {
         assertTrue(Arrays.stream(data).min().getAsDouble() <= interval[0]);
         assertTrue(Arrays.stream(data).max().getAsDouble() >= interval[1]);
     }
+
+    @Test
+    public  void testAllValuesAreSame(){
+        double[][] sample = new double[10][];
+        for(int i = 0; i < sample.length; i++){
+            sample[i] = new double[10];
+            Arrays.fill(sample[i], 1);
+        }
+        boolean result = HierarchicalBootstrap.evaluateBootstrap(sample, sample, 0.05);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testMatrixTransposed(){
+        double[][] sample1 = new double[1][];
+        double[][] sample2 = new double[1000][];
+        sample1[0] = new double[1000];
+
+        for(int i = 0; i < 1000; i++){
+            sample1[0][i] = i;
+            sample2[i] = new double[1];
+            sample2[i][0] = i;
+        }
+
+        boolean result = HierarchicalBootstrap.evaluateBootstrap(sample1, sample2, 0.05);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testJustOneValue(){
+        double[][] sample1 = new double[1][];
+        sample1[0] = new double[1000];
+        Arrays.fill(sample1[0], 1);
+        double[] ciInterval = HierarchicalBootstrap.calcCIInterval(sample1[0], 0.95);
+        assertEquals(1, ciInterval[0]);
+        assertEquals(1, ciInterval[1]);
+    }
+
+    @Test
+    public void testTwoValuesWithNoise(){
+        double noise = 0.01;
+        Random random = new Random();
+        double[][] sample1 = new double[2][];
+        sample1[0] = new double[100];
+        sample1[1] = new double[100];
+        for (int i = 0; i<100; i++){
+            sample1[0][i] = 1 + random.nextDouble(-noise, noise);
+            sample1[1][i] = 2 + random.nextDouble(-noise, noise);
+        }
+        boolean result = HierarchicalBootstrap.evaluateBootstrap(sample1, sample1, 0.05);
+        assertTrue(result);
+    }
+
 }

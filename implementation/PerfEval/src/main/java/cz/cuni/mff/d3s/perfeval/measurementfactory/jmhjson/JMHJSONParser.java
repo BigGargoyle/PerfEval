@@ -6,6 +6,7 @@ import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.pojoJMH.BenchmarkJMHJSONRoot;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -95,8 +96,9 @@ public class JMHJSONParser implements MeasurementParser {
             BenchmarkJMHJSONRoot[] root = mapper.readValue(file, BenchmarkJMHJSONRoot[].class);
             return Arrays.stream(root);
         } catch (Exception e) {
-            // TODO: dodat výjimku
+            // TODO: dodat výjimku --> jak ošetřit -> problém ve streamu
             throw new RuntimeException();
+            //throw new IOException("Unable to map JSON file to BenchmarkJMHJSONRoot.", e);
         }
     }
 
