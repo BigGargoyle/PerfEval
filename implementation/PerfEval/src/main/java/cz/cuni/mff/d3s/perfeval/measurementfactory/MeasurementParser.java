@@ -13,6 +13,7 @@ public interface MeasurementParser {
      *
      * @param fileNames names of files with results of performance tests
      * @return list of Samples objects
+     * @throws MeasurementParserException if there is an error during parsing
      */
     List<Samples> getTestsFromFiles(String[] fileNames);
 
@@ -20,6 +21,7 @@ public interface MeasurementParser {
      * Parses file with results of performance tests
      * @param fileName name of file with results of performance tests
      * @return list of Samples objects
+     * @throws MeasurementParserException if there is an error during parsing
      */
     default List<Samples> getTestsFromFile(String fileName){
         return getTestsFromFiles(new String[]{fileName});

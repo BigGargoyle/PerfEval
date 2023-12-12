@@ -56,4 +56,14 @@ public class Samples {
         return name;
     }
 
+    public Samples mergeSamples(Samples samples) {
+        if (samples.getMetric().equals(this.metric)) {
+            for (double[] sample : samples.getRawData()) {
+                this.addSample(sample);
+            }
+        } else {
+            throw new IllegalArgumentException("Samples have different metrics");
+        }
+        return this;
+    }
 }

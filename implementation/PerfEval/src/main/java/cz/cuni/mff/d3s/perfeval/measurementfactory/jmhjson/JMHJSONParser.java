@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParserException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.jmhjson.pojoJMH.BenchmarkJMHJSONRoot;
 
 import java.io.File;
@@ -74,8 +75,7 @@ public class JMHJSONParser implements MeasurementParser {
             BenchmarkJMHJSONRoot[] root = mapper.readValue(file, BenchmarkJMHJSONRoot[].class);
             return Arrays.stream(root);
         } catch (Exception e) {
-            // TODO: dodat výjimku
-            throw new RuntimeException();
+            throw new MeasurementParserException("JMHJSONParserException, error while processing file: "+file.getName(),e);
         }
     }
 
