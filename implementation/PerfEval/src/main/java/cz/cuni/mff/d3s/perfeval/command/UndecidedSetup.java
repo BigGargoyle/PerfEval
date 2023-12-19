@@ -1,20 +1,9 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
-import cz.cuni.mff.d3s.perfeval.ExitCode;
-import cz.cuni.mff.d3s.perfeval.evaluation.ResultPrinter;
-import cz.cuni.mff.d3s.perfeval.evaluation.UndecidedPrinter;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.TTestPerformanceComparator;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
-import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 import joptsimple.OptionSet;
-
-
-import java.time.Duration;
-
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveDuration;
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveInputFilesWithRespectToInputtedVersions;
+import org.apache.commons.lang.NotImplementedException;
 
 
 public class UndecidedSetup implements  CommandSetup{
@@ -23,7 +12,7 @@ public class UndecidedSetup implements  CommandSetup{
 
     @Override
     public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
-        FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
+        /*FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = new UndecidedPrinter(System.out);
         try {
             // tTest is able to response that there are not enough samples
@@ -34,7 +23,9 @@ public class UndecidedSetup implements  CommandSetup{
             return new EvaluateCLICommand(inputFiles, printer, comparator, config.getMeasurementParser());
         } catch (ParserException e) {
             throw new DatabaseException("Cannot parse max test duration: " + e.getMessage(), e, ExitCode.invalidArguments);
-        }
+        }*/
+        //TODO: implement
+        throw new NotImplementedException("UndecidedSetup");
     }
 
     public static String getCommandName() {

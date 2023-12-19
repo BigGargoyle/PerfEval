@@ -1,17 +1,19 @@
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.BootstrapPerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.NonparametricEvaluator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceEvaluator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BootstrapPerformanceComparatorTest {
+public class NonparametricEvaluatorTest {
 
     @Test
     public void newSamplesAreBetter() {
-        BootstrapPerformanceComparator comparator = new BootstrapPerformanceComparator(0.05, 0.1, 1000);
+        NonparametricEvaluator evaluator = new NonparametricEvaluator(0.05, 1000);
+        PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples oldSamples = new Samples(new Metric("", true), "name1");
         oldSamples.addSample(new double[]{1.0, 2.0, 3.0});
@@ -23,11 +25,13 @@ public class BootstrapPerformanceComparatorTest {
 
         MeasurementComparisonRecord result = comparator.compareSets(oldSamples, newSamples);
         assertTrue(result.testVerdict());
+
     }
 
     @Test
-    public void oldSamplesAreBetter() {
-        BootstrapPerformanceComparator comparator = new BootstrapPerformanceComparator(0.05, 0.1, 1000);
+    public void oldSamplesAreBetter(){
+        NonparametricEvaluator evaluator = new NonparametricEvaluator(0.05, 1000);
+        PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples newSamples = new Samples(new Metric("", true), "name1");
         newSamples.addSample(new double[]{1.0, 2.0, 3.0});
@@ -40,10 +44,10 @@ public class BootstrapPerformanceComparatorTest {
         MeasurementComparisonRecord result = comparator.compareSets(oldSamples, newSamples);
         assertFalse(result.testVerdict());
     }
-
     @Test
-    public void newSamplesAreBetterHigherIsWorse() {
-        BootstrapPerformanceComparator comparator = new BootstrapPerformanceComparator(0.05, 0.1, 1000);
+    public void newSamplesAreBetterHigherIsWorse(){
+        NonparametricEvaluator evaluator = new NonparametricEvaluator(0.05, 1000);
+        PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples newSamples = new Samples(new Metric("", false), "name1");
         newSamples.addSample(new double[]{1.0, 2.0, 3.0});
@@ -58,8 +62,9 @@ public class BootstrapPerformanceComparatorTest {
     }
 
     @Test
-    public void newSamplesAreSameAsOld() {
-        BootstrapPerformanceComparator comparator = new BootstrapPerformanceComparator(0.05, 0.1, 1000);
+    public void newSamplesAreSameAsOld(){
+        NonparametricEvaluator evaluator = new NonparametricEvaluator(0.05, 1000);
+        PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples oldSamples = new Samples(new Metric("", true), "name1");
         oldSamples.addSample(new double[]{1.0, 2.0, 3.0});
@@ -74,8 +79,9 @@ public class BootstrapPerformanceComparatorTest {
     }
 
     @Test
-    public void newSamplesAreWorseButInTolerance() {
-        BootstrapPerformanceComparator comparator = new BootstrapPerformanceComparator(0.05, 0.5, 1000);
+    public void newSamplesAreWorseButInTolerance(){
+        NonparametricEvaluator evaluator = new NonparametricEvaluator(0.05, 1000);
+        PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.5, null, evaluator);
 
         Samples oldSamples = new Samples(new Metric("", true), "name1");
         oldSamples.addSample(new double[]{7.0, 8.0, 9.0});

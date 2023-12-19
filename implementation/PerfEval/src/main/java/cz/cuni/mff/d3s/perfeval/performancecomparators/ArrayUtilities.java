@@ -53,6 +53,7 @@ public class ArrayUtilities {
         return (int) Math.ceil(sampleCount);
     }
 
+
     /**
      * Merges 2D array into 1D array
      *

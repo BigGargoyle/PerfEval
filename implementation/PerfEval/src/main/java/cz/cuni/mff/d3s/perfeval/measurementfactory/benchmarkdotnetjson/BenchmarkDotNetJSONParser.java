@@ -82,15 +82,24 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
     }
 
     private Stream<Samples> mapBenchmarkToSamples(Benchmark benchmark) {
-        //add sample to map if not present yet
+        // Assuming metric and testedIterationMode/testedIterationStage are defined elsewhere
+        // and properly initialized.
+
+        // Create a stream of Measurements filtered by iteration mode and stage
+        Stream<Measurement> filteredMeasurements = benchmark.getMeasurements().stream()
+                .filter(measurement ->
+                        measurement.getIterationMode().equals(testedIterationMode) &&
+                                measurement.getIterationStage().equals(testedIterationStage));
+
+        // Collect nanoseconds from filtered measurements into an array
+        double[] nanosecondsArray = filteredMeasurements.mapToDouble(Measurement::getNanoseconds)
+                .toArray();
+
+        // Create Samples object and add the nanoseconds array
         Samples samples = new Samples(metric, benchmark.getMethod());
-        //add raw data to sample
-        List<Integer> rawData = new ArrayList<>();
-        for (Measurement measurement : benchmark.getMeasurements()) {
-            if (measurement.getIterationMode().equals(testedIterationMode) && measurement.getIterationStage().equals(testedIterationStage))
-                rawData.add(measurement.getNanoseconds());
-        }
-        samples.addSample(rawData.stream().mapToDouble(i -> i).toArray());
+        samples.addSample(nanosecondsArray);
+
+        // Return a Stream containing the Samples object
         return Stream.of(samples);
     }
 

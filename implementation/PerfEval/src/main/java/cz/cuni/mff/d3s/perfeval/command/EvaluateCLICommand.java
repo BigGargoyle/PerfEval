@@ -1,15 +1,14 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
-import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceEvaluator;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonResultCollection;
 import cz.cuni.mff.d3s.perfeval.evaluation.ResultPrinter;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceComparator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,14 +28,14 @@ public class EvaluateCLICommand implements Command {
      *
      * @param inputFiles            files with results of performance tests
      * @param resultPrinter         printer for results
-     * @param performanceComparator comparator for performance tests
+     * @param performanceEvaluator comparator for performance tests
      * @param parser                parser for performance tests result files
      */
-    public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter, PerformanceComparator performanceComparator, MeasurementParser parser) {
+    public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter, PerformanceEvaluator performanceEvaluator, MeasurementParser parser) {
         this.inputFiles = inputFiles;
         assert inputFiles.length == TWO;
         this.resultPrinter = resultPrinter;
-        this.performanceComparator = performanceComparator;
+        this.performanceEvaluator = performanceEvaluator;
         this.parser = parser;
     }
 
@@ -51,9 +50,9 @@ public class EvaluateCLICommand implements Command {
      */
     ResultPrinter resultPrinter;
     /**
-     * Comparator for performance tests
+     * Evaluator for performance tests
      */
-    PerformanceComparator performanceComparator;
+    PerformanceEvaluator performanceEvaluator;
 
     /**
      * Parser for performance tests result files
@@ -69,7 +68,7 @@ public class EvaluateCLICommand implements Command {
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
         try {
-            MeasurementComparisonResultCollection comparisonResults = evaluateResults(inputFiles, performanceComparator);
+            MeasurementComparisonResultCollection comparisonResults = evaluateResults(inputFiles, performanceEvaluator);
             resultPrinter.PrintResults(comparisonResults);
             for (MeasurementComparisonRecord record : comparisonResults) {
                 if (!record.testVerdict()) return ExitCode.atLeastOneWorseResult;
@@ -86,10 +85,10 @@ public class EvaluateCLICommand implements Command {
      * Evaluates results of performance tests
      *
      * @param filesWithResultsData  files with results of performance tests metadata
-     * @param performanceComparator comparator for performance tests
+     * @param performanceEvaluator comparator for performance tests
      * @return collection of results of performance tests evaluation
      */
-    private MeasurementComparisonResultCollection evaluateResults(FileWithResultsData[][] filesWithResultsData, PerformanceComparator performanceComparator) {
+    private MeasurementComparisonResultCollection evaluateResults(FileWithResultsData[][] filesWithResultsData, PerformanceEvaluator performanceEvaluator) {
         assert filesWithResultsData.length == TWO;
         assert parser != null;
         List<Samples> olderMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[0]).map(FileWithResultsData::path).toArray(String[]::new));
@@ -97,7 +96,7 @@ public class EvaluateCLICommand implements Command {
         assert compareTestsFromListsOfMeasurements(newerMeasurements, olderMeasurements);
         MeasurementComparisonResultCollection resultCollection = new MeasurementComparisonResultCollection(filesWithResultsData);
         //fills resultCollection with results of comparison of performance tests
-        resultCollection.addAll(compareTestsWithStatistic(olderMeasurements, newerMeasurements, performanceComparator));
+        resultCollection.addAll(compareTestsWithStatistic(olderMeasurements, newerMeasurements, performanceEvaluator));
         return resultCollection;
     }
 
@@ -123,13 +122,13 @@ public class EvaluateCLICommand implements Command {
      *
      * @param olderMeasurements     first list of measurements
      * @param newerMeasurements     second list of measurements
-     * @param performanceComparator comparator for performance tests
+     * @param performanceEvaluator comparator for performance tests
      * @return list of results of comparison of performance tests
      */
-    private static List<MeasurementComparisonRecord> compareTestsWithStatistic(List<Samples> olderMeasurements, List<Samples> newerMeasurements, PerformanceComparator performanceComparator) {
+    private static List<MeasurementComparisonRecord> compareTestsWithStatistic(List<Samples> olderMeasurements, List<Samples> newerMeasurements, PerformanceEvaluator performanceEvaluator) {
         List<MeasurementComparisonRecord> resultsOfComparison = new ArrayList<>();
         for (int i = 0; i < newerMeasurements.size(); i++) {
-            resultsOfComparison.add(performanceComparator.compareSets(olderMeasurements.get(i), newerMeasurements.get(i)));
+            resultsOfComparison.add(performanceEvaluator.compareSets(olderMeasurements.get(i), newerMeasurements.get(i)));
         }
         return resultsOfComparison;
     }
