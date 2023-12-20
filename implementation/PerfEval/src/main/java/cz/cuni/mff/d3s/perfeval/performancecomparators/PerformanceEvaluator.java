@@ -59,8 +59,8 @@ public class PerformanceEvaluator {
      */
     private MeasurementComparisonRecord constructRecord(Samples oldSamples, Samples newSamples,
                                                         EvaluatorResult statResult) {
-        double oldAvg = ArrayUtilities.calculateAverage(oldSamples.getRawData());
-        double newAvg = ArrayUtilities.calculateAverage(newSamples.getRawData());
+        double oldAvg = ArrayUtilities.calculateHierarchicAverage(oldSamples.getRawData());
+        double newAvg = ArrayUtilities.calculateHierarchicAverage(newSamples.getRawData());
 
         double performanceChange = oldSamples.getMetric().getMetricPerformanceDirection() ? newAvg / oldAvg : oldAvg / newAvg;
         performanceChange = performanceChange * 100 - 100;

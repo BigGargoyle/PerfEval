@@ -14,21 +14,16 @@ public class ArrayUtilities {
      * @param matrix matrix of values
      * @return average of all values in matrix
      */
-    public static double calculateAverage(double[][] matrix) {
+    public static double calculateHierarchicAverage(double[][] matrix) {
         if (matrix == null || matrix.length == 0) {
             return 0.0;
         }
-
-        int count = 0;
         double sum = 0.0;
 
         for (double[] doubles : matrix) {
-            for (double d : doubles) {
-                sum += d;
-                count++;
-            }
+            sum+= StatUtils.mean(doubles);
         }
-        return sum / count;
+        return sum / matrix.length;
     }
 
     /**
@@ -51,31 +46,5 @@ public class ArrayUtilities {
         double sampleCount = Math.pow(criticalValue * standardDeviation / (mean * maxWidth), 2);
 
         return (int) Math.ceil(sampleCount);
-    }
-
-
-    /**
-     * Merges 2D array into 1D array
-     *
-     * @param sampleSet 2D array
-     * @return 1D array
-     */
-    public static double[] mergeArrays(double[][] sampleSet) {
-        int size = 0;
-        for (var arr : sampleSet) {
-            size += arr.length;
-        }
-        double[] mergedArray = new double[size];
-        int innerArrayIndex = 0;
-        int innerIndex = 0;
-        for (int i = 0; i < mergedArray.length; i++) {
-            mergedArray[i] = sampleSet[innerArrayIndex][innerIndex];
-            innerIndex++;
-            if (innerIndex == sampleSet[innerArrayIndex].length) {
-                innerArrayIndex++;
-                innerIndex = 0;
-            }
-        }
-        return mergedArray;
     }
 }
