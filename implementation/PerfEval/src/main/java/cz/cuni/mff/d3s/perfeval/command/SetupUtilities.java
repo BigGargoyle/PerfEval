@@ -8,10 +8,8 @@ import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
 import cz.cuni.mff.d3s.perfeval.evaluation.ResultPrinter;
 import cz.cuni.mff.d3s.perfeval.evaluation.TablePrinter;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.BootstrapPerformanceComparator;
 import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceComparator;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.TTestPerformanceComparator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceEvaluator;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
@@ -20,6 +18,7 @@ import cz.cuni.mff.d3s.perfeval.resultdatabase.ProjectVersion;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import org.apache.commons.lang.NotImplementedException;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import java.io.IOException;
@@ -159,10 +158,12 @@ public class SetupUtilities {
         PrintStream printStream = System.out;
         return options.has(JSON_OUTPUT_FLAG) ? new JSONPrinter(printStream, filter) : new TablePrinter(printStream, filter);
     }
-    static PerformanceComparator resolvePerformanceComparatorForEvaluateCommand(OptionSet options, PerfEvalConfig config){
-        return options.has(TTEST_FLAG) ?
+    static PerformanceEvaluator resolvePerformanceComparatorForEvaluateCommand(OptionSet options, PerfEvalConfig config){
+        //TODO: implement
+        throw new NotImplementedException("resolvePerformanceComparatorForEvaluateCommand");
+        /*return options.has(TTEST_FLAG) ?
                 new TTestPerformanceComparator(config.getCritValue(), config.getMaxCIWidth(), config.getTolerance(), config.getMaxTimeOnTest()) :
-                new BootstrapPerformanceComparator(config.getCritValue(), config.getTolerance(), options.valueOf(bootstrapSampleCountOption));
+                new BootstrapPerformanceComparator(config.getCritValue(), config.getTolerance(), options.valueOf(bootstrapSampleCountOption));*/
     }
 
     static FileWithResultsData[][] resolveInputFilesWithRespectToInputtedVersions(String[] args, OptionSet options) throws DatabaseException {

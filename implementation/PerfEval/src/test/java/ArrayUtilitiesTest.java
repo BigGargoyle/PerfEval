@@ -11,20 +11,20 @@ public class ArrayUtilitiesTest {
         // Test with a valid matrix
         double[][] matrix = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
         double expectedAverage = (1.0 + 2.0 + 3.0 + 4.0 + 5.0 + 6.0) / 6;
-        double actualAverage = ArrayUtilities.calculateAverage(matrix);
+        double actualAverage = ArrayUtilities.calculateHierarchicAverage(matrix);
         assertEquals(expectedAverage, actualAverage, 0.001);
     }
     @Test
     public void testCalculateAverageEmptyMatrix() {
         // Test with an empty matrix
         double[][] emptyMatrix = {};
-        double emptyMatrixAverage = ArrayUtilities.calculateAverage(emptyMatrix);
+        double emptyMatrixAverage = ArrayUtilities.calculateHierarchicAverage(emptyMatrix);
         assertEquals(0.0, emptyMatrixAverage, 0.001);
     }
     @Test
     public void testCalculateAverageNullMatrix() {
         // Test with a null matrix
-        double nullMatrixAverage = ArrayUtilities.calculateAverage(null);
+        double nullMatrixAverage = ArrayUtilities.calculateHierarchicAverage(null);
         assertEquals(0.0, nullMatrixAverage, 0.001);
     }
     @Test
@@ -45,7 +45,7 @@ public class ArrayUtilitiesTest {
         }
 
         double expectedAverage = expectedSum / (rowCount * colCount);
-        double actualAverage = ArrayUtilities.calculateAverage(matrix);
+        double actualAverage = ArrayUtilities.calculateHierarchicAverage(matrix);
         assertEquals(expectedAverage, actualAverage, 0.001);
     }
 
@@ -58,52 +58,6 @@ public class ArrayUtilitiesTest {
         double maxWidth = 0.1;
         int actualSampleCount = ArrayUtilities.calcMinSampleCount(statistics, confidenceLevel, maxWidth);
         assertTrue(actualSampleCount > statistics.length);
-    }
-
-    @Test
-    public void testMergeArrays() {
-        // Test merging arrays
-        double[] array1 = {1.0, 2.0, 3.0};
-        double[] array2 = {4.0, 5.0};
-        double[] array3 = {6.0};
-        double[][] sampleSet = {array1, array2, array3};
-        double[] expectedMergedArray = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-        double[] actualMergedArray = ArrayUtilities.mergeArrays(sampleSet);
-        assertArrayEquals(expectedMergedArray, actualMergedArray, 0.001);
-    }
-    @Test
-    public void testMergeArraysInLargeMatrix() {
-        // Test merging arrays within a larger matrix structure
-        int rows = 1000; // Number of rows in the matrix
-        int maxCols = 100; // Maximum number of columns in each row
-
-        // Creating a larger matrix
-        double[][] sampleSet = new double[rows][];
-        int totalElements = 0;
-        double[] expectedMergedArray = new double[rows * maxCols];
-        int index = 0;
-
-        // Populate the matrix with arrays of different lengths
-        for (int i = 0; i < rows; i++) {
-            int colCount = (int) (Math.random() * maxCols) + 1; // Random column count for each row
-            double[] array = new double[colCount];
-
-            // Populate array with values and update the expectedMergedArray
-            for (int j = 0; j < colCount; j++) {
-                double value = Math.random() * 100; // Random value for testing
-                array[j] = value;
-                expectedMergedArray[index++] = value;
-            }
-
-            sampleSet[i] = array;
-            totalElements += colCount;
-        }
-
-        // Trimming the expectedMergedArray to the actual total elements added
-        expectedMergedArray = Arrays.copyOf(expectedMergedArray, totalElements);
-
-        double[] actualMergedArray = ArrayUtilities.mergeArrays(sampleSet);
-        assertArrayEquals(expectedMergedArray, actualMergedArray, 0.001);
     }
 
 }

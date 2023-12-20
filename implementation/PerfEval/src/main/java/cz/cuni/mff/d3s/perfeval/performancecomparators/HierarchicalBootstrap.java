@@ -1,37 +1,24 @@
 package cz.cuni.mff.d3s.perfeval.performancecomparators;
 
-import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.analysis.MultivariateVectorFunction;
+import org.apache.commons.math3.fitting.leastsquares.*;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.stat.StatUtils;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+import org.apache.commons.math3.util.Pair;
 
 import java.util.Random;
+
 
 /**
  * Class for performing hierarchical bootstrap
  */
 public class HierarchicalBootstrap {
-    /**
-     * Critical value for bootstrap statistical test
-     */
-    double critValue;
-    /**
-     * Count of samples used for bootstrap
-     */
-    int bootstrapSampleCount;
 
     static int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 1_000;
-
-    /**
-     * Constructor for HierarchicalBootstrap
-     *
-     * @param critValue            critical value for bootstrap statistical test
-     * @param bootstrapSampleCount count of samples used for bootstrap
-     */
-    public HierarchicalBootstrap(double critValue, int bootstrapSampleCount) {
-        this.critValue = critValue;
-        this.bootstrapSampleCount = bootstrapSampleCount;
-    }
 
     /**
      * Performs hierarchical bootstrap
@@ -49,6 +36,11 @@ public class HierarchicalBootstrap {
         double[] bootstrapInterval = calcCIInterval(bootstrapSample, 1 - critValue);
         assert bootstrapInterval.length == 2;
         return bootstrapInterval[0] <= 0 && bootstrapInterval[1] >= 0;
+    }
+
+    public static double[] evaluateCIInterval(double[][] sampleSet1, double[][] sampleSet2, double confidenceLevel, int bootstrapSampleCount) {
+        double[] bootstrapSample = createBootstrapSample(sampleSet1, sampleSet2, bootstrapSampleCount);
+        return calcCIInterval(bootstrapSample, confidenceLevel);
     }
 
     /**
@@ -93,7 +85,7 @@ public class HierarchicalBootstrap {
         return StatUtils.mean(result);
     }
 
-    private static double[] createBootstrappedDataset(double[] sampleSet, Random random){
+    private static double[] createBootstrappedDataset(double[] sampleSet, Random random) {
         double[] result = new double[sampleSet.length];
         for (int i = 0; i < sampleSet.length; i++) {
             result[i] = sampleSet[random.nextInt(0, sampleSet.length)];
@@ -111,10 +103,99 @@ public class HierarchicalBootstrap {
      */
     public static double[] calcCIInterval(double[] data, double confidenceLevel) {
         Percentile percentile = new Percentile();
-        double lowerBound = percentile.evaluate(data, confidenceLevel/2);
-        double upperBound = percentile.evaluate(data, 100 - confidenceLevel/2);
+        double lowerBound = percentile.evaluate(data, confidenceLevel / 2);
+        double upperBound = percentile.evaluate(data, 100 - confidenceLevel / 2);
         // Calculate the sample mean and standard deviation
         return new double[]{lowerBound, upperBound};
     }
 
+    public static int getMinSampleCount(double[][] sampleSet, double confidenceLevel, double maxCIWidth, int bootstrapSampleCount) {
+        double[][] functionPoints = calcFunctionPoints(sampleSet, confidenceLevel, bootstrapSampleCount);
+        // y = a * 1 / sqrt(x) + b
+        double[] abParameters = calcFunctionParameters(functionPoints);
+        return calcMinSampleCountFromFunction(abParameters, maxCIWidth);
+    }
+
+    private static double[][] calcFunctionPoints(double[][] sampleSet, double confidenceLevel, int bootstrapSampleCount) {
+        int pointsCount = sampleSet.length;
+        double[][] functionPoints = new double[pointsCount][];
+        Random random = new Random();
+        for (int x = 0; x < pointsCount; x++) {
+            double[][] set = new double[x + 1][];
+            System.arraycopy(sampleSet, 0, set, 0, x + 1);
+            double[] bootstrapSample = createBootstrapSample(set, random, bootstrapSampleCount);
+            double[] bootstrapInterval = calcCIInterval(bootstrapSample, confidenceLevel);
+            assert bootstrapInterval.length == 2;
+            double y = StatUtils.mean(bootstrapInterval) / (bootstrapInterval[1] - bootstrapInterval[0]);
+            functionPoints[x] = new double[]{x, y};
+        }
+        return functionPoints;
+    }
+
+    private static double[] createBootstrapSample(double[][] sampleSet, Random random, int bootstrapSampleCount) {
+        double[] result = new double[bootstrapSampleCount];
+        //create bootstrapSampleCount of bootstrap samples
+        for (int i = 0; i < bootstrapSampleCount; i++) {
+            //create bootstrap sample of sampleSet
+            double sample = calcBoostrapValue(sampleSet, bootstrapSampleCount, random);
+            result[i] = sample;
+        }
+        return result;
+    }
+
+    public static int calcMinSampleCountFromFunction(double[] abParameters, double maxCIWidth) {
+        double a = abParameters[0];
+        double b = abParameters[1];
+
+        // y = a * 1 / sqrt(x) + b
+        // x = a * a / ((y - b) * (y - b))
+        // y = maxCIWidth
+        double x = a * a / ((maxCIWidth - b) * (maxCIWidth - b));
+        return (int) Math.ceil(x);
+    }
+
+    public static double[] calcFunctionParameters(double[][] functionPoints) {
+        double[] xData = new double[functionPoints.length];
+        double[] yData = new double[functionPoints.length];
+
+        for (int i = 0; i < functionPoints.length; i++) {
+            xData[i] = functionPoints[i][0];
+            yData[i] = functionPoints[i][1];
+        }
+
+        double a = 1.0; // Initial guess for 'a'
+        double b = 1.0; // Initial guess for 'b'
+        double learningRate = 0.001; // Adjust the learning rate
+        int maxIterations = 10000; // Maximum number of iterations
+
+        for (int iteration = 0; iteration < maxIterations; iteration++) {
+            double gradientA = 0.0;
+            double gradientB = 0.0;
+
+            for (int i = 0; i < xData.length; i++) {
+                // has to be positive
+                assert xData[i] > 0;
+                double sqrtX = Math.sqrt(xData[i]);
+                double yModel = a / sqrtX + b;
+
+                double error = yData[i] - yModel;
+
+                // Partial derivatives of the function with respect to 'a' and 'b'
+                double partialA = 1.0 / sqrtX; // Derivative with respect to 'a'
+                double partialB = 1.0; // Derivative with respect to 'b'
+
+                gradientA += -2 * error * partialA; // Update gradient for 'a'
+                gradientB += -2 * error * partialB; // Update gradient for 'b'
+            }
+
+            // Update parameters using the gradients
+            a -= learningRate * gradientA;
+            b -= learningRate * gradientB;
+        }
+
+        return new double[]{ a, b };
+    }
+
+
 }
+
