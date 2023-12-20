@@ -1,7 +1,7 @@
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.ParametricEvaluator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.ParametricTest;
 import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceEvaluator;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ParametricEvaluatorTest {
     @Test
     public void newSamplesAreBetter() {
-        ParametricEvaluator evaluator = new ParametricEvaluator(0.05);
+        ParametricTest evaluator = new ParametricTest(0.05);
         PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples oldSamples = new Samples(new Metric("", true), "name1");
@@ -29,7 +29,7 @@ public class ParametricEvaluatorTest {
 
     @Test
     public void oldSamplesAreBetter(){
-        ParametricEvaluator evaluator = new ParametricEvaluator(0.05);
+        ParametricTest evaluator = new ParametricTest(0.05);
         PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples newSamples = new Samples(new Metric("", true), "name1");
@@ -45,7 +45,7 @@ public class ParametricEvaluatorTest {
     }
     @Test
     public void newSamplesAreBetterHigherIsWorse(){
-        ParametricEvaluator evaluator = new ParametricEvaluator(0.05);
+        ParametricTest evaluator = new ParametricTest(0.05);
         PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples newSamples = new Samples(new Metric("", false), "name1");
@@ -62,7 +62,7 @@ public class ParametricEvaluatorTest {
 
     @Test
     public void newSamplesAreSameAsOld(){
-        ParametricEvaluator evaluator = new ParametricEvaluator(0.05);
+        ParametricTest evaluator = new ParametricTest(0.05);
         PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples oldSamples = new Samples(new Metric("", true), "name1");
@@ -79,7 +79,7 @@ public class ParametricEvaluatorTest {
 
     @Test
     public void newSamplesAreWorseButInTolerance(){
-        ParametricEvaluator evaluator = new ParametricEvaluator(0.05);
+        ParametricTest evaluator = new ParametricTest(0.05);
         PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.5, null, evaluator);
 
         Samples oldSamples = new Samples(new Metric("", true), "name1");

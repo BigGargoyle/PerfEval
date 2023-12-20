@@ -1,7 +1,7 @@
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.NonparametricEvaluator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.NonparametricTest;
 import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceEvaluator;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ public class NonparametricEvaluatorTest {
 
     @Test
     public void newSamplesAreBetter() {
-        NonparametricEvaluator evaluator = new NonparametricEvaluator(0.05, 1000);
+        NonparametricTest evaluator = new NonparametricTest(0.05, 1000);
         PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples oldSamples = new Samples(new Metric("", true), "name1");
@@ -30,7 +30,7 @@ public class NonparametricEvaluatorTest {
 
     @Test
     public void oldSamplesAreBetter(){
-        NonparametricEvaluator evaluator = new NonparametricEvaluator(0.05, 1000);
+        NonparametricTest evaluator = new NonparametricTest(0.05, 1000);
         PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples newSamples = new Samples(new Metric("", true), "name1");
@@ -46,7 +46,7 @@ public class NonparametricEvaluatorTest {
     }
     @Test
     public void newSamplesAreBetterHigherIsWorse(){
-        NonparametricEvaluator evaluator = new NonparametricEvaluator(0.05, 1000);
+        NonparametricTest evaluator = new NonparametricTest(0.05, 1000);
         PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples newSamples = new Samples(new Metric("", false), "name1");
@@ -63,7 +63,7 @@ public class NonparametricEvaluatorTest {
 
     @Test
     public void newSamplesAreSameAsOld(){
-        NonparametricEvaluator evaluator = new NonparametricEvaluator(0.05, 1000);
+        NonparametricTest evaluator = new NonparametricTest(0.05, 1000);
         PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.1, null, evaluator);
 
         Samples oldSamples = new Samples(new Metric("", true), "name1");
@@ -80,7 +80,7 @@ public class NonparametricEvaluatorTest {
 
     @Test
     public void newSamplesAreWorseButInTolerance(){
-        NonparametricEvaluator evaluator = new NonparametricEvaluator(0.05, 1000);
+        NonparametricTest evaluator = new NonparametricTest(0.05, 1000);
         PerformanceEvaluator comparator = new PerformanceEvaluator(0.05, 0.1, 0.5, null, evaluator);
 
         Samples oldSamples = new Samples(new Metric("", true), "name1");

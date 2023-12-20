@@ -2,7 +2,7 @@ package cz.cuni.mff.d3s.perfeval.performancecomparators;
 
 import static cz.cuni.mff.d3s.perfeval.performancecomparators.HierarchicalBootstrap.evaluateCIInterval;
 
-public class NonparametricEvaluator implements StatisticEvaluator{
+public class NonparametricTest implements StatisticTest {
     /**
      * Critical value for bootstrap statistical test
      */
@@ -20,11 +20,11 @@ public class NonparametricEvaluator implements StatisticEvaluator{
      * @param critValue            critical value for bootstrap statistical test
      * @param bootstrapSampleCount count of samples used for bootstrap
      */
-    public NonparametricEvaluator(double critValue, int bootstrapSampleCount) {
+    public NonparametricTest(double critValue, int bootstrapSampleCount) {
         this.critValue = critValue;
         this.bootstrapSampleCount = bootstrapSampleCount;
     }
-    public NonparametricEvaluator(double critValue) {
+    public NonparametricTest(double critValue) {
         this.critValue = critValue;
         this.bootstrapSampleCount = DEFAULT_BOOTSTRAP_SAMPLE_COUNT;
     }

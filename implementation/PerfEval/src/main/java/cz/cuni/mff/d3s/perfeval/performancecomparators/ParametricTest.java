@@ -4,9 +4,9 @@ import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.inference.TTest;
 
-public class ParametricEvaluator implements StatisticEvaluator{
+public class ParametricTest implements StatisticTest {
     double critValue;
-    public ParametricEvaluator(double critValue) {
+    public ParametricTest(double critValue) {
         this.critValue = critValue;
     }
     @Override

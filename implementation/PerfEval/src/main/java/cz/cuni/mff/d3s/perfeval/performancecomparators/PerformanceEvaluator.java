@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.perfeval.performancecomparators;
 
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
-import org.apache.commons.math3.util.Pair;
 
 import java.time.Duration;
 
@@ -28,7 +27,7 @@ public class PerformanceEvaluator {
      */
     Duration maxTestTime;
 
-    StatisticEvaluator statisticEvaluator;
+    StatisticTest statisticTest;
 
     /**
      * Constructor of the class.
@@ -38,16 +37,16 @@ public class PerformanceEvaluator {
      * @param tolerance   tolerance of the performance to get worse
      * @param maxTestTime maximal time of the test
      */
-    public PerformanceEvaluator(double critValue, double maxCIWidth, double tolerance, Duration maxTestTime, StatisticEvaluator statisticEvaluator) {
+    public PerformanceEvaluator(double critValue, double maxCIWidth, double tolerance, Duration maxTestTime, StatisticTest statisticTest) {
         this.critValue = critValue;
         this.maxCIWidth = maxCIWidth;
         this.tolerance = tolerance;
         this.maxTestTime = maxTestTime;
-        this.statisticEvaluator = statisticEvaluator;
+        this.statisticTest = statisticTest;
         assert tolerance >= 0 && tolerance <= 1;
         assert critValue > 0 && critValue < 1;
         assert maxCIWidth > 0 && maxCIWidth < 1;
-        assert statisticEvaluator != null;
+        assert statisticTest != null;
     }
 
     /**
@@ -78,7 +77,7 @@ public class PerformanceEvaluator {
                 comparisonResult = ComparisonResult.SameDistribution;
             }
             else {
-                minSampleCount = statisticEvaluator.calcMinSampleCount(oldSamples.getRawData(), newSamples.getRawData(), maxCIWidth);
+                minSampleCount = statisticTest.calcMinSampleCount(oldSamples.getRawData(), newSamples.getRawData(), maxCIWidth);
                 //TODO: pokud je to možné stihnout do maxTestTime, tak říct, že lepší to nebude
                 comparisonResult = ComparisonResult.NotEnoughSamples;
 
@@ -103,7 +102,7 @@ public class PerformanceEvaluator {
      */
     public MeasurementComparisonRecord compareSets(Samples oldSamples, Samples newSamples){
         return constructRecord(oldSamples, newSamples,
-                statisticEvaluator.calcCIInterval(oldSamples.getRawData(), newSamples.getRawData()));
+                statisticTest.calcCIInterval(oldSamples.getRawData(), newSamples.getRawData()));
 
     }
 }
