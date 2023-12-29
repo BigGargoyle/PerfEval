@@ -29,9 +29,8 @@ public class NonparametricTest implements StatisticTest {
         this.bootstrapSampleCount = DEFAULT_BOOTSTRAP_SAMPLE_COUNT;
     }
     @Override
-    public EvaluatorResult calcCIInterval(double[][] sampleSet1, double[][] sampleSet2) {
-        double[] ciInterval = evaluateCIInterval(sampleSet1, sampleSet2, 1 - critValue, bootstrapSampleCount);
-        return new EvaluatorResult(ciInterval[0], ciInterval[1], ciInterval[0] <= 0 && ciInterval[1] >= 0);
+    public double[] calcCIInterval(double[][] sampleSet1, double[][] sampleSet2) {
+        return evaluateCIInterval(sampleSet1, sampleSet2, 1 - critValue, bootstrapSampleCount);
     }
 
     @Override

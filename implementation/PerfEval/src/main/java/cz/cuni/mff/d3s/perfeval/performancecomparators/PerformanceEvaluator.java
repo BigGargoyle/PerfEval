@@ -22,10 +22,11 @@ public class PerformanceEvaluator {
      * Tolerance of the performance to get worse.
      */
     double tolerance;
+
     /**
-     * Maximal time of the test.
+     * Maximal count of tests to be performed.
      */
-    Duration maxTestTime;
+    int maxTestCount;
 
     StatisticTest statisticTest;
 
@@ -35,13 +36,13 @@ public class PerformanceEvaluator {
      * @param critValue   critical value of the t-test
      * @param maxCIWidth  maximal width of the confidence interval
      * @param tolerance   tolerance of the performance to get worse
-     * @param maxTestTime maximal time of the test
+     * @param maxTestCount maximal count of tests to be performed
      */
-    public PerformanceEvaluator(double critValue, double maxCIWidth, double tolerance, Duration maxTestTime, StatisticTest statisticTest) {
+    public PerformanceEvaluator(double critValue, double maxCIWidth, double tolerance, int maxTestCount, StatisticTest statisticTest) {
         this.critValue = critValue;
         this.maxCIWidth = maxCIWidth;
         this.tolerance = tolerance;
-        this.maxTestTime = maxTestTime;
+        this.maxTestCount = maxTestCount;
         this.statisticTest = statisticTest;
         assert tolerance >= 0 && tolerance <= 1;
         assert critValue > 0 && critValue < 1;
@@ -54,11 +55,11 @@ public class PerformanceEvaluator {
      *
      * @param oldSamples      samples from old version
      * @param newSamples      samples from new version
-     * @param statResult      result of statisticalEvaluator, true if performances seems not to be different, false otherwise
+     * @param ciInterval      confidence interval of the samples
      * @return record with results of comparison
      */
     private MeasurementComparisonRecord constructRecord(Samples oldSamples, Samples newSamples,
-                                                        EvaluatorResult statResult) {
+                                                        double[] ciInterval) {
         double oldAvg = ArrayUtilities.calculateHierarchicAverage(oldSamples.getRawData());
         double newAvg = ArrayUtilities.calculateHierarchicAverage(newSamples.getRawData());
 
@@ -67,19 +68,23 @@ public class PerformanceEvaluator {
 
         ComparisonResult comparisonResult = ComparisonResult.None;
         int minSampleCount = MINUS_ONE;
-        if(!statResult.areSetsSame()){
+        // does ciInterval contain 0?, if not, we can say that the performance is different
+        if(!(ciInterval[1]>0 && ciInterval[0]<0)){
             comparisonResult = ComparisonResult.DifferentDistribution;
         } else {
             //relative width of the confidence interval ((upperBound - lowerBound) / mean)
-            double ciWidth = 2*(statResult.ciUpperBound() - statResult.ciLowerBound()) / (statResult.ciLowerBound()+statResult.ciUpperBound());
+            double ciWidth = Math.abs((ciInterval[1] - ciInterval[0]) / (oldAvg + newAvg) / 2);
             //if the confidence interval is smaller than maxCIWidth, we can say that the performance is the same
             if(ciWidth <= maxCIWidth){
                 comparisonResult = ComparisonResult.SameDistribution;
             }
             else {
                 minSampleCount = statisticTest.calcMinSampleCount(oldSamples.getRawData(), newSamples.getRawData(), maxCIWidth);
-                //TODO: pokud je to možné stihnout do maxTestTime, tak říct, že lepší to nebude
-                comparisonResult = ComparisonResult.NotEnoughSamples;
+                assert minSampleCount >= Math.min(oldSamples.getRawData().length, newSamples.getRawData().length);
+                if(minSampleCount > maxTestCount)
+                    comparisonResult = ComparisonResult.Bootstrap;
+                else
+                    comparisonResult = ComparisonResult.NotEnoughSamples;
 
             }
         }

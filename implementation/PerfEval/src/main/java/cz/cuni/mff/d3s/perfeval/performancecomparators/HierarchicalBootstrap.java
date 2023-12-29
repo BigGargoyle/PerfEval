@@ -1,23 +1,19 @@
 package cz.cuni.mff.d3s.perfeval.performancecomparators;
 
-import org.apache.commons.math3.analysis.MultivariateVectorFunction;
-import org.apache.commons.math3.fitting.leastsquares.*;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
+import org.apache.commons.math3.fitting.SimpleCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoint;
+import org.apache.commons.math3.fitting.WeightedObservedPoints;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
-import org.apache.commons.math3.util.Pair;
 
 import java.util.Random;
-
 
 /**
  * Class for performing hierarchical bootstrap
  */
 public class HierarchicalBootstrap {
-
+//TODO: uklidit
     static int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 1_000;
 
     /**
@@ -106,7 +102,7 @@ public class HierarchicalBootstrap {
         double lowerBound = percentile.evaluate(data, confidenceLevel / 2);
         double upperBound = percentile.evaluate(data, 100 - confidenceLevel / 2);
         // Calculate the sample mean and standard deviation
-        return new double[]{lowerBound, upperBound};
+        return lowerBound <= upperBound ? new double[]{lowerBound, upperBound} : new double[]{upperBound, lowerBound};
     }
 
     public static int getMinSampleCount(double[][] sampleSet, double confidenceLevel, double maxCIWidth, int bootstrapSampleCount) {
@@ -120,14 +116,14 @@ public class HierarchicalBootstrap {
         int pointsCount = sampleSet.length;
         double[][] functionPoints = new double[pointsCount][];
         Random random = new Random();
-        for (int x = 0; x < pointsCount; x++) {
-            double[][] set = new double[x + 1][];
-            System.arraycopy(sampleSet, 0, set, 0, x + 1);
+        for (int x = 1; x <= pointsCount; x++) {
+            double[][] set = new double[x][];
+            System.arraycopy(sampleSet, 0, set, 0, x);
             double[] bootstrapSample = createBootstrapSample(set, random, bootstrapSampleCount);
             double[] bootstrapInterval = calcCIInterval(bootstrapSample, confidenceLevel);
             assert bootstrapInterval.length == 2;
-            double y = StatUtils.mean(bootstrapInterval) / (bootstrapInterval[1] - bootstrapInterval[0]);
-            functionPoints[x] = new double[]{x, y};
+            double y = (bootstrapInterval[1] - bootstrapInterval[0])/StatUtils.mean(bootstrapSample);
+            functionPoints[x-1] = new double[]{x, y};
         }
         return functionPoints;
     }
@@ -163,39 +159,40 @@ public class HierarchicalBootstrap {
             yData[i] = functionPoints[i][1];
         }
 
-        double a = 1.0; // Initial guess for 'a'
-        double b = 1.0; // Initial guess for 'b'
-        double learningRate = 0.001; // Adjust the learning rate
-        int maxIterations = 10000; // Maximum number of iterations
-
-        for (int iteration = 0; iteration < maxIterations; iteration++) {
-            double gradientA = 0.0;
-            double gradientB = 0.0;
-
-            for (int i = 0; i < xData.length; i++) {
-                // has to be positive
-                assert xData[i] > 0;
-                double sqrtX = Math.sqrt(xData[i]);
-                double yModel = a / sqrtX + b;
-
-                double error = yData[i] - yModel;
-
-                // Partial derivatives of the function with respect to 'a' and 'b'
-                double partialA = 1.0 / sqrtX; // Derivative with respect to 'a'
-                double partialB = 1.0; // Derivative with respect to 'b'
-
-                gradientA += -2 * error * partialA; // Update gradient for 'a'
-                gradientB += -2 * error * partialB; // Update gradient for 'b'
+        // Perform curve fitting
+        ParametricUnivariateFunction function = new ParametricUnivariateFunction() {
+            @Override
+            public double value(double x, double... parameters) {
+                // Function: y = a / sqrt(x)
+                double a = parameters[0];
+                return a / Math.sqrt(x);
             }
 
-            // Update parameters using the gradients
-            a -= learningRate * gradientA;
-            b -= learningRate * gradientB;
+            @Override
+            public double[] gradient(double x, double... parameters) {
+                double a = parameters[0];
+                double[] gradient = new double[1];
+                gradient[0] = 1 / Math.sqrt(x);
+                return gradient;
+            }
+        };
+
+        WeightedObservedPoints obs = new WeightedObservedPoints();
+        for (int i = 0; i < xData.length; i++) {
+            obs.add(new WeightedObservedPoint(1, xData[i], yData[i]));
         }
 
-        return new double[]{ a, b };
-    }
+        // Initial guess for the parameter
+        double[] initialGuess = {1.0};
 
+        SimpleCurveFitter fitter = SimpleCurveFitter.create(function, initialGuess);
+        fitter.withStartPoint(initialGuess);
+
+        double[] bestFitParameters = fitter.fit(obs.toList());
+        double bestFitA = bestFitParameters[0];
+
+        return new double[]{ bestFitA, 0 };
+    }
 
 }
 

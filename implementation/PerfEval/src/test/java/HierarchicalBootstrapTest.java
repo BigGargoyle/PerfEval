@@ -90,7 +90,7 @@ public class HierarchicalBootstrapTest {
     }
 
     @Test
-    public  void testAllValuesAreSame(){
+    public void testAllValuesAreSame(){
         double[][] sample = new double[10][];
         for(int i = 0; i < sample.length; i++){
             sample[i] = new double[10];
@@ -143,22 +143,12 @@ public class HierarchicalBootstrapTest {
 
     @Test
     public void parameterCalcTest(){
+        //y = 2/sqrt(x) + 0
         double[][] points = new double[][]{
-                {0.01,17.9}, {1.1,3.8}, {3.9,3.0}, {8.9, 2.7}
+                {0.01,20.3}, {1,2.02}, {4,1.0}, {9, 0.6}
         };
-        double[] abParams = HierarchicalBootstrap.calcFunctionParameters(points);
-        assertTrue(abParams[0] > 1.5 && abParams[0] < 2.5);
-        assertTrue(abParams[1] > 1.5 && abParams[1] < 2.5);
-    }
-
-    @Test
-    public void parameterCalcTest2(){
-        double[][] points = new double[][]{
-                {0.01,22}, {1,4}, {4,3.0}, {9, 2.6}
-        };
-        double[] abParams = HierarchicalBootstrap.calcFunctionParameters(points);
-        assertTrue(abParams[0] > 1.9 && abParams[0] < 2.1);
-        assertTrue(abParams[1] > 1.9 && abParams[1] < 2.1);
+        double[] aParams = HierarchicalBootstrap.calcFunctionParameters(points);
+        assertTrue(aParams[0] > 1.9 && aParams[0] < 2.1);
     }
 
 }

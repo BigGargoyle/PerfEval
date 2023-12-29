@@ -60,7 +60,7 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
                 //mapping POJOs to Stream of Benchmarks
                 .flatMap(this::mapBenchmarkDotNetJSONRootToBenchmark)
                 //mapping Benchmarks to Stream of Samples
-                .flatMap(this::mapBenchmarkToSamples)
+                .map(this::mapBenchmarkToSamples)
                 .collect(collectToMap());
     }
 
@@ -81,18 +81,16 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
         return root.getBenchmarks().stream();
     }
 
-    private Stream<Samples> mapBenchmarkToSamples(Benchmark benchmark) {
+    private Samples mapBenchmarkToSamples(Benchmark benchmark) {
         // Assuming metric and testedIterationMode/testedIterationStage are defined elsewhere
         // and properly initialized.
 
         // Create a stream of Measurements filtered by iteration mode and stage
-        Stream<Measurement> filteredMeasurements = benchmark.getMeasurements().stream()
+        double[] nanosecondsArray = benchmark.getMeasurements().stream()
                 .filter(measurement ->
                         measurement.getIterationMode().equals(testedIterationMode) &&
-                                measurement.getIterationStage().equals(testedIterationStage));
-
-        // Collect nanoseconds from filtered measurements into an array
-        double[] nanosecondsArray = filteredMeasurements.mapToDouble(Measurement::getNanoseconds)
+                                measurement.getIterationStage().equals(testedIterationStage))
+                .mapToDouble(Measurement::getNanoseconds)
                 .toArray();
 
         // Create Samples object and add the nanoseconds array
@@ -100,7 +98,7 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
         samples.addSample(nanosecondsArray);
 
         // Return a Stream containing the Samples object
-        return Stream.of(samples);
+        return samples;
     }
 
     public static String getParserName() {

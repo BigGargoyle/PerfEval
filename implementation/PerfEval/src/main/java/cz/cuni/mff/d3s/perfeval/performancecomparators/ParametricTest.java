@@ -10,7 +10,8 @@ public class ParametricTest implements StatisticTest {
         this.critValue = critValue;
     }
     @Override
-    public EvaluatorResult calcCIInterval(double[][] sampleSet1, double[][] sampleSet2) {
+    public double[] calcCIInterval(double[][] sampleSet1, double[][] sampleSet2) {
+        //TODO: stačí zjistit existenci nuly v intervalu
         double[] samples1 = calcMean(sampleSet1);
         double[] samples2 = calcMean(sampleSet2);
         TTest tTest = new TTest();
@@ -41,8 +42,8 @@ public class ParametricTest implements StatisticTest {
         // Calculate confidence interval bounds
         double lowerBound = meanDifference - marginOfError;
         double upperBound = meanDifference + marginOfError;
-
-        return new EvaluatorResult(lowerBound, upperBound, Math.abs(pValue) <= critValue);
+        return lowerBound <= upperBound ? new double[]{lowerBound, upperBound} : new double[]{upperBound, lowerBound};
+        //return new EvaluatorResult(lowerBound, upperBound, Math.abs(pValue) <= critValue);
     }
 
     @Override
