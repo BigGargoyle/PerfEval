@@ -8,25 +8,35 @@ import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 import joptsimple.OptionSet;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveInputFilesWithRespectToInputtedVersions;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolvePrinterForEvaluateCommand;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveStatisticTest;
 
-public class EvaluateSetup implements  CommandSetup{
+/**
+ * Setup for the evaluate command.
+ */
+public class EvaluateSetup implements CommandSetup {
 
+    /**
+     * Name of the command.
+     */
     static final String commandName = "evaluate";
-
     @Override
     public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException, ParserException {
 
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = resolvePrinterForEvaluateCommand(options);
         StatisticTest statisticTest = resolveStatisticTest(options, config);
-        PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getCritValue(), config.getMaxCIWidth(), config.getTolerance(), config.getMaxTestCount(), statisticTest);
-
-
+        PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getCritValue(), config.getMaxCIWidth(),
+                config.getTolerance(), config.getMaxTestCount(), statisticTest);
         return new EvaluateCLICommand(inputFiles, printer, evaluator, config.getMeasurementParser());
 
     }
 
+    /**
+     * Returns the name of the command.
+     * @return Name of the command.
+     */
     public static String getCommandName() {
         return commandName;
     }

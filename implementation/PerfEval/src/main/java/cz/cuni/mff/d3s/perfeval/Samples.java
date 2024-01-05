@@ -10,21 +10,33 @@ public class Samples {
     /**
      * Name of the method that data belongs to.
      */
-    String name;
+    private final String name;
     /**
      * Raw data of the samples.
      */
-    List<double[]> rawData;
+    private final List<double[]> rawData;
     /**
      * Metric used for the samples.
      */
-    Metric metric;
+    private final Metric metric;
 
+    /**
+     * Creates a new Samples object.
+     *
+     * @param metric Metric used for the samples.
+     * @param name   Name of the method that data belongs to.
+     */
     public Samples(Metric metric, String name) {
         this.metric = metric;
         this.name = name;
         this.rawData = new ArrayList<>();
     }
+
+    /**
+     * Adds a sample to the samples.
+     *
+     * @param sample Sample to be added.
+     */
     public void addSample(double[] sample) {
         rawData.add(sample);
     }
@@ -56,6 +68,12 @@ public class Samples {
         return name;
     }
 
+    /**
+     * Merges two samples.
+     *
+     * @param samples Samples to be merged with.
+     * @return Merged samples.
+     */
     public Samples mergeSamples(Samples samples) {
         if (samples.getMetric().equals(this.metric)) {
             for (double[] sample : samples.getRawData()) {

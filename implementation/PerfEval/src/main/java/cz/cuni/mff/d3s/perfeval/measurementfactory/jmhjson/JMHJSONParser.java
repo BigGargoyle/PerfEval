@@ -15,34 +15,44 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * Implementation of MeasurementParser for JMH framework test result in the JSON format
+ * Implementation of MeasurementParser for JMH framework test result in the JSON format.
  * @see MeasurementParser
  */
 
 public class JMHJSONParser implements MeasurementParser {
 
     /**
-     * Constructor for JMHJSONParser
+     * Constructor for JMHJSONParser.
      */
     public JMHJSONParser() {
     }
 
     /**
-     * Possible units of metric when measuring time
+     * Possible units of metric when measuring time.
      */
     static final String[] timeScoreUnits = new String[]{"ns/op", "us/op", "ms/op", "s/op"};
     /**
-     * Possible units of metric when measuring frequency (throughput)
+     * Possible units of metric when measuring frequency (throughput).
      */
     static final String[] frequencyScoreUnits = new String[]{"ops/s", "ops/ms", "ops/us", "ops/ns"};
 
+    /**
+     * Parses files with results of performance tests.
+     * @param fileNames names of files with results of performance tests
+     * @return list of Samples objects
+     */
     @Override
     public List<Samples> getTestsFromFiles(String[] fileNames) {
         Map<String, Samples> samplesPerTestName = getSamplesFromFiles(Arrays.stream(fileNames));
         return new ArrayList<>(samplesPerTestName.values());
     }
 
-    Map<String, Samples> getSamplesFromFiles(Stream<String> fileNames){
+    /**
+     * Parses files with results of performance tests.
+     * @param fileNames names of files with results of performance tests
+     * @return map of Samples objects with test name as key
+     */
+    Map<String, Samples> getSamplesFromFiles(Stream<String> fileNames) {
         Map<String, Samples> samplesPerTestName = new HashMap<>();
         //file names to files
         fileNames.map(this::mapFileFromString)
@@ -57,7 +67,7 @@ public class JMHJSONParser implements MeasurementParser {
                 samplesPerTestName.computeIfAbsent(sample.getBenchmark(), k -> new Samples(metric, sample.getBenchmark()));
                 //TODO: řešit kompatibilitu metrik
                 //add raw data to sample
-                for(var rawData : sample.getPrimaryMetric().getRawData()){
+                for (var rawData : sample.getPrimaryMetric().getRawData()) {
                     samplesPerTestName.get(sample.getBenchmark())
                             .addSample(rawData.stream().mapToDouble(Double::doubleValue).toArray());
                 }
@@ -65,20 +75,35 @@ public class JMHJSONParser implements MeasurementParser {
         return samplesPerTestName;
     }
 
-    File mapFileFromString(String fileName){
+    /**
+     * Maps file name to File object.
+     * @param fileName name of file
+     * @return File object
+     */
+    private File mapFileFromString(String fileName) {
         return new File(fileName);
     }
 
-    Stream<BenchmarkJMHJSONRoot> mapRootFromJSON(File file){
+    /**
+     * Maps file to JMH JSON root object.
+     * @param file file to be mapped
+     * @return JMH JSON root object
+     */
+    private Stream<BenchmarkJMHJSONRoot> mapRootFromJSON(File file) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             BenchmarkJMHJSONRoot[] root = mapper.readValue(file, BenchmarkJMHJSONRoot[].class);
             return Arrays.stream(root);
         } catch (Exception e) {
-            throw new MeasurementParserException("JMHJSONParserException, error while processing file: "+file.getName(),e);
+            throw new MeasurementParserException("JMHJSONParserException, error while processing file: "
+                    + file.getName(), e);
         }
     }
 
+    /**
+     * Getter for name of the parser.
+     * @return name of the parser
+     */
     public static String getParserName() {
         return "JMHJSONParser";
     }

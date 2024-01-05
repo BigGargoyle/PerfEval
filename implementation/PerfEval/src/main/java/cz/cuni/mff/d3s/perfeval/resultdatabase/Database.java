@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.util.Date;
 
 /**
- * Interface defining behaviour of the benchmark test results database
+ * Interface defining behaviour of the benchmark test result database.
  */
 public interface Database {
     /**

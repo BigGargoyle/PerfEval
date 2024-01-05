@@ -3,20 +3,20 @@ package cz.cuni.mff.d3s.perfeval.init;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
 
 /**
- * Exception thrown when PerfEval command fails
+ * Exception thrown when PerfEval command fails.
  */
 public class PerfEvalCommandFailedException extends Exception {
     /**
-     * Message of exception
+     * Message of exception.
      */
-    static String message = "PerfEval command failed.";
+    private static final String message = "PerfEval command failed.";
     /**
-     * Exit code of failed command
+     * Exit code of failed command.
      */
     public final ExitCode exitCode;
 
     /**
-     * Constructor for PerfEvalCommandFailedException
+     * Constructor for PerfEvalCommandFailedException.
      *
      * @param exitCode exit code of failed command
      */

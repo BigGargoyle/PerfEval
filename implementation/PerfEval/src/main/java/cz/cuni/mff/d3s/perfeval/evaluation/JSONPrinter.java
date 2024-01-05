@@ -7,20 +7,20 @@ import java.io.PrintStream;
 import java.util.Comparator;
 
 /**
- * Printer for results in JSON format
+ * Printer for results in JSON format.
  */
 public class JSONPrinter implements ResultPrinter {
     /**
-     * PrintStream where the results will be printed
+     * PrintStream where the results will be printed.
      */
     final PrintStream printStream;
     /**
-     * Comparator for sorting results
+     * Comparator for sorting results.
      */
     final Comparator<MeasurementComparisonRecord> filter;
 
     /**
-     * Constructor for JSONPrinter
+     * Constructor for JSONPrinter.
      *
      * @param printStream PrintStream where the results will be printed
      * @param filter      Comparator for sorting results
@@ -31,7 +31,7 @@ public class JSONPrinter implements ResultPrinter {
     }
 
     /**
-     * Prints MeasurementComparisonResultCollection object in JSON format
+     * Prints MeasurementComparisonResultCollection object in JSON format.
      *
      * @param resultCollection collection of results to be printed
      * @see MeasurementComparisonResultCollection

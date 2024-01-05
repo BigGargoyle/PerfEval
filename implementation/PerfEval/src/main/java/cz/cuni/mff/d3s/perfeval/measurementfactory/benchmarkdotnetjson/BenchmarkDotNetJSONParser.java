@@ -1,16 +1,21 @@
 package cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson;
+
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
-import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParserException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.Benchmark;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.BenchmarkDotNetJSONRoot;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParserException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet.Measurement;
 
 /**
@@ -21,26 +26,26 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
     /**
      * Metric used for parsing
      */
-    final Metric metric;
+    private final Metric metric;
 
     /**
-     * Constructor for BenchmarkDotNetJSONParser
+     * Constructor for BenchmarkDotNetJSONParser.
      */
     public BenchmarkDotNetJSONParser() {
         this.metric = new Metric("Nanoseconds", false);
     }
 
     /**
-     * Iteration mode that is tested
+     * Iteration mode that is tested.
      */
     static final String testedIterationMode = "Workload";
     /**
-     * Stage that is tested
+     * Stage that is tested.
      */
     static final String testedIterationStage = "Actual";
 
     /**
-     * Parses files with results of performance tests
+     * Parses files with results of performance tests.
      *
      * @param fileNames names of files with results of performance tests
      * @return list of Samples objects
@@ -88,8 +93,8 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
         // Create a stream of Measurements filtered by iteration mode and stage
         double[] nanosecondsArray = benchmark.getMeasurements().stream()
                 .filter(measurement ->
-                        measurement.getIterationMode().equals(testedIterationMode) &&
-                                measurement.getIterationStage().equals(testedIterationStage))
+                        measurement.getIterationMode().equals(testedIterationMode)
+                                && measurement.getIterationStage().equals(testedIterationStage))
                 .mapToDouble(Measurement::getNanoseconds)
                 .toArray();
 
@@ -101,6 +106,11 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
         return samples;
     }
 
+    /**
+     * Returns name of the parser.
+     *
+     * @return name of the parser
+     */
     public static String getParserName() {
         return "BenchmarkDotNetJSONParser";
     }
@@ -110,6 +120,8 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
      * <p>
      * The map aggregates all samples from the stream that belong to the same benchmark.
      * The collector assumes only single metric is used with all runs of each benchmark.
+     *
+     * @return collector that collects stream of sample containers into a map indexed by benchmark
      */
     public static Collector<Samples, Map<String, Samples>, Map<String, Samples>> collectToMap() {
         return Collector.of(

@@ -17,9 +17,25 @@ import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.INI_FILE_NAME;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.PERFEVAL_DIR;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.benchmarkParserOption;
 
-public class InitSetup implements CommandSetup{
+/**
+ * Command for initializing a new PerfEval system instance.
+ */
+public class InitSetup implements CommandSetup {
 
+    /**
+     * Name of the command.
+     */
     static final String commandName = "init";
+
+    /**
+     * Sets up the command.
+     *
+     * @param args    Command line arguments.
+     * @param options Command line options.
+     * @param config  Configuration of the program.
+     * @return Command to be executed.
+     * @throws ParserException If there is an error with the parser.
+     */
     @Override
     public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws ParserException {
         Path workingDir = Path.of(args[0]);
@@ -32,15 +48,16 @@ public class InitSetup implements CommandSetup{
                 emptyFiles[0]
         };
         MeasurementParser parser = null;
-        if(options.has(BENCHMARK_PARSER_PARAMETER)){
+        if (options.has(BENCHMARK_PARSER_PARAMETER)) {
             parser = ParserFactory.getParser(benchmarkParserOption.value(options));
         }
 
-        if(parser==null)
+        if (parser == null) {
             throw new ParserException(
-                    "Parser cannot be resolved. Default parser will be used."+System.lineSeparator()+
-                            "Possible parsers are: " + ParserFactory.getPossibleNames(),
+                    "Parser cannot be resolved. Default parser will be used." + System.lineSeparator()
+                            + "Possible parsers are: " + ParserFactory.getPossibleNames(),
                     ExitCode.invalidArguments);
+        }
 
 
         return new InitCommand(perfevalDirPath, gitIgnorePath, iniFilePath,

@@ -3,40 +3,51 @@ package cz.cuni.mff.d3s.perfeval.performancecomparators;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
 
-import java.time.Duration;
-
+/**
+ * Class that compares two sets of samples (with statistical tests).
+ */
 public class PerformanceEvaluator {
+
+    /**
+     * Constant that represents 1 as a percentage.
+     */
+    private static final int ONE_HUNDRED = 100;
+
     /**
      * Constant representing that the minimal sample count is not needed.
      */
-    static final int MINUS_ONE = -1;
+    private static final int MINUS_ONE = -1;
     /**
      * Critical value of the t-test.
      */
-    double critValue;
+    private final double critValue;
     /**
      * Maximal width of the confidence interval.
      */
-    double maxCIWidth;
+    private final double maxCIWidth;
     /**
      * Tolerance of the performance to get worse.
      */
-    double tolerance;
+    private final double tolerance;
 
     /**
      * Maximal count of tests to be performed.
      */
-    int maxTestCount;
-
-    StatisticTest statisticTest;
+    private final int maxTestCount;
 
     /**
-     * Constructor of the class.
+     * Statistic test to be used.
+     */
+    private final StatisticTest statisticTest;
+
+    /**
+     * Constructor for PerformanceEvaluator.
      *
-     * @param critValue   critical value of the t-test
-     * @param maxCIWidth  maximal width of the confidence interval
-     * @param tolerance   tolerance of the performance to get worse
+     * @param critValue    critical value of the t-test
+     * @param maxCIWidth   maximal width of the confidence interval
+     * @param tolerance    tolerance of the performance to get worse
      * @param maxTestCount maximal count of tests to be performed
+     * @param statisticTest statistic test to be used
      */
     public PerformanceEvaluator(double critValue, double maxCIWidth, double tolerance, int maxTestCount, StatisticTest statisticTest) {
         this.critValue = critValue;
@@ -51,7 +62,7 @@ public class PerformanceEvaluator {
     }
 
     /**
-     * Constructor for BootstrapPerformanceComparator
+     * Constructor for BootstrapPerformanceComparator.
      *
      * @param oldSamples      samples from old version
      * @param newSamples      samples from new version
@@ -64,33 +75,32 @@ public class PerformanceEvaluator {
         double newAvg = ArrayUtilities.calculateHierarchicAverage(newSamples.getRawData());
 
         double performanceChange = oldSamples.getMetric().getMetricPerformanceDirection() ? newAvg / oldAvg : oldAvg / newAvg;
-        performanceChange = performanceChange * 100 - 100;
+        performanceChange = performanceChange * ONE_HUNDRED - ONE_HUNDRED;
 
-        ComparisonResult comparisonResult = ComparisonResult.None;
+        ComparisonResult comparisonResult;
         int minSampleCount = MINUS_ONE;
         // does ciInterval contain 0?, if not, we can say that the performance is different
-        if(!(ciInterval[1]>0 && ciInterval[0]<0)){
+        if (!(ciInterval[1] > 0 && ciInterval[0] < 0)) {
             comparisonResult = ComparisonResult.DifferentDistribution;
         } else {
             //relative width of the confidence interval ((upperBound - lowerBound) / mean)
             double ciWidth = Math.abs((ciInterval[1] - ciInterval[0]) / (oldAvg + newAvg) / 2);
             //if the confidence interval is smaller than maxCIWidth, we can say that the performance is the same
-            if(ciWidth <= maxCIWidth){
+            if (ciWidth <= maxCIWidth) {
                 comparisonResult = ComparisonResult.SameDistribution;
-            }
-            else {
+            } else {
                 minSampleCount = statisticTest.calcMinSampleCount(oldSamples.getRawData(), newSamples.getRawData(), maxCIWidth);
                 assert minSampleCount >= Math.min(oldSamples.getRawData().length, newSamples.getRawData().length);
-                if(minSampleCount > maxTestCount)
+                if (minSampleCount > maxTestCount) {
                     comparisonResult = ComparisonResult.Bootstrap;
-                else
+                } else {
                     comparisonResult = ComparisonResult.NotEnoughSamples;
-
+                }
             }
         }
 
-        boolean testVerdict = comparisonResult == ComparisonResult.SameDistribution || performanceChange > 100
-                || Math.abs(performanceChange / 100) > 1 - tolerance;
+        boolean testVerdict = comparisonResult == ComparisonResult.SameDistribution || performanceChange > ONE_HUNDRED
+                || Math.abs(performanceChange / ONE_HUNDRED) > 1 - tolerance;
 
 
         return new MeasurementComparisonRecord(oldAvg, newAvg, performanceChange,
@@ -99,13 +109,13 @@ public class PerformanceEvaluator {
     }
 
     /**
-     * Compares two sets of samples (with statistical tests)
+     * Compares two sets of samples (with statistical tests).
      *
      * @param oldSamples samples from old version
      * @param newSamples samples from new version
      * @return record with results of comparison
      */
-    public MeasurementComparisonRecord compareSets(Samples oldSamples, Samples newSamples){
+    public MeasurementComparisonRecord compareSets(Samples oldSamples, Samples newSamples) {
         return constructRecord(oldSamples, newSamples,
                 statisticTest.calcCIInterval(oldSamples.getRawData(), newSamples.getRawData()));
 

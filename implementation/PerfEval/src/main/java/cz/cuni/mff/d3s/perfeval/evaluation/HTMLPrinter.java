@@ -7,21 +7,44 @@ import java.util.Comparator;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-public class HTMLPrinter implements ResultPrinter{
-    PrintStream printStream;
-    Comparator<MeasurementComparisonRecord> filter;
-    static String templatePath = "templates/result-printer-template.html";
+/**
+ * Class for printing results into HTML format.
+ */
+public class HTMLPrinter implements ResultPrinter {
+    /**
+     * Stream to print the results into.
+     */
+    private final PrintStream printStream;
+    /**
+     * Comparator for filtering the results.
+     */
+    private final Comparator<MeasurementComparisonRecord> filter;
+    /**
+     * Path to the HTML template.
+     */
+    private static final String templatePath = "templates/result-printer-template.html";
 
+    /**
+     * Constructor for the HTML printer.
+     * @param printStream Stream to print the results into.
+     * @param filter Comparator for filtering the results.
+     */
     public HTMLPrinter(PrintStream printStream, Comparator<MeasurementComparisonRecord> filter) {
         this.printStream = printStream;
         this.filter = filter;
     }
+
+    /**
+     * Prints the results into the stream.
+     * @param resultCollection collection of results to be printed
+     * @throws MeasurementPrinterException if the template is not found
+     */
     @Override
     public void PrintResults(MeasurementComparisonResultCollection resultCollection) throws MeasurementPrinterException {
         //TODO: print into file, not to std output
         resultCollection.sort(filter);
-        String templateContent = "";
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(templatePath)){
+        String templateContent;
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(templatePath)) {
             assert inputStream != null;
             templateContent = new String(inputStream.readAllBytes());
         } catch (NullPointerException | IOException e) {

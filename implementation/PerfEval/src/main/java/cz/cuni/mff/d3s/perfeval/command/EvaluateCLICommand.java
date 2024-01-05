@@ -33,7 +33,7 @@ public class EvaluateCLICommand implements Command {
      * @param parser                parser for performance tests result files
      */
     public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter, PerformanceEvaluator performanceEvaluator, MeasurementParser parser) {
-        this.inputFiles = inputFiles;
+        this.inputFiles = inputFiles.clone();
         assert inputFiles.length == TWO;
         this.resultPrinter = resultPrinter;
         this.performanceEvaluator = performanceEvaluator;

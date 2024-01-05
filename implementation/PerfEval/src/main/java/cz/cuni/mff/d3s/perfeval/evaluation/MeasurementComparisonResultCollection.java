@@ -2,38 +2,43 @@ package cz.cuni.mff.d3s.perfeval.evaluation;
 
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 /**
- * Collection of results of comparison of two sets of samples and their versions
+ * Collection of results of comparison of two sets of samples and their versions.
  */
 public class MeasurementComparisonResultCollection implements Collection<MeasurementComparisonRecord> {
     /**
-     * 2D array of file with results of performance tests metadata
-     * First dimension is for versions of performance tests
-     * Second dimension is for files with results of performance tests of one version
+     * 2D array of file with results of performance tests metadata.
+     * First dimension is for versions of performance tests.
+     * Second dimension is for files with results of performance tests of one version.
      */
     FileWithResultsData[][] originalFilesMetadata;
     /**
-     * List of results of comparison of two sets of samples
+     * List of results of comparison of two sets of samples.
      *
      * @see MeasurementComparisonRecord
      */
     List<MeasurementComparisonRecord> records;
 
     /**
-     * Constructor for MeasurementComparisonResultCollection
+     * Constructor for MeasurementComparisonResultCollection.
      *
      * @param originalFiles 2D array of file metadata that are compared
      */
     public MeasurementComparisonResultCollection(FileWithResultsData[][] originalFiles) {
         records = new ArrayList<>();
-        this.originalFilesMetadata = originalFiles;
+        this.originalFilesMetadata = originalFiles.clone();
         assert originalFiles.length == 2;
     }
 
     /**
-     * Getter for old version of performance tests
+     * Getter for old version of performance tests.
      *
      * @return old version of performance tests
      */
@@ -42,7 +47,7 @@ public class MeasurementComparisonResultCollection implements Collection<Measure
     }
 
     /**
-     * Getter for new version of performance tests
+     * Getter for new version of performance tests.
      *
      * @return new version of performance tests
      */
@@ -50,6 +55,11 @@ public class MeasurementComparisonResultCollection implements Collection<Measure
         return originalFilesMetadata[1][0].version().commitVersionHash();
     }
 
+    /**
+     * Getter for old version of performance tests.
+     *
+     * @return old version of performance tests
+     */
     public List<MeasurementComparisonRecord> getRecords() {
         return records;
     }

@@ -15,15 +15,15 @@ public class AddFilesFromDirCommand implements Command {
     /**
      * Directory from which to add files.
      */
-    final Path sourceDirPath;
+    private final Path sourceDirPath;
     /**
      * Database to which to add files.
      */
-    final Database database;
+    private final Database database;
     /**
      * Version of the project to which the files belong.
      */
-    final ProjectVersion version;
+    private final ProjectVersion version;
 
     /**
      * Creates a new command.

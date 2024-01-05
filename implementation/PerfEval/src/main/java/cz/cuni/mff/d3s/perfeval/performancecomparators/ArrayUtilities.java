@@ -5,11 +5,11 @@ import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**
- * Class with static methods for working with arrays
+ * Class with static methods for working with arrays.
  */
 public class ArrayUtilities {
     /**
-     * Calculates average of all values in matrix
+     * Calculates average of all values in matrix.
      *
      * @param matrix matrix of values
      * @return average of all values in matrix
@@ -21,13 +21,13 @@ public class ArrayUtilities {
         double sum = 0.0;
 
         for (double[] doubles : matrix) {
-            sum+= StatUtils.mean(doubles);
+            sum += StatUtils.mean(doubles);
         }
         return sum / matrix.length;
     }
 
     /**
-     * Calculates minimal sample count for given statistics, confidence level and maximum width
+     * Calculates minimal sample count for given statistics, confidence level and maximum width.
      *
      * @param statistics      array of statistics
      * @param confidenceLevel confidence level

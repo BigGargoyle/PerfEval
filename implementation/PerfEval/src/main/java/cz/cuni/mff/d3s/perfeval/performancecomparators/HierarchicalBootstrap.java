@@ -10,14 +10,14 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import java.util.Random;
 
 /**
- * Class for performing hierarchical bootstrap
+ * Class for performing hierarchical bootstrap.
  */
 public class HierarchicalBootstrap {
 //TODO: uklidit
     static int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 1_000;
 
     /**
-     * Performs hierarchical bootstrap
+     * Performs hierarchical bootstrap.
      *
      * @param sampleSet1 first set of samples
      * @param sampleSet2 second set of samples
@@ -170,7 +170,7 @@ public class HierarchicalBootstrap {
 
             @Override
             public double[] gradient(double x, double... parameters) {
-                double a = parameters[0];
+                //double a = parameters[0];
                 double[] gradient = new double[1];
                 gradient[0] = 1 / Math.sqrt(x);
                 return gradient;

@@ -12,25 +12,38 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.CreateParser;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.createParser;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.INI_FILE_NAME;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.PERFEVAL_DIR;
 
+/**
+ * Parser for command line arguments.
+ */
 public class Parser {
 
-    static Map<String, Supplier<CommandSetup>> commandPerSetup;
+    /**
+     * Map of commands and their setup.
+     */
+    private static final Map<String, Supplier<CommandSetup>> commandPerSetup;
     static {
         commandPerSetup = Map.of(
                 InitSetup.getCommandName(), InitSetup::new,
                 EvaluateSetup.getCommandName(), EvaluateSetup::new,
                 IndexNewSetup.getCommandName(), IndexNewSetup::new,
-                IndexAllSetup.getCommandName(),IndexAllSetup::new,
+                IndexAllSetup.getCommandName(), IndexAllSetup::new,
                 UndecidedSetup.getCommandName(), UndecidedSetup::new
         );
     }
 
+    /**
+     * Parses the command line arguments.
+     *
+     * @param args Command line arguments.
+     * @return Command to be executed.
+     * @throws ParserException If there is an error with parsing the command line arguments.
+     */
     public static Command getCommand(String[] args) throws ParserException {
-        OptionParser parser = CreateParser();
+        OptionParser parser = createParser();
         OptionSet options = parser.parse(args);
         Path iniFilePath = Path.of(args[0]).resolve(PERFEVAL_DIR).resolve(INI_FILE_NAME);
         PerfEvalConfig config;
@@ -41,7 +54,7 @@ public class Parser {
         }
         try {
             for (var arg : options.nonOptionArguments()) {
-                if(!commandPerSetup.containsKey(arg.toString())){
+                if (!commandPerSetup.containsKey(arg.toString())) {
                     continue;
                 }
                 CommandSetup commandSetup = commandPerSetup.get(arg.toString()).get();
@@ -49,14 +62,14 @@ public class Parser {
                     return commandSetup.setup(args, options, config);
                 }
             }
-        } catch (DatabaseException e){
+        } catch (DatabaseException e) {
             ParserException exception = new ParserException("Database error: " + e.getMessage());
             exception.exitCode = ExitCode.databaseError;
             exception.initCause(e);
             throw exception;
-        } catch (AssertionError e){
-            throw new ParserException("One of versions has no known measurement results."+
-                    System.lineSeparator()+"Assertion error: " + e.getMessage(), e);
+        } catch (AssertionError e) {
+            throw new ParserException("One of versions has no known measurement results."
+                    + System.lineSeparator() + "Assertion error: " + e.getMessage(), e);
         }
         return null;
     }

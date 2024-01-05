@@ -19,9 +19,25 @@ import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveDate;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveTag;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveVersion;
 
-public class IndexAllSetup implements CommandSetup{
+/**
+ * Command for adding all files from a directory to the database.
+ */
+public class IndexAllSetup implements CommandSetup {
 
+    /**
+     * Name of the command.
+     */
     static final String commandName = "index-all-results";
+
+    /**
+     * Sets up the command.
+     *
+     * @param args    Command line arguments.
+     * @param options Command line options.
+     * @param config  Configuration of the program.
+     * @return Command to be executed.
+     * @throws DatabaseException If there is an error with the database.
+     */
     @Override
     public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
         Path sourceDir = Path.of(options.valueOf(pathOption));
@@ -38,12 +54,16 @@ public class IndexAllSetup implements CommandSetup{
             assert version != null && tag != null;
 
             return new AddFilesFromDirCommand(sourceDir, database, projectVersion);
-        } catch (IOException e){
-            throw new DatabaseException("Git file not found: " + e.getMessage(),e, ExitCode.databaseError);
+        } catch (IOException e) {
+            throw new DatabaseException("Git file not found: " + e.getMessage(), e, ExitCode.databaseError);
         }
 
     }
 
+    /**
+     * Returns the name of the command.
+     * @return Name of the command.
+     */
     public static String getCommandName() {
         return commandName;
     }

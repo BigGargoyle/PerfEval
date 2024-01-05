@@ -26,8 +26,11 @@ public class Main {
             e.exitCode.exit();
         }
         try {
-            if (command == null) exitCode = ExitCode.invalidArguments;
-            else exitCode = command.execute();
+            if (command == null) {
+                exitCode = ExitCode.invalidArguments;
+            } else {
+                exitCode = command.execute();
+            }
 
         } catch (PerfEvalCommandFailedException e) {
             System.err.println(e.getMessage()); //NOPMD - suppressed SystemPrintln - only used for error messages, there is no other way to print them

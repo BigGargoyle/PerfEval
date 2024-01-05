@@ -16,52 +16,51 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.time.Duration;
 
 /**
- * Command for initializing perfeval in directory
+ * Command for initializing perfeval in directory.
  */
 public class InitCommand implements Command {
     /**
-     * String representation of key for critical value in ini file
+     * String representation of key for critical value in ini file.
      */
     private static final String CRIT_VALUE_KEY = "critValue.key";
     /**
-     * String representation of key for maximal confidence interval width in ini file
+     * String representation of key for maximal confidence interval width in ini file.
      */
     private static final String MAX_CI_WIDTH_KEY = "maxCIWidth.key";
     /**
-     * String representation of key for maximal time on test in ini file
+     * String representation of key for maximal time on test in ini file.
      */
     private static final String MAX_TEST_COUNT_KEY = "maxTestCount.key";
     /**
-     * String representation of key for version in ini file
+     * String representation of key for version in ini file.
      */
     private static final String VERSION_KEY = "version.key";
     /**
-     * String representation of key for git presence in ini file
+     * String representation of key for git presence in ini file.
      */
     private static final String GIT_PRESENCE_KEY = "git.key";
     /**
-     * String representation of key for parser name in ini file
+     * String representation of key for parser name in ini file.
      */
     private static final String PARSER_NAME_KEY = "parserName.key";
     /**
-     * String representation of key for tolerance in ini file
+     * String representation of key for tolerance in ini file.
      */
     private static final String TOLERANCE_KEY = "tolerance.key";
     /**
-     * String representation of true in ini file
+     * String representation of true in ini file.
      */
     private static final String TRUE_STRING = "TRUE";
     /**
-     * String representation of false in ini file
+     * String representation of false in ini file.
      */
     private static final String FALSE_STRING = "FALSE";
 
     /**
      * Returns default config if perfeval is not initialized in this directory
-     * Otherwise returns config from ini file
+     * otherwise returns config from ini file.
      *
      * @param iniFilePath path to ini file
      * @return config from ini file or default config
@@ -81,7 +80,7 @@ public class InitCommand implements Command {
     }
 
     /**
-     * Returns true if perfeval is initialized in this directory
+     * Returns true if perfeval is initialized in this directory.
      *
      * @param perfevalDirPath path to perfeval directory
      * @return true if perfeval is initialized in this directory, false otherwise
@@ -91,7 +90,7 @@ public class InitCommand implements Command {
     }
 
     /**
-     * Reads config from ini file
+     * Reads config from ini file.
      *
      * @param iniFilePath path to ini file
      * @return config from ini file
@@ -113,7 +112,7 @@ public class InitCommand implements Command {
     }
 
     /**
-     * Creates ini file
+     * Creates ini file.
      *
      * @param iniFilePath    path to ini file
      * @param perfevalConfig config to be saved to ini file
@@ -121,8 +120,9 @@ public class InitCommand implements Command {
      * @throws IOException            if ini file cannot be created
      */
     private static void createIniFile(Path iniFilePath, PerfEvalConfig perfevalConfig) throws ConfigurationException, IOException {
-        if (iniFilePath.toFile().exists() && !iniFilePath.toFile().delete())
+        if (iniFilePath.toFile().exists() && !iniFilePath.toFile().delete()) {
             throw new IOException("ini file cannot be deleted");
+        }
 
         INIConfiguration config = new INIConfiguration();
 
@@ -144,36 +144,36 @@ public class InitCommand implements Command {
     }
 
     /**
-     * true if perfeval should be initialized even if it is already initialized in this directory, false otherwise
+     * True if perfeval should be initialized even if it is already initialized in this directory, false otherwise.
      */
     final boolean forceFlag;
     /**
-     * path to perfeval directory
+     * Path to perfeval directory.
      */
     final Path perfevalDirPath;
     /**
-     * path to gitignore file
+     * Path to gitignore file.
      */
     final Path gitIgnorePath;
     /**
-     * path to ini file
+     * Path to ini file.
      */
     final Path iniFilePath;
     /**
-     * paths to files that should be created
+     * Paths to files that should be created.
      */
     final Path[] emptyFilesToCreate;
     /**
-     * paths to files that should be ignored by git
+     * Paths to files that should be ignored by git.
      */
     final Path[] gitIgnoredFiles;
     /**
-     * config to be saved to ini file
+     * Config to be saved to ini file.
      */
     final PerfEvalConfig config;
 
     /**
-     * Constructor for InitCommand
+     * Constructor for InitCommand.
      *
      * @param perfevalDirPath    path to perfeval directory
      * @param gitIgnorePath      path to gitignore file
@@ -187,15 +187,15 @@ public class InitCommand implements Command {
                        Path[] gitIgnoredFiles, PerfEvalConfig config, boolean forceFlag) {
         this.gitIgnorePath = gitIgnorePath;
         this.iniFilePath = iniFilePath;
-        this.emptyFilesToCreate = emptyFilesToCreate;
+        this.emptyFilesToCreate = emptyFilesToCreate.clone();
         this.config = config;
         this.perfevalDirPath = perfevalDirPath;
-        this.gitIgnoredFiles = gitIgnoredFiles;
+        this.gitIgnoredFiles = gitIgnoredFiles.clone();
         this.forceFlag = forceFlag;
     }
 
     /**
-     * Executes init command
+     * Executes init command.
      *
      * @return exit code, OK if init was successful, notInitialized if perfeval is already initialized in this directory and force flag is not set
      * @throws PerfEvalCommandFailedException if init fails
@@ -224,7 +224,7 @@ public class InitCommand implements Command {
     }
 
     /**
-     * Creates perfeval files
+     * Creates perfeval files.
      *
      * @throws IOException if perfeval files cannot be created
      */
@@ -243,7 +243,7 @@ public class InitCommand implements Command {
     }
 
     /**
-     * Creates empty file
+     * Creates empty file.
      *
      * @param emptyFilePath path to empty file to be created
      * @throws IOException if empty file cannot be created
@@ -255,7 +255,7 @@ public class InitCommand implements Command {
     }
 
     /**
-     * Creates gitignore file
+     * Creates gitignore file.
      *
      * @param gitIgnoreFilePath path to gitignore file to be created
      * @param ignoredFiles      paths to files that should be ignored by git
@@ -271,7 +271,7 @@ public class InitCommand implements Command {
     }
 
     /**
-     * Deletes directory
+     * Deletes directory.
      *
      * @param dirPath path to directory to be deleted
      * @throws IOException if directory cannot be deleted
@@ -279,8 +279,9 @@ public class InitCommand implements Command {
     private static void deleteDirectory(Path dirPath) throws IOException {
         if (Files.isDirectory(dirPath)) {
             DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dirPath);
-            for (Path entry : directoryStream)
+            for (Path entry : directoryStream) {
                 deleteDirectory(entry);
+            }
             directoryStream.close();
         }
         Files.delete(dirPath);

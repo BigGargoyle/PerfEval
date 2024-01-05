@@ -4,7 +4,7 @@ import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
 import cz.cuni.mff.d3s.perfeval.Samples;
 
 /**
- * Record for storing results of comparison of two sets of samples
+ * Record for storing results of comparison of two sets of samples.
  * @param oldAverage average of old samples
  * @param newAverage average of new samples
  * @param performanceChange percentage change of performance

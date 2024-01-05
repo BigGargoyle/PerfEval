@@ -5,20 +5,20 @@ import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
 import java.io.PrintStream;
 
 /**
- * Printer for list-undecided command
+ * Printer for list-undecided command.
  */
 public class UndecidedPrinter implements ResultPrinter {
     /**
-     * PrintStream where the results will be printed
+     * PrintStream where the results will be printed.
      */
     final PrintStream printStream;
     /**
-     * Delimiter for printing results
+     * Delimiter for printing results.
      */
     static final String COLUMN_DELIMITER = "\t";
 
     /**
-     * Constructor for UndecidedPrinter
+     * Constructor for UndecidedPrinter.
      *
      * @param printStream PrintStream where the results will be printed
      */
@@ -28,7 +28,7 @@ public class UndecidedPrinter implements ResultPrinter {
 
     /**
      * Prints content of MeasurementComparisonResultCollection object
-     * in format: name of test \t minimal sample count
+     * in format: name of test \t minimal sample count.
      *
      * @param resultCollection collection of results to be printed
      * @see MeasurementComparisonResultCollection
@@ -43,7 +43,7 @@ public class UndecidedPrinter implements ResultPrinter {
     }
 
     /**
-     * Method printing name and minimal sample counts for a one undecided test
+     * Method printing name and minimal sample counts for a one undecided test.
      *
      * @param comparisonResult an instance of undecided test comparison result (IMeasurementComparisonResult)
      * @param printStream      PrintStream to print undecided result to

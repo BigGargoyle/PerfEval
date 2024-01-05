@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.perfeval.performancecomparators;
 
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.StatUtils;
-import org.apache.commons.math3.stat.inference.TTest;
 
 public class ParametricTest implements StatisticTest {
     double critValue;
@@ -11,17 +10,15 @@ public class ParametricTest implements StatisticTest {
     }
     @Override
     public double[] calcCIInterval(double[][] sampleSet1, double[][] sampleSet2) {
-        //TODO: stačí zjistit existenci nuly v intervalu
         double[] samples1 = calcMean(sampleSet1);
         double[] samples2 = calcMean(sampleSet2);
-        TTest tTest = new TTest();
-        double pValue = Math.abs(tTest.t(samples1, samples2));
         // Calculate degrees of freedom
         int df = Math.min(samples1.length - 1, samples2.length - 1);
 
         // Calculate critical value for the desired confidence level
-        double confidenceLevel = 1-critValue; // Set your desired confidence level
+        //double confidenceLevel = 1-critValue; // Set your desired confidence level
         TDistribution tDistribution = new TDistribution(df);
+        //TODO: má zde být 1-confidenceLevel nebo critValue?
         double inverseCumulativeProbability = tDistribution.inverseCumulativeProbability(critValue);
 
         // Calculate mean difference

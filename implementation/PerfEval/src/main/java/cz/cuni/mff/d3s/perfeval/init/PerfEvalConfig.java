@@ -4,40 +4,40 @@ import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.BenchmarkDotNetJSONParser;
 
 /**
- * Class for storing configuration of PerfEval
+ * Class for storing configuration of PerfEval.
  */
 public final class PerfEvalConfig {
     /**
-     * Default value for gitFilePresence
+     * Default value for gitFilePresence.
      */
     private static final boolean DEFAULT_GIT_PRESENCE = false;
     /**
-     * Default value for maxTimeOnTest
+     * Default value for maxTimeOnTest.
      */
     private static final int DEFAULT_MAX_TEST_COUNT = 100;
     /**
-     * Default value for critValue
+     * Default value for critValue.
      */
     private static final double DEFAULT_CRIT_VALUE = 0.05;
     /**
-     * Default value for maxCIWidth
+     * Default value for maxCIWidth.
      */
     private static final double DEFAULT_MAX_CI_WIDTH = 0.1;
     /**
-     * Default value for version
+     * Default value for version.
      */
     private static final String DEFAULT_VERSION = "UNKNOWN_VERSION";
     /**
-     * Default value for parser
+     * Default value for parser.
      */
     private static final MeasurementParser DEFAULT_PARSER = new BenchmarkDotNetJSONParser();
     /**
-     * Default value for tolerance
+     * Default value for tolerance.
      */
     private static final double DEFAULT_TOLERANCE = 0.05;
 
     /**
-     * Getter for default configuration
+     * Getter for default configuration.
      *
      * @return default configuration
      * @throws PerfEvalInvalidConfigException if default configuration is invalid (it should not happen)
@@ -47,7 +47,7 @@ public final class PerfEvalConfig {
     }
 
     /**
-     * Constructor for PerfEvalConfig
+     * Constructor for PerfEvalConfig.
      *
      * @param gitFilePresence if true, the project where PerfEval is initialized in is git repository
      * @param maxTestCount    maximal count of test that is possible to do
@@ -66,45 +66,57 @@ public final class PerfEvalConfig {
         this.version = version;
         this.measurementParser = parser;
         this.tolerance = tolerance;
-        if (critValue <= 0 || critValue >= 1) throw new PerfEvalInvalidConfigException();
-        if (maxTestCount <= 0) throw new PerfEvalInvalidConfigException();
-        if (maxCIWidth <= 0 || maxCIWidth >= 1) throw new PerfEvalInvalidConfigException();
-        if (version == null) throw new PerfEvalInvalidConfigException();
-        if (measurementParser == null) throw new PerfEvalInvalidConfigException();
-        if (tolerance <= 0 || tolerance >= 1) throw new PerfEvalInvalidConfigException();
+        if (critValue <= 0 || critValue >= 1) {
+            throw new PerfEvalInvalidConfigException();
+        }
+        if (maxTestCount <= 0) {
+            throw new PerfEvalInvalidConfigException();
+        }
+        if (maxCIWidth <= 0 || maxCIWidth >= 1) {
+            throw new PerfEvalInvalidConfigException();
+        }
+        if (version == null) {
+            throw new PerfEvalInvalidConfigException();
+        }
+        if (measurementParser == null) {
+            throw new PerfEvalInvalidConfigException();
+        }
+        if (tolerance <= 0 || tolerance >= 1) {
+            throw new PerfEvalInvalidConfigException();
+        }
     }
 
     /**
-     * If true, the project where PerfEval is initialized in is git repository
+     * If true, the project where PerfEval is initialized in is git repository.
      */
     private final boolean gitFilePresence;
     /**
-     * Maximal time for one performance test
+     * Maximal time for one performance test.
      */
     private final int maxTestCount;
     /**
-     * Maximal width of confidence interval (relative to average)
+     * Maximal width of confidence interval (relative to average).
      */
     private final double maxCIWidth;
     /**
-     * Critical value for statistical tests
+     * Critical value for statistical tests.
      */
     private final double critValue;
     /**
-     * Version of performance tests that will be added
+     * Version of performance tests that will be added.
      */
     private final String version;
     /**
-     * Parser for performance tests result files
+     * Parser for performance tests result files.
      */
     private final MeasurementParser measurementParser;
     /**
-     * Tolerance for performance tests
+     * Tolerance for performance tests.
      */
     private final double tolerance;
 
     /**
-     * Getter for gitFilePresence
+     * Getter for gitFilePresence.
      *
      * @return gitFilePresence
      */
@@ -113,7 +125,7 @@ public final class PerfEvalConfig {
     }
 
     /**
-     * Getter for maxTimeOnTest
+     * Getter for maxTimeOnTest.
      *
      * @return maxTimeOnTest
      */
@@ -122,7 +134,7 @@ public final class PerfEvalConfig {
     }
 
     /**
-     * Getter for maxCIWidth
+     * Getter for maxCIWidth.
      *
      * @return maxCIWidth
      */
@@ -131,7 +143,7 @@ public final class PerfEvalConfig {
     }
 
     /**
-     * Getter for critValue
+     * Getter for critValue.
      *
      * @return critValue
      */
@@ -140,7 +152,7 @@ public final class PerfEvalConfig {
     }
 
     /**
-     * Getter for version
+     * Getter for version.
      *
      * @return version
      */
@@ -149,7 +161,7 @@ public final class PerfEvalConfig {
     }
 
     /**
-     * Getter for parser
+     * Getter for parser.
      *
      * @return parser
      */
@@ -158,7 +170,7 @@ public final class PerfEvalConfig {
     }
 
     /**
-     * Getter for tolerance
+     * Getter for tolerance.
      *
      * @return tolerance
      */

@@ -19,15 +19,15 @@ public class Metric {
     /**
      * How many digits after the decimal point should be printed.
      */
-    static int basicAccuracy = 5;
+    private static final int BASIC_ACCURACY = 5;
     /**
      * Type of the metric.
      */
-    String metricType;
+    private final String metricType;
     /**
      * Whether higher values are better.
      */
-    boolean higherIsBetter;
+    private final boolean higherIsBetter;
 
     /**
      * Converts a value to a string.
@@ -36,13 +36,12 @@ public class Metric {
      * @return String representation of the value.
      */
     public String valueToString(double value) {
-        assert basicAccuracy > 0;
-        String format = "%." + basicAccuracy + "f " + metricType;
+        String format = "%." + BASIC_ACCURACY + "f " + metricType;
         return String.format(format, value);
     }
 
     /**
-     * compares two metrics if they are compatible with each other (have the same type)
+     * compares two metrics if they are compatible with each other (have the same type).
      *
      * @param metric metric to be compared with
      * @return if the metric is compatible with this metric
@@ -52,8 +51,6 @@ public class Metric {
     }
 
     /**
-     * returns metric performance direction
-     *
      * @return if higher values are better, otherwise false
      */
     public boolean getMetricPerformanceDirection() {

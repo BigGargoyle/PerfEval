@@ -6,20 +6,50 @@ import java.io.PrintStream;
 import java.util.Comparator;
 
 /**
- * Printer for results in table format
+ * Printer for results in table format.
  */
 public class TablePrinter implements ResultPrinter {
     /**
-     * PrintStream where the results will be printed
+     * Number of columns in the table.
      */
-    final PrintStream printStream;
+    private static final int TABLE_COLUM_COUNT = 8;
     /**
-     * Comparator for sorting results
+     * Index of column with name of the sample.
      */
-    final Comparator<MeasurementComparisonRecord> filter;
+    private static final int NAME_COLUMN_INDEX = 0;
+    /**
+     * Index of column with new average.
+     */
+    private static final int NEW_AVERAGE_COLUMN_INDEX = 1;
+    /**
+     * Index of column with old average.
+     */
+    private static final int OLD_AVERAGE_COLUMN_INDEX = 2;
+    /**
+     * Index of column with change in performance.
+     */
+    private static final int CHANGE_COLUMN_INDEX = 3;
+    /**
+     * Index of column with verdict of comparison.
+     */
+    private static final int VERDICT_COLUMN_INDEX = 4;
+    /**
+     * Index of column with result of comparison.
+     */
+    private static final int RESULT_COLUMN_INDEX = 5;
+
 
     /**
-     * Constructor for TablePrinter
+     * PrintStream where the results will be printed.
+     */
+    private final PrintStream printStream;
+    /**
+     * Comparator for sorting results.
+     */
+    private final Comparator<MeasurementComparisonRecord> filter;
+
+    /**
+     * Constructor for TablePrinter.
      *
      * @param printStream PrintStream where the results will be printed
      * @param filter      Comparator for sorting results
@@ -30,7 +60,7 @@ public class TablePrinter implements ResultPrinter {
     }
 
     /**
-     * Prints MeasurementComparisonResultCollection object in table format
+     * Prints MeasurementComparisonResultCollection object in table format.
      *
      * @param resultCollection collection of results to be printed
      * @see MeasurementComparisonResultCollection
@@ -53,47 +83,43 @@ public class TablePrinter implements ResultPrinter {
 
 
     /**
-     * Creates comparison table header that should be printed before the whole table
+     * Creates comparison table header that should be printed before the whole table.
      *
      * @return header row of the table of results
      */
     private static String[] createComparisonTableHeader() {
-        String[] tableRow = new String[6];
-        tableRow[0] = ("Name");
-        tableRow[1] = ("NewAverage");
-        tableRow[2] = ("OldAverage");
-        tableRow[3] = ("Change [%]");
-        tableRow[4] = ("Comparison verdict");
-        tableRow[5] = ("Comparison result");
+        String[] tableRow = new String[TABLE_COLUM_COUNT];
+        tableRow[NAME_COLUMN_INDEX] = ("Name");
+        tableRow[NEW_AVERAGE_COLUMN_INDEX] = ("NewAverage");
+        tableRow[OLD_AVERAGE_COLUMN_INDEX] = ("OldAverage");
+        tableRow[CHANGE_COLUMN_INDEX] = ("Change [%]");
+        tableRow[VERDICT_COLUMN_INDEX] = ("Comparison verdict");
+        tableRow[RESULT_COLUMN_INDEX] = ("Comparison result");
 
         return tableRow;
     }
 
     /**
-     * Creates table row from an instance of IMeasurementComparisonResult
+     * Creates table row from an instance of IMeasurementComparisonResult.
      *
      * @param comparisonResult result of comparison
      * @return table row with info about comparisonResult
      */
     private static String[] measurementComparisonToTableRow(MeasurementComparisonRecord comparisonResult) {
-        String[] tableRow = new String[8];
+        String[] tableRow = new String[TABLE_COLUM_COUNT];
 
-        tableRow[0] = (comparisonResult.oldSamples().getName());
-        tableRow[1] = (String.valueOf(comparisonResult.newAverage()));
-        tableRow[2] = (String.valueOf(comparisonResult.oldAverage()));
-        tableRow[3] = (String.valueOf(comparisonResult.performanceChange()));
-        if (comparisonResult.testVerdict())
-            tableRow[4] = ("OK");
-        else
-            tableRow[4] = ("NOT OK");
+        tableRow[NAME_COLUMN_INDEX] = (comparisonResult.oldSamples().getName());
+        tableRow[NEW_AVERAGE_COLUMN_INDEX] = (String.valueOf(comparisonResult.newAverage()));
+        tableRow[OLD_AVERAGE_COLUMN_INDEX] = (String.valueOf(comparisonResult.oldAverage()));
+        tableRow[CHANGE_COLUMN_INDEX] = (String.valueOf(comparisonResult.performanceChange()));
+        tableRow[VERDICT_COLUMN_INDEX] = comparisonResult.testVerdict() ? ("OK") : ("NOT OK");
         switch (comparisonResult.comparisonResult()) {
-
-            case SameDistribution -> tableRow[5] = ("same distribution");
-            case DifferentDistribution -> tableRow[5] = ("different distribution");
-            case NotEnoughSamples -> tableRow[5] = ("not enough samples (" + comparisonResult.minSampleCount()
-                    + " samples needed)");
-            case Bootstrap -> tableRow[5] = ("note enough samples (bootstrap was made)");
-            default -> tableRow[5] = ("NONE???");
+            case SameDistribution -> tableRow[RESULT_COLUMN_INDEX] = ("same distribution");
+            case DifferentDistribution -> tableRow[RESULT_COLUMN_INDEX] = ("different distribution");
+            case NotEnoughSamples -> tableRow[RESULT_COLUMN_INDEX] =
+                    ("not enough samples (" + comparisonResult.minSampleCount() + " samples needed)");
+            case Bootstrap -> tableRow[RESULT_COLUMN_INDEX] = ("note enough samples (bootstrap was made)");
+            default -> tableRow[RESULT_COLUMN_INDEX] = ("NONE???");
         }
 
         return tableRow;
