@@ -243,7 +243,7 @@ public class H2Database implements Database {
             Date creationDate = new Date(fileAttributes.creationTime().toMillis());
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
-                preparedStatement.setString(1, pathToDBFile.relativize(filePath).toString());
+                preparedStatement.setString(1, pathToDBFile.relativize(filePath.toAbsolutePath()).toString());
                 preparedStatement.setTimestamp(2, new Timestamp(creationDate.getTime())); // Current date for dateOfCreation
                 preparedStatement.setTimestamp(3, new Timestamp(version.dateOfCommit().getTime()));
                 preparedStatement.setString(4, version.commitVersionHash());

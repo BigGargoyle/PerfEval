@@ -33,7 +33,7 @@ public class InitCommand implements Command {
     /**
      * String representation of key for maximal time on test in ini file
      */
-    private static final String MAX_TIME_KEY = "maxTime.key";
+    private static final String MAX_TEST_COUNT_KEY = "maxTestCount.key";
     /**
      * String representation of key for version in ini file
      */
@@ -103,13 +103,13 @@ public class InitCommand implements Command {
         INIConfiguration config = configs.ini(iniFilePath.toFile());
         double critValue = Double.parseDouble(config.getString(CRIT_VALUE_KEY));
         double maxCIWidth = Double.parseDouble(config.getString(MAX_CI_WIDTH_KEY));
-        Duration timeUnit = Duration.ofNanos(Long.parseLong(config.getString(MAX_TIME_KEY)));
+        int maxTestCount = config.getInt(MAX_TEST_COUNT_KEY);
         String version = config.getString(VERSION_KEY);
         boolean gitPresence = config.getString(GIT_PRESENCE_KEY).compareTo(TRUE_STRING) == 0;
         String parserName = config.getString(PARSER_NAME_KEY);
         MeasurementParser parser = ParserFactory.getParser(parserName);
         double tolerance = Double.parseDouble(config.getString(TOLERANCE_KEY));
-        return new PerfEvalConfig(gitPresence, timeUnit, maxCIWidth, critValue, version, parser, tolerance);
+        return new PerfEvalConfig(gitPresence, maxTestCount, maxCIWidth, critValue, version, parser, tolerance);
     }
 
     /**
@@ -129,7 +129,7 @@ public class InitCommand implements Command {
         // Set INI properties
         config.setProperty(CRIT_VALUE_KEY, perfevalConfig.getCritValue());
         config.setProperty(MAX_CI_WIDTH_KEY, perfevalConfig.getMaxCIWidth());
-        config.setProperty(MAX_TIME_KEY, perfevalConfig.getMaxTimeOnTest().getNano());
+        config.setProperty(MAX_TEST_COUNT_KEY, perfevalConfig.getMaxTestCount());
         String gitPresenceString = perfevalConfig.hasGitFilePresence() ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
         config.setProperty(VERSION_KEY, perfevalConfig.getVersion());

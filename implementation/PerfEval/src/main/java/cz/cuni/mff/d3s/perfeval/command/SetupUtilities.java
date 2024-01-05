@@ -8,8 +8,7 @@ import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
 import cz.cuni.mff.d3s.perfeval.evaluation.ResultPrinter;
 import cz.cuni.mff.d3s.perfeval.evaluation.TablePrinter;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceEvaluator;
+import cz.cuni.mff.d3s.perfeval.performancecomparators.*;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
@@ -34,7 +33,7 @@ import java.util.regex.Pattern;
 public class SetupUtilities {
     private static final String EMPTY_STRING = "";
 
-    static final String PERFEVAL_DIR = ".performance";
+    public static final String PERFEVAL_DIR = ".performance";
     static final String GIT_IGNORE_FILE_NAME = ".gitignore";
     static final String INI_FILE_NAME = "config.ini";
     static final String DATABASE_FILE_NAME = "test_results.db";
@@ -46,6 +45,7 @@ public class SetupUtilities {
     static final String FORCE_FLAG = "force";
     private static final String HELP_FLAG = "flag";
     private static final String JSON_OUTPUT_FLAG = "json-output";
+    private static final String HTML_OUTPUT_FLAG = "html-output";
     private static final String GRAPHICAL_FLAG = "graphical";
     private static final String TTEST_FLAG = "t-test";
 
@@ -75,36 +75,6 @@ public class SetupUtilities {
     static final Comparator<MeasurementComparisonRecord> sizeOfChangeFilterComparator = Comparator.comparing(MeasurementComparisonRecord::performanceChange);
     private static final String TEST_ID_FILTER = "test-id";
     static final Comparator<MeasurementComparisonRecord> nameFilterComparator = Comparator.comparing(MeasurementComparisonRecord::newSamples, Comparator.comparing(Samples::getName));
-    static Duration resolveDuration(OptionSet options, PerfEvalConfig config) throws ParserException {
-        if(!options.has(maxTimeOption))
-            return config.getMaxTimeOnTest();
-        Pattern pattern = Pattern.compile("(?:(\\d+)h)?(?:(\\d+)m)?(?:(\\d+)s)?");
-        Matcher matcher = pattern.matcher(options.valueOf(maxTimeOption));
-        int hours = 0;
-        int minutes = 0;
-        int seconds = 0;
-
-        if (matcher.find()) {
-            // Extract and parse the matched groups
-            if (matcher.group(1) != null) {
-                hours = Integer.parseInt(matcher.group(1));
-            }
-            if (matcher.group(2) != null) {
-                minutes = Integer.parseInt(matcher.group(2));
-            }
-            if (matcher.group(3) != null) {
-                seconds = Integer.parseInt(matcher.group(3));
-            }
-        }
-
-        if(Duration.ofHours(hours).plusMinutes(minutes).plusSeconds(seconds).toNanos()==0){
-            //System.err.println("Max time on test has invalid value. Default value will be used.");
-            throw new ParserException("Max time on test has invalid value. Default value will be used.");
-        }
-
-        // Create a Duration object using the parsed values
-        return Duration.ofHours(hours).plusMinutes(minutes).plusSeconds(seconds);
-    }
     static String resolveVersion(Path gitFilePath, OptionSet options) throws IOException {
         if(options.has(versionOption))
             return options.valueOf(versionOption);
@@ -147,7 +117,6 @@ public class SetupUtilities {
     static ResultPrinter resolvePrinterForEvaluateCommand(OptionSet options) throws ParserException {
         Comparator<MeasurementComparisonRecord> filter = new DefaultComparator<>();
         if (options.has(filterOption)) {
-            //TODO: zbavit se println (všude)
             switch (options.valueOf(filterOption)) {
                 case TEST_ID_FILTER -> filter = nameFilterComparator;
                 case SIZE_OF_CHANGE_FILTER -> filter = sizeOfChangeFilterComparator;
@@ -156,6 +125,8 @@ public class SetupUtilities {
             }
         }
         PrintStream printStream = System.out;
+        /*if(options.has(HTML_OUTPUT_FLAG))
+            return new HTMLPrinter(printStream, filter);*/
         return options.has(JSON_OUTPUT_FLAG) ? new JSONPrinter(printStream, filter) : new TablePrinter(printStream, filter);
     }
     static PerformanceEvaluator resolvePerformanceComparatorForEvaluateCommand(OptionSet options, PerfEvalConfig config){
@@ -184,11 +155,15 @@ public class SetupUtilities {
         assert newFiles.length > 0 && oldFiles.length > 0;
         return new FileWithResultsData[][]{oldFiles, newFiles};
     }
-
-
-
+    static StatisticTest resolveStatisticTest(OptionSet options, PerfEvalConfig config){
+        return options.has(TTEST_FLAG) ?
+                new ParametricTest(config.getCritValue()) :
+                options.has(bootstrapSampleCountOption) ?
+                        new NonparametricTest(config.getCritValue(), options.valueOf(bootstrapSampleCountOption)) :
+                        new NonparametricTest(config.getCritValue());
+    }
     static ArgumentAcceptingOptionSpec<String> filterOption;
-    static ArgumentAcceptingOptionSpec<String> maxTimeOption;
+    static ArgumentAcceptingOptionSpec<Integer> maxTestCountOption;
     static ArgumentAcceptingOptionSpec<Integer> bootstrapSampleCountOption;
     static ArgumentAcceptingOptionSpec<String> newVersionOption;
     static ArgumentAcceptingOptionSpec<String> oldVersionOption;
@@ -205,10 +180,10 @@ public class SetupUtilities {
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Filter option with a parameter");
-        maxTimeOption = parser.accepts(MAX_TIME_PARAMETER)
+        maxTestCountOption = parser.accepts(MAX_TIME_PARAMETER)
                 .withRequiredArg()
-                .ofType(String.class)
-                .describedAs("Max time option with a duration parameter");
+                .ofType(Integer.class)
+                .describedAs("Max count of test that it is possible to do");
         bootstrapSampleCountOption = parser.accepts(BOOTSTRAP_SAMPLE_COUNT_PARAMETER)
                 .withRequiredArg()
                 .ofType(Integer.class)
@@ -243,6 +218,7 @@ public class SetupUtilities {
         parser.accepts(HELP_FLAG, "Print help message");
         parser.accepts(GRAPHICAL_FLAG, "Enable graphical mode");
         parser.accepts(JSON_OUTPUT_FLAG, "Enable JSON output");
+        parser.accepts(HTML_OUTPUT_FLAG, "Enable HTML output");
         parser.accepts(FORCE_FLAG, "Force the operation of init");
         parser.accepts(TTEST_FLAG, "Uses t-test instead of bootstrap");
         return parser;

@@ -35,6 +35,10 @@ public class ParserFactory {
     }
 
     public static MeasurementParser getParser(String value) {
+        if(!registeredParsers.containsKey(value)) {
+            //parser was not registered
+            return null;
+        }
         return registeredParsers.get(value).get();
     }
 }

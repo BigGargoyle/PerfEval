@@ -1,12 +1,14 @@
 import cz.cuni.mff.d3s.perfeval.command.Command;
+import cz.cuni.mff.d3s.perfeval.command.Parser;
+import cz.cuni.mff.d3s.perfeval.command.ParserException;
+import cz.cuni.mff.d3s.perfeval.command.SetupUtilities;
+import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.ProjectVersion;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.H2Database;
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -22,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandTest {
     //static String PWD = "test-directory";
-   /* static String[] testEvaluateCLIValidLines = new String[]{
+    static String[] testEvaluateCLIValidLines = new String[]{
         "evaluate",
         "evaluate --old-version version1",
         "evaluate --old-version=version1",
@@ -32,15 +34,15 @@ public class CommandTest {
         "evaluate --old-version version1 --json-output",
         "evaluate --old-version version1 --t-test --json-output",
         "evaluate --old-version version1 --filter test-result",
-        "evaluate --old-version version1 --filter test-result2" // unknown filter -> null
+        //"evaluate --old-version version1 --filter test-result2" // unknown filter -> null
     };
 
     static String[] testEvaluateCLIInvalidLines = new String[]{
         "evaluate --old-version version3", // unknown version -> null
     };
     static String[] testInitLines = new String[]{
-        "init",
-        "init --force"
+        "init --benchmark-parser JMHJSONParser",
+        "init --force --benchmark-parser BenchmarkDotNetJSONParser"
     };
 
     static String[] testIndexNewResultLines = new String[]{
@@ -71,7 +73,7 @@ public class CommandTest {
     };
 
     static String[] testListUndecidedInvalidLines = new String[] {
-        "list-undecided --old-version version3", // unknown version -> null
+        "list-undecided --old-version versionx3", // unknown version -> ParserError
     };
 
     static String[] assemblyCLIArgs(String CLIExample) throws URISyntaxException {
@@ -80,13 +82,25 @@ public class CommandTest {
         String[] arg0 = new String[]{actualDirectory.toAbsolutePath().toString()};
         return ArrayUtils.addAll(arg0, splittedCLI);
     }
-/*
+
     Database db;
     Path dbPath = Path.of("test-db");
     Path dirWithTestFiles = Path.of("test-results");
+    @BeforeAll
+    static void initPerfEval() throws URISyntaxException, ParserException, PerfEvalCommandFailedException {
+        //PerfEval.init(PWD);
+        String inputLine = "init --force --benchmark-parser BenchmarkDotNetJSONParser";
+        String[] args = assemblyCLIArgs(inputLine);
+        Command command = Parser.getCommand(args);
+        assert command != null;
+        command.execute();
+    }
+
     @BeforeEach
-    void setup() throws DatabaseException, SQLException {
-        db = H2Database.getDBFromFilePath(dbPath);
+    void setup() throws DatabaseException, SQLException, URISyntaxException {
+        //db = H2Database.getDBFromFilePath(dbPath);
+        String[] pwd = assemblyCLIArgs("");
+        db = SetupUtilities.constructDatabase(Path.of(pwd[0]).resolve(SetupUtilities.PERFEVAL_DIR));
         int i = 0;
         for (File f: Objects.requireNonNull(dirWithTestFiles.toFile().listFiles())) {
             ProjectVersion version = new ProjectVersion(
@@ -102,25 +116,25 @@ public class CommandTest {
         ((H2Database)db).dropTable();
     }
 
-    @Test
-    public void validCLIEvaluateLines() throws URISyntaxException {
+   @Test
+   public void validCLIEvaluateLines() throws URISyntaxException, ParserException {
         for (String CLILine : testEvaluateCLIValidLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
             assertNotNull(command);
         }
     }
-    @Test
-    public void invalidCLIEvaluateLines() throws URISyntaxException {
+    /*@Test
+    public void invalidCLIEvaluateLines() throws URISyntaxException, ParserException {
         for (String CLILine : testEvaluateCLIInvalidLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
             assertNull(command);
         }
-    }
+    }*/
 
     @Test
-    public void validInitLines() throws URISyntaxException {
+    public void validInitLines() throws URISyntaxException, ParserException {
         for (String CLILine : testInitLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
@@ -128,7 +142,7 @@ public class CommandTest {
         }
     }
     @Test
-    public void validIndexNewLines() throws URISyntaxException {
+    public void validIndexNewLines() throws URISyntaxException, ParserException {
         for (String CLILine : testIndexNewResultLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
@@ -136,7 +150,7 @@ public class CommandTest {
         }
     }
     @Test
-    public void validIndexAllLines() throws URISyntaxException {
+    public void validIndexAllLines() throws URISyntaxException, ParserException {
         for (String CLILine : testIndexAllResultsLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
@@ -145,7 +159,7 @@ public class CommandTest {
     }
 
     @Test
-    public void validUndecidedLines() throws URISyntaxException {
+    public void validUndecidedLines() throws URISyntaxException, ParserException {
         for (String CLILine : testListUndecidedValidLines) {
             String[] args = assemblyCLIArgs(CLILine);
             Command command = Parser.getCommand(args);
@@ -154,12 +168,10 @@ public class CommandTest {
     }
 
     @Test
-    public void invalidUndecidedLines() throws URISyntaxException {
-        for (String CLILine : testListUndecidedInvalidLines) {
-            String[] args = assemblyCLIArgs(CLILine);
-            Command command = Parser.getCommand(args);
-            assertNull(command);
-        }
+    public void invalidUndecidedLines() throws URISyntaxException, ParserException {
+        String CLILine = testListUndecidedInvalidLines[0];
+        String[] args = assemblyCLIArgs(CLILine);
+        assertThrows(ParserException.class, ()->Parser.getCommand(args));
     }
-*/
+
 }

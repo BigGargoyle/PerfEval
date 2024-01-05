@@ -90,6 +90,7 @@ public class DatabaseTest {
         assertNotNull(lastNVersions);
         assertTrue(lastNVersions.length > 0);
         assertTrue(lastNVersions.length <= n);
+        assertEquals(n, lastNVersions.length);
 
         // Ensure the versions are in descending order (newest first)
         for (int i = 0; i < lastNVersions.length - 1; i++) {

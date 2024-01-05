@@ -41,6 +41,9 @@ public class Parser {
         }
         try {
             for (var arg : options.nonOptionArguments()) {
+                if(!commandPerSetup.containsKey(arg.toString())){
+                    continue;
+                }
                 CommandSetup commandSetup = commandPerSetup.get(arg.toString()).get();
                 if (commandSetup != null) {
                     return commandSetup.setup(args, options, config);

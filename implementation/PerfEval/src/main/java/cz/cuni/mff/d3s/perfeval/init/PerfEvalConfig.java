@@ -3,8 +3,6 @@ package cz.cuni.mff.d3s.perfeval.init;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.BenchmarkDotNetJSONParser;
 
-import java.time.Duration;
-
 /**
  * Class for storing configuration of PerfEval
  */
@@ -16,7 +14,7 @@ public final class PerfEvalConfig {
     /**
      * Default value for maxTimeOnTest
      */
-    private static final Duration DEFAULT_MAX_TIME_ON_TEST = Duration.ofHours(1);
+    private static final int DEFAULT_MAX_TEST_COUNT = 100;
     /**
      * Default value for critValue
      */
@@ -45,14 +43,14 @@ public final class PerfEvalConfig {
      * @throws PerfEvalInvalidConfigException if default configuration is invalid (it should not happen)
      */
     public static PerfEvalConfig getDefaultConfig() throws PerfEvalInvalidConfigException {
-        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MAX_TIME_ON_TEST, DEFAULT_MAX_CI_WIDTH, DEFAULT_CRIT_VALUE, DEFAULT_VERSION, DEFAULT_PARSER, DEFAULT_TOLERANCE);
+        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MAX_TEST_COUNT, DEFAULT_MAX_CI_WIDTH, DEFAULT_CRIT_VALUE, DEFAULT_VERSION, DEFAULT_PARSER, DEFAULT_TOLERANCE);
     }
 
     /**
      * Constructor for PerfEvalConfig
      *
      * @param gitFilePresence if true, the project where PerfEval is initialized in is git repository
-     * @param maxTimeOnTest   maximal time for one performance test
+     * @param maxTestCount    maximal count of test that is possible to do
      * @param maxCIWidth      maximal width of confidence interval
      * @param critValue       critical value for statistical tests
      * @param version         version of performance tests that will be added
@@ -60,16 +58,16 @@ public final class PerfEvalConfig {
      * @param tolerance       tolerance for performance tests
      * @throws PerfEvalInvalidConfigException if configuration is invalid
      */
-    public PerfEvalConfig(boolean gitFilePresence, Duration maxTimeOnTest, double maxCIWidth, double critValue, String version, MeasurementParser parser, double tolerance) throws PerfEvalInvalidConfigException {
+    public PerfEvalConfig(boolean gitFilePresence, int maxTestCount, double maxCIWidth, double critValue, String version, MeasurementParser parser, double tolerance) throws PerfEvalInvalidConfigException {
         this.gitFilePresence = gitFilePresence;
-        this.maxTimeOnTest = maxTimeOnTest;
+        this.maxTestCount = maxTestCount;
         this.maxCIWidth = maxCIWidth;
         this.critValue = critValue;
         this.version = version;
         this.measurementParser = parser;
         this.tolerance = tolerance;
         if (critValue <= 0 || critValue >= 1) throw new PerfEvalInvalidConfigException();
-        if (maxTimeOnTest.toNanos() < 0) throw new PerfEvalInvalidConfigException();
+        if (maxTestCount <= 0) throw new PerfEvalInvalidConfigException();
         if (maxCIWidth <= 0 || maxCIWidth >= 1) throw new PerfEvalInvalidConfigException();
         if (version == null) throw new PerfEvalInvalidConfigException();
         if (measurementParser == null) throw new PerfEvalInvalidConfigException();
@@ -83,7 +81,7 @@ public final class PerfEvalConfig {
     /**
      * Maximal time for one performance test
      */
-    private final Duration maxTimeOnTest;
+    private final int maxTestCount;
     /**
      * Maximal width of confidence interval (relative to average)
      */
@@ -119,8 +117,8 @@ public final class PerfEvalConfig {
      *
      * @return maxTimeOnTest
      */
-    public Duration getMaxTimeOnTest() {
-        return maxTimeOnTest;
+    public int getMaxTestCount() {
+        return maxTestCount;
     }
 
     /**
