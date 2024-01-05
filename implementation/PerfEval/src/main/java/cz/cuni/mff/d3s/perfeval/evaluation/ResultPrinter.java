@@ -9,5 +9,5 @@ public interface ResultPrinter {
      *
      * @param resultCollection collection of results to be printed
      */
-    void PrintResults(MeasurementComparisonResultCollection resultCollection);
+    void PrintResults(MeasurementComparisonResultCollection resultCollection) throws MeasurementPrinterException;
 }

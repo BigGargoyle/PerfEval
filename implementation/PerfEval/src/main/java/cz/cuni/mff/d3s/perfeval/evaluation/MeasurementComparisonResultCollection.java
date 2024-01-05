@@ -50,6 +50,10 @@ public class MeasurementComparisonResultCollection implements Collection<Measure
         return originalFilesMetadata[1][0].version().commitVersionHash();
     }
 
+    public List<MeasurementComparisonRecord> getRecords() {
+        return records;
+    }
+
     @Override
     public int size() {
         return records.size();
