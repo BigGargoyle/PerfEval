@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.perfeval.performancecomparators;
+package cz.cuni.mff.d3s.perfeval.evaluation;
 
 /**
  * Interface representing statistical test.

@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.perfeval.evaluation;
+package cz.cuni.mff.d3s.perfeval.printers;
 
 import java.io.IOException;
 import java.io.InputStream;

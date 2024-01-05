@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.perfeval.performancecomparators;
+package cz.cuni.mff.d3s.perfeval.evaluation;
 
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.StatUtils;

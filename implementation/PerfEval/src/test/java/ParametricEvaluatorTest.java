@@ -1,9 +1,9 @@
 import cz.cuni.mff.d3s.perfeval.Metric;
 import cz.cuni.mff.d3s.perfeval.Samples;
-import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.ComparisonResult;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.ParametricTest;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceEvaluator;
+import cz.cuni.mff.d3s.perfeval.printers.MeasurementComparisonRecord;
+import cz.cuni.mff.d3s.perfeval.evaluation.ComparisonResult;
+import cz.cuni.mff.d3s.perfeval.evaluation.ParametricTest;
+import cz.cuni.mff.d3s.perfeval.evaluation.PerformanceEvaluator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

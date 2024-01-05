@@ -1,7 +1,7 @@
-package cz.cuni.mff.d3s.perfeval.performancecomparators;
+package cz.cuni.mff.d3s.perfeval.evaluation;
 
 import cz.cuni.mff.d3s.perfeval.Samples;
-import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
+import cz.cuni.mff.d3s.perfeval.printers.MeasurementComparisonRecord;
 
 /**
  * Class that compares two sets of samples (with statistical tests).

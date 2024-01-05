@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.perfeval.performancecomparators;
+package cz.cuni.mff.d3s.perfeval.evaluation;
 
 /**
  * Enum representing result of comparison of two Samples.

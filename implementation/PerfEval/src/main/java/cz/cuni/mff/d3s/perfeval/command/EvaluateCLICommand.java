@@ -1,13 +1,13 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
 import cz.cuni.mff.d3s.perfeval.ExitCode;
-import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementPrinterException;
+import cz.cuni.mff.d3s.perfeval.printers.MeasurementPrinterException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceEvaluator;
+import cz.cuni.mff.d3s.perfeval.evaluation.PerformanceEvaluator;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
-import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonResultCollection;
-import cz.cuni.mff.d3s.perfeval.evaluation.ResultPrinter;
-import cz.cuni.mff.d3s.perfeval.evaluation.MeasurementComparisonRecord;
+import cz.cuni.mff.d3s.perfeval.printers.MeasurementComparisonResultCollection;
+import cz.cuni.mff.d3s.perfeval.printers.ResultPrinter;
+import cz.cuni.mff.d3s.perfeval.printers.MeasurementComparisonRecord;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
 

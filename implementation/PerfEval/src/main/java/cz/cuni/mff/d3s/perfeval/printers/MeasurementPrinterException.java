@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.perfeval.evaluation;
+package cz.cuni.mff.d3s.perfeval.printers;
 
 /**
  * Exception thrown when there is an error with printing the results.

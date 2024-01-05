@@ -1,6 +1,6 @@
-package cz.cuni.mff.d3s.perfeval.performancecomparators;
+package cz.cuni.mff.d3s.perfeval.evaluation;
 
-import static cz.cuni.mff.d3s.perfeval.performancecomparators.HierarchicalBootstrap.evaluateCIInterval;
+import static cz.cuni.mff.d3s.perfeval.evaluation.HierarchicalBootstrap.evaluateCIInterval;
 
 public class NonparametricTest implements StatisticTest {
     /**

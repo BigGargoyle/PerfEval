@@ -1,10 +1,10 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
-import cz.cuni.mff.d3s.perfeval.evaluation.ResultPrinter;
-import cz.cuni.mff.d3s.perfeval.evaluation.UndecidedPrinter;
+import cz.cuni.mff.d3s.perfeval.printers.ResultPrinter;
+import cz.cuni.mff.d3s.perfeval.printers.UndecidedPrinter;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.PerformanceEvaluator;
-import cz.cuni.mff.d3s.perfeval.performancecomparators.StatisticTest;
+import cz.cuni.mff.d3s.perfeval.evaluation.PerformanceEvaluator;
+import cz.cuni.mff.d3s.perfeval.evaluation.StatisticTest;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 import joptsimple.OptionSet;

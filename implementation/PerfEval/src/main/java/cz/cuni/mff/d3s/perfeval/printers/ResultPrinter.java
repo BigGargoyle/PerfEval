@@ -1,4 +1,4 @@
-package cz.cuni.mff.d3s.perfeval.evaluation;
+package cz.cuni.mff.d3s.perfeval.printers;
 
 /**
  * Interface for printing results of comparison of two sets of samples.
