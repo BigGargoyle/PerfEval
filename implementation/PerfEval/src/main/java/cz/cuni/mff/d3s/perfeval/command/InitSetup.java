@@ -55,7 +55,8 @@ public class InitSetup implements CommandSetup {
         if (parser == null) {
             throw new ParserException(
                     "Parser cannot be resolved. Default parser will be used." + System.lineSeparator()
-                            + "Possible parsers are: " + ParserFactory.getPossibleNames(),
+                            + "Possible parsers are: " + ParserFactory.getPossibleNames() + System.lineSeparator()
+                            + "Parser name can be specified by --" + BENCHMARK_PARSER_PARAMETER,
                     ExitCode.invalidArguments);
         }
 

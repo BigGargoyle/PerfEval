@@ -107,4 +107,9 @@ public class JMHJSONParser implements MeasurementParser {
     public static String getParserName() {
         return "JMHJSONParser";
     }
+
+    @Override
+    public String toString() {
+        return getParserName();
+    }
 }

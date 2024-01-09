@@ -107,4 +107,26 @@ public class GitUtilities {
         }
     }
 
+    public static String getLastGitCommitHash(Path gitFilePath) {
+        try {
+            //try-with-resources does not work here
+            Git git = Git.open(new File(gitFilePath.toString()));
+            ObjectId objectId = git.getRepository().resolve("HEAD");
+
+            if (objectId == null) {
+                return null;
+            }
+
+            RevWalk revWalk = new RevWalk(git.getRepository());
+            RevCommit commit = revWalk.parseCommit(objectId);
+            ObjectId commitId = commit.getId();
+            String hash = commitId.getName();
+            revWalk.dispose();
+            git.close();
+            return hash;
+
+        } catch (IOException e) {
+            return null;
+        }
+    }
 }

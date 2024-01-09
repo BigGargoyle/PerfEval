@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group = 'org.example'
+group = 'cz.cuni.mff.d3s.perfeval'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -37,7 +37,7 @@ dependencies {
 jar {
     duplicatesStrategy = 'exclude'
     manifest {
-        attributes 'Main-Class': 'org.example.Main'
+        attributes 'Main-Class': 'cz.cuni.mff.d3s.perfeval.Main'
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

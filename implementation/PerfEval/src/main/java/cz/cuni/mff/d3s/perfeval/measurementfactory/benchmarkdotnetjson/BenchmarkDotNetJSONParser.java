@@ -115,6 +115,11 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
         return "BenchmarkDotNetJSONParser";
     }
 
+    @Override
+    public String toString() {
+        return getParserName();
+    }
+
     /**
      * Collects stream of sample containers into a map indexed by benchmark.
      * <p>

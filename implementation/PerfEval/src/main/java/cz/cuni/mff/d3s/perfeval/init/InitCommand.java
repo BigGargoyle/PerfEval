@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.perfeval.init;
 
 import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
+import cz.cuni.mff.d3s.perfeval.command.GitUtilities;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -16,6 +17,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.GIT_FILE_NAME;
 
 /**
  * Command for initializing perfeval in directory.
@@ -124,17 +127,24 @@ public class InitCommand implements Command {
             throw new IOException("ini file cannot be deleted");
         }
 
+        Path gitFilePath = iniFilePath.getParent().getParent().resolve(GIT_FILE_NAME);
+        boolean isThereAGitFile = gitFilePath.toFile().exists();
+
         INIConfiguration config = new INIConfiguration();
 
         // Set INI properties
         config.setProperty(CRIT_VALUE_KEY, perfevalConfig.getCritValue());
         config.setProperty(MAX_CI_WIDTH_KEY, perfevalConfig.getMaxCIWidth());
         config.setProperty(MAX_TEST_COUNT_KEY, perfevalConfig.getMaxTestCount());
-        String gitPresenceString = perfevalConfig.hasGitFilePresence() ? TRUE_STRING : FALSE_STRING;
+        String gitPresenceString = perfevalConfig.hasGitFilePresence() || isThereAGitFile ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
         config.setProperty(VERSION_KEY, perfevalConfig.getVersion());
-        //TODO: solve parser name
-        //config.setProperty(PARSER_NAME_KEY, perfevalConfig.getMeasurementParser().getParserName());
+        if(isThereAGitFile) {
+            String lastCommitHash = GitUtilities.getLastGitCommitHash(gitFilePath);
+            config.setProperty(VERSION_KEY, lastCommitHash);
+        }
+        //solve parser name --> method toString()
+        config.setProperty(PARSER_NAME_KEY, perfevalConfig.getMeasurementParser().toString());
         config.setProperty(TOLERANCE_KEY, perfevalConfig.getTolerance());
 
         // Save to the INI file
@@ -202,7 +212,7 @@ public class InitCommand implements Command {
      */
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
-        if (isPerfevalInitializedInThisDirectory(perfevalDirPath)) {
+        if(forceFlag && isPerfevalInitializedInThisDirectory(perfevalDirPath)) {
             try {
                 deleteDirectory(perfevalDirPath);
             } catch (IOException e) {
@@ -210,8 +220,8 @@ public class InitCommand implements Command {
                 exception.initCause(e);
                 throw exception;
             }
-        } else if (!forceFlag) {
-            throw new PerfEvalCommandFailedException(ExitCode.notInitialized);
+        } else if (isPerfevalInitializedInThisDirectory(perfevalDirPath)) {
+            return ExitCode.alreadyInitialized;
         }
         try {
             createPerfEvalFiles();

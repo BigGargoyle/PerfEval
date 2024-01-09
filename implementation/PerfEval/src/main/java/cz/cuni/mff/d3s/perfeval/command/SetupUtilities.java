@@ -56,7 +56,7 @@ public class SetupUtilities {
     /**
      * Name of the file containing the git information.
      */
-    static final String GIT_FILE_NAME = ".git";
+    public static final String GIT_FILE_NAME = ".git";
 
     /**
      * Only for use with init command. New PerfEval system will be initialized. Old system will be deleted.
@@ -265,7 +265,10 @@ public class SetupUtilities {
         ProjectVersion oldVersion = options.has(oldVersionOption) ? new ProjectVersion(null, options.valueOf(oldVersionOption), null) : null;
         if (newVersion == null && oldVersion == null) {
             ProjectVersion[] versions = database.getLastNVersions(2);
-            assert versions.length == 2;
+            //assert versions.length == 2;
+            if(versions.length < 2) {
+                throw new DatabaseException("There are not enough versions in the database.", ExitCode.databaseError);
+            }
             newVersion = versions[0];
             oldVersion = versions[1];
         }

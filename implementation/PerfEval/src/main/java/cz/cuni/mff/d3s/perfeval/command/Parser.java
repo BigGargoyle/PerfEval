@@ -44,7 +44,13 @@ public class Parser {
      */
     public static Command getCommand(String[] args) throws ParserException {
         OptionParser parser = createParser();
-        OptionSet options = parser.parse(args);
+        OptionSet options;
+        try {
+            //runtime exception -> unchecked
+            options = parser.parse(args);
+        } catch ( joptsimple.OptionException e) {
+            throw new ParserException("Error while parsing arguments: " + e.getMessage(), ExitCode.invalidArguments);
+        }
         Path iniFilePath = Path.of(args[0]).resolve(PERFEVAL_DIR).resolve(INI_FILE_NAME);
         PerfEvalConfig config;
         try {
@@ -63,7 +69,7 @@ public class Parser {
                 }
             }
         } catch (DatabaseException e) {
-            ParserException exception = new ParserException("Database error: " + e.getMessage());
+            ParserException exception = new ParserException("Database error: " + e.toString());
             exception.exitCode = ExitCode.databaseError;
             exception.initCause(e);
             throw exception;

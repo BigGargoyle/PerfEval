@@ -22,18 +22,22 @@ public enum ExitCode {
      */
     notInitialized(102),
     /**
+     * Exit code for unsuccessful execution due to already initialized PerfEval.
+     */
+    alreadyInitialized(103),
+    /**
      * Exit code for unsuccessful execution due to failed evaluation.
      */
-    evaluationFailed(103),
+    evaluationFailed(104),
     /**
      * Exit code for unsuccessful execution due to database error.
      */
-    databaseError(104),
+    databaseError(105),
 
     /**
      * Exit code for unsuccessful execution due to parser error.
      */
-    parserError(105);
+    parserError(106);
     /**
      * Integer value of the exit code.
      */
