@@ -10,7 +10,9 @@
 
 ## Problém (teorie)
 
--   Aktuální SW pro testování výkonu není schopný
+-   Aktuální SW pro testování výkonu není schopný vyhodnocovat výkon automaticky
+    -   pouhá prostředí pro měření, ale mají stnadardizovaný výstup
+    -   příležitost strojového zpracování a začlenění do CI/CD
 -   Použití statistických metod pro analýzu dat
 
 
@@ -31,7 +33,7 @@
 
 ## Zhodnocení řešení (projektu)
 
--   Jak se se systémem PerfEval reálně pracuje
+-   Jak se se systémem PerfEval reálně pracuje (uživatelská dokumentace)
     -   ukázka postupného zadávání commandů a jak na ně systém reaguje
 -   Zhodnocení výstupů systému nad výstupem testů reálného systému (Crate)
     -   Ukázka výstupu příkazu evaluate s různými způsoby výpisu
@@ -42,3 +44,6 @@
 -   Jak systém jako celek funguje
 -   Architektura systému
     -   Popis a rozbor funkcí jednotlivých komponent
+    -   Na co si dát pozor (místa s komentáři) --> RuntimeExceptions
+-   Jaká je rozšiřitelnost a její omezení
+-   Javadoc
