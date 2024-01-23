@@ -6,6 +6,8 @@ import java.io.PrintStream;
 import java.util.Comparator;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 /**
  * Class for printing results into HTML format.
@@ -41,18 +43,15 @@ public class HTMLPrinter implements ResultPrinter {
      */
     @Override
     public void PrintResults(MeasurementComparisonResultCollection resultCollection) throws MeasurementPrinterException {
-        //TODO: print into file, not to std output
+        // print into file, not to std output (user redirects output to file)
         resultCollection.sort(filter);
-        String templateContent;
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(templatePath)) {
-            assert inputStream != null;
-            templateContent = new String(inputStream.readAllBytes());
-        } catch (NullPointerException | IOException e) {
-            //printStream.println("Cannot be formatted");
-            throw new MeasurementPrinterException("HTML Template was not found", e);
-        }
+
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setTemplateMode("HTML");
+        templateResolver.setCacheable(false);
 
         TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
 
         // Create a Thymeleaf context and add data to it
         Context context = new Context();
@@ -61,7 +60,7 @@ public class HTMLPrinter implements ResultPrinter {
         context.setVariable("records", resultCollection.getRecords()); // Assuming a getter method `records()` is available
 
         // Process the loaded template with Thymeleaf and return the rendered HTML
-        String result = templateEngine.process(templateContent, context);
+        String result = templateEngine.process(templatePath, context);
         printStream.println(result);
     }
 }

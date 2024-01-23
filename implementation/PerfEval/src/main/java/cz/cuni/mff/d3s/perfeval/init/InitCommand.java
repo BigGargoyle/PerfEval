@@ -27,31 +27,31 @@ public class InitCommand implements Command {
     /**
      * String representation of key for critical value in ini file.
      */
-    private static final String CRIT_VALUE_KEY = "critValue.key";
+    private static final String CRIT_VALUE_KEY = "statistic.critValue";
     /**
      * String representation of key for maximal confidence interval width in ini file.
      */
-    private static final String MAX_CI_WIDTH_KEY = "maxCIWidth.key";
+    private static final String MAX_CI_WIDTH_KEY = "statistic.maxCIWidth";
     /**
      * String representation of key for maximal time on test in ini file.
      */
-    private static final String MAX_TEST_COUNT_KEY = "maxTestCount.key";
+    private static final String MAX_TEST_COUNT_KEY = "statistic.maxTestCount";
     /**
      * String representation of key for version in ini file.
      */
-    private static final String VERSION_KEY = "version.key";
+    private static final String VERSION_KEY = "project.version";
     /**
      * String representation of key for git presence in ini file.
      */
-    private static final String GIT_PRESENCE_KEY = "git.key";
+    private static final String GIT_PRESENCE_KEY = "project.git";
     /**
      * String representation of key for parser name in ini file.
      */
-    private static final String PARSER_NAME_KEY = "parserName.key";
+    private static final String PARSER_NAME_KEY = "project.parserName";
     /**
      * String representation of key for tolerance in ini file.
      */
-    private static final String TOLERANCE_KEY = "tolerance.key";
+    private static final String TOLERANCE_KEY = "statistic.tolerance";
     /**
      * String representation of true in ini file.
      */
@@ -85,11 +85,11 @@ public class InitCommand implements Command {
     /**
      * Returns true if perfeval is initialized in this directory.
      *
-     * @param perfevalDirPath path to perfeval directory
+     * @param iniFilePath path to ini file
      * @return true if perfeval is initialized in this directory, false otherwise
      */
-    public static boolean isPerfevalInitializedInThisDirectory(Path perfevalDirPath) {
-        return perfevalDirPath.toFile().isDirectory();
+    public static boolean isPerfevalInitializedInThisDirectory(Path iniFilePath) {
+        return iniFilePath.toFile().isFile();
     }
 
     /**

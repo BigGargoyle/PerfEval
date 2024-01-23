@@ -108,8 +108,9 @@ public final class PerfEvalConfig {
     private final String version;
     /**
      * Parser for performance tests result files.
+     * It is not final because it can be set later (init command).
      */
-    private final MeasurementParser measurementParser;
+    private MeasurementParser measurementParser;
     /**
      * Tolerance for performance tests.
      */
@@ -167,6 +168,18 @@ public final class PerfEvalConfig {
      */
     public MeasurementParser getMeasurementParser() {
         return measurementParser;
+    }
+
+    /**
+     * Setter for parser.
+     *
+     * @param parser new parser
+     */
+    public void setMeasurementParser(MeasurementParser parser) throws PerfEvalInvalidConfigException {
+        if(parser == null) {
+            throw new PerfEvalInvalidConfigException();
+        }
+        this.measurementParser = parser;
     }
 
     /**

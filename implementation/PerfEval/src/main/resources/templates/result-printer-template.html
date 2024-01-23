@@ -9,14 +9,15 @@
 
 <!-- Display Old and New Versions -->
 <h2>Versions:</h2>
-<p>Old Version: {{ oldVersion }}</p>
-<p>New Version: {{ newVersion }}</p>
+<p>Old Version: <span th:text="${oldVersion}"></span></p>
+<p>New Version: <span th:text="${newVersion}"></span></p>
 
 <!-- Display Records -->
 <h2>Records:</h2>
 <table border="1">
     <thead>
     <tr>
+        <th>Measurement Name</th>
         <th>Old Average</th>
         <th>New Average</th>
         <th>Performance Change</th>
@@ -27,17 +28,15 @@
     </tr>
     </thead>
     <tbody>
-    {{#each records}}
-    <tr>
-        <td>{{ oldAverage }}</td>
-        <td>{{ newAverage }}</td>
-        <td>{{ performanceChange }}</td>
-        <td>{{ comparisonResult }}</td>
-        <td>{{ testVerdict }}</td>
-        <td>{{ minSampleCount }}</td>
+    <tr th:each="record : ${records}">
+        <td th:text="${record.oldSamples.name}"></td>
+        <td th:text="${record.oldAverage}"></td>
+        <td th:text="${record.newAverage}"></td>
+        <td th:text="${record.performanceChange}"></td>
+        <td th:text="${record.comparisonResult}"></td>
+        <td th:text="${record.testVerdict}"></td>
+        <td th:text="${record.minSampleCount}"></td>
         <!-- Add more table cells based on MeasurementComparisonRecord fields -->
-    </tr>
-    {{/each}}
     </tbody>
 </table>
 </body>

@@ -3,6 +3,7 @@ package cz.cuni.mff.d3s.perfeval.command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
 import cz.cuni.mff.d3s.perfeval.init.InitCommand;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
+import cz.cuni.mff.d3s.perfeval.init.PerfEvalInvalidConfigException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
 import joptsimple.OptionSet;
@@ -60,6 +61,12 @@ public class InitSetup implements CommandSetup {
                     ExitCode.invalidArguments);
         }
 
+
+        try {
+            config.setMeasurementParser(parser);
+        } catch (PerfEvalInvalidConfigException e) {
+            throw new ParserException(e.toString(), ExitCode.invalidArguments);
+        }
 
         return new InitCommand(perfevalDirPath, gitIgnorePath, iniFilePath,
                 emptyFiles, gitIgnoredFiles, config, options.has(FORCE_FLAG));

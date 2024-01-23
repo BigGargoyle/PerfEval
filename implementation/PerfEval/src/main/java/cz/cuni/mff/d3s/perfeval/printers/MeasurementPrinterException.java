@@ -18,6 +18,10 @@ public class MeasurementPrinterException extends Exception {
         initCause(cause);
     }
 
+    public MeasurementPrinterException(String message) {
+        this.message = message;
+    }
+
     /**
      * Getter for message of the exception.
      */

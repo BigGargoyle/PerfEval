@@ -51,7 +51,12 @@ public class IndexAllSetup implements CommandSetup {
 
             ProjectVersion projectVersion = new ProjectVersion(date, version, tag);
 
-            assert version != null && tag != null;
+            if(version == null) {
+                throw new DatabaseException("Version is null. Your repo is not clean or the version was not typed in.", ExitCode.databaseError);
+            }
+            if(date == null) {
+                throw new DatabaseException("Date is null. Your repo is not clean or the date was not typed in.", ExitCode.databaseError);
+            }
 
             return new AddFilesFromDirCommand(sourceDir, database, projectVersion);
         } catch (IOException e) {

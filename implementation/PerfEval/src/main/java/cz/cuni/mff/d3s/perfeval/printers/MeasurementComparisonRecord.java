@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.perfeval.printers;
 
 import cz.cuni.mff.d3s.perfeval.evaluation.ComparisonResult;
 import cz.cuni.mff.d3s.perfeval.Samples;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Record for storing results of comparison of two sets of samples.
@@ -15,13 +16,13 @@ import cz.cuni.mff.d3s.perfeval.Samples;
  * @param newSamples samples of older version
  */
 public record MeasurementComparisonRecord(
-        double oldAverage,
-        double newAverage,
-        double performanceChange,
-        ComparisonResult comparisonResult,
-        boolean testVerdict,
-        int minSampleCount,
-        Samples oldSamples,
-        Samples newSamples
+        @JsonProperty("oldAverage") double oldAverage,
+        @JsonProperty("newAverage") double newAverage,
+        @JsonProperty("performanceChange") double performanceChange,
+        @JsonProperty("comparisonResult") ComparisonResult comparisonResult,
+        @JsonProperty("testVerdict") boolean testVerdict,
+        @JsonProperty("minSampleCount") int minSampleCount,
+        @JsonProperty("oldSamples") Samples oldSamples,
+        @JsonProperty("newSamples") Samples newSamples
 ) {
 }

@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -222,7 +224,7 @@ public class SetupUtilities {
         }
 
         //System.err.println("Date cannot be resolved");
-        return null;
+        return Date.from(Instant.now());
     }
 
     /**
