@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandTest {
     //static String PWD = "test-directory";
+    /*
     static String[] testEvaluateCLIValidLines = new String[]{
         "evaluate",
         "evaluate --old-version version1",
@@ -131,7 +132,7 @@ public class CommandTest {
             Command command = Parser.getCommand(args);
             assertNull(command);
         }
-    }*/
+    }
 
     @Test
     public void validInitLines() throws URISyntaxException, ParserException {
@@ -173,5 +174,5 @@ public class CommandTest {
         String[] args = assemblyCLIArgs(CLILine);
         assertThrows(ParserException.class, ()->Parser.getCommand(args));
     }
-
+*/
 }

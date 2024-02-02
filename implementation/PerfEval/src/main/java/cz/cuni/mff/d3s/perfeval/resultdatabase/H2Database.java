@@ -85,7 +85,7 @@ public class H2Database implements Database {
      * @param dataSource    JDBCDataSource that represents metadata about database connection
      * @param originPath    path to db file, used for adding relative paths to that file to database
      */
-    public H2Database(JdbcDataSource dataSource, Path originPath) {
+    private H2Database(JdbcDataSource dataSource, Path originPath) {
         this.dataSource = dataSource;
         this.pathToDBFile = originPath;
     }

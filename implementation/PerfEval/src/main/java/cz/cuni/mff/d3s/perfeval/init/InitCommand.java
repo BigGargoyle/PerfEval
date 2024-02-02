@@ -88,7 +88,7 @@ public class InitCommand implements Command {
      * @param iniFilePath path to ini file
      * @return true if perfeval is initialized in this directory, false otherwise
      */
-    public static boolean isPerfevalInitializedInThisDirectory(Path iniFilePath) {
+    private static boolean isPerfevalInitializedInThisDirectory(Path iniFilePath) {
         return iniFilePath.toFile().isFile();
     }
 
@@ -100,7 +100,7 @@ public class InitCommand implements Command {
      * @throws ConfigurationException         if ini file cannot be read
      * @throws PerfEvalInvalidConfigException if config (instance of PerfEvalConfig) cannot be created
      */
-    public static PerfEvalConfig readFromIniFile(Path iniFilePath) throws ConfigurationException, PerfEvalInvalidConfigException {
+    private static PerfEvalConfig readFromIniFile(Path iniFilePath) throws ConfigurationException, PerfEvalInvalidConfigException {
         Configurations configs = new Configurations();
         INIConfiguration config = configs.ini(iniFilePath.toFile());
         double critValue = Double.parseDouble(config.getString(CRIT_VALUE_KEY));

@@ -69,7 +69,7 @@ public class EvaluateCLICommand implements Command {
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
         try {
-            MeasurementComparisonResultCollection comparisonResults = evaluateResults(inputFiles, performanceEvaluator);
+            MeasurementComparisonResultCollection comparisonResults = evaluateResults(parser, inputFiles, performanceEvaluator);
             resultPrinter.PrintResults(comparisonResults);
             for (MeasurementComparisonRecord record : comparisonResults) {
                 if (!record.testVerdict()) return ExitCode.atLeastOneWorseResult;
@@ -89,7 +89,7 @@ public class EvaluateCLICommand implements Command {
      * @param performanceEvaluator comparator for performance tests
      * @return collection of results of performance tests evaluation
      */
-    private MeasurementComparisonResultCollection evaluateResults(FileWithResultsData[][] filesWithResultsData, PerformanceEvaluator performanceEvaluator) {
+    private static MeasurementComparisonResultCollection evaluateResults(MeasurementParser parser, FileWithResultsData[][] filesWithResultsData, PerformanceEvaluator performanceEvaluator) {
         assert filesWithResultsData.length == TWO;
         assert parser != null;
         List<Samples> olderMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[0]).map(FileWithResultsData::path).toArray(String[]::new));
