@@ -8,11 +8,10 @@ public enum ExitCode {
      * Exit code for successful execution of command.
      */
     OK(0),
-    //TODO: change to 1
     /**
      * Exit code for unsuccessful execution due to performance get worse.
      */
-    atLeastOneWorseResult(0),
+    atLeastOneWorseResult(1),
     /**
      * Exit code for unsuccessful execution due to invalid arguments.
      */
