@@ -89,7 +89,7 @@ public class InitCommand implements Command {
      * @return true if perfeval is initialized in this directory, false otherwise
      */
     private static boolean isPerfevalInitializedInThisDirectory(Path iniFilePath) {
-        return iniFilePath.toFile().isFile();
+        return iniFilePath.toFile().exists();
     }
 
     /**
