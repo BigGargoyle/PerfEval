@@ -56,22 +56,22 @@ public class JMHJSONParser implements MeasurementParser {
         Map<String, Samples> samplesPerTestName = new HashMap<>();
         //file names to files
         fileNames.map(this::mapFileFromString)
-            //files to POJOs JMH JSON root objects
-            .flatMap(this::mapRootFromJSON)
-            //POJOs to Samples
-            .forEach(sample -> {
-                //find out metric of sample
-                Metric metric = new Metric(sample.getPrimaryMetric().getScoreUnit(),
-                        Arrays.asList(frequencyScoreUnits).contains(sample.getPrimaryMetric().getScoreUnit()));
-                //add sample to map if not present yet
-                samplesPerTestName.computeIfAbsent(sample.getBenchmark(), k -> new Samples(metric, sample.getBenchmark()));
-                //TODO: řešit kompatibilitu metrik
-                //add raw data to sample
-                for (var rawData : sample.getPrimaryMetric().getRawData()) {
-                    samplesPerTestName.get(sample.getBenchmark())
-                            .addSample(rawData.stream().mapToDouble(Double::doubleValue).toArray());
-                }
-            });
+                //files to POJOs JMH JSON root objects
+                .flatMap(this::mapRootFromJSON)
+                //POJOs to Samples
+                .forEach(sample -> {
+                    //find out metric of sample
+                    Metric metric = new Metric(sample.getPrimaryMetric().getScoreUnit(),
+                            Arrays.asList(frequencyScoreUnits).contains(sample.getPrimaryMetric().getScoreUnit()));
+                    //add sample to map if not present yet
+                    samplesPerTestName.computeIfAbsent(sample.getBenchmark(), k -> new Samples(metric, sample.getBenchmark()));
+                    //TODO: řešit kompatibilitu metrik
+                    //add raw data to sample
+                    for (var rawData : sample.getPrimaryMetric().getRawData()) {
+                        samplesPerTestName.get(sample.getBenchmark())
+                                .addSample(rawData.stream().mapToDouble(Double::doubleValue).toArray());
+                    }
+                });
         return samplesPerTestName;
     }
 
@@ -95,6 +95,7 @@ public class JMHJSONParser implements MeasurementParser {
             BenchmarkJMHJSONRoot[] root = mapper.readValue(file, BenchmarkJMHJSONRoot[].class);
             return Arrays.stream(root);
         } catch (Exception e) {
+            System.out.println(e.getClass());
             throw new MeasurementParserException("JMHJSONParserException, error while processing file: "
                     + file.getName(), e);
         }

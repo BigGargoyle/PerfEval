@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
 import cz.cuni.mff.d3s.perfeval.ExitCode;
+import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParserException;
 import cz.cuni.mff.d3s.perfeval.printers.MeasurementPrinterException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.evaluation.PerformanceEvaluator;
@@ -10,6 +11,7 @@ import cz.cuni.mff.d3s.perfeval.printers.ResultPrinter;
 import cz.cuni.mff.d3s.perfeval.printers.MeasurementComparisonRecord;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
+import net.bytebuddy.asm.Advice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,11 +91,19 @@ public class EvaluateCLICommand implements Command {
      * @param performanceEvaluator comparator for performance tests
      * @return collection of results of performance tests evaluation
      */
-    private static MeasurementComparisonResultCollection evaluateResults(MeasurementParser parser, FileWithResultsData[][] filesWithResultsData, PerformanceEvaluator performanceEvaluator) {
+    private static MeasurementComparisonResultCollection evaluateResults(MeasurementParser parser, FileWithResultsData[][] filesWithResultsData, PerformanceEvaluator performanceEvaluator) throws PerfEvalCommandFailedException {
         assert filesWithResultsData.length == TWO;
         assert parser != null;
-        List<Samples> olderMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[0]).map(FileWithResultsData::path).toArray(String[]::new));
-        List<Samples> newerMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[1]).map(FileWithResultsData::path).toArray(String[]::new));
+        List<Samples> olderMeasurements, newerMeasurements;
+        try{
+            olderMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[0]).map(FileWithResultsData::path).toArray(String[]::new));
+            newerMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[1]).map(FileWithResultsData::path).toArray(String[]::new));
+        }
+        catch (MeasurementParserException e){
+            PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.evaluationFailed);
+            exception.initCause(e);
+            throw exception;
+        }
         assert compareTestsFromListsOfMeasurements(newerMeasurements, olderMeasurements);
         MeasurementComparisonResultCollection resultCollection = new MeasurementComparisonResultCollection(filesWithResultsData);
         //fills resultCollection with results of comparison of performance tests

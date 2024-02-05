@@ -183,7 +183,7 @@ public class H2Database implements Database {
                     List<FileWithResultsData> results = new ArrayList<>();
 
                     while (resultSet.next()) {
-                        String path = pathToDBFile.resolve(resultSet.getString("path")).toAbsolutePath().toString();
+                        String path = pathToDBFile.resolve(resultSet.getString("path")).toAbsolutePath().normalize().toString();
                         Date dateOfCreation = resultSet.getTimestamp("dateOfCreation");
                         String tag = resultSet.getString("tag");
                         Date dateOfCommit = resultSet.getTimestamp("dateOfCommit");
