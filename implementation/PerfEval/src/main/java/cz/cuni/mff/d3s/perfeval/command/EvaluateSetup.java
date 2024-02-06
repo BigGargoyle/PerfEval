@@ -27,7 +27,7 @@ public class EvaluateSetup implements CommandSetup {
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = resolvePrinterForEvaluateCommand(options);
         StatisticTest statisticTest = resolveStatisticTest(options, config);
-        PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getCritValue(), config.getMaxCIWidth(),
+        PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getMaxCIWidth(),
                 config.getTolerance(), config.getMaxTestCount(), statisticTest);
         return new EvaluateCLICommand(inputFiles, printer, evaluator, config.getMeasurementParser());
 
