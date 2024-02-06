@@ -25,4 +25,11 @@ public record MeasurementComparisonRecord(
         @JsonProperty("oldSamples") Samples oldSamples,
         @JsonProperty("newSamples") Samples newSamples
 ) {
+    public String newAverageToString() {
+        return newSamples.getMetric().valueToString(newAverage);
+    }
+
+    public String oldAverageToString() {
+        return oldSamples.getMetric().valueToString(oldAverage);
+    }
 }

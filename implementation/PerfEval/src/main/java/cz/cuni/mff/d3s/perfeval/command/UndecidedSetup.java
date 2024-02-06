@@ -21,7 +21,7 @@ public class UndecidedSetup implements  CommandSetup{
         StatisticTest statTest = resolveStatisticTest(options, config);
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
         ResultPrinter printer = new UndecidedPrinter(System.out);
-        PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getCritValue(), config.getMaxCIWidth(), config.getTolerance(), config.getMaxTestCount(), statTest);
+        PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getMaxCIWidth(), config.getTolerance(), config.getMaxTestCount(), statTest);
         return new EvaluateCLICommand(inputFiles, printer, evaluator, config.getMeasurementParser());
     }
 

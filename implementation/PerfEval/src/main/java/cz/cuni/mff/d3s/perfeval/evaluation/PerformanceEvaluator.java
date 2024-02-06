@@ -18,10 +18,6 @@ public class PerformanceEvaluator {
      */
     private static final int MINUS_ONE = -1;
     /**
-     * Critical value of the t-test.
-     */
-    private final double critValue;
-    /**
      * Maximal width of the confidence interval.
      */
     private final double maxCIWidth;
@@ -43,20 +39,17 @@ public class PerformanceEvaluator {
     /**
      * Constructor for PerformanceEvaluator.
      *
-     * @param critValue    critical value of the t-test
-     * @param maxCIWidth   maximal width of the confidence interval
-     * @param tolerance    tolerance of the performance to get worse
-     * @param maxTestCount maximal count of tests to be performed
+     * @param maxCIWidth    maximal width of the confidence interval
+     * @param tolerance     tolerance of the performance to get worse
+     * @param maxTestCount  maximal count of tests to be performed
      * @param statisticTest statistic test to be used
      */
-    public PerformanceEvaluator(double critValue, double maxCIWidth, double tolerance, int maxTestCount, StatisticTest statisticTest) {
-        this.critValue = critValue;
+    public PerformanceEvaluator(double maxCIWidth, double tolerance, int maxTestCount, StatisticTest statisticTest) {
         this.maxCIWidth = maxCIWidth;
         this.tolerance = tolerance;
         this.maxTestCount = maxTestCount;
         this.statisticTest = statisticTest;
         assert tolerance >= 0 && tolerance <= 1;
-        assert critValue > 0 && critValue < 1;
         assert maxCIWidth > 0 && maxCIWidth < 1;
         assert statisticTest != null;
     }
@@ -99,8 +92,9 @@ public class PerformanceEvaluator {
             }
         }
 
-        boolean testVerdict = comparisonResult == ComparisonResult.SameDistribution || performanceChange > ONE_HUNDRED
-                || Math.abs(performanceChange / ONE_HUNDRED) > 1 - tolerance;
+        boolean testVerdict = (comparisonResult == ComparisonResult.SameDistribution // performance is the same
+                || performanceChange > 0 // performance is better
+                || Math.abs(performanceChange / ONE_HUNDRED) > 1 - tolerance); // performance is worse, but within tolerance
 
 
         return new MeasurementComparisonRecord(oldAvg, newAvg, performanceChange,

@@ -36,4 +36,9 @@ public class PerfEvalCommandFailedException extends Exception {
     public String toString() {
         return getCause().toString() + System.lineSeparator() + message;
     }
+
+    @Override
+    public String getMessage() {
+        return this.toString();
+    }
 }

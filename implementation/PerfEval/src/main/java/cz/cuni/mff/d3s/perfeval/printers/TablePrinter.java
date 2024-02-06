@@ -12,7 +12,7 @@ public class TablePrinter implements ResultPrinter {
     /**
      * Number of columns in the table.
      */
-    private static final int TABLE_COLUM_COUNT = 8;
+    private static final int TABLE_COLUM_COUNT = 6;
     /**
      * Index of column with name of the sample.
      */
@@ -108,17 +108,17 @@ public class TablePrinter implements ResultPrinter {
     private static String[] measurementComparisonToTableRow(MeasurementComparisonRecord comparisonResult) {
         String[] tableRow = new String[TABLE_COLUM_COUNT];
 
-        tableRow[NAME_COLUMN_INDEX] = (comparisonResult.oldSamples().getName());
-        tableRow[NEW_AVERAGE_COLUMN_INDEX] = (String.valueOf(comparisonResult.newAverage()));
-        tableRow[OLD_AVERAGE_COLUMN_INDEX] = (String.valueOf(comparisonResult.oldAverage()));
-        tableRow[CHANGE_COLUMN_INDEX] = (String.valueOf(comparisonResult.performanceChange()));
+        tableRow[NAME_COLUMN_INDEX] = comparisonResult.oldSamples().getName();
+        tableRow[NEW_AVERAGE_COLUMN_INDEX] = comparisonResult.newAverageToString();
+        tableRow[OLD_AVERAGE_COLUMN_INDEX] = comparisonResult.oldAverageToString();
+        tableRow[CHANGE_COLUMN_INDEX] = String.valueOf(comparisonResult.performanceChange());
         tableRow[VERDICT_COLUMN_INDEX] = comparisonResult.testVerdict() ? ("OK") : ("NOT OK");
         switch (comparisonResult.comparisonResult()) {
             case SameDistribution -> tableRow[RESULT_COLUMN_INDEX] = ("same distribution");
             case DifferentDistribution -> tableRow[RESULT_COLUMN_INDEX] = ("different distribution");
             case NotEnoughSamples -> tableRow[RESULT_COLUMN_INDEX] =
                     ("not enough samples (" + comparisonResult.minSampleCount() + " samples needed)");
-            case Bootstrap -> tableRow[RESULT_COLUMN_INDEX] = ("note enough samples (bootstrap was made)");
+            case Bootstrap -> tableRow[RESULT_COLUMN_INDEX] = ("impossible to measure enough samples ("+comparisonResult.minSampleCount()+" samples needed)");
             default -> tableRow[RESULT_COLUMN_INDEX] = ("NONE???");
         }
 
