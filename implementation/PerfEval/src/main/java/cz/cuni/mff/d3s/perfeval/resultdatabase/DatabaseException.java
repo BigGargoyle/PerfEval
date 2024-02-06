@@ -45,4 +45,9 @@ public class DatabaseException extends Exception {
             return message;
         }
     }
+
+    @Override
+    public String getMessage() {
+        return this.toString();
+    }
 }

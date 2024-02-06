@@ -274,8 +274,11 @@ public class H2Database implements Database {
 
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException | IOException e) {
-            throw new DatabaseException("Error adding file to the database: " + e.getMessage(), e, ExitCode.databaseError);
+        } catch (SQLException e) {
+            //System.out.println("Error adding file to the database: " + e.getMessage());
+            throw new DatabaseException("Error adding file to the database: " + e.getMessage(), ExitCode.databaseError);
+        } catch (IOException e) {
+            throw new DatabaseException("File does not exists: " + filePath.toString(), ExitCode.databaseError);
         }
     }
 
