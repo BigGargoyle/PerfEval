@@ -27,7 +27,6 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -233,7 +232,7 @@ public class SetupUtilities {
      * @return Printer for the evaluate command.
      * @throws ParserException If there is an error with parsing the command line arguments.
      */
-    static ResultPrinter resolvePrinterForEvaluateCommand(OptionSet options) throws ParserException {
+    static ResultPrinter resolvePrinterForEvaluateCommand(OptionSet options, Path perfevalDir) throws ParserException {
         Comparator<MeasurementComparisonRecord> filter = new DefaultComparator<>();
         if (options.has(filterOption)) {
             switch (options.valueOf(filterOption)) {
@@ -245,7 +244,7 @@ public class SetupUtilities {
         }
         PrintStream printStream = System.out;
         if (options.has(HTML_OUTPUT_FLAG)) {
-            return new HTMLPrinter(printStream, filter);
+            return new HTMLPrinter(printStream, filter, perfevalDir);
         }
         if (options.has(JSON_OUTPUT_FLAG)) {
             return new JSONPrinter(printStream, filter);
