@@ -254,13 +254,14 @@ public class SetupUtilities {
 
     /**
      * Resolves input files with respect to inputted versions. Based on the command line options.
-     * @param args  Command line arguments.
-     * @param options  Command line options.
+     *
+     * @param options Command line options.
      * @return Input files with respect to inputted versions.
      * @throws DatabaseException If there is an error with the database.
      */
-    static FileWithResultsData[][] resolveInputFilesWithRespectToInputtedVersions(String[] args, OptionSet options) throws DatabaseException {
-        Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
+    static FileWithResultsData[][] resolveInputFilesWithRespectToInputtedVersions(OptionSet options) throws DatabaseException {
+        Path userDir = Path.of(System.getProperty("user.dir"));
+        Database database = constructDatabase(userDir.resolve(PERFEVAL_DIR));
         //fields that are null will not be used in WHERE clause of SQL query
         ProjectVersion newVersion = options.has(newVersionOption) ? new ProjectVersion(null, options.valueOf(newVersionOption), null) : null;
         ProjectVersion oldVersion = options.has(oldVersionOption) ? new ProjectVersion(null, options.valueOf(oldVersionOption), null) : null;

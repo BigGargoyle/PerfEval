@@ -51,7 +51,8 @@ public class Parser {
         } catch ( joptsimple.OptionException e) {
             throw new ParserException("Error while parsing arguments: " + e.getMessage(), ExitCode.invalidArguments);
         }
-        Path iniFilePath = Path.of(args[0]).resolve(PERFEVAL_DIR).resolve(INI_FILE_NAME);
+        Path userDir = Path.of(System.getProperty("user.dir"));
+        Path iniFilePath = userDir.resolve(PERFEVAL_DIR).resolve(INI_FILE_NAME);
         PerfEvalConfig config;
         try {
             config = InitCommand.getConfig(iniFilePath);
@@ -65,7 +66,7 @@ public class Parser {
                 }
                 CommandSetup commandSetup = commandPerSetup.get(arg.toString()).get();
                 if (commandSetup != null) {
-                    return commandSetup.setup(args, options, config);
+                    return commandSetup.setup(options, config);
                 }
             }
         } catch (DatabaseException e) {

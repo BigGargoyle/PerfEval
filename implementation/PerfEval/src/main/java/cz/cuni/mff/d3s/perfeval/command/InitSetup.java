@@ -31,16 +31,15 @@ public class InitSetup implements CommandSetup {
     /**
      * Sets up the command.
      *
-     * @param args    Command line arguments.
      * @param options Command line options.
      * @param config  Configuration of the program.
      * @return Command to be executed.
      * @throws ParserException If there is an error with the parser.
      */
     @Override
-    public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws ParserException {
-        Path workingDir = Path.of(args[0]);
-        Path perfevalDirPath = workingDir.resolve(PERFEVAL_DIR);
+    public Command setup(OptionSet options, PerfEvalConfig config) throws ParserException {
+        Path userDir = Path.of(System.getProperty("user.dir"));
+        Path perfevalDirPath = userDir.resolve(PERFEVAL_DIR);
         Path gitIgnorePath = perfevalDirPath.resolve(GIT_IGNORE_FILE_NAME);
         Path iniFilePath = perfevalDirPath.resolve(INI_FILE_NAME);
         Path[] emptyFiles = new Path[]{perfevalDirPath.resolve(DATABASE_FILE_NAME)};

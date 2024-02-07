@@ -22,10 +22,11 @@ public class EvaluateSetup implements CommandSetup {
      */
     static final String commandName = "evaluate";
     @Override
-    public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException, ParserException {
+    public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException, ParserException {
 
-        FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
-        ResultPrinter printer = resolvePrinterForEvaluateCommand(options, Path.of(args[0]).resolve(PERFEVAL_DIR));
+        FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(options);
+        Path userDir = Path.of(System.getProperty("user.dir"));
+        ResultPrinter printer = resolvePrinterForEvaluateCommand(options, userDir.resolve(PERFEVAL_DIR));
         StatisticTest statisticTest = resolveStatisticTest(options, config);
         PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getMaxCIWidth(),
                 config.getTolerance(), config.getMaxTestCount(), statisticTest);

@@ -32,17 +32,17 @@ public class IndexAllSetup implements CommandSetup {
     /**
      * Sets up the command.
      *
-     * @param args    Command line arguments.
      * @param options Command line options.
      * @param config  Configuration of the program.
      * @return Command to be executed.
      * @throws DatabaseException If there is an error with the database.
      */
     @Override
-    public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
+    public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException {
         Path sourceDir = Path.of(options.valueOf(pathOption));
-        Path gitFilePath = config.hasGitFilePresence() ? Path.of(args[0]).resolve(GIT_FILE_NAME) : null;
-        Database database = constructDatabase(Path.of(args[0]).resolve(PERFEVAL_DIR));
+        Path userDir = Path.of(System.getProperty("user.dir"));
+        Path gitFilePath = config.hasGitFilePresence() ? userDir.resolve(GIT_FILE_NAME) : null;
+        Database database = constructDatabase(userDir.resolve(PERFEVAL_DIR));
 
         try {
             String version = resolveVersion(gitFilePath, options);

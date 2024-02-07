@@ -17,9 +17,9 @@ public class UndecidedSetup implements  CommandSetup{
     static final String commandName = "list-undecided";
 
     @Override
-    public Command setup(String[] args, OptionSet options, PerfEvalConfig config) throws DatabaseException {
+    public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException {
         StatisticTest statTest = resolveStatisticTest(options, config);
-        FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(args, options);
+        FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(options);
         ResultPrinter printer = new UndecidedPrinter(System.out);
         PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getMaxCIWidth(), config.getTolerance(), config.getMaxTestCount(), statTest);
         return new EvaluateCLICommand(inputFiles, printer, evaluator, config.getMeasurementParser());
