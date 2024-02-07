@@ -13,7 +13,21 @@ public class ParametricTest implements StatisticTest {
         double[] samples1 = calcMean(sampleSet1);
         double[] samples2 = calcMean(sampleSet2);
         // Calculate degrees of freedom
+        if(samples1.length == 1) {
+            samples1 = sampleSet1[0];
+        }
+        if(samples2.length == 1) {
+            samples2 = sampleSet2[0];
+        }
+
         int df = Math.min(samples1.length - 1, samples2.length - 1);
+
+        if(df <= 0) {
+            if(samples1.length == 1 || samples2.length == 1) {
+                return samples1[0]<=samples2[0] ? new double[]{samples1[0], samples2[0]} : new double[]{samples2[0], samples1[0]};
+            }
+            //throw new IllegalArgumentException("Samples are too small to perform the test.");
+        }
 
         // Calculate critical value for the desired confidence level
         //double confidenceLevel = 1-critValue; // Set your desired confidence level

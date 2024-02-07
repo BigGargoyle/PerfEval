@@ -92,9 +92,11 @@ public class PerformanceEvaluator {
             }
         }
 
-        boolean testVerdict = (comparisonResult == ComparisonResult.SameDistribution // performance is the same
+        boolean testVerdict = ((comparisonResult == ComparisonResult.SameDistribution // performance is the same
                 || performanceChange > 0 // performance is better
-                || Math.abs(performanceChange / ONE_HUNDRED) > 1 - tolerance); // performance is worse, but within tolerance
+                || Math.abs(performanceChange / ONE_HUNDRED) > 1 - tolerance)
+                && comparisonResult!=ComparisonResult.NotEnoughSamples
+                && comparisonResult!=ComparisonResult.Bootstrap); // performance is worse, but within tolerance
 
 
         return new MeasurementComparisonRecord(oldAvg, newAvg, performanceChange,
