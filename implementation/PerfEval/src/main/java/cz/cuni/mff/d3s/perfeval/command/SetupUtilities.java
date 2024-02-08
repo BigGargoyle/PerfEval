@@ -64,7 +64,7 @@ public class SetupUtilities {
      */
     static final String FORCE_FLAG = "force";
 
-    //private static final String HELP_FLAG = "flag";
+    static final String HELP_FLAG = "help";
     /**
      * JSONPrinter will be used for printing results.
      */
@@ -388,6 +388,7 @@ public class SetupUtilities {
         parser.accepts(HTML_OUTPUT_FLAG, "Enable HTML output");
         parser.accepts(FORCE_FLAG, "Force the operation of init");
         parser.accepts(TTEST_FLAG, "Uses t-test instead of bootstrap");
+        parser.accepts(HELP_FLAG, "Print help message");
         return parser;
     }
 

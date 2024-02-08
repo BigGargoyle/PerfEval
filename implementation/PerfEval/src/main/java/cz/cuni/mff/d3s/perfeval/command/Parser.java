@@ -8,13 +8,12 @@ import cz.cuni.mff.d3s.perfeval.init.InitCommand;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalInvalidConfigException;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.createParser;
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.INI_FILE_NAME;
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.PERFEVAL_DIR;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
 
 /**
  * Parser for command line arguments.
@@ -51,6 +50,16 @@ public class Parser {
         } catch ( joptsimple.OptionException e) {
             throw new ParserException("Error while parsing arguments: " + e.getMessage(), ExitCode.invalidArguments);
         }
+
+        if(options.has("h") || options.has(HELP_FLAG)) {
+            try{
+                parser.printHelpOn(System.out);
+            } catch (IOException e) {
+                throw new ParserException("Error while printing help: " + e.getMessage(), ExitCode.invalidArguments);
+            }
+            throw new ParserException("Help printed.", ExitCode.OK);
+        }
+
         Path userDir = Path.of(System.getProperty("user.dir"));
         Path iniFilePath = userDir.resolve(PERFEVAL_DIR).resolve(INI_FILE_NAME);
         PerfEvalConfig config;
