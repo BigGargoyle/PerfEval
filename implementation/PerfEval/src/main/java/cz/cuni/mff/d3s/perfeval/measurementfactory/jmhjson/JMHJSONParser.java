@@ -96,7 +96,7 @@ public class JMHJSONParser implements MeasurementParser {
             BenchmarkJMHJSONRoot[] root = mapper.readValue(file, BenchmarkJMHJSONRoot[].class);
             return Arrays.stream(root);
         } catch (Exception e) {
-            System.out.println(e.getClass());
+            //System.out.println(e.getClass());
             throw new MeasurementParserException("JMHJSONParserException, error while processing file: "
                     + file.getName(), e);
         }

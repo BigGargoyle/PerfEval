@@ -17,7 +17,7 @@ public class UndecidedSetup implements  CommandSetup{
     static final String commandName = "list-undecided";
 
     @Override
-    public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException {
+    public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException, ParserException {
         StatisticTest statTest = resolveStatisticTest(options, config);
         FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(options);
         ResultPrinter printer = new UndecidedPrinter(System.out);

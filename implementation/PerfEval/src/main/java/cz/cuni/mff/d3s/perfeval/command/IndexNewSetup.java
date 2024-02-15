@@ -7,6 +7,7 @@ import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.ProjectVersion;
 import joptsimple.OptionSet;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 
@@ -41,7 +42,6 @@ public class IndexNewSetup implements CommandSetup {
         if(path == null) {
             throw new DatabaseException("Source directory is null. --path argument is missing or empty", ExitCode.invalidArguments);
         }
-        System.out.println("Path: " + path);
         Path sourceDir = Path.of(path);
         Path userDir = Path.of(System.getProperty("user.dir"));
         Path gitFilePath = config.hasGitFilePresence() ? userDir.resolve(GIT_FILE_NAME) : null;
@@ -57,7 +57,7 @@ public class IndexNewSetup implements CommandSetup {
             assert version != null && tag != null;
 
             return new AddFileCommand(sourceDir, database, projectVersion);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new DatabaseException("Git file not found: " + e.getMessage(), e, ExitCode.databaseError);
         }
     }

@@ -174,12 +174,12 @@ public class SetupUtilities {
      * @return Version of the software.
      * @throws IOException If there is an error with the git file.
      */
-    static String resolveVersion(Path gitFilePath, OptionSet options) throws IOException {
+    static String resolveVersion(Path gitFilePath, OptionSet options) throws IOException, DatabaseException {
         if (options.has(versionOption)) {
             return options.valueOf(versionOption);
         }
         if (gitFilePath == null) {
-            return null;
+            throw new DatabaseException("Git file not found. Use --version argument to set version.", ExitCode.databaseError);
         }
 
         if (GitUtilities.isRepoClean(gitFilePath.getParent())) {
@@ -188,7 +188,7 @@ public class SetupUtilities {
             return lastCommit.getName();
         }
         //System.err.println("Version cannot be resolved");
-        return null;
+        throw new DatabaseException("Git repo is not clean. Use --version argument to set version.", ExitCode.databaseError);
 
     }
 

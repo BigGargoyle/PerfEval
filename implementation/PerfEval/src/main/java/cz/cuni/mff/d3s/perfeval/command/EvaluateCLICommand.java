@@ -34,9 +34,14 @@ public class EvaluateCLICommand implements Command {
      * @param performanceEvaluator comparator for performance tests
      * @param parser                parser for performance tests result files
      */
-    public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter, PerformanceEvaluator performanceEvaluator, MeasurementParser parser) {
+    public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter, PerformanceEvaluator performanceEvaluator, MeasurementParser parser) throws ParserException {
         this.inputFiles = inputFiles.clone();
-        assert inputFiles.length == TWO;
+        if(inputFiles.length != TWO){
+            throw new ParserException("There must be two versions of performance tests for evaluation.");
+        }
+        if(inputFiles[0].length == 0 || inputFiles[1].length == 0){
+            throw new ParserException("There must be at least one file of each version with results of performance tests for evaluation.");
+        }
         this.resultPrinter = resultPrinter;
         this.performanceEvaluator = performanceEvaluator;
         this.parser = parser;
