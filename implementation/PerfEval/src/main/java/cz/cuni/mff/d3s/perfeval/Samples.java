@@ -13,6 +13,8 @@ public class Samples {
     private final String name;
     /**
      * Raw data of the samples.
+     * Array represents a single run, each element of the array represents a single measurement.
+     * Because of variable number of runs, raw data are represented as a list of arrays.
      */
     private final List<double[]> rawData;
     /**

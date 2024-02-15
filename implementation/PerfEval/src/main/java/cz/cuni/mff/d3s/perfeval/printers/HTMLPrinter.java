@@ -23,10 +23,15 @@ public class HTMLPrinter implements ResultPrinter {
     /**
      * Path to PerfEval directory. (.performance)
      */
-    private final String perfevalDir;
+    private final Path perfevalDir;
 
     /**
      * Path to the HTML template.
+     */
+    private final Path templatePath;
+
+    /**
+     * Default path to the HTML template.
      */
     private static final String TEMPLATE_PATH = "templates/result-printer-template.html";
 
@@ -50,7 +55,15 @@ public class HTMLPrinter implements ResultPrinter {
     public HTMLPrinter(PrintStream printStream, Comparator<MeasurementComparisonRecord> filter, Path perfevalDir) {
         this.printStream = printStream;
         this.filter = filter;
-        this.perfevalDir = perfevalDir.toString();
+        this.perfevalDir = perfevalDir;
+        this.templatePath = Path.of(TEMPLATE_PATH);
+    }
+
+    public HTMLPrinter(PrintStream printStream, Comparator<MeasurementComparisonRecord> filter, Path perfevalDir, Path templatePath) {
+        this.printStream = printStream;
+        this.filter = filter;
+        this.perfevalDir = perfevalDir;
+        this.templatePath = templatePath;
     }
 
     /**
@@ -62,25 +75,27 @@ public class HTMLPrinter implements ResultPrinter {
     public void PrintResults(MeasurementComparisonResultCollection resultCollection) throws MeasurementPrinterException {
         // print into file, not to std output (user redirects output to file)
         resultCollection.sort(filter);
-        String result = fillTemplate(resultCollection);
+        String result = fillTemplate(this.templatePath, resultCollection);
         writeToOutputFile(result);
     }
 
     private void writeToOutputFile(String result) throws MeasurementPrinterException {
-        String outputFilePath = getOutputFilePath(perfevalDir);
-        try (PrintStream out = new PrintStream(outputFilePath)) {
+        Path outputFilePath = getOutputFilePath(perfevalDir);
+        try (PrintStream out = new PrintStream(outputFilePath.toString())) {
             out.print(result);
-            printStream.println(INFO_MESSAGE + outputFilePath);
+            printStream.println(INFO_MESSAGE + outputFilePath.toString());
         } catch (Exception e) {
             throw new MeasurementPrinterException("Error while writing to file: " + outputFilePath, e);
         }
     }
 
-    private static String getOutputFilePath(String perfevalDir) {
-        return Path.of(perfevalDir, RESULT_FILE_NAME).toString();
+    private static Path getOutputFilePath(Path perfevalDir) {
+        return perfevalDir.resolve(RESULT_FILE_NAME);
     }
 
-    private static String fillTemplate(MeasurementComparisonResultCollection resultCollection) {
+    private static String fillTemplate(Path templatePath, MeasurementComparisonResultCollection resultCollection) throws MeasurementPrinterException {
+        try {
+
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setTemplateMode("HTML");
         templateResolver.setCacheable(false);
@@ -95,6 +110,9 @@ public class HTMLPrinter implements ResultPrinter {
         context.setVariable("records", resultCollection.getRecords()); // Assuming a getter method `records()` is available
 
         // Process the loaded template with Thymeleaf and return the rendered HTML
-        return templateEngine.process(TEMPLATE_PATH, context);
+        return templateEngine.process(templatePath.toString() , context);
+        } catch (Exception e) {
+            throw new MeasurementPrinterException("Error while filling the template: " + templatePath);
+        }
     }
 }

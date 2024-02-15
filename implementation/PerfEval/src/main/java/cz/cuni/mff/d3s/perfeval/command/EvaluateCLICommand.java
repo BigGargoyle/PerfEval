@@ -104,7 +104,9 @@ public class EvaluateCLICommand implements Command {
             exception.initCause(e);
             throw exception;
         }
-        assert compareTestsFromListsOfMeasurements(newerMeasurements, olderMeasurements);
+        if(!compareTestsFromListsOfMeasurements(newerMeasurements, olderMeasurements)){
+            throw new PerfEvalCommandFailedException("Lists of tests are not the same in both versions.", ExitCode.evaluationFailed);
+        }
         MeasurementComparisonResultCollection resultCollection = new MeasurementComparisonResultCollection(filesWithResultsData);
         //fills resultCollection with results of comparison of performance tests
         resultCollection.addAll(compareTestsWithStatistic(olderMeasurements, newerMeasurements, performanceEvaluator));

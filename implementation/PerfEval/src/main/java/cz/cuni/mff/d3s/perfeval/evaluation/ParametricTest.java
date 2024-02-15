@@ -30,9 +30,10 @@ public class ParametricTest implements StatisticTest {
         }
 
         // Calculate critical value for the desired confidence level
-        //double confidenceLevel = 1-critValue; // Set your desired confidence level
         TDistribution tDistribution = new TDistribution(df);
-        //TODO: má zde být 1-confidenceLevel nebo critValue?
+
+        //  there should be critValue, because it is the probability of the value being in the confidence interval
+        //  p-quantile is the tighter than (1-p)-quantile
         double inverseCumulativeProbability = tDistribution.inverseCumulativeProbability(critValue);
 
         // Calculate mean difference

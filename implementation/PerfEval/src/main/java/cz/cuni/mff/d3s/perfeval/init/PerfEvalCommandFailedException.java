@@ -9,7 +9,10 @@ public class PerfEvalCommandFailedException extends Exception {
     /**
      * Message of exception.
      */
-    private static final String message = "PerfEval command failed.";
+    private static final String DEFAULT_MESSAGE = "PerfEval command failed.";
+
+    private final String message;
+
     /**
      * Exit code of failed command.
      */
@@ -21,11 +24,12 @@ public class PerfEvalCommandFailedException extends Exception {
      * @param exitCode exit code of failed command
      */
     public PerfEvalCommandFailedException(ExitCode exitCode) {
+        this.message = DEFAULT_MESSAGE;
         this.exitCode = exitCode;
     }
 
     public PerfEvalCommandFailedException(String message, ExitCode exitCode) {
-        super(message);
+        this.message = DEFAULT_MESSAGE + System.lineSeparator() + message;
         this.exitCode = exitCode;
     }
 
@@ -34,6 +38,9 @@ public class PerfEvalCommandFailedException extends Exception {
      */
     @Override
     public String toString() {
+        if (getCause() == null) {
+            return message;
+        }
         return getCause().toString() + System.lineSeparator() + message;
     }
 

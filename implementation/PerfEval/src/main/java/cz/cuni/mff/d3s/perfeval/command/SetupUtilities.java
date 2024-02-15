@@ -64,6 +64,9 @@ public class SetupUtilities {
      */
     static final String FORCE_FLAG = "force";
 
+    /**
+     * Help flag for printing help message.
+     */
     static final String HELP_FLAG = "help";
     /**
      * JSONPrinter will be used for printing results.
@@ -78,6 +81,11 @@ public class SetupUtilities {
      */
     private static final String TTEST_FLAG = "t-test";
 
+
+    /**
+     * Name of the parameter for the HTML template option.
+     */
+    private static final String HTML_TEMPLATE_PARAMETER = "html-template";
 
     /**
      * Name of the parameter for the input of the new version.
@@ -244,6 +252,12 @@ public class SetupUtilities {
         }
         PrintStream printStream = System.out;
         if (options.has(HTML_OUTPUT_FLAG)) {
+            if(options.has(htmlTemplateOption)) {
+                if(options.valueOf(htmlTemplateOption).charAt(0) == '/') {
+                    return new HTMLPrinter(printStream, filter, perfevalDir, Path.of(options.valueOf(htmlTemplateOption)));
+                }
+                return new HTMLPrinter(printStream, filter, perfevalDir, Path.of(System.getProperty("user.dir")).resolve(options.valueOf(htmlTemplateOption)).normalize());
+            }
             return new HTMLPrinter(printStream, filter, perfevalDir);
         }
         if (options.has(JSON_OUTPUT_FLAG)) {
@@ -336,6 +350,11 @@ public class SetupUtilities {
     static ArgumentAcceptingOptionSpec<String> benchmarkParserOption;
 
     /**
+     * Option for the HTML template.
+     */
+    static ArgumentAcceptingOptionSpec<String> htmlTemplateOption;
+
+    /**
      * Creates parser for parsing command line arguments.
      * @return Parser for parsing command line arguments.
      */
@@ -367,23 +386,25 @@ public class SetupUtilities {
         pathOption = parser.accepts(PATH_PARAMETER)
                 .withRequiredArg()
                 .ofType(String.class)
-                .describedAs("Path option with a parameter");
+                .describedAs("Path to file or dir to be added to database");
         versionOption = parser.accepts(VERSION_PARAMETER)
                 .withRequiredArg()
                 .ofType(String.class)
-                .describedAs("version option with a parameter");
+                .describedAs("Version of file/s that are added to database");
         tagOption = parser.accepts(TAG_PARAMETER)
                 .withRequiredArg()
                 .ofType(String.class)
-                .describedAs("tag option with a parameter");
+                .describedAs("Tag of file/s that are added to database");
         benchmarkParserOption = parser.accepts(BENCHMARK_PARSER_PARAMETER)
                 .withRequiredArg()
                 .ofType(String.class)
-                .describedAs("benchmark parser option with a parameter");
+                .describedAs("Benchmark parser that will be used for parsing the input files.");
+        htmlTemplateOption = parser.accepts(HTML_TEMPLATE_PARAMETER)
+                .withRequiredArg()
+                .ofType(String.class)
+                .describedAs("HTML template that will be used for printing the results in HTML output.");
 
         // Define flags (options without arguments)
-        //parser.accepts(HELP_FLAG, "Print help message");
-        //parser.accepts(GRAPHICAL_FLAG, "Enable graphical mode");
         parser.accepts(JSON_OUTPUT_FLAG, "Enable JSON output");
         parser.accepts(HTML_OUTPUT_FLAG, "Enable HTML output");
         parser.accepts(FORCE_FLAG, "Force the operation of init");

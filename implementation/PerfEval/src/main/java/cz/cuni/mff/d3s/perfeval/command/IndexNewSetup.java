@@ -37,7 +37,12 @@ public class IndexNewSetup implements CommandSetup {
      */
     @Override
     public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException {
-        Path sourceDir = Path.of(options.valueOf(pathOption));
+        String path = options.valueOf(pathOption);
+        if(path == null) {
+            throw new DatabaseException("Source directory is null. --path argument is missing or empty", ExitCode.invalidArguments);
+        }
+        System.out.println("Path: " + path);
+        Path sourceDir = Path.of(path);
         Path userDir = Path.of(System.getProperty("user.dir"));
         Path gitFilePath = config.hasGitFilePresence() ? userDir.resolve(GIT_FILE_NAME) : null;
         Database database = constructDatabase(userDir.resolve(PERFEVAL_DIR));

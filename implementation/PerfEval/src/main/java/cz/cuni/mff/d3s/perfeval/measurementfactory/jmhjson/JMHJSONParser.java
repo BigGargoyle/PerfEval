@@ -67,10 +67,11 @@ public class JMHJSONParser implements MeasurementParser {
                     samplesPerTestName.computeIfAbsent(sample.getBenchmark(), k -> new Samples(metric, sample.getBenchmark()));
                     //TODO: řešit kompatibilitu metrik
                     //add raw data to sample
-                    for (var rawData : sample.getPrimaryMetric().getRawData()) {
-                        samplesPerTestName.get(sample.getBenchmark())
-                                .addSample(rawData.stream().mapToDouble(Double::doubleValue).toArray());
-                    }
+                    if(sample.getPrimaryMetric().getRawData() != null)
+                        for (List<Double> rawData : sample.getPrimaryMetric().getRawData()) {
+                            samplesPerTestName.get(sample.getBenchmark())
+                                    .addSample(rawData.stream().mapToDouble(Double::doubleValue).toArray());
+                        }
                 });
         return samplesPerTestName;
     }
