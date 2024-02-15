@@ -9,6 +9,13 @@ import java.util.Comparator;
  * Printer for results in table format.
  */
 public class TablePrinter implements ResultPrinter {
+
+    /**
+     * Maximum length of the name of the sample.
+     * Empirical value.
+     */
+    private static final int MAX_NAME_LENGTH = 40;
+
     /**
      * Number of columns in the table.
      */
@@ -108,7 +115,7 @@ public class TablePrinter implements ResultPrinter {
     private static String[] measurementComparisonToTableRow(MeasurementComparisonRecord comparisonResult) {
         String[] tableRow = new String[TABLE_COLUM_COUNT];
 
-        tableRow[NAME_COLUMN_INDEX] = comparisonResult.oldSamples().getName();
+        tableRow[NAME_COLUMN_INDEX] = truncateName(comparisonResult.oldSamples().getName());
         tableRow[NEW_AVERAGE_COLUMN_INDEX] = comparisonResult.newAverageToString();
         tableRow[OLD_AVERAGE_COLUMN_INDEX] = comparisonResult.oldAverageToString();
         tableRow[CHANGE_COLUMN_INDEX] = String.valueOf(comparisonResult.performanceChange());
@@ -118,10 +125,36 @@ public class TablePrinter implements ResultPrinter {
             case DifferentDistribution -> tableRow[RESULT_COLUMN_INDEX] = ("different distribution");
             case NotEnoughSamples -> tableRow[RESULT_COLUMN_INDEX] =
                     ("not enough samples (" + comparisonResult.minSampleCount() + " samples needed)");
-            case Bootstrap -> tableRow[RESULT_COLUMN_INDEX] = ("impossible to measure enough samples ("+comparisonResult.minSampleCount()+" samples needed)");
+            case Bootstrap ->
+                    tableRow[RESULT_COLUMN_INDEX] = ("impossible to measure enough samples (" + comparisonResult.minSampleCount() + " samples needed)");
             default -> tableRow[RESULT_COLUMN_INDEX] = ("NONE???");
         }
 
         return tableRow;
     }
+
+    private static String truncateName(String name) {
+        if (name.length() <= MAX_NAME_LENGTH) return name;
+        StringBuilder result = new StringBuilder();
+        String[] parts = name.split("\\.");
+        int fullLength = name.length();
+        int index = 0;
+        while (fullLength > MAX_NAME_LENGTH) {
+            if(index == parts.length-1) break;
+            fullLength -= parts[index].length() - 1;
+            result.append(Character.valueOf(parts[index].charAt(0)).toString()).append(".");
+            index++;
+        }
+        while (index < parts.length) {
+            result.append(parts[index]);
+            if (index != parts.length - 1)
+                result.append(".");
+            index++;
+        }
+
+        result = new StringBuilder(result.substring(0, Math.min(result.length(), MAX_NAME_LENGTH)));
+
+        return result.toString();
+    }
+
 }
