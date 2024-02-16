@@ -99,7 +99,7 @@ public class PerformanceEvaluator {
                 && comparisonResult!=ComparisonResult.Bootstrap); // performance is worse, but within tolerance
 
 
-        return new MeasurementComparisonRecord(oldAvg, newAvg, performanceChange,
+        return new MeasurementComparisonRecord(oldAvg, newAvg, ciInterval[1], ciInterval[0], performanceChange,
                 comparisonResult, testVerdict,
                 minSampleCount, oldSamples, newSamples);
     }

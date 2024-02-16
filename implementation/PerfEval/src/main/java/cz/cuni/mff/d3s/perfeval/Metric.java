@@ -40,6 +40,22 @@ public class Metric {
         return String.format(format, value);
     }
 
+    public String circleciValueToString(double value, double[] confidenceInterval) {
+
+        double diff = confidenceInterval[1] - confidenceInterval[0];
+        int log = (int) Math.ceil(Math.log10(diff));
+        int accuracy = -log;
+
+        value = Math.round(value);
+
+        if (accuracy < 0) {
+            accuracy = 0;
+        }
+
+        String format = "%." + accuracy + "f " + metricType;
+        return String.format(format, value);
+    }
+
     /**
      * compares two metrics if they are compatible with each other (have the same type).
      *

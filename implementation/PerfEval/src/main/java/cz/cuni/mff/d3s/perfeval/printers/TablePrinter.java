@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.perfeval.printers;
 
+import dnl.utils.text.table.GuavaTableModel;
 import dnl.utils.text.table.TextTable;
 
 import java.io.PrintStream;
@@ -19,7 +20,7 @@ public class TablePrinter implements ResultPrinter {
     /**
      * Number of columns in the table.
      */
-    private static final int TABLE_COLUM_COUNT = 6;
+    private static final int TABLE_COLUM_COUNT = 8;
     /**
      * Index of column with name of the sample.
      */
@@ -45,6 +46,15 @@ public class TablePrinter implements ResultPrinter {
      */
     private static final int RESULT_COLUMN_INDEX = 5;
 
+    /**
+     * Index of column with lower bound of confidence interval.
+     */
+    private static final int LOWER_CI_BOUND_COLUMN_INDEX = 6;
+
+    /**
+     * Index of column with upper bound of confidence interval.
+     */
+    private static final int UPPER_CI_BOUND_COLUMN_INDEX = 7;
 
     /**
      * PrintStream where the results will be printed.
@@ -102,7 +112,8 @@ public class TablePrinter implements ResultPrinter {
         tableRow[CHANGE_COLUMN_INDEX] = ("Change [%]");
         tableRow[VERDICT_COLUMN_INDEX] = ("Comparison verdict");
         tableRow[RESULT_COLUMN_INDEX] = ("Comparison result");
-
+        tableRow[LOWER_CI_BOUND_COLUMN_INDEX] = ("Lower CI bound");
+        tableRow[UPPER_CI_BOUND_COLUMN_INDEX] = ("Upper CI bound");
         return tableRow;
     }
 
@@ -118,7 +129,7 @@ public class TablePrinter implements ResultPrinter {
         tableRow[NAME_COLUMN_INDEX] = truncateName(comparisonResult.oldSamples().getName());
         tableRow[NEW_AVERAGE_COLUMN_INDEX] = comparisonResult.newAverageToString();
         tableRow[OLD_AVERAGE_COLUMN_INDEX] = comparisonResult.oldAverageToString();
-        tableRow[CHANGE_COLUMN_INDEX] = String.valueOf(comparisonResult.performanceChange());
+        tableRow[CHANGE_COLUMN_INDEX] = String.valueOf(comparisonResult.changeToString());
         tableRow[VERDICT_COLUMN_INDEX] = comparisonResult.testVerdict() ? ("OK") : ("NOT OK");
         switch (comparisonResult.comparisonResult()) {
             case SameDistribution -> tableRow[RESULT_COLUMN_INDEX] = ("same distribution");
@@ -126,9 +137,12 @@ public class TablePrinter implements ResultPrinter {
             case NotEnoughSamples -> tableRow[RESULT_COLUMN_INDEX] =
                     ("not enough samples (" + comparisonResult.minSampleCount() + " samples needed)");
             case Bootstrap ->
-                    tableRow[RESULT_COLUMN_INDEX] = ("impossible to measure enough samples (" + comparisonResult.minSampleCount() + " samples needed)");
+                    tableRow[RESULT_COLUMN_INDEX] = ("impossible to measure (" + comparisonResult.minSampleCount() + " samples needed)");
             default -> tableRow[RESULT_COLUMN_INDEX] = ("NONE???");
         }
+
+        tableRow[LOWER_CI_BOUND_COLUMN_INDEX] = String.valueOf(comparisonResult.lowerCIBound());
+        tableRow[UPPER_CI_BOUND_COLUMN_INDEX] = String.valueOf(comparisonResult.upperCIBound());
 
         return tableRow;
     }

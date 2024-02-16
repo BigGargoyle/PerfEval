@@ -18,6 +18,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public record MeasurementComparisonRecord(
         @JsonProperty("oldAverage") double oldAverage,
         @JsonProperty("newAverage") double newAverage,
+        @JsonProperty("upperCIBound") double upperCIBound,
+        @JsonProperty("lowerCIBound") double lowerCIBound,
         @JsonProperty("performanceChange") double performanceChange,
         @JsonProperty("comparisonResult") ComparisonResult comparisonResult,
         @JsonProperty("testVerdict") boolean testVerdict,
@@ -26,10 +28,13 @@ public record MeasurementComparisonRecord(
         @JsonProperty("newSamples") Samples newSamples
 ) {
     public String newAverageToString() {
-        return newSamples.getMetric().valueToString(newAverage);
+        return newSamples.getMetric().circleciValueToString(newAverage, new double[]{lowerCIBound, upperCIBound});
     }
 
     public String oldAverageToString() {
-        return oldSamples.getMetric().valueToString(oldAverage);
+        return oldSamples.getMetric().circleciValueToString(oldAverage, new double[]{lowerCIBound, upperCIBound});
+    }
+    public String changeToString() {
+        return String.format("%+.2f", performanceChange);
     }
 }

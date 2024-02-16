@@ -5,7 +5,10 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 /**
  * Class for printing results into HTML format.
@@ -28,7 +31,7 @@ public class HTMLPrinter implements ResultPrinter {
     /**
      * Path to the HTML template.
      */
-    private final Path templatePath;
+    private final String templatePath;
 
     /**
      * Default path to the HTML template.
@@ -56,15 +59,29 @@ public class HTMLPrinter implements ResultPrinter {
         this.printStream = printStream;
         this.filter = filter;
         this.perfevalDir = perfevalDir;
-        this.templatePath = Path.of(TEMPLATE_PATH);
+        this.templatePath = TEMPLATE_PATH;
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setTemplateMode("HTML");
+        templateResolver.setCacheable(false);
+        this.templateResolver = templateResolver;
     }
 
     public HTMLPrinter(PrintStream printStream, Comparator<MeasurementComparisonRecord> filter, Path perfevalDir, Path templatePath) {
         this.printStream = printStream;
         this.filter = filter;
         this.perfevalDir = perfevalDir;
-        this.templatePath = templatePath;
+        this.templatePath = templatePath.toAbsolutePath().toString();
+
+        FileTemplateResolver templateResolver = new FileTemplateResolver();
+        templateResolver.setTemplateMode("HTML");
+        templateResolver.setCacheable(false);
+        templateResolver.setCheckExistence(true);
+        this.templateResolver = templateResolver;
+
+
     }
+
+    private final ITemplateResolver templateResolver;
 
     /**
      * Prints the results into the stream.
@@ -75,7 +92,7 @@ public class HTMLPrinter implements ResultPrinter {
     public void PrintResults(MeasurementComparisonResultCollection resultCollection) throws MeasurementPrinterException {
         // print into file, not to std output (user redirects output to file)
         resultCollection.sort(filter);
-        String result = fillTemplate(this.templatePath, resultCollection);
+        String result = fillTemplate(resultCollection);
         writeToOutputFile(result);
     }
 
@@ -93,12 +110,8 @@ public class HTMLPrinter implements ResultPrinter {
         return perfevalDir.resolve(RESULT_FILE_NAME);
     }
 
-    private static String fillTemplate(Path templatePath, MeasurementComparisonResultCollection resultCollection) throws MeasurementPrinterException {
+    private String fillTemplate(MeasurementComparisonResultCollection resultCollection) throws MeasurementPrinterException {
         try {
-
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setTemplateMode("HTML");
-        templateResolver.setCacheable(false);
 
         TemplateEngine templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
@@ -110,8 +123,9 @@ public class HTMLPrinter implements ResultPrinter {
         context.setVariable("records", resultCollection.getRecords()); // Assuming a getter method `records()` is available
 
         // Process the loaded template with Thymeleaf and return the rendered HTML
-        return templateEngine.process(templatePath.toString() , context);
+        return templateEngine.process(templatePath, context);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new MeasurementPrinterException("Error while filling the template: " + templatePath);
         }
     }
