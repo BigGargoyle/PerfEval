@@ -13,8 +13,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
-
 /**
  * Parser for command line arguments.
  */
@@ -42,7 +40,7 @@ public class Parser {
      * @throws ParserException If there is an error with parsing the command line arguments.
      */
     public static Command getCommand(String[] args) throws ParserException {
-        OptionParser parser = createParser();
+        OptionParser parser = SetupUtilities.createParser();
         OptionSet options;
         try {
             //runtime exception -> unchecked
@@ -51,7 +49,7 @@ public class Parser {
             throw new ParserException("Error while parsing arguments: " + e.getMessage(), ExitCode.invalidArguments);
         }
 
-        if(options.has("h") || options.has(HELP_FLAG)) {
+        if(options.has("h") || options.has(SetupUtilities.HELP_FLAG)) {
             try{
                 parser.printHelpOn(System.out);
             } catch (IOException e) {
@@ -61,7 +59,7 @@ public class Parser {
         }
 
         Path userDir = Path.of(System.getProperty("user.dir"));
-        Path iniFilePath = userDir.resolve(PERFEVAL_DIR).resolve(INI_FILE_NAME);
+        Path iniFilePath = userDir.resolve(SetupUtilities.PERFEVAL_DIR).resolve(SetupUtilities.INI_FILE_NAME);
         PerfEvalConfig config;
         try {
             config = InitCommand.getConfig(iniFilePath);

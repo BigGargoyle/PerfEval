@@ -46,14 +46,14 @@ public class Metric {
         int log = (int) Math.ceil(Math.log10(diff));
         int accuracy = -log;
 
-        value = Math.round(value);
+        double circValue = Math.round(value);
 
         if (accuracy < 0) {
             accuracy = 0;
         }
 
         String format = "%." + accuracy + "f " + metricType;
-        return String.format(format, value);
+        return String.format(format, circValue);
     }
 
     /**

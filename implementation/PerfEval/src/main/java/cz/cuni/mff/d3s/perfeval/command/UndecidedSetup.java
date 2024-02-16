@@ -9,8 +9,6 @@ import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 import joptsimple.OptionSet;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
-
 
 public class UndecidedSetup implements  CommandSetup{
 
@@ -18,8 +16,8 @@ public class UndecidedSetup implements  CommandSetup{
 
     @Override
     public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException, ParserException {
-        StatisticTest statTest = resolveStatisticTest(options, config);
-        FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(options);
+        StatisticTest statTest = SetupUtilities.resolveStatisticTest(options, config);
+        FileWithResultsData[][] inputFiles = SetupUtilities.resolveInputFilesWithRespectToInputtedVersions(options);
         ResultPrinter printer = new UndecidedPrinter(System.out);
         PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getMaxCIWidth(), config.getTolerance(),
                 config.getMinTestCount(), config.getMaxTestCount(), statTest);

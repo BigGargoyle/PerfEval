@@ -22,7 +22,6 @@ public class PerfEvalInvalidConfigException extends Exception {
     @Override
     public String toString() {
         String cause = getCause() != null ? getCause().toString() : "";
-        String message = "Config file has invalid data.";
         return cause + System.lineSeparator() + message;
     }
 }

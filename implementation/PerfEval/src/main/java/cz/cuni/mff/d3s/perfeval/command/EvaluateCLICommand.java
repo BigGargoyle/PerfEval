@@ -11,7 +11,6 @@ import cz.cuni.mff.d3s.perfeval.printers.ResultPrinter;
 import cz.cuni.mff.d3s.perfeval.printers.MeasurementComparisonRecord;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
-import net.bytebuddy.asm.Advice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,7 +98,8 @@ public class EvaluateCLICommand implements Command {
     private static MeasurementComparisonResultCollection evaluateResults(MeasurementParser parser, FileWithResultsData[][] filesWithResultsData, PerformanceEvaluator performanceEvaluator) throws PerfEvalCommandFailedException {
         assert filesWithResultsData.length == TWO;
         assert parser != null;
-        List<Samples> olderMeasurements, newerMeasurements;
+        List<Samples> olderMeasurements;
+        List<Samples> newerMeasurements;
         try{
             olderMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[0]).map(FileWithResultsData::path).toArray(String[]::new));
             newerMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[1]).map(FileWithResultsData::path).toArray(String[]::new));

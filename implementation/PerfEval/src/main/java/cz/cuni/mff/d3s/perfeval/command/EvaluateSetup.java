@@ -10,8 +10,6 @@ import joptsimple.OptionSet;
 
 import java.nio.file.Path;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
-
 /**
  * Setup for the evaluate command.
  */
@@ -24,10 +22,10 @@ public class EvaluateSetup implements CommandSetup {
     @Override
     public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException, ParserException {
 
-        FileWithResultsData[][] inputFiles = resolveInputFilesWithRespectToInputtedVersions(options);
+        FileWithResultsData[][] inputFiles = SetupUtilities.resolveInputFilesWithRespectToInputtedVersions(options);
         Path userDir = Path.of(System.getProperty("user.dir"));
-        ResultPrinter printer = resolvePrinterForEvaluateCommand(options, userDir.resolve(PERFEVAL_DIR));
-        StatisticTest statisticTest = resolveStatisticTest(options, config);
+        ResultPrinter printer = SetupUtilities.resolvePrinterForEvaluateCommand(options, userDir.resolve(SetupUtilities.PERFEVAL_DIR));
+        StatisticTest statisticTest = SetupUtilities.resolveStatisticTest(options, config);
         PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getMaxCIWidth(),
                 config.getTolerance(), config.getMinTestCount(), config.getMaxTestCount(), statisticTest);
         return new EvaluateCLICommand(inputFiles, printer, evaluator, config.getMeasurementParser());
