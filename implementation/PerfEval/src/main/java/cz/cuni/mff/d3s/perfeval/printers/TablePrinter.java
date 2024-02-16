@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.perfeval.printers;
 
-import dnl.utils.text.table.GuavaTableModel;
 import dnl.utils.text.table.TextTable;
 
 import java.io.PrintStream;
@@ -154,7 +153,7 @@ public class TablePrinter implements ResultPrinter {
         int fullLength = name.length();
         int index = 0;
         while (fullLength > MAX_NAME_LENGTH) {
-            if(index == parts.length-1) break;
+            if (index == parts.length - 1) break;
             fullLength -= parts[index].length() - 1;
             result.append(Character.valueOf(parts[index].charAt(0)).toString()).append(".");
             index++;

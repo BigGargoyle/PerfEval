@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
@@ -66,6 +65,14 @@ public class HTMLPrinter implements ResultPrinter {
         this.templateResolver = templateResolver;
     }
 
+    /**
+     * Constructor for the HTML printer.
+     *
+     * @param printStream  Stream to print the results into.
+     * @param filter       Comparator for filtering the results.
+     * @param perfevalDir  Path to PerfEval directory.
+     * @param templatePath Path to the HTML template.
+     */
     public HTMLPrinter(PrintStream printStream, Comparator<MeasurementComparisonRecord> filter, Path perfevalDir, Path templatePath) {
         this.printStream = printStream;
         this.filter = filter;
@@ -77,14 +84,16 @@ public class HTMLPrinter implements ResultPrinter {
         templateResolver.setCacheable(false);
         templateResolver.setCheckExistence(true);
         this.templateResolver = templateResolver;
-
-
     }
 
+    /**
+     * Template resolver for Thymeleaf.
+     */
     private final ITemplateResolver templateResolver;
 
     /**
      * Prints the results into the stream.
+     *
      * @param resultCollection collection of results to be printed
      * @throws MeasurementPrinterException if the template is not found
      */
@@ -96,36 +105,53 @@ public class HTMLPrinter implements ResultPrinter {
         writeToOutputFile(result);
     }
 
+    /**
+     * Writes the result into the output file.
+     *
+     * @param result result to be written
+     * @throws MeasurementPrinterException if the file cannot be written
+     */
     private void writeToOutputFile(String result) throws MeasurementPrinterException {
         Path outputFilePath = getOutputFilePath(perfevalDir);
         try (PrintStream out = new PrintStream(outputFilePath.toString())) {
             out.print(result);
-            printStream.println(INFO_MESSAGE + outputFilePath.toString());
+            printStream.println(INFO_MESSAGE + outputFilePath);
         } catch (Exception e) {
             throw new MeasurementPrinterException("Error while writing to file: " + outputFilePath, e);
         }
     }
 
+    /**
+     * Returns the path to the output file.
+     *
+     * @param perfevalDir path to PerfEval directory
+     * @return path to the output file
+     */
     private static Path getOutputFilePath(Path perfevalDir) {
         return perfevalDir.resolve(RESULT_FILE_NAME);
     }
 
+    /**
+     * Fills the template with the results.
+     *
+     * @param resultCollection collection of results to be printed
+     * @return filled template
+     * @throws MeasurementPrinterException if the template is not found
+     */
     private String fillTemplate(MeasurementComparisonResultCollection resultCollection) throws MeasurementPrinterException {
         try {
+            TemplateEngine templateEngine = new TemplateEngine();
+            templateEngine.setTemplateResolver(templateResolver);
 
-        TemplateEngine templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver);
+            // Create a Thymeleaf context and add data to it
+            Context context = new Context();
+            context.setVariable("oldVersion", resultCollection.getOldVersion());
+            context.setVariable("newVersion", resultCollection.getNewVersion());
+            context.setVariable("records", resultCollection.getRecords()); // Assuming a getter method `records()` is available
 
-        // Create a Thymeleaf context and add data to it
-        Context context = new Context();
-        context.setVariable("oldVersion", resultCollection.getOldVersion());
-        context.setVariable("newVersion", resultCollection.getNewVersion());
-        context.setVariable("records", resultCollection.getRecords()); // Assuming a getter method `records()` is available
-
-        // Process the loaded template with Thymeleaf and return the rendered HTML
-        return templateEngine.process(templatePath, context);
+            // Process the loaded template with Thymeleaf and return the rendered HTML
+            return templateEngine.process(templatePath, context);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new MeasurementPrinterException("Error while filling the template: " + templatePath);
         }
     }
