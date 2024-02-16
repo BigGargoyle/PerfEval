@@ -29,7 +29,7 @@ public class EvaluateSetup implements CommandSetup {
         ResultPrinter printer = resolvePrinterForEvaluateCommand(options, userDir.resolve(PERFEVAL_DIR));
         StatisticTest statisticTest = resolveStatisticTest(options, config);
         PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getMaxCIWidth(),
-                config.getTolerance(), config.getMaxTestCount(), statisticTest);
+                config.getTolerance(), config.getMinTestCount(), config.getMaxTestCount(), statisticTest);
         return new EvaluateCLICommand(inputFiles, printer, evaluator, config.getMeasurementParser());
 
     }

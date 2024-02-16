@@ -37,6 +37,10 @@ public class InitCommand implements Command {
      */
     private static final String MAX_TEST_COUNT_KEY = "statistic.maxTestCount";
     /**
+     * String representation of key for minimal test count in ini file.
+     */
+    private static final String MIN_TEST_COUNT_KEY = "statistic.minTestCount";
+    /**
      * String representation of key for version in ini file.
      */
     private static final String VERSION_KEY = "project.version";
@@ -106,12 +110,33 @@ public class InitCommand implements Command {
         double critValue = Double.parseDouble(config.getString(CRIT_VALUE_KEY));
         double maxCIWidth = Double.parseDouble(config.getString(MAX_CI_WIDTH_KEY));
         int maxTestCount = config.getInt(MAX_TEST_COUNT_KEY);
+        int minTestCount = config.getInt(MIN_TEST_COUNT_KEY);
         String version = config.getString(VERSION_KEY);
         boolean gitPresence = config.getString(GIT_PRESENCE_KEY).compareTo(TRUE_STRING) == 0;
         String parserName = config.getString(PARSER_NAME_KEY);
         MeasurementParser parser = ParserFactory.getParser(parserName);
         double tolerance = Double.parseDouble(config.getString(TOLERANCE_KEY));
-        return new PerfEvalConfig(gitPresence, maxTestCount, maxCIWidth, critValue, version, parser, tolerance);
+
+        if(critValue <= 0 || critValue >= 1){
+            throw new PerfEvalInvalidConfigException("Critical value must be in (0, 1)");
+        }
+        if(maxCIWidth <= 0 || maxCIWidth >= 1){
+            throw new PerfEvalInvalidConfigException("Maximal width of confidence interval must be in (0, 1)");
+        }
+        if(minTestCount < 0) {
+            throw new PerfEvalInvalidConfigException("Minimal count of tests must be non-negative.");
+        }
+        if(minTestCount > maxTestCount) {
+            throw new PerfEvalInvalidConfigException("Minimal count of tests must be less than maximal count of tests.");
+        }
+        if(maxTestCount <= 0){
+            throw new PerfEvalInvalidConfigException("Maximal count of tests must be positive");
+        }
+        if(tolerance < 0 || tolerance > 1){
+            throw new PerfEvalInvalidConfigException("Tolerance must be in [0, 1]");
+        }
+
+        return new PerfEvalConfig(gitPresence, minTestCount, maxTestCount, maxCIWidth, critValue, version, parser, tolerance);
     }
 
     /**
@@ -135,6 +160,7 @@ public class InitCommand implements Command {
         // Set INI properties
         config.setProperty(CRIT_VALUE_KEY, perfevalConfig.getCritValue());
         config.setProperty(MAX_CI_WIDTH_KEY, perfevalConfig.getMaxCIWidth());
+        config.setProperty(MIN_TEST_COUNT_KEY, perfevalConfig.getMinTestCount());
         config.setProperty(MAX_TEST_COUNT_KEY, perfevalConfig.getMaxTestCount());
         String gitPresenceString = perfevalConfig.hasGitFilePresence() || isThereAGitFile ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);

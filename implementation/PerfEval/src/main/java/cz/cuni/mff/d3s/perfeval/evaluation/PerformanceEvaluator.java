@@ -32,6 +32,11 @@ public class PerformanceEvaluator {
     private final int maxTestCount;
 
     /**
+     * Minimal count of tests to be performed.
+     */
+    private final int minTestCount;
+
+    /**
      * Statistic test to be used.
      */
     private final StatisticTest statisticTest;
@@ -44,9 +49,10 @@ public class PerformanceEvaluator {
      * @param maxTestCount  maximal count of tests to be performed
      * @param statisticTest statistic test to be used
      */
-    public PerformanceEvaluator(double maxCIWidth, double tolerance, int maxTestCount, StatisticTest statisticTest) {
+    public PerformanceEvaluator(double maxCIWidth, double tolerance, int minTestCount, int maxTestCount, StatisticTest statisticTest) {
         this.maxCIWidth = maxCIWidth;
         this.tolerance = tolerance;
+        this.minTestCount = minTestCount;
         this.maxTestCount = maxTestCount;
         this.statisticTest = statisticTest;
         assert tolerance >= 0 && tolerance <= 1;
@@ -81,6 +87,9 @@ public class PerformanceEvaluator {
             //if the confidence interval is smaller than maxCIWidth, we can say that the performance is the same
             if (ciWidth <= maxCIWidth) {
                 comparisonResult = ComparisonResult.SameDistribution;
+            } else if (oldSamples.getRawData().length < minTestCount || newSamples.getRawData().length < minTestCount) {
+                minSampleCount = minTestCount;
+                comparisonResult = ComparisonResult.NotEnoughSamples;
             } else {
                 minSampleCount = statisticTest.calcMinSampleCount(oldSamples.getRawData(), newSamples.getRawData(), maxCIWidth);
                 assert minSampleCount >= Math.min(oldSamples.getRawData().length, newSamples.getRawData().length);

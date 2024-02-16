@@ -11,6 +11,12 @@ public final class PerfEvalConfig {
      * Default value for gitFilePresence.
      */
     private static final boolean DEFAULT_GIT_PRESENCE = false;
+
+    /**
+     * Default value for minTestCount.
+     */
+    private static final int DEFAULT_MIN_TEST_COUNT = 5;
+
     /**
      * Default value for maxTimeOnTest.
      */
@@ -43,7 +49,7 @@ public final class PerfEvalConfig {
      * @throws PerfEvalInvalidConfigException if default configuration is invalid (it should not happen)
      */
     public static PerfEvalConfig getDefaultConfig() throws PerfEvalInvalidConfigException {
-        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MAX_TEST_COUNT, DEFAULT_MAX_CI_WIDTH, DEFAULT_CRIT_VALUE, DEFAULT_VERSION, DEFAULT_PARSER, DEFAULT_TOLERANCE);
+        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MIN_TEST_COUNT, DEFAULT_MAX_TEST_COUNT, DEFAULT_MAX_CI_WIDTH, DEFAULT_CRIT_VALUE, DEFAULT_VERSION, DEFAULT_PARSER, DEFAULT_TOLERANCE);
     }
 
     /**
@@ -58,8 +64,9 @@ public final class PerfEvalConfig {
      * @param tolerance       tolerance for performance tests
      * @throws PerfEvalInvalidConfigException if configuration is invalid
      */
-    public PerfEvalConfig(boolean gitFilePresence, int maxTestCount, double maxCIWidth, double critValue, String version, MeasurementParser parser, double tolerance) throws PerfEvalInvalidConfigException {
+    public PerfEvalConfig(boolean gitFilePresence, int minTestCount, int maxTestCount, double maxCIWidth, double critValue, String version, MeasurementParser parser, double tolerance) throws PerfEvalInvalidConfigException {
         this.gitFilePresence = gitFilePresence;
+        this.minTestCount = minTestCount;
         this.maxTestCount = maxTestCount;
         this.maxCIWidth = maxCIWidth;
         this.critValue = critValue;
@@ -67,22 +74,28 @@ public final class PerfEvalConfig {
         this.measurementParser = parser;
         this.tolerance = tolerance;
         if (critValue <= 0 || critValue >= 1) {
-            throw new PerfEvalInvalidConfigException();
+            throw new PerfEvalInvalidConfigException("Critical value for statistical tests must be in (0, 1).");
+        }
+        if(minTestCount < 0) {
+            throw new PerfEvalInvalidConfigException("Minimal count of tests must be non-negative.");
+        }
+        if(minTestCount > maxTestCount) {
+            throw new PerfEvalInvalidConfigException("Minimal count of tests must be less than maximal count of tests.");
         }
         if (maxTestCount <= 0) {
-            throw new PerfEvalInvalidConfigException();
+            throw new PerfEvalInvalidConfigException("Maximal count of tests must be positive.");
         }
         if (maxCIWidth <= 0 || maxCIWidth >= 1) {
-            throw new PerfEvalInvalidConfigException();
+            throw new PerfEvalInvalidConfigException("Maximal width of confidence interval must be in (0, 1).");
         }
         if (version == null) {
-            throw new PerfEvalInvalidConfigException();
+            throw new PerfEvalInvalidConfigException("Version must be set.");
         }
         if (measurementParser == null) {
-            throw new PerfEvalInvalidConfigException();
+            throw new PerfEvalInvalidConfigException("Parser must be set.");
         }
         if (tolerance <= 0 || tolerance >= 1) {
-            throw new PerfEvalInvalidConfigException();
+            throw new PerfEvalInvalidConfigException("Tolerance must be in (0, 1).");
         }
     }
 
@@ -90,6 +103,10 @@ public final class PerfEvalConfig {
      * If true, the project where PerfEval is initialized in is git repository.
      */
     private final boolean gitFilePresence;
+    /**
+     * Minimal time for one performance test.
+     */
+    private final int minTestCount;
     /**
      * Maximal time for one performance test.
      */
@@ -177,7 +194,7 @@ public final class PerfEvalConfig {
      */
     public void setMeasurementParser(MeasurementParser parser) throws PerfEvalInvalidConfigException {
         if(parser == null) {
-            throw new PerfEvalInvalidConfigException();
+            throw new PerfEvalInvalidConfigException("Unknown parser name.");
         }
         this.measurementParser = parser;
     }
@@ -189,5 +206,13 @@ public final class PerfEvalConfig {
      */
     public double getTolerance() {
         return tolerance;
+    }
+
+    /**
+     * Getter for minTestCount.
+     * @return minTestCount
+     */
+    public int getMinTestCount() {
+        return minTestCount;
     }
 }
