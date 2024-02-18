@@ -1,0 +1,192 @@
+\chapter{Problém vyhodnocování výkonu}
+
+\section{Automatické vyhodnocování}
+V~minulé kapitole byl zmíněn problém programátora s~testováním výkonu. Programátor má unit
+testy, které testují korektnost jeho softwaru. Umí je efektivně spouštět s~každou změnou
+pomocí průběžné integrace. Chtěl by, aby mohl podobně efektivně testovat i~výkon svého softwaru.
+
+S~testováním výkonu je ale problém. Když se spustí měření výkonu, tak výsledkem je pouhá
+datová sada. Tato datová sada nevypovídá nic o~změně průběžného výkonu, která
+je zajímavá. Právě podle změny ve~výkonu softwaru je možné zjistit, jestli je nutné
+kód optimalizovat, protože dochází k~významným zhoršením.
+
+Při samotném měření výkonu je ale možné, že se některé hodnoty výrazně odchýlí od ostatních.
+Může tedy být nutné měření opakovat a~z~více naměřených hodnot dohromady usuzovat, jak se
+výkon v~průběhu vývoje mění. K~analýze takto získaných hodnot se ale hodí využít statistických
+metod, které si i~se zmíněnými odchylkami umí poradit.
+
+Vyvinutý systém PerfEval řeší programátorův problém. Jedná se o~nástroj, který může
+zakomponovat do~své průběžné integrace tak, aby byl pokles výkonu hlášen. Nástroj
+při~spuštění průběžné integrace porovná dvě poslední verze a~případně oznámí zhoršení výkonu.
+Na~základě tohoto hlášení může selhat celá průběžná integrace, což je obdobné chování,
+jako se očekává při selhání unit testů.
+
+\section{Výsledky měření výkonu}
+
+Z~počátku je dobré se zamyslet nad tím, jak můžou výsledky měření výkonu softwaru vypadat.
+První domněnky o~tom, že stačí měřit pouze čas se ukázaly jako mylné. Testovací frameworky
+totiž umožňují mimo měření času také měření frekvence nebo například spotřeby paměti.
+Předpokládat se tedy dá jen to, že pokud vezmu dva výsledky měření výkonu ze~dvou různých
+verzí, tak budou reprezentovány stejnou fyzikální veličinou a~v~lepším případě budou mít
+i~stejnou fyzikální jednotku.
+
+Protože testovací frameworky nepoužívají žádné identifikátory testů, tak je nejpřímější
+řešení jejich rozpoznávání používat jména testovacích metod jako identifikátor. Tato jména poskytují ve~výsledcích
+měření jak framework BenchmarkDotNet, tak framework JMH. Z~dokumentace frameworku Criterion
+pro měření výkonu v~jazyce~R se název metody ve~výsledcích nachází také. Z~toho lze
+usoudit, že použití jména metody jako identifikátoru může být dostatečně obecné.
+(DOKUMENTACE - CRITERION)
+
+\subsection{Výstup měření BenchmarkDotNet}
+
+BenchmarkDotNet je framework určený k~měření výkonu programů na~platformě .NET. V~důsledku
+toho, že měří programy na platformě .NET je schopen měřit výkon programů napsaných
+v~programovacích jazycích C\#, F\# a~Visual Basic (DOKUMENTACE - BenchmarkDotNet README.md).
+
+Při~měření výkonu pomocí BenchmarkDotNet se měřené hodnoty vypisují na~standardní výstup
+včetně konečného shrnutí. Mimo standardní výstup se ještě výsledky měření ukládají
+do~strojově zpracovatelných formátu jako je například JSON, nebo CSV.
+
+(DODAT PŘÍLOHU)
+
+Měření výkonu programu v~jazyce C\# pomocí frameworku BenchmarkDotNet má za~výstup již statisticky zpracované hodnoty.
+Aby bylo možné sledovat jednotlivé naměřené hodnoty je nutné zvolit již při~psaní testů správný
+exportér, který tuto funkci podporuje. Pro~možnost sledování konkrétních naměřených hodnot u~exportéru
+nazvaného JsonExporter je nutné nastavit možnost excludeMeasurements na~false, aby se ve~výstupním
+souboru hodnoty objevily. Jedna naměřená hodnota se nachází u~výsledku měření jako položka Nanoseconds.
+Z~názvu položky lze usoudit, že v~základním nastavení BenchmarkDotNet se měří čas.
+
+Celkově tedy v~souboru s~výsledky nalezneme podrobnosti o~prostředí jako je operační systém,
+verze platformy .NET, jméno, typ a~parametry procesoru. Dále se v~souboru s~výsledky nachází
+výsledky jednotlivých provedených měření. Výsledek měření u~sebe má informaci o~jméně
+testovací metody, zpracované statistické údaje a~naměřené hodnoty z~různých módů a~iterací měření.
+
+Je nutné vybírat jen některé hodnoty, protože C\# je kompilovaný jazyk metodou
+JIT. Je tedy nutné dávat pozor jaká data pro~porovnávání výsledků budou použita. Určitě není správně dávat
+k~sobě pro porovnání hodnoty, které byly naměřeny před optimalizacemi překladačem a~po~nich. Může totiž dojít
+ke~zkreslení výsledků.
+
+TODO: přidat jako přílohu výstupy BenchmarkDotNet odkazovat se do nich a do dokumentace BDN
+
+\subsection{Výstup měření JMH}
+
+JMH je framework pro měření výkonu, který umožňuje pomocí anotací definovat výkonostní testy
+pro programy v~jazyce Java. Z~průzkumu (ZDROJ-prezentace) vyplývá, že se jedná o~nejpoužívanější framework
+pro měření výkonu pro projekty vyvíjené v jazyce Java. %% https://d3s.mff.cuni.cz/f/resources/icpe2017/slides-unit-testing-performance-in-java-projects.pdf
+
+JMH obdobně jako BenchmarkDotNet poskytuje výsledek měření jako tabulku na standardní výstup.
+Dále poskytuje výstup také v~podobě strojově zpracovatelných formátů jako jsou například XML,
+nebo JSON. O~výstup v~této podobě je nutné zažádat pomocí argumentů na~příkazové řádce při
+spouštění měření (DOKUMENTACE - JMH).
+
+(DODAT PŘÍLOHU)
+
+Ve výstupním souboru měření pomocí JMH lze nalézt informace o~stroji na~kterém probíhalo měření.
+Jedná se především o~název stroje a~verzi operačního systému. Dále zde lze nalézt verzi Javy,
+ve~které probíhalo měření. V~souboru je možné vidět také ostatní parametry měření, jako je
+zahřívací doba a~počet zahřívacích iterací. Zahřívací iterace jsou důležité opět kvůli tomu,
+že Java je překládaná technologií JIT.
+
+Jednotlivé naměřené hodnoty jsou ve výstupním souboru dostupné i~ve~výchozím nastavení JMH.
+Naměřené hodnoty jsou reprezentovány pomocí metriky. V~rámci metriky jsou uloženy informace
+o~fyzikální jednotce, která se měřila, a~sady naměřených hodnot. Pro~každý běh (fork), přičemž běhů
+může být v~jednom spuštění JMH více, se~objeví jedna sada měřených hodnot u~metriky.
+
+\section{Použití statistických metod pro analýzu dat}
+
+Pro vyhodnování výkonu je využito metod testování hypotéz. Ve statistickém testování
+hypotéz se snažíme zamítnout nulovou hypotézu. V~případě zamítnutí nulové hypotézy
+se předpokládá, že platí alternativní hypotéza.
+
+Při testování hypotéz rozeznáváme
+chyby I. a~II. druhu. Chyba I. druhu znamená, že jsme nulovou hypotézu zamítli,
+i~když platí. Chyba II. druhu znamená, že jsme ji nezamítli, ale ona neplatí.
+
+V našem případě porovnávání výkonu bude nulová hypotéza tvrzení, že výkon obou verzí je stejný.
+Jako alternativní hypotézu budeme uvažovat, že výkony obou verzí jsou různé.
+Naměřené hodnoty jedné testovací metody každé z verzí budeme považovat za diskrétní náhodnou veličinu.
+Pokud hodnoty těchto veličin mají stejné rozdělení, tak budeme tvrdit, že i výkon obou verzí je stejný.
+
+Chyba I. druhu tedy v našem případě znamená, že jsme prohlásili, že výkony dvou verzí jsou různé,
+ačkoli jsou stejné. Pravděpodobnost chyby I. druhu je obvyklý parametr statistického testu.
+Pravděpodobnost chyby I. druhu bude dále značen jako parametr $\alpha$. Parametr $\alpha$
+je součástí konfigurace systému PerfEval.
+
+\subsection{Dvouvýběrový T-test}
+
+Dvouvýběrový T-test se používá při neznalosti rozptylu zkoumaných náhodných veličin.
+Protože není možné usuzovat rozptyl naměřených hodnot, tak nám tato vlastnost vyhovuje.
+Dvouvýběrový T-test zkoumá jestli je rozdíl středních hodnot $\delta$.
+Pokud mají být rozdělení náhodných veličin stejná, rozdíl jejich středních hodnot by měl být nula ($\delta = 0$).
+
+T-test vyžaduje od~náhodných veličin tři vlastnosti. Měly by být nezávislé, normální
+a~měly by mít stejný rozptyl. Nezávislost veličin není možné při měření zajistit,
+proto bude případná závislost zanedbána. Stejný rozptyl obou veličičn také není možné zaručit.
+Lze ale předpokládat, že měření veličin při stejných podmínkách, způsobí podobný rozptyl.
+Podle shrnutí o~dvouvýběrových testech (ZDROJ - dvouvýběrové testy) %%-> https://www.karlin.mff.cuni.cz/~turcic/Dvouvyberove_testy.pdf)
+způsobí zanedbání shodnosti rozptylů pouze malou chybu.
+
+Posledním z~požadavků dvouvýběrového T-testu je normalita náhodných veličin. Toho docílíme pomocí centrální limitní věty (CLV).
+Výsledky měření se skládají z~běhů. Každý běh obsahuje naměřené vzorky náhodné veličiny, která reprezentuje naměřenou hodnotu výkonu.
+Pokud budeme v~rámci T-testu namísto naměřených hodnot uvažovat průměry jednotlivých běhů, tak se podle CLV
+bude rozdělení těchto průměrů blížit normálnímu rozdělení.
+
+Dvouvýběrový T-test je dnes běžnou součástí standardních matematických knihoven.
+Použití T-testu v programu je tedy velmi jednoduché, protože není potřeba zamýšlet se
+nad korektností psaného kódu. V~případě systému PerfEval se T-test provádí tak, že
+se z~naměřených hodnot vyrobí Studentovo T-rozdělení. Z~tohoto rozdělení se zjistí
+intervalový odhad střední hodnoty.
+
+Nakonec se již jen zkoumá zda-li tento interval obsahuje nulu ($\delta = 0$).
+Pokud interval nulu neobsahuje, pak lze tvrdit, že s~pravděpodobností $1-\alpha$
+nulová hypotéza neplatí.
+
+TODO: odkaz do skript z PaSt1, doplnit nějakou myšlenku? %%-> https://iuuk.mff.cuni.cz/~samal/vyuka/2223/PSt1/skripta.pdf
+
+\subsection{Hierarchický bootstrap}
+
+%% - https://www.youtube.com/watch?v=Xz0x-8-cgaQ
+
+Bootstrap je statistická metoda využívající tzv. resamplování.
+Stejně jako u dvouvýběrového T-testu se předpokládá nezávislost náhodných veličin.
+Podmínka nezávislosti bude v systému zanedbána, protože ji není možné zaručit.
+Bootstrap se jako metoda používá v případě, kdy se o náhodných věličinách nedá
+dopředu téměř nic usuzovat. Toto odpovídá případu měření výkonu, kdy neznáme ani
+rozptyl ani střední hodnotu.
+
+Mějme naměřený statistický soubor dat o~velikosti n.
+Z~tohoto statistického souboru vybereme n-krát náhodný prvek. Z~těchto náhodně vybraných prvků spočítáme průměr.
+Spočtený průměr budeme považovat za~nový vzorek nově počítaného statistického souboru.
+Namísto malého statistického souboru se tedy vytvoří větší statistický soubor.
+Z~nového statistického souboru se určí interval spolehlivosti tak, že se vezme $\frac{\alpha}{2}$-tý
+a~$\frac{1-\alpha}{2}$-tý percentil.
+
+Zkoumanou náhodnou veličinou je rozdíl dvou náhodných veličin. Tyto dvě náhodné veličiny jsou dány měřením
+výkonnosti dvou verzí softwaru. Nulová hypotéza, která je vyvracena, tvrdí, že obě veličiny mají stejné rozdělení.
+Pokud tedy interval spolehlivosti neobsahuje nulu, tak můžeme nulovou hypotézu vyvrátit, protože s~pravděpodobností
+$1-\alpha$ neplatí.
+
+Naměřené vzorky však nejsou prostý statistický soubor. Jedná se o~hierarchický soubor dat.
+Každé jedno měření se skládá z~jednoho, nebo více běhů. Každý běh se skládá z~jednoho, nebo více naměřených údajů.
+Vytváření bootstrapového statistického souboru tedy vypadá trochu odlišně. Prvky tohoto souboru
+budou spočteny z~náhodně vybraných běhů. Hodnota prvku náhodně vybraného běhu bude průměr
+bootstrapového souboru spočteného z~měření v~tomto běhu. Bootstrapový soubor z~hodnot běhu
+se již spočte výše zmíněným způsobem. Vybere se n~náhodných hodnot z~naměřených hodnot v~běhu.
+
+\subsection{Co dělat v případě nevyvrácení hypotézy?}
+
+V~případě nevyvrácení nulové hypotézy nám statistické testy nedávají žádnou informaci.
+Nicméně je stále nutné se rozhodnout zda-li nulová hypotéza platí. Je nutné se ale stále
+vyvarovat chybě II. druhu. Proto v tomto případě budeme považovat nulovou hypotézu za platnou,
+pokud bude interval spolehlivosti dostatečně úzký. Pokud má tedy interval spolehlivosti
+dolní mez 1 a horní mez 3, pak je jeho délka 2. Odhadovaný průměr by byl také 2.
+Relativní úzkost intervalu by tedy byl poměr průměru a délky, tedy 1.
+
+V případě většího množství vzorků je možné zužovat interval spolehlivosti. Vztah mezi
+úzkostí a~počtem vzorků odpovídá $O(\frac{1}{\sqrt{n}})$, kde n je počet vzorků. Z~daného
+množství vzorků je tedy možné analyticky určit, kolik vzorků je ještě zapotřebí změřit.
+
+%% https://iuuk.mff.cuni.cz/~samal/vyuka/2223/PSt1/skripta.pdf
+
+V případě, že je interval dostatečně úzký prohlásíme, že nulová hypotéza platí.
+V případě, že interval není dostatečně úzký, prohlásíme, že vzorků není dost.

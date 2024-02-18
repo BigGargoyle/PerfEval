@@ -1,0 +1,35 @@
+\chapter*{Úvod}
+\addcontentsline{toc}{chapter}{Úvod}
+Po~více než dvacet let pomáhají unit testy udržovat kvalitu kódu v~průběhu vývoje
+softwaru. Za~tuto dobu bylo vyvinuto spoustu knihoven pro~implementaci a~spouštění
+unit testů. Verzovací nástroje jako GitLab, nebo GitHub umožňují v~rámci vývoje
+software verzovat, spouštět unit testy a~reagovat na~jejich případná selhání.
+
+Pro~udržování korektnosti kódu využíváme pokrytí unit testy. Udržování korektnosti
+je dnes již naprosto běžnou součástí vývoje softwaru. Psaní výkonnostních testů ovšem
+tak běžné není. Práce s~frameworky pro~měření výkonu totiž není tak jednoduchá jako používání
+knihoven pro~psaní unit testů, a~proto jejich užití není tak časté.
+
+Frameworky pro~vyhodnocování výkonu softwaru jsou podobné knihovnám pro psaní unit testů.
+Frameworky jako JMH nebo BenchmarkDotNet pomáhají implementovat výkonnostní testy.
+Výkonnostní testy se implementují obdobně jako u~unit testů obvykle pomocí anotací.
+Vyhodnocování naměřených výsledků dnes obvykle zahrnuje i~ruční zhodnocení naměřených výsledků.
+Vyhodnocování výkonu totiž vyžaduje porovnat naměřený výkon s~nějakou další referenční hodnotou.
+Měřící frameworky tyto referenční hodnoty nemají a~ani je nikde získat nemohou,
+protože měří pouze jednu verzi softwaru. Nemohou tedy dělat zmíněné celkové vyhodnocení.
+
+Z~porovnání vyhodnocování unit testů a~výkonnostních testů, není vyhodnocování
+výkonnostních testů tak jednoduché. Unit testy testují korektnost. Korektnost
+se prokáže tak, že~na~každý zadaný vstup program vrátí očekávaný výstup. Při vyhodnocování
+výkonu se~změří nějaká data o~běhu programu. Tato data ale sama o~sobě nic neříkají
+a~je nutné je zkoumat v kontextu.
+
+Výsledkem této práce je nástroj nazvaný PerfEval. PerfEval je konzolová aplikace
+napsaná v~programovacím jazyce Java. Perfeval umí pomocí argumentů na~příkazové
+řádce vyhodnocovat výsledky výkonnostních testů.
+
+PerfEval je schopen automatického hlášení výsledků výkonnostních testů. Umí porovnávat
+výsledky měření výkonu dvou verzí softwaru mezi sebou. PerfEval je také vhodný pro
+skriptování, protože o~výsledcích informuje nejen výpisem na~standardní výstup, ale
+také exit kódem. Nástroj podporuje zpracování výstupů frameworků BenchmarkDotNet a~JMH ve~formátu JSON,
+ale je rozšiřitelný i~pro~zpracování jiných frameworků, nebo formátů.

@@ -1,0 +1,113 @@
+\chapter{Programátorská dokumentace systému PerfEval}
+
+\section{Architektura systému}
+
+\section{Rozšiřitelnost a její omezení}
+
+Systém PerfEval byl od~počátku projektován tak, aby byl rozšiřitelný. Hlavní jádro
+celé aplikace tvoří vyhodnocování výkonu. V~různých částech návrhu se~vyskytují místa,
+kde je možné významným způsobem doplnit a~změnit chování celé aplikace.
+
+Nejdůležitější ze~zmiňovaných rozšíření je rozšíření o~datový formát. Tato možnost dělá z~PerfEvalu
+poměrně univerzální nástroj. Činí ho totiž méně závislým na~použitém měřícím systému a~výstupním jeho formátu.
+
+Rozšiřitelnost systému PerfEval není neomezená. Rozšíření, která nebudou zmíněná v~této kapitole,
+pravděpodobně nebudou možná, nebo budou vyžadovat mnohem více času pro~vývoj. Naopak pro~rozšíření
+v~této kapitole existuje návod jak systém rozšířit.
+
+\subsection{Rozšíření o datový formát}
+
+Vezměmě opět příklad našeho programátora z~první kapitoly. Programátor si napsal výkonnostní testy.
+Testy napsal pomocí nástroje, který nepodporuje PerfEval. Nicméně progrmátor ví, že~systém PerfEval
+dělá přesně to, co~potřebuje. Jediný problém je tedy ve~vysvětlení svého datového formátu systému.
+
+PerfEvalje od~počátku zamýšlen pro rozšíření v~tomto místě. Programátor tedy musí prozkoumat, jak správně zkonstruovat
+třídu Samples. Třída Samples totiž reprezentuje jedno spuštění testovací metody měřícího frameworku. Všechny hodnoty
+naměřené jednou metodou jsou tedy uloženy zde.
+
+Programátor musí naimplementovat vlastní implementaci rozhraní MeasurementParser. V~tomto rozhraní je důležitá metoda
+getTestsFromFiles. Tato metoda na~vstupu přijme všechny soubory s~výsledky měření jedné verze. Výstupem je list objektů
+typů Samples. Pro každou metodu (měřící test), který se v~souborech nachází, se v~listu vyskytuje pouze jedna instance
+typu Samples.
+
+Pokud jsem tedy měření pomocí frameworku spustil dvakrát se~stejnými měřícími metodami, tak se ve~výsledných Samples
+každá objeví právě jednou. Naměřené hodnoty budou všechny u~této jedné instance Samples.
+
+Poslední krok tohoto rozšíření po~naimplementování rozhraní MeasurementParser je jeho registrace. Registrace probíhá tak,
+že~se~přidá jeden řádek do~statického konstruktoru třídy ParserFactory. Na~řádku bude přidání položky do~objektu
+s~názvem registeredParsers. Tento objekt je typu HashMap a~přiřazuje k~sobě Supplier, který vrací MeasurementParser
+a~název typu String. Přidávaná položka je tedy String odpovídající názvu parseru a~reference na~metodu,
+která umí parser zkonstruovat.
+
+Použití nového parseru je pak jednoduché. Při inicializaci systému PerfEval příkazem init se jako parametr argumentu
+benchmark-parser použije jméno nového parseru. Dokonce je začne hlásit v~nabídce i~varování v~případě, že žádný parser
+není při~inicializaci zadán.
+
+\subsection{Rozšíření o filtr}
+
+Pokud uživatel PerfEvalu chce změnit pořadí výpisu testů~na výstupu, může implementovat nový filtr.
+Tento filtr objektem typu Comparator, který porovnává instance MeasurementComparisonRecord. Pomocí tohoto
+komparátoru, pak dojde k~setřídění vypisovaných prvků.
+
+Dále je nutné přepsat metodu resolvePrinterForEvaluateCommand takovým způsobem, aby~používala i~nový druh filtru.
+Tuto metodu je možné nalézt ve~třídě SetupUtilities. Komparátor se~pak může předávat objektům typu ResultPrinter
+při konstrukci. O~jejich dalším použití si tedy tyto objekty rozhodují samy.
+
+\subsection{Rozšíření o statistický test}
+
+Může se stát, že~uživatel systému PerfEval má o~svých datech nějaké informace, které
+by chtěl při~vyhodnocování zohlednit. Může si tedy naprogramovat vlastní implementaci
+rozhraní StatisticTest.
+
+Po~naprogramování vlastní implementace rozhraní StatisticTest, pak jen stačí ve~třídě SetupUtilities
+změnit chování metody resolveStatisticTest, tak~aby~brala novou implementaci v~potaz. Posledním krokem je
+přidání nového flagu do~parseru příkazové řádky v~metodě createParser.
+
+\subsection{Rozšíření o možnost výpisu}
+
+Pro vypisování výsledků porovnání slouží rozhraní ResultPrinter. Pokud by si uživatel chtěl naimplementovat
+vlastní způsob vypisování, tak stačí impleemtnovat jedoinou jeho metodu PrintResults.
+
+Přidání nového ResultPrinteru je podobné jeko u~přidávání nové implementace rozhraní StatisticTest.
+Stačí změnit implementaci metody resolvePrinterForEvaluateCommand ve~třídě SetupUtilities.
+Úprava by~měla být provedena tak, aby~metoda uměla vrátit i~novou implementaci.
+Pokud by~bylo zapotřebí nového argumentu na~příkazové řádce, takje nutné jej také
+správně naimplementovat do~metody createParser.
+
+\subsection{Změna použitého databázového systému}
+
+V~důsledku dlouhého rozhodování se o~tom, jak se budou informace o~výsledcích měření ukládat vzniklo rozhraní Database.
+Rozhraní má spoustu metod. Pokud by se uživatel rozhodl změnit způsob ukládání dat o~měřeních, tak by
+musel implementovat celé toto rozhraní. Po~implementaci rozhraní pak už jen stačí změnit metodu constructDatabase ve~třídě
+SetupUtilities, která vrací instanci objektu typu Database.
+
+\subsection{Rozšíření o příkaz}
+
+Každý příkaz PerfEval se skládá ze~dvou tříd. Jedná se o~třídu implementující rozhraní CommandSetup
+a~o~třídu implementující rozhraní Command. Pokud by uživatel chtěl doplnit nějaký nový příkaz,
+který by v~kontextu systému dával smysl, tak je to možné. Dobrý příklad pro~reprezentování nového příkazu
+bude vyhodnocení výkonu s~grafickým výstupem.
+
+Na~rozdíl od~stávajícího vyhodnocování by~grafické vyhodnocování potřebovalo údaje z~více než dvou posledních verzí.
+Proto by příkaz evaluate-graphical třída rozpoznala jako a~vytvořila instanci třídy EvaluateGraphicalSetup.
+Na~této třídě, implementaci CommandSetup, by pak zavolala metodu setup. Metoda setup na~třídě EvaluateGraphicalSetup
+by měla za~úkol z~konfigurace PerfEvalu a~příkazové řádky vyrobit objekt EvaluateGraphicalCommand. Tento objekt, který
+by implementoval rozhraní Command by pak metoda getCommand na~třídě Parser vrátila.
+
+Zbytek programu by se již nezměnil metoda main ve~třídě Main by vykonala dodaný příkaz. Spustila by~standardním způsobem
+metodu execute na~instanci objektu typu Command.
+
+Zaregistrování nového příkazu by probíhalo přidáním nové položky do~statického konstruktoru podobně.
+Položka mapy commandPerSetup má obdobnou strukturu jako v~případě rozšíření o~nový MeasurementParser.
+Dodal by se řádek s~názvem příkazu typu String a~z~reference na~bezparametrický konstruktor
+implementace rozhraní CommandSetup. Název příkazu odpovídá příkazu, kterým se bude volat z~příkazové řádky.
+
+\subsection{Omezená rošiřitelnost ve vyhodnocování}
+
+Jeden z nejhorších požadavků na rozšíření systému by bylo rozšíření v oblasti vyhodnocování.
+Jedná se zejména o změnu implementace třídy PerformanceEvaluator. Tato třída utváří
+celkovou vyhodnocovací logiku. Její rozšiřitelnost je omezená na impelmentace rozhraní
+StatisticTest.
+
+Změnu chování vyhodnocování výkonnostních testů lze ale provést. Omezené změny ve vyhodnocování
+se provádí změnami hodnot uvnitř config.ini souboru.
