@@ -24,6 +24,8 @@
         <th>Comparison Result</th>
         <th>Test Verdict</th>
         <th>Min Sample Count</th>
+        <th>CI lower bound</th>
+        <th>CI upper bound</th>
         <!-- Add more table headers based on MeasurementComparisonRecord fields -->
     </tr>
     </thead>
@@ -36,6 +38,8 @@
         <td th:text="${record.comparisonResult}"></td>
         <td th:text="${record.testVerdict}"></td>
         <td th:text="${record.minSampleCount}"></td>
+        <td th:text="${record.lowerCIBound}"></td>
+        <td th:text="${record.upperCIBound}"></td>
     </tr>
     </tbody>
 </table>
