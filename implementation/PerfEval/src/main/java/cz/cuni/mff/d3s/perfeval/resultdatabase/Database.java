@@ -89,4 +89,6 @@ public interface Database {
      * @throws DatabaseException if there is a problem with the database
      */
     ProjectVersion findClosestVersionToDate(Date date) throws DatabaseException;
+
+    FileWithResultsData[] getAllResults() throws DatabaseException;
 }

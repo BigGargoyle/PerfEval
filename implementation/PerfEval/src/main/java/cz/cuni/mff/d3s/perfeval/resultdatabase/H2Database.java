@@ -502,4 +502,29 @@ public class H2Database implements Database {
             throw new DatabaseException("Error finding closest version to a date: " + e.getMessage(), e, ExitCode.databaseError);
         }
     }
+
+    @Override
+    public FileWithResultsData[] getAllResults() throws DatabaseException{
+        try(Connection connection = dataSource.getConnection()){
+            String query = "SELECT path, dateOfCreation, version, tag, dateOfCommit FROM ResultMetadata";
+            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+                try(ResultSet resultSet = preparedStatement.executeQuery()){
+                    List<FileWithResultsData> results = new ArrayList<>();
+                    while(resultSet.next()){
+                        String path = pathToDBFile.resolve(resultSet.getString("path")).toAbsolutePath().toString();
+                        Date dateOfCreation = resultSet.getTimestamp("dateOfCreation");
+                        String versionHash = resultSet.getString("version");
+                        String tag = resultSet.getString("tag");
+                        Date dateOfCommit = resultSet.getTimestamp("dateOfCommit");
+
+                        FileWithResultsData resultData = new FileWithResultsData(path, dateOfCreation, new ProjectVersion(dateOfCommit, versionHash, tag));
+                        results.add(resultData);
+                    }
+                    return results.toArray(new FileWithResultsData[0]);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Error retrieving all results: " + e.getMessage(), e, ExitCode.databaseError);
+        }
+    }
 }

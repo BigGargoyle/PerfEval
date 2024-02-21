@@ -34,6 +34,15 @@ public record MeasurementComparisonRecord(
     public String oldAverageToString() {
         return oldSamples.getMetric().circleciValueToString(oldAverage, new double[]{lowerCIBound, upperCIBound});
     }
+
+    public String lowerCIBoundToString() {
+        return String.format("%+.3f", lowerCIBound);
+    }
+
+    public String upperCIBoundToString() {
+        return String.format("%+.3f", upperCIBound);
+    }
+
     public String changeToString() {
         return String.format("%+.2f", performanceChange);
     }

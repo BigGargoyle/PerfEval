@@ -28,7 +28,8 @@ public class Parser {
                 EvaluateSetup.getCommandName(), EvaluateSetup::new,
                 IndexNewSetup.getCommandName(), IndexNewSetup::new,
                 IndexAllSetup.getCommandName(), IndexAllSetup::new,
-                UndecidedSetup.getCommandName(), UndecidedSetup::new
+                UndecidedSetup.getCommandName(), UndecidedSetup::new,
+                ListResultsSetup.getCommandName(),ListResultsSetup::new
         );
     }
 
@@ -77,7 +78,7 @@ public class Parser {
                 }
             }
         } catch (DatabaseException e) {
-            ParserException exception = new ParserException("Database error: " + e.toString());
+            ParserException exception = new ParserException("Database error: " + e.getMessage());
             exception.exitCode = ExitCode.databaseError;
             exception.initCause(e);
             throw exception;

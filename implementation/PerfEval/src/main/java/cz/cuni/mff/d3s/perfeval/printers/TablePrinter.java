@@ -37,23 +37,23 @@ public class TablePrinter implements ResultPrinter {
      */
     private static final int CHANGE_COLUMN_INDEX = 3;
     /**
-     * Index of column with verdict of comparison.
-     */
-    private static final int VERDICT_COLUMN_INDEX = 4;
-    /**
-     * Index of column with result of comparison.
-     */
-    private static final int RESULT_COLUMN_INDEX = 5;
-
-    /**
      * Index of column with lower bound of confidence interval.
      */
-    private static final int LOWER_CI_BOUND_COLUMN_INDEX = 6;
+    private static final int LOWER_CI_BOUND_COLUMN_INDEX = 4;
 
     /**
      * Index of column with upper bound of confidence interval.
      */
-    private static final int UPPER_CI_BOUND_COLUMN_INDEX = 7;
+    private static final int UPPER_CI_BOUND_COLUMN_INDEX = 5;
+    /**
+     * Index of column with result of comparison.
+     */
+    private static final int RESULT_COLUMN_INDEX = 6;
+
+    /**
+     * Index of column with verdict of comparison.
+     */
+    private static final int VERDICT_COLUMN_INDEX = 7;
 
     /**
      * PrintStream where the results will be printed.
@@ -140,8 +140,8 @@ public class TablePrinter implements ResultPrinter {
             default -> tableRow[RESULT_COLUMN_INDEX] = ("NONE???");
         }
 
-        tableRow[LOWER_CI_BOUND_COLUMN_INDEX] = String.valueOf(comparisonResult.lowerCIBound());
-        tableRow[UPPER_CI_BOUND_COLUMN_INDEX] = String.valueOf(comparisonResult.upperCIBound());
+        tableRow[LOWER_CI_BOUND_COLUMN_INDEX] = comparisonResult.lowerCIBoundToString();
+        tableRow[UPPER_CI_BOUND_COLUMN_INDEX] = comparisonResult.upperCIBoundToString();
 
         return tableRow;
     }
@@ -155,11 +155,18 @@ public class TablePrinter implements ResultPrinter {
         while (fullLength > MAX_NAME_LENGTH) {
             if (index == parts.length - 1) break;
             fullLength -= parts[index].length() - 1;
+            if (!result.isEmpty())
+                result.deleteCharAt(result.length() - 1); // remove last dot (if it is there)
             result.append(Character.valueOf(parts[index].charAt(0)).toString()).append(".");
             index++;
         }
         while (index < parts.length) {
-            result.append(parts[index]);
+            if (parts[index].length() + result.length() > MAX_NAME_LENGTH) {
+                result.append(truncateFromMiddle(parts[index], MAX_NAME_LENGTH - result.length() - 1));
+            }
+            else {
+                result.append(parts[index]);
+            }
             if (index != parts.length - 1)
                 result.append(".");
             index++;
@@ -168,6 +175,11 @@ public class TablePrinter implements ResultPrinter {
         result = new StringBuilder(result.substring(0, Math.min(result.length(), MAX_NAME_LENGTH)));
 
         return result.toString();
+    }
+
+    private static String truncateFromMiddle(String part, int length) {
+        int half = length / 2;
+        return part.substring(0, half) + "~" + part.substring(part.length() - half);
     }
 
 }
