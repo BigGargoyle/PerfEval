@@ -2,6 +2,159 @@
 
 \section{Architektura systému}
 
+Architekturu systému PerfEval je možné rozdělit do~dvou částí. První část systému tvoří
+parser příkazové řádky a~tzv. setup třídy. Druhou částí jsou tzv. command třídy,
+které provádí skutečně požadovanou činnost. V~této části dokumentace nemusí být
+některé podrobnosti o~implementaci, které je možné najít v~automaticky generované dokumentaci
+JavaDoc. Jedná se například o~argumenty zmiňovaných metod.
+
+Vnitřní struktura běhu je velice jednoduchá. Metoda main má tři jednoduché úkoly.
+Zavolat metodu getCommand na~třídě Parser. Tato metoda vrátí objekt typu Command,
+na kterém metoda main zavolá metodu execute. Metoda execute při návratu vrací enumerátor
+typu ExitCode. Na~objektu ExitCode pak na~konci metoda main zavolá metodu exit,
+která ukončuje program s~požadovaným exit kódem. Metody getCommand a~execute mohou skončit
+s~výjimkami ParserException a~PerfEvalCommandFailedException. Pro tyto případy tyto
+výjimky obsahují položku exitCode na~které metoda main opět zavolá metodu exit.
+
+\subsection{Parser a setup třídy}
+
+Hlavní část třídy Parser tvoří slovník commandPerSetup a~metoda getCommand.
+Ve slovníku jsou k jednotlivým řetězcovým klíčům přiřazeny objekty typu
+Supplier, které mají za~úkol vracet instance typu CommandSetup.
+Klíče jsou skutečné řetězce zadávané uživatelem. Parser pak na~základě příkazu
+zadaného na~příkazové řádce zkonstruuje skrze Supplier získaný ze~slovníku správnou
+instanci třídy CommandSetup. Na~této instanci se zavolá metoda setup, která vrací
+objekt typu Command, podle definice rozhraní CommandSetup. Metoda getCommand je volaná
+z~metody main, která tvoří hlavní metodu programu.
+
+Třída Parser předává do~metody setup objekty OptionSet a~PerfEvalConfig. Třída PerfEvalConfig
+reprezentuje globální konfiguraci systému PerfEval podle konfiguračního souboru.
+Parser tedy skrze statické metody této třídy zařídí přečtení konfiguračního souboru
+do~objektu PerfEvalConfig. Objekt OptionSet reprezentuje parametry a~značky zadané
+uživatelem na~příkazovou řádku. Jedná se o~objekt z~knihovny joptsimple. Rozpoznávány jsou
+všechny značky blíže specifikované ve~třídě SetupUtilities.
+
+SetupUtilities je třída obsahující statické položky a~řetězcové konstanty.
+Tyto položky a~konstanty slouží pro~zpracování argumentů příkazové řádky.
+Setup třídy a~Parser využívají jednotlivé metody této třídy.
+Protože některé setup třídy využívají stejných metod ze~třídy SetupUtilities, tak jsou umístěny
+právě ve~třídě SetupUtilities.
+
+InitSetup je třída, která má za~úkol připravit instanci InitCommand. Protože se jedná
+o~setup třídu, tak shání informace pro~práci Commandu, který konstruuje. Poté, co v~rámci
+metody setup sežene všechny potřebné informace zkonstruuje InitCommand a~vrátí jej.
+Tímto je InitCommand připraven k~práci.
+
+IndexNewSetup je třída pro přípravu instance AddFileCommand. IndexNewSetup dodává
+při konstrukci AddFileCommandu implementaci rozhraní Database, cestu k přidávanému souboru
+a~instanci objektu ProjectVersion. ProjectVersion popisuje verzi softwaru pro kterou
+byl nově přidávaný výsledek změřen. Zkonstruovanou instanci třídy AddFileCommand vrací metoda setup.
+
+IndexAllSetup je třída pro přípravu instance AddFilesFromDirCommand. IndexAllSetup dodává
+při konstrukci AddFilesFromDirCommandu implementaci rozhraní Database, cestu ke složce, ze které se budou přidávat soubory,
+a~instanci objektu ProjectVersion. ProjectVersion popisuje verzi softwaru pro kterou
+byly nově přidávané výsledky změřeny. Zkonstruovanou instanci třídy AddFilesFromDirCommand vrací metoda setup.
+
+EvaluateSetup je třída která připravuje EvaluateCLICommand. Musí v~databázi najít
+soubory s~výsledky měření, které bude EvaluateCLICommand porovnávat. Dále vyrábí
+implementace rozhraní StatisticTest a ResultPrinter, podle příznaků z~příkazové řádky.
+EvaluateSetup musí také vyrobit instanci objektu PerformanceEvaluator. Tuto instanci vyrobí
+z~nastavení v~objektu PerfEvalConfig a~ze~zmíněné implementace StatisticTest. EvaluateCLICommand je zkonstruovaný
+z~vyrobeného PerformanceEvaluatoru, ResultPrinteru, vstupních souborů s~výsledky
+a~MeasurementParseru. MeasurementParser je součástí objektu PerfEvalConfig.
+
+UndecidedSetup konstruuje EvaluateCLICommand způsobem z~předchozího odstavce.
+Jediný rozdíl je, že se použije pevně stanovený ResultPrinter typu UndecidedPrinter.
+Tato implementace CommandSetup vznikla proto, aby se vypsání informace o~nerozhodných
+testech vypisovala pomocí odlišného příkazu.
+
+Třída ListResultsSetup připravuje ListResultsCommand. Jediná činnost metody setup
+spočívá ve~vyrobení instance rozhraní Database. Tuto instanci předá konstruktoru
+třídy ListResultsCommand. Vyrobenou instanci třídy ListResultsCommand vrací.
+
+\subsection{Command třídy}
+
+PerfEval je systém ovládaný pomocí příkazů (commandů) z~příkazové řádky. Každému z~příkazů
+odpovídá některá z~implementací rozhraní Command. Implementace třídy Command musejí mít implementovanou
+jedinou metodu execute.
+
+Třída AddFileCommand má~za~úkol přidat nový výsledek měření do~databáze. Vnitřní položky
+třídy jsou fileToAdd, database a~version. Metoda execute tedy volá metodu addFile na dodané implementaci
+databáze. Předávané paramtery jsou fileToAdd a~version.
+
+Třída AddFilesFromDirCommand má~za~úkol přidat všechny výsledky měření ve složce do~databáze. Vnitřní položky
+třídy jsou sourceDirPath, database a~version. Metoda execute tedy volá metodu addFilesFromDir na~dodané implementaci
+databáze. Předávané paramtery jsou sourceDirPath a~version.
+
+%% nutno upravit implementaci -> detail
+Třída InitCommand má za~úkol v~adresáři, odkud byl PerfEval z~příkazové řádky spuštěn, inicializovat systém PerfEval.
+Inicializace systému PerfEval probíhá v několika krocích. Nejprve se vytvoří adresář .performance. Následně se do .gitignore
+(v případě neexistence bude vytvořen) souboru doplní ignorace souborů a adresářů systému PerfEval. Nakonec je~z~parametrů
+dodaných při~konstrukci a~z~výchozích parametrů vytvořen konfigurační soubor config.ini. V případě, že systém je
+v~adresáři již inicializovaný a nebyl dodán příznak násilné inicializace, tak systém nebude inicializovaný.
+
+Třída EvaluateCLICommand má za~úkol porovnat výsledky měření výkonu dvou různých verzí.
+Soubory s~výsledky dvou verzí a~parser k~nim jsou dodané při~konstrukci. Při~konstrukci
+je dodaný objekt implementace rozhraní StatisticTest. Zmíněný objekt slouží ke~statistickému
+porovnání výsledků měření. Při~konstrukci je dále dodaná implementace rozhraní ResultPrinter.
+Implementace tohoto rozhraní rozhoduje o tom, jakým způsobem budou prezentovány výsledky porovnání.
+Třída v rámci volání metody execute nechá naparsovat soubory s výsledky měření do objektů typu Samples.
+Seznamy těchto objektů nechá porovnat pomocí statistického testu. Výsledkem je objekt MeasurementComparisonResultCollection.
+Tento objekt je nakonec pomocí dodané implementace rozhraní ResultPrinter prezentováno uživateli.
+
+Třída ListResultsCommand a~její metoda execute slouží k~prostému vypsání obsahu databáze s~výsledky měření.
+Databáze obsahuje informace o~výsledcích měření jako je cesta k~souboru a~popis verze. Tyto údaje vypíše
+metoda print na~třídě FileInfoPrinter do~přehledné tabulky na~standardní výstup.
+
+\subsection{Implementace rozhraní MeasurementParser}
+
+Rozhraní MeasurementParser je určeno ke~zpracování souborů s~výsledky měření výkonu.
+Třída MeasurementFactory vrací správnou instanci MeasurementParseru na~základě dodaného jména (řetězce).
+Jméno parseru je uloženo v konfiguračním souboru.
+
+Implementace rozhraní mohou při zpracovávání souborů vyhazovat runtime výjimku
+MeasurementParserException. Výjimka je odchytávaná mimo implementaci MeasurementParser
+v~metodě execute třídy EvaluateCLICommand. Výjimku je tedy bezpečné vyhazovat.
+
+Aktuálně dostupné implementace rozhraní MeasurementParser jsou JMHJSONParser a~BenchmarkDotNetJSONParser.
+JMHJSONParser umí zprácovavat výstup frameworku JMH ve~formátu JSON. BenchmarkDotNetJSONParser
+umí zprácovavat výstup frameworku BenchmarkDotNet ve~formátu JSON.
+
+\subsection{Implementace rozhraní StatisticTest}
+
+Rozhraní StatisticTest definuje jaké metody mají mít implementace statistických testů
+pro porovnání dvourozmětných polí typu double. Jedná se o~metodu, která vrací interval spolehlivosti.
+Interval spolehlivosti je intervalový odhad střední hodnoty pro rozdíl dvou náhodných veličin.
+Dále musí umět vrátit odhad minimálního počtu vzorků, které jsou zapotřebí pro zajištění dostatečně úzkého intervalu.
+
+Implementace tohoto rozhraní jsou dvě. První je třída ParametricTest, která používá
+Welchův T-test, který je podrobněji popsán v~kapitole 2.3.1. Druhou implementací je
+NonparamtericTest, který využívá hierarchického bootstrapu. Tento bootstrap je podrobněji
+popsaný v~kapitole 2.3.2.
+
+\subsection{Implementace rozhraní Database}
+
+Rozhraní Database definuje funkce, které jsou požadovány od~systému, který má uládat
+metadata o~výsledcích měření. Jeho jediná implementace využívá technologie H2 embedded databáze.
+Technologie umožňuje vyhledávat položky v~lokální databázi pomocí standardních SQL příkazů.
+
+\subsection{Struktura konfiguračního souboru}
+
+Konfigurační soubor systému PerfEval se nachází ve~složce .performance a~má název config.ini.
+V~souboru jsou dvě sekce. Jedná se o~sekce statistic a~project.
+
+V~sekci statistic je možné nastavit
+pět různých paramterů. Prvním parametrem je critValue, který odpovídá velikosti chyby I.~druhu při
+statistickém testu. K~přímému ovlivnění statistických testů slouží ještě parametr maxCIWidth a~tolerance.
+Parametr maxCIWidth říká, jaká může být relativní šířka intervalu spolehlivosti při nevyvrácení hypotézy, aby test prošel
+s~kladným výsledkem. Parametr tolerance říká, o~kolik může klesnout výkon v~poměru s~předchozí verzí.
+Parametr maxTestCount udává kolik je možné provést maximálně měření jedné verze. Parametr minTestCount
+udává kolik minimálně by~mělo být dodaných naměřených výsledků (celkový počet běhů)
+pro porovnání výkonů.
+
+V~sekci project je možné nastavit používání git repozitáře (parametr git) pomocí hodnot TRUE a~FALSE.
+Dalším parametrem je parserName. Tento parametr definuje parser, kterou bude vracet ParserFactory.
+
 \section{Rozšiřitelnost a její omezení}
 
 Systém PerfEval byl od~počátku projektován tak, aby byl rozšiřitelný. Hlavní jádro
@@ -9,11 +162,11 @@ celé aplikace tvoří vyhodnocování výkonu. V~různých částech návrhu se
 kde je možné významným způsobem doplnit a~změnit chování celé aplikace.
 
 Nejdůležitější ze~zmiňovaných rozšíření je rozšíření o~datový formát. Tato možnost dělá z~PerfEvalu
-poměrně univerzální nástroj. Činí ho totiž méně závislým na~použitém měřícím systému a~výstupním jeho formátu.
+poměrně univerzální nástroj. Činí ho totiž méně závislým na~použitém měřícím systému a~jeho výstupním formátu.
 
 Rozšiřitelnost systému PerfEval není neomezená. Rozšíření, která nebudou zmíněná v~této kapitole,
 pravděpodobně nebudou možná, nebo budou vyžadovat mnohem více času pro~vývoj. Naopak pro~rozšíření
-v~této kapitole existuje návod jak systém rozšířit.
+v~této kapitole existuje návod jak systém jednoduše rozšířit.
 
 \subsection{Rozšíření o datový formát}
 
@@ -21,7 +174,7 @@ Vezměmě opět příklad našeho programátora z~první kapitoly. Programátor 
 Testy napsal pomocí nástroje, který nepodporuje PerfEval. Nicméně progrmátor ví, že~systém PerfEval
 dělá přesně to, co~potřebuje. Jediný problém je tedy ve~vysvětlení svého datového formátu systému.
 
-PerfEvalje od~počátku zamýšlen pro rozšíření v~tomto místě. Programátor tedy musí prozkoumat, jak správně zkonstruovat
+PerfEval je od~počátku zamýšlen pro rozšíření v~tomto místě. Programátor tedy musí prozkoumat, jak správně zkonstruovat
 třídu Samples. Třída Samples totiž reprezentuje jedno spuštění testovací metody měřícího frameworku. Všechny hodnoty
 naměřené jednou metodou jsou tedy uloženy zde.
 
@@ -39,19 +192,22 @@ s~názvem registeredParsers. Tento objekt je typu HashMap a~přiřazuje k~sobě 
 a~název typu String. Přidávaná položka je tedy String odpovídající názvu parseru a~reference na~metodu,
 která umí parser zkonstruovat.
 
-Použití nového parseru je pak jednoduché. Při inicializaci systému PerfEval příkazem init se jako parametr argumentu
-benchmark-parser použije jméno nového parseru. Dokonce je začne hlásit v~nabídce i~varování v~případě, že žádný parser
+Použití nového parseru je pak jednoduché. Při inicializaci systému PerfEval příkazem init se jako argumentu
+benchmark-parser použije jméno nového parseru. Dokonce jej začne hlásit v~nabídce i~chybová hláška v~případě, že žádný parser
 není při~inicializaci zadán.
 
 \subsection{Rozšíření o filtr}
 
-Pokud uživatel PerfEvalu chce změnit pořadí výpisu testů~na výstupu, může implementovat nový filtr.
-Tento filtr objektem typu Comparator, který porovnává instance MeasurementComparisonRecord. Pomocí tohoto
+Pokud uživatel chce  PerfEvalu změnit pořadí výpisu testů~na výstupu, může použít filtr.
+Pokud mu žádný z~připravených nevyhovuje, tak může implementovat nový filtr.
+Tento filtr je objektem typu Comparator, který porovnává instance MeasurementComparisonRecord. Pomocí tohoto
 komparátoru, pak dojde k~setřídění vypisovaných prvků.
 
-Dále je nutné přepsat metodu resolvePrinterForEvaluateCommand takovým způsobem, aby~používala i~nový druh filtru.
-Tuto metodu je možné nalézt ve~třídě SetupUtilities. Komparátor se~pak může předávat objektům typu ResultPrinter
-při konstrukci. O~jejich dalším použití si tedy tyto objekty rozhodují samy.
+Dále je nutné přepsat metodu resolvePrinterForEvaluateCommand takovým způsobem, aby~rozponávala i~nový druh filtru
+podle příkazové řádky. Tuto metodu je možné nalézt ve~třídě SetupUtilities.
+Posledním krokem je přidání nové značky do~parseru příkazové řádky v~metodě createParser.
+Komparátor se~pak může předávat objektům typu ResultPrinter při~konstrukci.
+O~jejich dalším použití si tedy tyto objekty rozhodují samy.
 
 \subsection{Rozšíření o statistický test}
 
@@ -60,18 +216,18 @@ by chtěl při~vyhodnocování zohlednit. Může si tedy naprogramovat vlastní 
 rozhraní StatisticTest.
 
 Po~naprogramování vlastní implementace rozhraní StatisticTest, pak jen stačí ve~třídě SetupUtilities
-změnit chování metody resolveStatisticTest, tak~aby~brala novou implementaci v~potaz. Posledním krokem je
-přidání nového flagu do~parseru příkazové řádky v~metodě createParser.
+změnit chování metody resolveStatisticTest, tak~aby~rozpoznnávala novou implementaci podle příkazové řádky. Posledním krokem je
+přidání nové značky do~parseru příkazové řádky v~metodě createParser.
 
 \subsection{Rozšíření o možnost výpisu}
 
 Pro vypisování výsledků porovnání slouží rozhraní ResultPrinter. Pokud by si uživatel chtěl naimplementovat
-vlastní způsob vypisování, tak stačí impleemtnovat jedoinou jeho metodu PrintResults.
+vlastní způsob vypisování, tak stačí implmetnovat jedinou jeho metodu PrintResults.
 
-Přidání nového ResultPrinteru je podobné jeko u~přidávání nové implementace rozhraní StatisticTest.
+Přidání nového ResultPrinteru je podobné jako u~přidávání nové implementace rozhraní StatisticTest.
 Stačí změnit implementaci metody resolvePrinterForEvaluateCommand ve~třídě SetupUtilities.
 Úprava by~měla být provedena tak, aby~metoda uměla vrátit i~novou implementaci.
-Pokud by~bylo zapotřebí nového argumentu na~příkazové řádce, takje nutné jej také
+Pokud by~bylo zapotřebí nového argumentu na~příkazové řádce, tak je nutné jej také
 správně naimplementovat do~metody createParser.
 
 \subsection{Změna použitého databázového systému}
@@ -92,12 +248,12 @@ Na~rozdíl od~stávajícího vyhodnocování by~grafické vyhodnocování potře
 Proto by příkaz evaluate-graphical třída rozpoznala jako a~vytvořila instanci třídy EvaluateGraphicalSetup.
 Na~této třídě, implementaci CommandSetup, by pak zavolala metodu setup. Metoda setup na~třídě EvaluateGraphicalSetup
 by měla za~úkol z~konfigurace PerfEvalu a~příkazové řádky vyrobit objekt EvaluateGraphicalCommand. Tento objekt, který
-by implementoval rozhraní Command by pak metoda getCommand na~třídě Parser vrátila.
+by implementoval rozhraní Command, by pak metoda getCommand na~třídě Parser vrátila.
 
 Zbytek programu by se již nezměnil metoda main ve~třídě Main by vykonala dodaný příkaz. Spustila by~standardním způsobem
 metodu execute na~instanci objektu typu Command.
 
-Zaregistrování nového příkazu by probíhalo přidáním nové položky do~statického konstruktoru podobně.
+Zaregistrování nového příkazu by probíhalo přidáním nové položky do~statického konstruktoru třídy Parser.
 Položka mapy commandPerSetup má obdobnou strukturu jako v~případě rozšíření o~nový MeasurementParser.
 Dodal by se řádek s~názvem příkazu typu String a~z~reference na~bezparametrický konstruktor
 implementace rozhraní CommandSetup. Název příkazu odpovídá příkazu, kterým se bude volat z~příkazové řádky.
@@ -106,8 +262,8 @@ implementace rozhraní CommandSetup. Název příkazu odpovídá příkazu, kter
 
 Jeden z nejhorších požadavků na rozšíření systému by bylo rozšíření v oblasti vyhodnocování.
 Jedná se zejména o změnu implementace třídy PerformanceEvaluator. Tato třída utváří
-celkovou vyhodnocovací logiku. Její rozšiřitelnost je omezená na impelmentace rozhraní
+celkovou vyhodnocovací logiku. Její rozšiřitelnost je omezená na implementace rozhraní
 StatisticTest.
 
-Změnu chování vyhodnocování výkonnostních testů lze ale provést. Omezené změny ve vyhodnocování
+Omezenou změnu chování vyhodnocování výkonnostních testů provést lze. Omezené změny ve~vyhodnocování
 se provádí změnami hodnot uvnitř config.ini souboru.
