@@ -2,7 +2,6 @@ package cz.cuni.mff.d3s.perfeval.init;
 
 import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.ExitCode;
-import cz.cuni.mff.d3s.perfeval.command.GitUtilities;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.ParserFactory;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -40,10 +39,6 @@ public class InitCommand implements Command {
      * String representation of key for minimal test count in ini file.
      */
     private static final String MIN_TEST_COUNT_KEY = "statistic.minTestCount";
-    /**
-     * String representation of key for version in ini file.
-     */
-    private static final String VERSION_KEY = "project.version";
     /**
      * String representation of key for git presence in ini file.
      */
@@ -111,7 +106,6 @@ public class InitCommand implements Command {
         double maxCIWidth = Double.parseDouble(config.getString(MAX_CI_WIDTH_KEY));
         int maxTestCount = config.getInt(MAX_TEST_COUNT_KEY);
         int minTestCount = config.getInt(MIN_TEST_COUNT_KEY);
-        String version = config.getString(VERSION_KEY);
         boolean gitPresence = config.getString(GIT_PRESENCE_KEY).compareTo(TRUE_STRING) == 0;
         String parserName = config.getString(PARSER_NAME_KEY);
         MeasurementParser parser = ParserFactory.getParser(parserName);
@@ -136,7 +130,7 @@ public class InitCommand implements Command {
             throw new PerfEvalInvalidConfigException("Tolerance must be in [0, 1]");
         }
 
-        return new PerfEvalConfig(gitPresence, minTestCount, maxTestCount, maxCIWidth, critValue, version, parser, tolerance);
+        return new PerfEvalConfig(gitPresence, minTestCount, maxTestCount, maxCIWidth, critValue, parser, tolerance);
     }
 
     /**
@@ -164,11 +158,6 @@ public class InitCommand implements Command {
         config.setProperty(MAX_TEST_COUNT_KEY, perfevalConfig.getMaxTestCount());
         String gitPresenceString = perfevalConfig.hasGitFilePresence() || isThereAGitFile ? TRUE_STRING : FALSE_STRING;
         config.setProperty(GIT_PRESENCE_KEY, gitPresenceString);
-        config.setProperty(VERSION_KEY, perfevalConfig.getVersion());
-        if(isThereAGitFile) {
-            String lastCommitHash = GitUtilities.getLastGitCommitHash(gitFilePath);
-            config.setProperty(VERSION_KEY, lastCommitHash);
-        }
         //solve parser name --> method toString()
         config.setProperty(PARSER_NAME_KEY, perfevalConfig.getMeasurementParser().toString());
         config.setProperty(TOLERANCE_KEY, perfevalConfig.getTolerance());

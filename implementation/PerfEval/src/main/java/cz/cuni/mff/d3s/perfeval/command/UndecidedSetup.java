@@ -10,7 +10,7 @@ import cz.cuni.mff.d3s.perfeval.resultdatabase.FileWithResultsData;
 import joptsimple.OptionSet;
 
 
-public class UndecidedSetup implements  CommandSetup{
+public class UndecidedSetup implements CommandSetup {
 
     static final String commandName = "list-undecided";
 

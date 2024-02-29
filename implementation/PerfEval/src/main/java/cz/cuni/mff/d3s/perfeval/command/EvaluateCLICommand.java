@@ -75,7 +75,7 @@ public class EvaluateCLICommand implements Command {
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
         try {
-            MeasurementComparisonResultCollection comparisonResults = evaluateResults(parser, inputFiles, performanceEvaluator);
+                MeasurementComparisonResultCollection comparisonResults = evaluateResults(parser, inputFiles, performanceEvaluator);
             resultPrinter.PrintResults(comparisonResults);
             for (MeasurementComparisonRecord record : comparisonResults) {
                 if (!record.testVerdict()) return ExitCode.atLeastOneWorseResult;

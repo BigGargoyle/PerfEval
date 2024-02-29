@@ -91,10 +91,22 @@ public class SetupUtilities {
      * Name of the parameter for the input of the new version.
      */
     private static final String NEW_VERSION_PARAMETER = "new-version";
+
+    /**
+     * Name of the parameter for the input of the new tag.
+     */
+    private static final String NEW_TAG_PARAMETER = "new-tag";
+
     /**
      * Name of the parameter for the input of the old version.
      */
     private static final String OLD_VERSION_PARAMETER = "old-version";
+
+    /**
+     * Name of the parameter for the input of the old tag.
+     */
+    private static final String OLD_TAG_PARAMETER = "old-tag";
+
     /**
      * Name of the parameter for the maximum count of tests.
      */
@@ -276,8 +288,45 @@ public class SetupUtilities {
     static FileWithResultsData[][] resolveInputFilesWithRespectToInputtedVersions(OptionSet options) throws DatabaseException {
         Path userDir = Path.of(System.getProperty("user.dir"));
         Database database = constructDatabase(userDir.resolve(PERFEVAL_DIR));
+
+        boolean newVersionSet = options.has(newVersionOption) || options.has(newTagOption);
+        boolean oldVersionSet = options.has(oldVersionOption) || options.has(oldTagOption);
+
+        FileWithResultsData[] newFiles;
+        FileWithResultsData[] oldFiles;
+
+        if (newVersionSet && oldVersionSet) {
+            ProjectVersion newVersion = new ProjectVersion(null, options.valueOf(newVersionOption), options.valueOf(newTagOption));
+            ProjectVersion oldVersion = new ProjectVersion(null, options.valueOf(oldVersionOption), options.valueOf(oldTagOption));
+            newFiles = database.getResultsOfVersion(newVersion);
+            oldFiles = database.getResultsOfVersion(oldVersion);
+        } else if (newVersionSet) {
+            ProjectVersion newVersion = new ProjectVersion(null, options.valueOf(newVersionOption), options.valueOf(newTagOption));
+            newFiles = database.getResultsOfVersion(newVersion);
+            ProjectVersion[] versions = database.getLastNVersions(1);
+            if(versions.length < 1) {
+                throw new DatabaseException("There are not enough versions in the database.", ExitCode.databaseError);
+            }
+            oldFiles = database.getResultsOfVersion(versions[0]);
+        } else if (oldVersionSet) {
+            ProjectVersion oldVersion = new ProjectVersion(null, options.valueOf(oldVersionOption), options.valueOf(oldTagOption));
+            oldFiles = database.getResultsOfVersion(oldVersion);
+            ProjectVersion[] versions = database.getLastNVersions(1);
+            if(versions.length < 1) {
+                throw new DatabaseException("There are not enough versions in the database.", ExitCode.databaseError);
+            }
+            newFiles = database.getResultsOfVersion(versions[0]);
+        } else {
+            ProjectVersion[] versions = database.getLastNVersions(2);
+            if(versions.length < 2) {
+                throw new DatabaseException("There are not enough versions in the database.", ExitCode.databaseError);
+            }
+            newFiles = database.getResultsOfVersion(versions[0]);
+            oldFiles = database.getResultsOfVersion(versions[1]);
+        }
+
         //fields that are null will not be used in WHERE clause of SQL query
-        ProjectVersion newVersion = options.has(newVersionOption) ? new ProjectVersion(null, options.valueOf(newVersionOption), null) : null;
+        /*ProjectVersion newVersion = options.has(newVersionOption) ? new ProjectVersion(null, options.valueOf(newVersionOption), null) : null;
         ProjectVersion oldVersion = options.has(oldVersionOption) ? new ProjectVersion(null, options.valueOf(oldVersionOption), null) : null;
         if (newVersion == null && oldVersion == null) {
             ProjectVersion[] versions = database.getLastNVersions(2);
@@ -291,10 +340,9 @@ public class SetupUtilities {
         if (newVersion == null) {
             newVersion = database.getLastNVersions(1)[0];
         }
-        assert newVersion != null && oldVersion != null;
         FileWithResultsData[] newFiles = database.getResultsOfVersion(newVersion);
         FileWithResultsData[] oldFiles = database.getResultsOfVersion(oldVersion);
-        assert newFiles.length > 0 && oldFiles.length > 0;
+        assert newFiles.length > 0 && oldFiles.length > 0;*/
         return new FileWithResultsData[][]{oldFiles, newFiles};
     }
 
@@ -329,9 +377,19 @@ public class SetupUtilities {
      */
     static ArgumentAcceptingOptionSpec<String> newVersionOption;
     /**
+     * Option for the new tag.
+     */
+    static ArgumentAcceptingOptionSpec<String> newTagOption;
+
+    /**
      * Option for the old version.
      */
     static ArgumentAcceptingOptionSpec<String> oldVersionOption;
+    /**
+     * Option for the old tag.
+     */
+    static ArgumentAcceptingOptionSpec<String> oldTagOption;
+
     /**
      * Option for the path.
      */
@@ -379,10 +437,18 @@ public class SetupUtilities {
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Version of measured software");
+        newTagOption = parser.accepts(NEW_TAG_PARAMETER)
+                .withRequiredArg()
+                .ofType(String.class)
+                .describedAs("Tag of measured software");
         oldVersionOption = parser.accepts(OLD_VERSION_PARAMETER)
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Version of measured software");
+        oldTagOption = parser.accepts(OLD_TAG_PARAMETER)
+                .withRequiredArg()
+                .ofType(String.class)
+                .describedAs("Tag of measured software");
         pathOption = parser.accepts(PATH_PARAMETER)
                 .withRequiredArg()
                 .ofType(String.class)

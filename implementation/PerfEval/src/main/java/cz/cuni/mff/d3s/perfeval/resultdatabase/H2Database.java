@@ -222,7 +222,8 @@ public class H2Database implements Database {
             whereClauseBuilder.append(" AND ");
         }
         if (pattern.tag() != null) {
-            whereClauseBuilder.append("tag = ?");
+            //tag is case-insensitive
+            whereClauseBuilder.append("tag ~* ?");
         }
 
         return whereClauseBuilder.toString();

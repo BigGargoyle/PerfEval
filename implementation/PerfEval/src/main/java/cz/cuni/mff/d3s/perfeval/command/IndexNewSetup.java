@@ -43,6 +43,9 @@ public class IndexNewSetup implements CommandSetup {
             throw new DatabaseException("Source directory is null. --path argument is missing or empty", ExitCode.invalidArguments);
         }
         Path sourceDir = Path.of(path);
+        if(!sourceDir.toFile().exists() && !sourceDir.toFile().isFile()) {
+            throw new DatabaseException("Source file does not exist.", ExitCode.invalidArguments);
+        }
         Path userDir = Path.of(System.getProperty("user.dir"));
         Path gitFilePath = config.hasGitFilePresence() ? userDir.resolve(GIT_FILE_NAME) : null;
         Database database = constructDatabase(userDir.resolve(PERFEVAL_DIR));

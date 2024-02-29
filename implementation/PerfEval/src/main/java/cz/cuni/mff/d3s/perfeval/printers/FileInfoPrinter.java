@@ -53,7 +53,7 @@ public class FileInfoPrinter {
 
         String[][] data = new String[results.length][COLUMN_COUNT];
         for (int i = 0; i < results.length; i++) {
-            data[i][PATH_COLUMN_INDEX] = Path.of(results[i].path()).normalize().toString();
+            data[i][PATH_COLUMN_INDEX] = Path.of(System.getProperty("user.dir")).relativize(Path.of(results[i].path())).normalize().toString();
             data[i][DATE_OF_CREATION_COLUMN_INDEX] = results[i].dateOfCreation().toString();
             data[i][DATE_OF_COMMIT_COLUMN_INDEX] = results[i].version().dateOfCommit().toString();
             data[i][VERSION_COLUMN_INDEX] = results[i].version().commitVersionHash();

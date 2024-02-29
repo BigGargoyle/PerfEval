@@ -103,7 +103,7 @@ public class PerformanceEvaluator {
 
         boolean testVerdict = ((comparisonResult == ComparisonResult.SameDistribution // performance is the same
                 || performanceChange > 0 // performance is better
-                || Math.abs(performanceChange / ONE_HUNDRED) > 1 - tolerance)
+                || Math.abs(performanceChange / ONE_HUNDRED) < tolerance)
                 && comparisonResult!=ComparisonResult.NotEnoughSamples
                 && comparisonResult!=ComparisonResult.Bootstrap); // performance is worse, but within tolerance
 

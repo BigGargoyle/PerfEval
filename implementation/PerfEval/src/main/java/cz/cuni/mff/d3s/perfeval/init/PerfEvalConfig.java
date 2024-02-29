@@ -30,10 +30,6 @@ public final class PerfEvalConfig {
      */
     private static final double DEFAULT_MAX_CI_WIDTH = 0.1;
     /**
-     * Default value for version.
-     */
-    private static final String DEFAULT_VERSION = "UNKNOWN_VERSION";
-    /**
      * Default value for parser.
      */
     private static final MeasurementParser DEFAULT_PARSER = new BenchmarkDotNetJSONParser();
@@ -49,7 +45,7 @@ public final class PerfEvalConfig {
      * @throws PerfEvalInvalidConfigException if default configuration is invalid (it should not happen)
      */
     public static PerfEvalConfig getDefaultConfig() throws PerfEvalInvalidConfigException {
-        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MIN_TEST_COUNT, DEFAULT_MAX_TEST_COUNT, DEFAULT_MAX_CI_WIDTH, DEFAULT_CRIT_VALUE, DEFAULT_VERSION, DEFAULT_PARSER, DEFAULT_TOLERANCE);
+        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MIN_TEST_COUNT, DEFAULT_MAX_TEST_COUNT, DEFAULT_MAX_CI_WIDTH, DEFAULT_CRIT_VALUE, DEFAULT_PARSER, DEFAULT_TOLERANCE);
     }
 
     /**
@@ -59,18 +55,16 @@ public final class PerfEvalConfig {
      * @param maxTestCount    maximal count of test that is possible to do
      * @param maxCIWidth      maximal width of confidence interval
      * @param critValue       critical value for statistical tests
-     * @param version         version of performance tests that will be added
      * @param parser          parser for performance tests result files
      * @param tolerance       tolerance for performance tests
      * @throws PerfEvalInvalidConfigException if configuration is invalid
      */
-    public PerfEvalConfig(boolean gitFilePresence, int minTestCount, int maxTestCount, double maxCIWidth, double critValue, String version, MeasurementParser parser, double tolerance) throws PerfEvalInvalidConfigException {
+    public PerfEvalConfig(boolean gitFilePresence, int minTestCount, int maxTestCount, double maxCIWidth, double critValue, MeasurementParser parser, double tolerance) throws PerfEvalInvalidConfigException {
         this.gitFilePresence = gitFilePresence;
         this.minTestCount = minTestCount;
         this.maxTestCount = maxTestCount;
         this.maxCIWidth = maxCIWidth;
         this.critValue = critValue;
-        this.version = version;
         this.measurementParser = parser;
         this.tolerance = tolerance;
         if (critValue <= 0 || critValue >= 1) {
@@ -87,9 +81,6 @@ public final class PerfEvalConfig {
         }
         if (maxCIWidth <= 0 || maxCIWidth >= 1) {
             throw new PerfEvalInvalidConfigException("Maximal width of confidence interval must be in (0, 1).");
-        }
-        if (version == null) {
-            throw new PerfEvalInvalidConfigException("Version must be set.");
         }
         if (measurementParser == null) {
             throw new PerfEvalInvalidConfigException("Parser must be set.");
@@ -119,10 +110,6 @@ public final class PerfEvalConfig {
      * Critical value for statistical tests.
      */
     private final double critValue;
-    /**
-     * Version of performance tests that will be added.
-     */
-    private final String version;
     /**
      * Parser for performance tests result files.
      * It is not final because it can be set later (init command).
@@ -167,15 +154,6 @@ public final class PerfEvalConfig {
      */
     public double getCritValue() {
         return critValue;
-    }
-
-    /**
-     * Getter for version.
-     *
-     * @return version
-     */
-    public String getVersion() {
-        return version;
     }
 
     /**
