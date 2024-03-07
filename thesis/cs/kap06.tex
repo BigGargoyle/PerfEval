@@ -87,8 +87,8 @@ příkaz measure provede měření verze zadané jako první argument a~výslede
 
 \section{Nasazení systému v praxi}
 
-Pro prezentování fungování PerfEvalu s reálnými daty jsem si vybral softwarový projetk crate.
-Tento projekt je dostupný na GitHubu (\cite{crateDB}) a jeho autoři používají k vyhodnocování výkonu framework JMH.
+Pro prezentování fungování PerfEvalu s reálnými daty jsem si vybral softwarový projekt crate  (\cite{crateDB}).
+Tento projekt je dostupný na GitHubu a jeho autoři používají k vyhodnocování výkonu framework JMH.
 Pomocí testů od autorů bylo provedeno měření několika verzí. Byly vybírány zejména verze jejichž
 commit message se zmiňovala o zlepšení výkonu a verze před tímto zlepšením.
 
@@ -117,19 +117,19 @@ U obou verzí došlo měření výkonu. Měření projektu jsou součástí proj
 pouze ke~spuštění JMH testů a~uložení výsledků ve~formátu JSON. Po naměření byly porovnány
 výše uvedené verze.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=1\textwidth]{../img/list-results-crate.png}
     \caption{Obsah databáze systému PerfEval pro projekt crate}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=1\textwidth]{../img/version-comparison-nes.png}
     \caption{Výsledek porovnání mezi commity}
 \end{figure}
 
-Z~výsledků porovnání je vidět, že došlo k~nějakému zlepšení výkonu. I přes to, že
+Z~výsledků porovnání je vidět, že došlo k~nějakému zlepšení výkonu. I~přes to, že
 ve dvou případech došlo ke zlepšení v řádu stovek procent, tak test selhal s~kódem 1.
 Toto selhání je zapříčiněno přísliš malým počtem změřených běhů pro dvě měřené metody.
 Jedná se o~metodu benchmarkRuntimeMethod a~o~metodu benchmarkMemoryMXBeanMethod.
@@ -139,19 +139,19 @@ výsledky měření budou simulovány tak, že se již přidané soubory s výsl
 Toto vícenásobné přidání se projeví v databázi PerfEvalu obsahující informace o~výsledcích měření tak,
 že se zde stejný řádek bude vyskytovat vícekrát.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=1\textwidth]{../img/list-results-crate2.png}
     \caption{Obsah databáze systému PerfEval pro projekt crate se simulovanými záznamy}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=1\textwidth]{../img/version-comparison-es.png}
     \caption{Výsledek porovnání po simulování měření}
 \end{figure}
 
-Výstup programu s nasimulovanými výsledky měření ukazuje, že výsledky není možné
+Výstup programu s~nasimulovanými výsledky měření ukazuje, že výsledky není možné
 doměřit. V~konfiguračním souboru je maximální počet měření, který lze provést shora omezen číslem 100.
 Pokud tedy PerfEval odhadl, že by bylo zapotřebí více než 100 měření, tak selže (exit kód 1).
 PerfEval tedy není schopen v~tomto případě sám o~sobě rozhodnout jestli se nová verze nezhoršila.

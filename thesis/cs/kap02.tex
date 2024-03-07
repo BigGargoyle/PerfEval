@@ -84,7 +84,7 @@ Ve výstupním souboru měření pomocí JMH lze nalézt informace o~stroji na~k
 Jedná se především o~název stroje a~verzi operačního systému. Dále zde lze nalézt verzi Javy,
 ve~které probíhalo měření. V~souboru je možné vidět také ostatní parametry měření, jako je
 zahřívací doba a~počet zahřívacích iterací. Zahřívací iterace jsou zde uvedeny, protože Java
-je stejně jako C\# jazyk kompilovaný metodou JIT. Je tedy nutné vástupní data vhodně filtrovat.
+je stejně jako C\# jazyk kompilovaný metodou JIT. Je tedy nutné výstupní data vhodně filtrovat.
 
 Jednotlivé naměřené hodnoty jsou ve výstupním souboru dostupné i~ve~výchozím nastavení JMH.
 Naměřené hodnoty jsou reprezentovány pomocí metriky. V~rámci metriky jsou uloženy informace
@@ -120,12 +120,10 @@ se blíží normálnímu rozdělení. Nezávislost náhodných veličin je dána
 experimentu \cite[]{twosampletests} a její zajištění je mimo doménu řešeného problému. PerfEval
 tedy v případě použití možnosti T-test možnou závislost zanedbává.
 
-TODO: není náhodou lepší místo CLV použít silný zákon velkých čísel
-
 Normalitu náhodných veličin je možné zajistit díky centrální limitní větě (CLV).
 Se zajištěním normality nám pomůže samotná struktura naměřených výsledků. Výsledky měření
 obsahují běhy. Běhy obsahují jednotlivé naměřené hodnoty. Naměřené hodnoty představují
-vzorky náhodné veličiny. Pokud budeme v~rámci T-testu namísto naměřených hodnot uvažovat
+vzorky náhodné veličiny. Pokud se budou v~rámci T-testu namísto naměřených hodnot uvažovat
 průměry jednotlivých běhů, tak se podle CLV bude rozdělení těchto průměrů blížit normálnímu rozdělení.
 
 Dvouvýběrový T-test je dnes běžnou součástí standardních matematických knihoven.
@@ -143,11 +141,11 @@ nulová hypotéza neplatí.
 %% - https://www.youtube.com/watch?v=Xz0x-8-cgaQ
 
 Bootstrap je statistická metoda využívající tzv. resamplování.
-Stejně jako u dvouvýběrového T-testu se předpokládá nezávislost náhodných veličin.
-Podmínka nezávislosti bude v systému zanedbána, protože ji není možné zaručit.
-Bootstrap se jako metoda používá v případě, kdy o náhodných veličinách není možné
+Stejně jako u~dvouvýběrového T-testu se předpokládá nezávislost náhodných veličin.
+Podmínka nezávislosti bude zanedbána, protože ji není možné zaručit.
+Bootstrap se jako metoda používá v~případě, kdy o~náhodných veličinách není možné
 určit téměř žádné silné předpoklady. Díky této vlastnosti je bootstrap pro testování
-hypotéz o výkonu verzí softwaru použit.
+hypotéz o~výkonu verzí softwaru použit.
 
 \begin{algorithm}[h!]
     \caption{Bootstrap1D}
@@ -168,15 +166,6 @@ hypotéz o výkonu verzí softwaru použit.
     
     \Return{samples}\;
 \end{algorithm}
-
-Interval spolehlivosti se z~výstupu výše uvedeného algoritmu určuje velmi snadno.
-Podle percentilového bootstrapu se interval spolehlivosti nalezne tak, že se~vezme $\frac{\alpha}{2}$-tý
-a~$\frac{1-\alpha}{2}$-tý percentil z~resamplovaného souboru. Tyto dvě hodnoty budou představovat hranice intervalu.
-
-Zkoumanou náhodnou veličinou je rozdíl dvou náhodných veličin. Tyto dvě náhodné veličiny jsou dány měřením
-výkonnosti dvou verzí softwaru. Nulová hypotéza, která je vyvracena, tvrdí, že obě veličiny mají stejné rozdělení.
-Pokud tedy interval spolehlivosti neobsahuje nulu, tak můžeme nulovou hypotézu vyvrátit, protože s~pravděpodobností
-$1-\alpha$ neplatí.
 
 \begin{algorithm}[h!]
     \caption{Bootstrap2D}
@@ -199,11 +188,20 @@ $1-\alpha$ neplatí.
     \Return{samples}\;
 \end{algorithm}
 
+Interval spolehlivosti se z~výstupu Bootstrap1D určuje velmi snadno.
+Podle percentilového bootstrapu se interval spolehlivosti nalezne tak, že se~vezme $\frac{\alpha}{2}$-tý
+a~$\frac{1-\alpha}{2}$-tý percentil z~resamplovaného souboru. Tyto dvě hodnoty budou představovat hranice intervalu.
+
+Zkoumanou náhodnou veličinou je rozdíl dvou náhodných veličin. Tyto dvě náhodné veličiny jsou dány měřením
+výkonnosti dvou verzí softwaru. Nulová hypotéza, která je vyvracena, tvrdí, že obě veličiny mají stejné rozdělení.
+Pokud tedy interval spolehlivosti neobsahuje nulu, tak můžeme nulovou hypotézu vyvrátit, protože s~pravděpodobností
+$1-\alpha$ neplatí.
+
 Naměřené vzorky však nejsou prostý statistický soubor. Jedná se o~hierarchický soubor dat.
 Každé jedno měření se skládá z~jednoho, nebo více běhů. Každý běh se skládá z~jednoho, nebo více naměřených údajů.
 Vytváření bootstrapového statistického souboru tedy vypadá trochu odlišně.
 
-Algoritmus výše ukazuje, jak vypadá výběr nového statistického souboru. Vyberou
+Bootstrap2D ukazuje, jak vypadá výběr nového statistického souboru. Vyberou
 se náhodné běhy z~jednotlivých výsledků měření. Z těchto běhů se získá 1D bootstrap.
 Novým prvkem vytvářeného statistického souboru se stane rozdíl středních hodnot těchto bootstrapů.
 
@@ -213,8 +211,8 @@ V~případě nevyvrácení nulové hypotézy nám statistické testy nedávají 
 Nicméně je stále nutné se rozhodnout zda-li nulová hypotéza platí. Je nutné se ale stále
 vyvarovat chybě II. druhu. Proto v tomto případě budeme považovat nulovou hypotézu za platnou,
 pokud bude interval spolehlivosti dostatečně úzký. Pokud má tedy interval spolehlivosti
-dolní mez 1 a horní mez 3, pak je jeho délka 2. Odhadovaný průměr by byl také 2.
-Relativní úzkost intervalu by tedy byl poměr průměru a délky, tedy 1.
+dolní mez $x$ a horní mez $y$, pak je jeho délka $y-x$. Odhadovaný průměr by byl $\frac{x+y}{2}$.
+Relativní úzkost intervalu by tedy byl poměr průměru a délky, tedy $\frac{(x+y)/2}{y-x}$.
 
 V případě většího množství vzorků je možné zužovat interval spolehlivosti. Vztah mezi
 úzkostí a~počtem vzorků odpovídá $O(\frac{1}{\sqrt{n}})$, kde n je počet vzorků. Z~daného

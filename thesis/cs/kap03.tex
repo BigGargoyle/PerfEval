@@ -8,6 +8,22 @@ měření dvou verzí.
 
 \subsection{Průběh vyhodnocování}
 
+Na následujícím obrázku je k~vidění architektura části systému právě kolem třídy EvaluateCLICommand, která zajišťuje
+průběh vyhodnocování testů výkonu.
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[width=0.92\textwidth]{../img/perfeval_evaluate.png}
+        \caption{Objektový návrh časti PerfEvalu pro porovnávání výsledků měření}
+    \end{figure}
+
+Hlavní myšlenka návrhu je tok dat programem. Po~zpracování příkazové řádky dostane instance EvaluateCLICommand informace
+o~soubourech se kterými bude pracovat. Při~konstrukci dostane správné implementace ResultPrinter,
+MeasurementParser a~instanci třídy PerformanceEvaluator se správnou instancí StatisticTest.
+Data plynou programem tak, že se naparsují pomocí implementace třídy MeasurementParser. Naparsované výsledky
+se pomocí statistického testu vyhodnotí mezi sebou. Výsledky porovnání se vypíšou pomocí implementace rozhraní
+ResultPrinter.
+
 Hlavní funkcionalitu pro~vyhodnocování poskytuje třída EvaluateCLICommand. Celý úkol vyhodnocování výkonu
 byl rozdělen do~tří oddělených kroků.
 
@@ -40,22 +56,6 @@ Po~vypsání výsledků požadovaným způspobem dle dodané implementace Result
 že všechny testy dopadly kladně, pak bude exit kód 0. V~případě, že alespoň v~jednom případě došlo ke~zhoršení, pak bude
 exit kód 1. V~případě, že dojde k~nějaké výjimce, tak exit kód bude větší než 100. Touto výjimkou může být například
 neexistence některého ze~souborů s~naměřenými výsledky v~důsledku jeho smazání, nebo přesunutí.
-
-Na následujícím obrázku je k~vidění architektura části systému právě kolem třídy EvaluateCLICommand, která zajišťuje
-průběh vyhodnocování testů výkonu.
-
-    \begin{figure}[h!]
-        \centering
-        \includegraphics[width=0.9\textwidth]{../img/perfeval_evaluate.png}
-        \caption{Objektový návrh časti PerfEvalu pro porovnávání výsledků měření}
-    \end{figure}
-
-Hlavní myšlenka návrhu je tok dat programem. Po~zpracování příkazové řádky dostane instance EvaluateCLICommand informace
-o~soubourech se kterými bude pracovat. Při~konstrukci dostane správné implementace ResultPrinter,
-MeasurementParser a~instanci třídy PerformanceEvaluator se správnou instancí StatisticTest.
-Data plynou programem tak, že se naparsují pomocí implementace třídy MeasurementParser. Naparsované výsledky
-se pomocí statistického testu vyhodnotí mezi sebou. Výsledky porovnání se vypíšou pomocí implementace rozhraní
-ResultPrinter.
 
 \subsection{Inicializace systému PerfEval}
 
@@ -135,7 +135,7 @@ Na druhou stranu použití stávajícího řešení tyto nevýhody nemá. Jedin�
 způsob měření zvládne uložit výsledek do~souboru, který PerfEval umí zpracovat.
 
 Stávající řešení je tedy složitější v tom, že~uživatel musí testování výkonu spouštět sám. Poté, co~spustí testování
-výkonu a~dostane soubor s~výsledky je přidá do databáze výsledků systému PerfEval a~poté spustí PerfEval s~příkazem evaluate
+výkonu a~dostane soubor s~výsledky jej přidá do databáze výsledků systému PerfEval a~poté spustí PerfEval s~příkazem evaluate
 pro porovnání výsledků testování výkonu. Kdyby se použila varianta s~tím, že si PerfEval spouští testy sám, tak
 by uživatel testování a~porovnání výkonu zvládl jedním spuštěním aplikace.
 
@@ -153,7 +153,7 @@ dat, kterým vzorky odpovídají, dochází k~pouhému dosazení hodnot do vzorc
 
 Uživatel by se tedy při volbě testu měl rozhodovat na základě toho kolik má změřených vzorků a~kolik má času na porovnání
 výsledků měření. Pokud má uživatel naměřených vzorků málo a větší množství času k vyhodnocení doporučuje se použít bootstrap.
-Pokud má uživatel větší množství vzorků a~málo času je pro něho lepší použít T-test.
+Pokud má uživatel větší množství vzorků a~málo času je pro něho lepší použít T\-test.
 
 \subsection{Forma ukládání informací o měřeních}
 Systém, který provnává výsledky měření, by měl mít nějaké informace o~tom, k~jaké verzi se měření vztahuje, nebo kde
@@ -172,7 +172,7 @@ Celkově tedy tento způsob poskytuje jednoduché zjištění, kde se výsledek 
 zjistit verzi, protože je nutné projít adresářovou strukturu, což může být při velkém množství dat pomalé.
 
 Druhá zvažovaná varianta byla taková, že by PerfEval znal celý obsah souborů s~výsledky testování. Konkrétně by v~nějakém
-svém adresáři měl uložený celý výstup měření ve~svém vlastním formátu, dooplněné o~vlastní poteřbná metadata. Při~zaznamenání
+svém adresáři měl uložený celý výstup měření ve~svém vlastním formátu, doplněné o~vlastní potřebná metadata. Při~zaznamenání
 nových výsledků by tedy došlo k načtení celého souboru s~výsledky jeho přepracování do~formátu, kterému by PerfEval rozumněl,
 a~znovuuložení do svého adresáře s~výsledky měření.
 
@@ -182,8 +182,7 @@ ale dochází k~prohledávání souborů na~disku jako u~první varianty. Aby by
 by nutné nalézt soubor s~výsledky měření k~této verzi mezi všemi výsledky měření, které systém eviduje. Lze docílit částečného
 zrychlení, pokud by se tento systém ukládánní doplnil o~nějakou variantu cache. Nicméně při testování dvou verzí z~nichž
 jedna není uložena v~cache by došlo k~pomalému prohledávání celé struktury.
-
-Tento způsob tedy Nakonec také nebyl použit, z~důvodu pomalého procházení dat uložených v~pevné paměti.
+Tento způsob tedy nakonec také nebyl použit, z~důvodu pomalého procházení dat uložených v~pevné paměti.
 
 Poslední uvažované řešení je strukturované ukládání metadat o~výsledcích měření. Využije se databáze o~jedné tabulce, kde
 je uvedena cesta k~výsledku měření a~verze ke které byl výsledek změřen. Uživatel do~systému nahlásí, že má nový výsledek
