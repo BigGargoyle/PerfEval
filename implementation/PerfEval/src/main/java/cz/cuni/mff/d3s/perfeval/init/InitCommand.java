@@ -26,11 +26,11 @@ public class InitCommand implements Command {
     /**
      * String representation of key for critical value in ini file.
      */
-    private static final String CRIT_VALUE_KEY = "statistic.critValue";
+    private static final String CRIT_VALUE_KEY = "statistic.falseAlarmProbability";
     /**
      * String representation of key for maximal confidence interval width in ini file.
      */
-    private static final String MAX_CI_WIDTH_KEY = "statistic.maxCIWidth";
+    private static final String MAX_CI_WIDTH_KEY = "statistic.sensitivity";
     /**
      * String representation of key for maximal time on test in ini file.
      */
@@ -40,6 +40,18 @@ public class InitCommand implements Command {
      */
     private static final String MIN_TEST_COUNT_KEY = "statistic.minTestCount";
     /**
+     * String representation of key for tolerance in ini file.
+     */
+    private static final String TOLERANCE_KEY = "statistic.tolerance";
+    /**
+     * String representation of key for high run demands in ini file.
+     */
+    private static final String HIGH_RUN_DEMAND_ALERT_KEY = "alerts.highDemandOfRuns";
+    /**
+     * String representation of key for improved performance in ini file.
+     */
+    private static final String IMPROVED_PERFORMANCE_ALERT_KEY = "alerts.improvedPerformance";
+    /**
      * String representation of key for git presence in ini file.
      */
     private static final String GIT_PRESENCE_KEY = "project.git";
@@ -47,10 +59,6 @@ public class InitCommand implements Command {
      * String representation of key for parser name in ini file.
      */
     private static final String PARSER_NAME_KEY = "project.parserName";
-    /**
-     * String representation of key for tolerance in ini file.
-     */
-    private static final String TOLERANCE_KEY = "statistic.tolerance";
     /**
      * String representation of true in ini file.
      */
@@ -110,6 +118,8 @@ public class InitCommand implements Command {
         String parserName = config.getString(PARSER_NAME_KEY);
         MeasurementParser parser = ParserFactory.getParser(parserName);
         double tolerance = Double.parseDouble(config.getString(TOLERANCE_KEY));
+        boolean highRunDemandsAlert = config.getString(HIGH_RUN_DEMAND_ALERT_KEY).compareTo(TRUE_STRING) == 0;
+        boolean improvedPerformanceAlert = config.getString(IMPROVED_PERFORMANCE_ALERT_KEY).compareTo(TRUE_STRING) == 0;
 
         if(critValue <= 0 || critValue >= 1){
             throw new PerfEvalInvalidConfigException("Critical value must be in (0, 1)");
@@ -130,7 +140,7 @@ public class InitCommand implements Command {
             throw new PerfEvalInvalidConfigException("Tolerance must be in [0, 1]");
         }
 
-        return new PerfEvalConfig(gitPresence, minTestCount, maxTestCount, maxCIWidth, critValue, parser, tolerance);
+        return new PerfEvalConfig(gitPresence, minTestCount, maxTestCount, maxCIWidth, critValue, parser, tolerance, highRunDemandsAlert, improvedPerformanceAlert);
     }
 
     /**
@@ -161,6 +171,8 @@ public class InitCommand implements Command {
         //solve parser name --> method toString()
         config.setProperty(PARSER_NAME_KEY, perfevalConfig.getMeasurementParser().toString());
         config.setProperty(TOLERANCE_KEY, perfevalConfig.getTolerance());
+        config.setProperty(HIGH_RUN_DEMAND_ALERT_KEY, perfevalConfig.isHighRunDemandAlert() ? TRUE_STRING : FALSE_STRING);
+        config.setProperty(IMPROVED_PERFORMANCE_ALERT_KEY, perfevalConfig.isImprovedPerformanceAlert() ? TRUE_STRING : FALSE_STRING);
 
         // Save to the INI file
         FileWriter writer = new FileWriter(iniFilePath.toFile());
@@ -185,14 +197,6 @@ public class InitCommand implements Command {
      */
     final Path iniFilePath;
     /**
-     * Paths to files that should be created.
-     */
-    final Path[] emptyFilesToCreate;
-    /**
-     * Paths to files that should be ignored by git.
-     */
-    final Path[] gitIgnoredFiles;
-    /**
      * Config to be saved to ini file.
      */
     final PerfEvalConfig config;
@@ -203,19 +207,15 @@ public class InitCommand implements Command {
      * @param perfevalDirPath    path to perfeval directory
      * @param gitIgnorePath      path to gitignore file
      * @param iniFilePath        path to ini file
-     * @param emptyFilesToCreate paths to files that should be created
-     * @param gitIgnoredFiles    paths to files that should be ignored by git
      * @param config             config to be saved to ini file
      * @param forceFlag          true if perfeval should be initialized even if it is already initialized in this directory, false otherwise
      */
-    public InitCommand(Path perfevalDirPath, Path gitIgnorePath, Path iniFilePath, Path[] emptyFilesToCreate,
-                       Path[] gitIgnoredFiles, PerfEvalConfig config, boolean forceFlag) {
+    public InitCommand(Path perfevalDirPath, Path gitIgnorePath, Path iniFilePath,
+                       PerfEvalConfig config, boolean forceFlag) {
         this.gitIgnorePath = gitIgnorePath;
         this.iniFilePath = iniFilePath;
-        this.emptyFilesToCreate = emptyFilesToCreate.clone();
         this.config = config;
         this.perfevalDirPath = perfevalDirPath;
-        this.gitIgnoredFiles = gitIgnoredFiles.clone();
         this.forceFlag = forceFlag;
     }
 
@@ -261,37 +261,21 @@ public class InitCommand implements Command {
         } catch (ConfigurationException e) {
             throw new IOException("Config file cannot be created", e);
         }
-        createGitIgnoreFile(this.gitIgnorePath, gitIgnoredFiles);
-        for (Path emptyFile : emptyFilesToCreate) {
-            createEmptyFile(emptyFile);
-        }
-    }
-
-    /**
-     * Creates empty file.
-     *
-     * @param emptyFilePath path to empty file to be created
-     * @throws IOException if empty file cannot be created
-     */
-    private static void createEmptyFile(Path emptyFilePath) throws IOException {
-        if (!emptyFilePath.toFile().createNewFile()) {
-            throw new IOException("File " + emptyFilePath.getFileName() + " was not created");
-        }
+        createGitIgnoreFile(this.gitIgnorePath);
     }
 
     /**
      * Creates gitignore file.
      *
      * @param gitIgnoreFilePath path to gitignore file to be created
-     * @param ignoredFiles      paths to files that should be ignored by git
      * @throws IOException if gitignore file cannot be created
      */
-    private static void createGitIgnoreFile(Path gitIgnoreFilePath, Path[] ignoredFiles) throws IOException {
+    private static void createGitIgnoreFile(Path gitIgnoreFilePath) throws IOException {
         BufferedWriter writer = Files.newBufferedWriter(gitIgnoreFilePath, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-        for (Path ignoredFile : ignoredFiles) {
-            writer.write(ignoredFile.getFileName().toString());
-            writer.newLine();
-        }
+        writer.write("# Ignore perfeval files");
+        writer.newLine();
+        writer.write("*");
+        writer.newLine();
         writer.close();
     }
 

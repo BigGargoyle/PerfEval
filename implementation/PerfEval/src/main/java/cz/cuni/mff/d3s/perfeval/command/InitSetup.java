@@ -11,7 +11,6 @@ import joptsimple.OptionSet;
 import java.nio.file.Path;
 
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.BENCHMARK_PARSER_PARAMETER;
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.DATABASE_FILE_NAME;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.FORCE_FLAG;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.GIT_IGNORE_FILE_NAME;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.INI_FILE_NAME;
@@ -42,11 +41,6 @@ public class InitSetup implements CommandSetup {
         Path perfevalDirPath = userDir.resolve(PERFEVAL_DIR);
         Path gitIgnorePath = perfevalDirPath.resolve(GIT_IGNORE_FILE_NAME);
         Path iniFilePath = perfevalDirPath.resolve(INI_FILE_NAME);
-        Path[] emptyFiles = new Path[]{perfevalDirPath.resolve(DATABASE_FILE_NAME)};
-        Path[] gitIgnoredFiles = new Path[]{
-                iniFilePath,
-                emptyFiles[0]
-        };
         MeasurementParser parser = null;
         if (options.has(BENCHMARK_PARSER_PARAMETER)) {
             parser = ParserFactory.getParser(benchmarkParserOption.value(options));
@@ -68,7 +62,7 @@ public class InitSetup implements CommandSetup {
         }
 
         return new InitCommand(perfevalDirPath, gitIgnorePath, iniFilePath,
-                emptyFiles, gitIgnoredFiles, config, options.has(FORCE_FLAG));
+                config, options.has(FORCE_FLAG));
     }
 
     public static String getCommandName() {

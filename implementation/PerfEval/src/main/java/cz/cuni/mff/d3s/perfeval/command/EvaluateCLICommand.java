@@ -25,7 +25,7 @@ public class EvaluateCLICommand implements Command {
     /**
      * Number of input files for evaluation (two versions of performance tests)
      */
-    static final int TWO = 2;
+    private static final int TWO = 2;
 
     /**
      * Constructor for EvaluateCLICommand
@@ -35,7 +35,10 @@ public class EvaluateCLICommand implements Command {
      * @param performanceEvaluator comparator for performance tests
      * @param parser                parser for performance tests result files
      */
-    public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter, PerformanceEvaluator performanceEvaluator, MeasurementParser parser) throws ParserException {
+    public EvaluateCLICommand(FileWithResultsData[][] inputFiles, ResultPrinter resultPrinter,
+                              PerformanceEvaluator performanceEvaluator, MeasurementParser parser,
+                              boolean HighRunDemandAlert, boolean ImprovedPerformanceAlert
+                              ) throws ParserException {
         this.inputFiles = inputFiles.clone();
         if(inputFiles.length != TWO){
             throw new ParserException("There must be two versions of performance tests for evaluation.");
@@ -46,6 +49,8 @@ public class EvaluateCLICommand implements Command {
         this.resultPrinter = resultPrinter;
         this.performanceEvaluator = performanceEvaluator;
         this.parser = parser;
+        this.HighRunDemandAlert = HighRunDemandAlert;
+        this.ImprovedPerformanceAlert = ImprovedPerformanceAlert;
     }
 
     /**
@@ -53,20 +58,24 @@ public class EvaluateCLICommand implements Command {
      * First dimension is for versions of performance tests
      * Second dimension is for files with results of performance tests of one version
      */
-    FileWithResultsData[][] inputFiles;
+    private final FileWithResultsData[][] inputFiles;
     /**
      * Printer for results
      */
-    ResultPrinter resultPrinter;
+    private final ResultPrinter resultPrinter;
     /**
      * Evaluator for performance tests
      */
-    PerformanceEvaluator performanceEvaluator;
+    private final PerformanceEvaluator performanceEvaluator;
 
     /**
      * Parser for performance tests result files
      */
-    MeasurementParser parser;
+    private final MeasurementParser parser;
+
+    private final boolean HighRunDemandAlert;
+
+    private final boolean ImprovedPerformanceAlert;
 
     /**
      * Executes evaluation of performance tests results
@@ -79,13 +88,33 @@ public class EvaluateCLICommand implements Command {
         try {
             MeasurementComparisonResultCollection comparisonResults = evaluateResults(parser, inputFiles, performanceEvaluator);
             resultPrinter.PrintResults(comparisonResults);
-            for (MeasurementComparisonRecord record : comparisonResults) {
-                if (!record.testVerdict() && record.comparisonResult() != ComparisonResult.Bootstrap) return ExitCode.atLeastOneWorseResult;
-            }
+            return resolveExitCode(comparisonResults);
         } catch (AssertionError | MeasurementPrinterException e) {
             PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.evaluationFailed);
             exception.initCause(e);
             throw exception;
+        }
+    }
+
+    /**
+     * Resolves exit code of evaluation
+     * @param comparisonResults collection of results of performance tests evaluation
+     * @return exit code of evaluation
+     */
+    private ExitCode resolveExitCode(MeasurementComparisonResultCollection comparisonResults) {
+        for (MeasurementComparisonRecord record : comparisonResults) {
+            if (!record.testVerdict() && record.comparisonResult() != ComparisonResult.Bootstrap) return ExitCode.atLeastOneWorseResult;
+            if (HighRunDemandAlert){
+                if(record.comparisonResult() == ComparisonResult.Bootstrap){
+                    return ExitCode.highRunDemand;
+                }
+            }
+            if (ImprovedPerformanceAlert) {
+                // If test passed and the distribution is different, the performance improved
+                if (record.testVerdict() && record.comparisonResult() == ComparisonResult.DifferentDistribution) {
+                    return ExitCode.improvedPerformance;
+                }
+            }
         }
         return ExitCode.OK;
     }
@@ -104,7 +133,6 @@ public class EvaluateCLICommand implements Command {
         List<Samples> newerMeasurements;
         try{
             olderMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[0]).map(FileWithResultsData::path).toArray(String[]::new));
-            //System.out.println("Older measurements parsed");
             newerMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[1]).map(FileWithResultsData::path).toArray(String[]::new));
         }
         catch (MeasurementParserException e){

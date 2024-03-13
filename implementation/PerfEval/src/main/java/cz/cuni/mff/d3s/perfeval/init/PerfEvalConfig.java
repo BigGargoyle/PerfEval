@@ -37,6 +37,14 @@ public final class PerfEvalConfig {
      * Default value for tolerance.
      */
     private static final double DEFAULT_TOLERANCE = 0.05;
+    /**
+     * Default value for highRunDemandsAlert.
+     */
+    private static final boolean DEFAULT_HIGH_RUN_DEMAND_ALERT = false;
+    /**
+     * Default value for improvedPerformanceAlert.
+     */
+    private static final boolean DEFAULT_IMPROVED_PERFORMANCE_ALERT = false;
 
     /**
      * Getter for default configuration.
@@ -45,7 +53,9 @@ public final class PerfEvalConfig {
      * @throws PerfEvalInvalidConfigException if default configuration is invalid (it should not happen)
      */
     public static PerfEvalConfig getDefaultConfig() throws PerfEvalInvalidConfigException {
-        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MIN_TEST_COUNT, DEFAULT_MAX_TEST_COUNT, DEFAULT_MAX_CI_WIDTH, DEFAULT_CRIT_VALUE, DEFAULT_PARSER, DEFAULT_TOLERANCE);
+        return new PerfEvalConfig(DEFAULT_GIT_PRESENCE, DEFAULT_MIN_TEST_COUNT, DEFAULT_MAX_TEST_COUNT,
+                DEFAULT_MAX_CI_WIDTH, DEFAULT_CRIT_VALUE, DEFAULT_PARSER, DEFAULT_TOLERANCE,
+                DEFAULT_HIGH_RUN_DEMAND_ALERT, DEFAULT_IMPROVED_PERFORMANCE_ALERT);
     }
 
     /**
@@ -59,7 +69,9 @@ public final class PerfEvalConfig {
      * @param tolerance       tolerance for performance tests
      * @throws PerfEvalInvalidConfigException if configuration is invalid
      */
-    public PerfEvalConfig(boolean gitFilePresence, int minTestCount, int maxTestCount, double maxCIWidth, double critValue, MeasurementParser parser, double tolerance) throws PerfEvalInvalidConfigException {
+    public PerfEvalConfig(boolean gitFilePresence, int minTestCount, int maxTestCount, double maxCIWidth,
+                          double critValue, MeasurementParser parser, double tolerance, boolean highRunDemandsAlert,
+                          boolean improvedPerformanceAlert) throws PerfEvalInvalidConfigException {
         this.gitFilePresence = gitFilePresence;
         this.minTestCount = minTestCount;
         this.maxTestCount = maxTestCount;
@@ -67,6 +79,8 @@ public final class PerfEvalConfig {
         this.critValue = critValue;
         this.measurementParser = parser;
         this.tolerance = tolerance;
+        this.highRunDemandAlert = highRunDemandsAlert;
+        this.improvedPerformanceAlert = improvedPerformanceAlert;
         if (critValue <= 0 || critValue >= 1) {
             throw new PerfEvalInvalidConfigException("Critical value for statistical tests must be in (0, 1).");
         }
@@ -120,6 +134,8 @@ public final class PerfEvalConfig {
      */
     private final double tolerance;
 
+    private final boolean highRunDemandAlert;
+    private final boolean improvedPerformanceAlert;
     /**
      * Getter for gitFilePresence.
      *
@@ -192,5 +208,13 @@ public final class PerfEvalConfig {
      */
     public int getMinTestCount() {
         return minTestCount;
+    }
+
+    public boolean isHighRunDemandAlert() {
+        return highRunDemandAlert;
+    }
+
+    public boolean isImprovedPerformanceAlert() {
+        return improvedPerformanceAlert;
     }
 }

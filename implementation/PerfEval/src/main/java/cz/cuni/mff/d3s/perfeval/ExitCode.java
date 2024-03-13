@@ -12,6 +12,16 @@ public enum ExitCode {
      * Exit code for unsuccessful execution due to performance get worse.
      */
     atLeastOneWorseResult(1),
+
+    /**
+     * Exit code for unsuccessful execution due to high demand of run.
+     */
+    highRunDemand(2),
+
+    /**
+     * Exit code for unsuccessful execution due to improved performance.
+     */
+    improvedPerformance(3),
     /**
      * Exit code for unsuccessful execution due to invalid arguments.
      */

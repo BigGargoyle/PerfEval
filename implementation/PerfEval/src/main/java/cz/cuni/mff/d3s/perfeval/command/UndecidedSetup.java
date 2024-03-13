@@ -21,7 +21,8 @@ public class UndecidedSetup implements CommandSetup {
         ResultPrinter printer = new UndecidedPrinter(System.out);
         PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getMaxCIWidth(), config.getTolerance(),
                 config.getMinTestCount(), config.getMaxTestCount(), statTest);
-        return new EvaluateCLICommand(inputFiles, printer, evaluator, config.getMeasurementParser());
+        return new EvaluateCLICommand(inputFiles, printer, evaluator, config.getMeasurementParser(),
+                config.isHighRunDemandAlert(), config.isImprovedPerformanceAlert());
     }
 
     public static String getCommandName() {

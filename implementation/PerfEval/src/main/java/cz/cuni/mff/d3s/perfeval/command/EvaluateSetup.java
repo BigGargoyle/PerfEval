@@ -19,6 +19,7 @@ public class EvaluateSetup implements CommandSetup {
      * Name of the command.
      */
     static final String commandName = "evaluate";
+
     @Override
     public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException, ParserException {
 
@@ -28,12 +29,13 @@ public class EvaluateSetup implements CommandSetup {
         StatisticTest statisticTest = SetupUtilities.resolveStatisticTest(options, config);
         PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getMaxCIWidth(),
                 config.getTolerance(), config.getMinTestCount(), config.getMaxTestCount(), statisticTest);
-        return new EvaluateCLICommand(inputFiles, printer, evaluator, config.getMeasurementParser());
-
+        return new EvaluateCLICommand(inputFiles, printer, evaluator, config.getMeasurementParser(),
+                config.isHighRunDemandAlert(), config.isImprovedPerformanceAlert());
     }
 
     /**
      * Returns the name of the command.
+     *
      * @return Name of the command.
      */
     public static String getCommandName() {
