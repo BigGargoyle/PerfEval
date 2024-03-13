@@ -10,6 +10,7 @@ import cz.cuni.mff.d3s.perfeval.init.PerfEvalInvalidConfigException;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -86,6 +87,9 @@ public class Parser {
             throw new ParserException("One of versions has no known measurement results."
                     + System.lineSeparator() + "Assertion error: " + e.getMessage(), e);
         }
-        return null;
+        throw new ParserException("No command found."
+                + System.lineSeparator() + "Available commands are: "
+                + Arrays.toString(commandPerSetup.keySet().stream().sorted().toArray()),
+                ExitCode.invalidArguments);
     }
 }

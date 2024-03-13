@@ -82,6 +82,7 @@ public class JMHJSONParser implements MeasurementParser {
      * @return File object
      */
     private File mapFileFromString(String fileName) {
+        //System.out.println(fileName);
         return new File(fileName);
     }
 

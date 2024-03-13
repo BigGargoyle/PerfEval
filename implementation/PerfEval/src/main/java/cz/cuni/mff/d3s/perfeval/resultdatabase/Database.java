@@ -91,4 +91,6 @@ public interface Database {
     ProjectVersion findClosestVersionToDate(Date date) throws DatabaseException;
 
     FileWithResultsData[] getAllResults() throws DatabaseException;
+
+    Date getDateOfVersionHash(String versionHash) throws DatabaseException;
 }

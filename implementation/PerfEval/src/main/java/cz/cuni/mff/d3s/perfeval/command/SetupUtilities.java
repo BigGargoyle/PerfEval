@@ -124,7 +124,8 @@ public class SetupUtilities {
 
     /**
      * Comparator that does not change the order of elements.
-     * @param <T>   Type of the elements.
+     *
+     * @param <T> Type of the elements.
      */
     static class DefaultComparator<T> implements Comparator<T> {
         @Override
@@ -181,8 +182,9 @@ public class SetupUtilities {
     /**
      * Resolves version of the software. Based on the git file, command line
      * options and config file.
-     * @param gitFilePath  Path to the git file.
-     * @param options  Command line options.
+     *
+     * @param gitFilePath Path to the git file.
+     * @param options     Command line options.
      * @return Version of the software.
      * @throws IOException If there is an error with the git file.
      */
@@ -207,9 +209,10 @@ public class SetupUtilities {
     /**
      * Resolves tag of the software. Based on the git file, command line
      * options and config file.
-     * @param gitFilePath  Path to the git file.
-     * @param options  Command line options.
-     * @param version  Version of the software.
+     *
+     * @param gitFilePath Path to the git file.
+     * @param options     Command line options.
+     * @param version     Version of the software.
      * @return Tag of the software.
      * @throws IOException If there is an error with the git file.
      */
@@ -229,26 +232,38 @@ public class SetupUtilities {
 
     /**
      * Resolves date of the last update of software. Based on the git file.
-     * @param gitFilePath  Path to the git file.
-     * @param versionHash  Version of the software.
+     *
+     * @param gitFilePath Path to the git file.
+     * @param versionHash Version of the software.
      * @return Date of the software.
      * @throws IOException If there is an error with the git file.
      */
     static Date resolveDate(Path gitFilePath, String versionHash) throws IOException {
         if (gitFilePath == null) {
-            return null;
+            //TODO: code duplication 1
+            try {
+                Database database = constructDatabase(Path.of(System.getProperty("user.dir")).resolve(PERFEVAL_DIR));
+                return database.getDateOfVersionHash(versionHash);
+            } catch (DatabaseException e) {
+                return Date.from(Instant.now());
+            }
         }
         if (GitUtilities.isRepoClean(gitFilePath.getParent())) {
             return GitUtilities.getCommitDate(gitFilePath.getParent(), versionHash);
         }
-
-        //System.err.println("Date cannot be resolved");
-        return Date.from(Instant.now());
+        // TODO: code duplication 2
+        try {
+            Database database = constructDatabase(Path.of(System.getProperty("user.dir")).resolve(PERFEVAL_DIR));
+            return database.getDateOfVersionHash(versionHash);
+        } catch (DatabaseException e) {
+            return Date.from(Instant.now());
+        }
     }
 
     /**
      * Resolves printer for printing results. Based on the command line options.
-     * @param options  Command line options.
+     *
+     * @param options Command line options.
      * @return Printer for the evaluate command.
      * @throws ParserException If there is an error with parsing the command line arguments.
      */
@@ -264,8 +279,8 @@ public class SetupUtilities {
         }
         PrintStream printStream = System.out;
         if (options.has(HTML_OUTPUT_FLAG)) {
-            if(options.has(htmlTemplateOption)) {
-                if(options.valueOf(htmlTemplateOption).charAt(0) == '/') {
+            if (options.has(htmlTemplateOption)) {
+                if (options.valueOf(htmlTemplateOption).charAt(0) == '/') {
                     return new HTMLPrinter(printStream, filter, perfevalDir, Path.of(options.valueOf(htmlTemplateOption)));
                 }
                 return new HTMLPrinter(printStream, filter, perfevalDir, Path.of(System.getProperty("user.dir")).resolve(options.valueOf(htmlTemplateOption)).normalize());
@@ -303,61 +318,39 @@ public class SetupUtilities {
         } else if (newVersionSet) {
             ProjectVersion newVersion = new ProjectVersion(null, options.valueOf(newVersionOption), options.valueOf(newTagOption));
             newFiles = database.getResultsOfVersion(newVersion);
-            ProjectVersion[] versions = database.getLastNVersions(1);
-            if(versions.length < 1) {
-                throw new DatabaseException("There are not enough versions in the database.", ExitCode.databaseError);
-            }
-            oldFiles = database.getResultsOfVersion(versions[0]);
+            ProjectVersion oldVersion = database.findOlderNeighbourVersion(newVersion);
+            oldFiles = database.getResultsOfVersion(oldVersion);
         } else if (oldVersionSet) {
             ProjectVersion oldVersion = new ProjectVersion(null, options.valueOf(oldVersionOption), options.valueOf(oldTagOption));
             oldFiles = database.getResultsOfVersion(oldVersion);
-            ProjectVersion[] versions = database.getLastNVersions(1);
-            if(versions.length < 1) {
-                throw new DatabaseException("There are not enough versions in the database.", ExitCode.databaseError);
-            }
-            newFiles = database.getResultsOfVersion(versions[0]);
+            ProjectVersion newVersion = database.findNewerNeighbourVersion(oldVersion);
+            newFiles = database.getResultsOfVersion(newVersion);
         } else {
             ProjectVersion[] versions = database.getLastNVersions(2);
-            if(versions.length < 2) {
+            if (versions.length < 2) {
                 throw new DatabaseException("There are not enough versions in the database.", ExitCode.databaseError);
             }
             newFiles = database.getResultsOfVersion(versions[0]);
             oldFiles = database.getResultsOfVersion(versions[1]);
         }
-
-        //fields that are null will not be used in WHERE clause of SQL query
-        /*ProjectVersion newVersion = options.has(newVersionOption) ? new ProjectVersion(null, options.valueOf(newVersionOption), null) : null;
-        ProjectVersion oldVersion = options.has(oldVersionOption) ? new ProjectVersion(null, options.valueOf(oldVersionOption), null) : null;
-        if (newVersion == null && oldVersion == null) {
-            ProjectVersion[] versions = database.getLastNVersions(2);
-            //assert versions.length == 2;
-            if(versions.length < 2) {
-                throw new DatabaseException("There are not enough versions in the database.", ExitCode.databaseError);
-            }
-            newVersion = versions[0];
-            oldVersion = versions[1];
-        }
-        if (newVersion == null) {
-            newVersion = database.getLastNVersions(1)[0];
-        }
-        FileWithResultsData[] newFiles = database.getResultsOfVersion(newVersion);
-        FileWithResultsData[] oldFiles = database.getResultsOfVersion(oldVersion);
-        assert newFiles.length > 0 && oldFiles.length > 0;*/
+        // System.out.println(oldFiles[0].version());
+        // System.out.println(newFiles[0].version());
         return new FileWithResultsData[][]{oldFiles, newFiles};
     }
 
     /**
      * Resolves statistic test. Based on the command line options.
+     *
      * @param options Command line options.
-     * @param config Configuration of the program.
+     * @param config  Configuration of the program.
      * @return Statistic test.
      */
     static StatisticTest resolveStatisticTest(OptionSet options, PerfEvalConfig config) {
         return options.has(TTEST_FLAG)
                 ? new ParametricTest(config.getCritValue())
                 : options.has(bootstrapSampleCountOption)
-                        ? new NonparametricTest(config.getCritValue(), options.valueOf(bootstrapSampleCountOption))
-                        : new NonparametricTest(config.getCritValue());
+                ? new NonparametricTest(config.getCritValue(), options.valueOf(bootstrapSampleCountOption))
+                : new NonparametricTest(config.getCritValue());
     }
 
     /**
@@ -414,6 +407,7 @@ public class SetupUtilities {
 
     /**
      * Creates parser for parsing command line arguments.
+     *
      * @return Parser for parsing command line arguments.
      */
     public static OptionParser createParser() {
@@ -481,7 +475,8 @@ public class SetupUtilities {
 
     /**
      * Creates database connection to the database file.
-     * @param perfevalDir  Path to the directory containing the database file.
+     *
+     * @param perfevalDir Path to the directory containing the database file.
      * @return Database from the database file.
      * @throws DatabaseException If there is an error with the database.
      */

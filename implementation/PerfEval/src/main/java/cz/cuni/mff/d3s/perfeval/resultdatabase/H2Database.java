@@ -100,7 +100,7 @@ public class H2Database implements Database {
     public ProjectVersion[] getLastNVersions(int n) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
             //db query for getting info about newest N versions
-            String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata ORDER BY dateOfCommit DESC LIMIT ?";
+            String query = "SELECT DISTINCT version, dateOfCommit, tag FROM ResultMetadata ORDER BY dateOfCommit DESC LIMIT ?";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, n);
@@ -176,7 +176,6 @@ public class H2Database implements Database {
             }
             String whereClause = generatePatternWhereClause(version);
             String query = "SELECT path, dateOfCreation, tag, dateOfCommit FROM ResultMetadata " + whereClause;
-
             try (PreparedStatement preparedStatement = generateStatementFromVersionPatternQuery(connection, query, version)) {
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -225,7 +224,6 @@ public class H2Database implements Database {
             //tag is case-insensitive
             whereClauseBuilder.append("tag ~* ?");
         }
-
         return whereClauseBuilder.toString();
     }
 
@@ -276,7 +274,6 @@ public class H2Database implements Database {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            //System.out.println("Error adding file to the database: " + e.getMessage());
             throw new DatabaseException("Error adding file to the database: " + e.getMessage(), ExitCode.databaseError);
         } catch (IOException e) {
             throw new DatabaseException("File does not exists: " + filePath.toString(), ExitCode.databaseError);
@@ -339,7 +336,7 @@ public class H2Database implements Database {
                 }
             }
             // If no older neighbor version is found, return null
-            return null;
+            throw new DatabaseException("No older neighbor version found of version "+version.commitVersionHash(), ExitCode.databaseError);
         } catch (SQLException e) {
             throw new DatabaseException("Error finding older neighbor version: " + e.getMessage(), e, ExitCode.databaseError);
         }
@@ -371,7 +368,7 @@ public class H2Database implements Database {
                 }
             }
             // If no newer neighbor version is found, return null
-            return null;
+            throw new DatabaseException("No newer neighbor version found of version "+version.commitVersionHash(), ExitCode.databaseError);
         } catch (SQLException e) {
             throw new DatabaseException("Error finding newer neighbor version: " + e.getMessage(), e, ExitCode.databaseError);
         }
@@ -522,6 +519,24 @@ public class H2Database implements Database {
                         results.add(resultData);
                     }
                     return results.toArray(new FileWithResultsData[0]);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Error retrieving all results: " + e.getMessage(), e, ExitCode.databaseError);
+        }
+    }
+
+    @Override
+    public Date getDateOfVersionHash(String versionHash) throws DatabaseException {
+        try(Connection connection = dataSource.getConnection()){
+            String query = "SELECT dateOfCommit FROM ResultMetadata WHERE version = ?";
+            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+                preparedStatement.setString(1, versionHash);
+                try(ResultSet resultSet = preparedStatement.executeQuery()){
+                    if (resultSet.next()){
+                        return resultSet.getTimestamp(1);
+                    }
+                    throw new DatabaseException("Error unknown version.", ExitCode.OK);
                 }
             }
         } catch (SQLException e) {

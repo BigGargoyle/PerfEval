@@ -1,6 +1,7 @@
 package cz.cuni.mff.d3s.perfeval.command;
 
 import cz.cuni.mff.d3s.perfeval.ExitCode;
+import cz.cuni.mff.d3s.perfeval.evaluation.ComparisonResult;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParserException;
 import cz.cuni.mff.d3s.perfeval.printers.MeasurementPrinterException;
 import cz.cuni.mff.d3s.perfeval.measurementfactory.MeasurementParser;
@@ -12,9 +13,10 @@ import cz.cuni.mff.d3s.perfeval.printers.MeasurementComparisonRecord;
 import cz.cuni.mff.d3s.perfeval.Samples;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalCommandFailedException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.IntStream;
 
 /**
  * Command for evaluating results of performance tests
@@ -75,10 +77,10 @@ public class EvaluateCLICommand implements Command {
     @Override
     public ExitCode execute() throws PerfEvalCommandFailedException {
         try {
-                MeasurementComparisonResultCollection comparisonResults = evaluateResults(parser, inputFiles, performanceEvaluator);
+            MeasurementComparisonResultCollection comparisonResults = evaluateResults(parser, inputFiles, performanceEvaluator);
             resultPrinter.PrintResults(comparisonResults);
             for (MeasurementComparisonRecord record : comparisonResults) {
-                if (!record.testVerdict()) return ExitCode.atLeastOneWorseResult;
+                if (!record.testVerdict() && record.comparisonResult() != ComparisonResult.Bootstrap) return ExitCode.atLeastOneWorseResult;
             }
         } catch (AssertionError | MeasurementPrinterException e) {
             PerfEvalCommandFailedException exception = new PerfEvalCommandFailedException(ExitCode.evaluationFailed);
@@ -102,6 +104,7 @@ public class EvaluateCLICommand implements Command {
         List<Samples> newerMeasurements;
         try{
             olderMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[0]).map(FileWithResultsData::path).toArray(String[]::new));
+            //System.out.println("Older measurements parsed");
             newerMeasurements = parser.getTestsFromFiles(Arrays.stream(filesWithResultsData[1]).map(FileWithResultsData::path).toArray(String[]::new));
         }
         catch (MeasurementParserException e){
@@ -143,11 +146,24 @@ public class EvaluateCLICommand implements Command {
      * @param performanceEvaluator comparator for performance tests
      * @return list of results of comparison of performance tests
      */
-    private static List<MeasurementComparisonRecord> compareTestsWithStatistic(List<Samples> olderMeasurements, List<Samples> newerMeasurements, PerformanceEvaluator performanceEvaluator) {
-        List<MeasurementComparisonRecord> resultsOfComparison = new ArrayList<>();
+    public static List<MeasurementComparisonRecord> compareTestsWithStatistic(List<Samples> olderMeasurements, List<Samples> newerMeasurements, PerformanceEvaluator performanceEvaluator) {
+        // Create a thread-safe list to hold the results
+        List<MeasurementComparisonRecord> resultsOfComparison = new CopyOnWriteArrayList<>();
+
+        // Use a traditional for loop to iterate over indices
+        /*
         for (int i = 0; i < newerMeasurements.size(); i++) {
-            resultsOfComparison.add(performanceEvaluator.compareSets(olderMeasurements.get(i), newerMeasurements.get(i)));
+            MeasurementComparisonRecord result = performanceEvaluator.compareSets(olderMeasurements.get(i), newerMeasurements.get(i));
+            resultsOfComparison.add(result);
         }
+        */
+
+        // Use IntStream to iterate over indices in parallel
+        IntStream.range(0, newerMeasurements.size()).parallel().forEach(i -> {
+            MeasurementComparisonRecord result = performanceEvaluator.compareSets(olderMeasurements.get(i), newerMeasurements.get(i));
+            resultsOfComparison.add(result);
+        });
+
         return resultsOfComparison;
     }
 }

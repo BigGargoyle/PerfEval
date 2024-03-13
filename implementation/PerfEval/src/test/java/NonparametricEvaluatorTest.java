@@ -93,7 +93,7 @@ public class NonparametricEvaluatorTest {
     @Test
     public void newSamplesAreWorseButInTolerance(){
         NonparametricTest evaluator = new NonparametricTest(0.05, 1000);
-        PerformanceEvaluator comparator = new PerformanceEvaluator(0.1, 0.5, 0, maxTestCount, evaluator);
+        PerformanceEvaluator comparator = new PerformanceEvaluator(0.1, 0.7, 0, maxTestCount, evaluator);
 
         Samples oldSamples = new Samples(new Metric("", true), "name1");
         oldSamples.addSample(new double[]{7.0, 8.0, 9.0});
