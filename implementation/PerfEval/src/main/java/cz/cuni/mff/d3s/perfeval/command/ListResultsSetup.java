@@ -5,8 +5,6 @@ import cz.cuni.mff.d3s.perfeval.resultdatabase.Database;
 import cz.cuni.mff.d3s.perfeval.resultdatabase.DatabaseException;
 import joptsimple.OptionSet;
 
-import java.nio.file.Path;
-
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.PERFEVAL_DIR;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.USER_DIR;
 
