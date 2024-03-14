@@ -2,8 +2,10 @@ package cz.cuni.mff.d3s.perfeval.command;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 
@@ -16,6 +18,15 @@ import java.util.Date;
  * Class containing utilities for working with git.
  */
 public class GitUtilities {
+
+    /**
+     * Name of the git file.
+     */
+    private static final String GIT_FILE_NAME = ".git";
+    /**
+     * Prefix for tags.
+     */
+    private static final String TAGS_PREFIX = "refs/tags/";
 
     /**
      * Checks if the repository is clean.
@@ -42,10 +53,10 @@ public class GitUtilities {
      * @throws IOException If the repository is not found.
      */
     public static RevCommit getLastCommit(Path pathToRepo) throws IOException {
+        pathToRepo = pathToRepo.resolve(GIT_FILE_NAME);
         try (Git git = Git.open(new File(pathToRepo.toString()))) {
             Ref head = git.getRepository().exactRef("HEAD");
             ObjectId objectId = head.getObjectId();
-
             if (objectId == null) {
                 return null;
             }
@@ -65,22 +76,28 @@ public class GitUtilities {
      * @throws IOException If the repository is not found.
      */
     public static String getLastCommitTag(Path pathToRepo, String version) throws IOException {
+        pathToRepo = pathToRepo.resolve(GIT_FILE_NAME);
         try (Git git = Git.open(new File(pathToRepo.toString()))) {
-            ObjectId objectId = git.getRepository().resolve(version);
-
-            if (objectId == null) {
-                return null;
+            Repository repository = git.getRepository();
+            ObjectId commitId = repository.resolve(version);
+            if (commitId == null) {
+                return ""; // Commit not found
             }
 
-            Ref tagRef = git.getRepository().getRefDatabase().peel(git.getRepository().getRefDatabase().findRef(objectId.getName()));
-            if (tagRef != null) {
-                return tagRef.getName();
-            } else {
-                return "";
+            // Get all refs (tags and branches)
+            Iterable<Ref> refs = git.tagList().call();
+            for (Ref ref : refs) {
+                ObjectId objectId = ref.getObjectId();
+                if (objectId.equals(commitId)) {
+                    return ref.getName().replace(TAGS_PREFIX, "");
+                }
             }
 
-        } catch (Exception e) {
-            throw new IOException("No git file founded.", e);
+            return ""; // No tag found for the commit
+        } catch (IOException e) {
+            throw new IOException("No git file found.", e);
+        } catch (GitAPIException e) {
+            throw new IOException("Error while getting tags.", e);
         }
     }
 
@@ -92,6 +109,7 @@ public class GitUtilities {
      * @return Date of the commit.
      */
     public static Date getCommitDate(Path pathToRepo, String commitHash) {
+        pathToRepo = pathToRepo.resolve(GIT_FILE_NAME);
         try (Git git = Git.open(new File(pathToRepo.toString()))) {
             ObjectId objectId = git.getRepository().resolve(commitHash);
 
@@ -103,29 +121,6 @@ public class GitUtilities {
             return commit.getAuthorIdent().getWhen();
 
         } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static String getLastGitCommitHash(Path gitFilePath) {
-        try {
-            //try-with-resources does not work here
-            Git git = Git.open(new File(gitFilePath.toString()));
-            ObjectId objectId = git.getRepository().resolve("HEAD");
-
-            if (objectId == null) {
-                return null;
-            }
-
-            RevWalk revWalk = new RevWalk(git.getRepository());
-            RevCommit commit = revWalk.parseCommit(objectId);
-            ObjectId commitId = commit.getId();
-            String hash = commitId.getName();
-            revWalk.dispose();
-            git.close();
-            return hash;
-
-        } catch (IOException e) {
             return null;
         }
     }

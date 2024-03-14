@@ -54,7 +54,6 @@ public class IndexNewSetup implements CommandSetup {
             String version = resolveVersion(gitFilePath, options);
             String tag = resolveTag(gitFilePath, options, version);
             Date date = resolveDate(gitFilePath, version);
-
             ProjectVersion projectVersion = new ProjectVersion(date, version, tag);
 
             assert version != null && tag != null;

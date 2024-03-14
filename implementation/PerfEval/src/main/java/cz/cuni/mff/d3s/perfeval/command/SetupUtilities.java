@@ -222,9 +222,7 @@ public class SetupUtilities {
         }
         if (gitFilePath != null) {
             if (GitUtilities.isRepoClean(gitFilePath.getParent())) {
-                String lastCommitTag = GitUtilities.getLastCommitTag(gitFilePath.getParent(), version);
-                assert lastCommitTag != null;
-                return lastCommitTag;
+                return GitUtilities.getLastCommitTag(gitFilePath.getParent(), version);
             }
         }
         return EMPTY_STRING;
@@ -240,18 +238,20 @@ public class SetupUtilities {
      */
     static Date resolveDate(Path gitFilePath, String versionHash) throws IOException {
         if (gitFilePath == null) {
-            //TODO: code duplication 1
-            try {
-                Database database = constructDatabase(Path.of(System.getProperty("user.dir")).resolve(PERFEVAL_DIR));
-                return database.getDateOfVersionHash(versionHash);
-            } catch (DatabaseException e) {
-                return Date.from(Instant.now());
-            }
+            return getDateFromDatabase(versionHash);
         }
         if (GitUtilities.isRepoClean(gitFilePath.getParent())) {
             return GitUtilities.getCommitDate(gitFilePath.getParent(), versionHash);
         }
-        // TODO: code duplication 2
+        return getDateFromDatabase(versionHash);
+    }
+
+    /**
+     * Resolves date of the last update of software. Based on the Perfeval database.
+     * @param versionHash Version of the software.
+     * @return Date of the software version that is in the database or current date.
+     */
+    private static Date getDateFromDatabase(String versionHash) {
         try {
             Database database = constructDatabase(Path.of(System.getProperty("user.dir")).resolve(PERFEVAL_DIR));
             return database.getDateOfVersionHash(versionHash);
