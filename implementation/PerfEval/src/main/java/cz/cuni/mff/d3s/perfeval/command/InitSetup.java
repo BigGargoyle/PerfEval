@@ -10,12 +10,7 @@ import joptsimple.OptionSet;
 
 import java.nio.file.Path;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.BENCHMARK_PARSER_PARAMETER;
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.FORCE_FLAG;
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.GIT_IGNORE_FILE_NAME;
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.INI_FILE_NAME;
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.PERFEVAL_DIR;
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.benchmarkParserOption;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
 
 /**
  * Command for initializing a new PerfEval system instance.
@@ -37,8 +32,7 @@ public class InitSetup implements CommandSetup {
      */
     @Override
     public Command setup(OptionSet options, PerfEvalConfig config) throws ParserException {
-        Path userDir = Path.of(System.getProperty("user.dir"));
-        Path perfevalDirPath = userDir.resolve(PERFEVAL_DIR);
+        Path perfevalDirPath = USER_DIR.resolve(PERFEVAL_DIR);
         Path gitIgnorePath = perfevalDirPath.resolve(GIT_IGNORE_FILE_NAME);
         Path iniFilePath = perfevalDirPath.resolve(INI_FILE_NAME);
         MeasurementParser parser = null;
