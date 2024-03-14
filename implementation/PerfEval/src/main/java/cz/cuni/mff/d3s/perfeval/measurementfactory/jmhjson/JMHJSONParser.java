@@ -29,6 +29,7 @@ public class JMHJSONParser implements MeasurementParser {
 
     /**
      * Possible units of metric when measuring time.
+     * Field just for information purposes.
      */
     static final String[] timeScoreUnits = new String[]{"ns/op", "us/op", "ms/op", "s/op"};
     /**

@@ -11,7 +11,14 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 
-import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.*;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.GIT_FILE_NAME;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.PERFEVAL_DIR;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.USER_DIR;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.constructDatabase;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.pathOption;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveDate;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveTag;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.resolveVersion;
 
 /**
  * Command for adding all files from a directory to the database.

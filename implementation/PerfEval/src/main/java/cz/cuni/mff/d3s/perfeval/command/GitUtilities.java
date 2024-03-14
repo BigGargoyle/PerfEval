@@ -53,8 +53,8 @@ public class GitUtilities {
      * @throws IOException If the repository is not found.
      */
     public static RevCommit getLastCommit(Path pathToRepo) throws IOException {
-        pathToRepo = pathToRepo.resolve(GIT_FILE_NAME);
-        try (Git git = Git.open(new File(pathToRepo.toString()))) {
+        Path pathToGitFile = pathToRepo.resolve(GIT_FILE_NAME);
+        try (Git git = Git.open(new File(pathToGitFile.toString()))) {
             Ref head = git.getRepository().exactRef("HEAD");
             ObjectId objectId = head.getObjectId();
             if (objectId == null) {
@@ -76,8 +76,8 @@ public class GitUtilities {
      * @throws IOException If the repository is not found.
      */
     public static String getLastCommitTag(Path pathToRepo, String version) throws IOException {
-        pathToRepo = pathToRepo.resolve(GIT_FILE_NAME);
-        try (Git git = Git.open(new File(pathToRepo.toString()))) {
+        Path pathToGitFile = pathToRepo.resolve(GIT_FILE_NAME);
+        try (Git git = Git.open(new File(pathToGitFile.toString()))) {
             Repository repository = git.getRepository();
             ObjectId commitId = repository.resolve(version);
             if (commitId == null) {
@@ -109,8 +109,8 @@ public class GitUtilities {
      * @return Date of the commit.
      */
     public static Date getCommitDate(Path pathToRepo, String commitHash) {
-        pathToRepo = pathToRepo.resolve(GIT_FILE_NAME);
-        try (Git git = Git.open(new File(pathToRepo.toString()))) {
+        Path pathToGitFile = pathToRepo.resolve(GIT_FILE_NAME);
+        try (Git git = Git.open(new File(pathToGitFile.toString()))) {
             ObjectId objectId = git.getRepository().resolve(commitHash);
 
             if (objectId == null) {
