@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.USER_DIR;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.GIT_FILE_NAME;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.PERFEVAL_DIR;
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.constructDatabase;
@@ -46,9 +47,8 @@ public class IndexNewSetup implements CommandSetup {
         if(!sourceDir.toFile().exists() && !sourceDir.toFile().isFile()) {
             throw new DatabaseException("Source file does not exist.", ExitCode.invalidArguments);
         }
-        Path userDir = Path.of(System.getProperty("user.dir"));
-        Path gitFilePath = config.hasGitFilePresence() ? userDir.resolve(GIT_FILE_NAME) : null;
-        Database database = constructDatabase(userDir.resolve(PERFEVAL_DIR));
+        Path gitFilePath = config.hasGitFilePresence() ? USER_DIR.resolve(GIT_FILE_NAME) : null;
+        Database database = constructDatabase(USER_DIR.resolve(PERFEVAL_DIR));
 
         try {
             String version = resolveVersion(gitFilePath, options);

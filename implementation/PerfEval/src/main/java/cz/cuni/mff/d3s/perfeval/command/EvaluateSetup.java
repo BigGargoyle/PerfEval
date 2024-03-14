@@ -10,6 +10,8 @@ import joptsimple.OptionSet;
 
 import java.nio.file.Path;
 
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.USER_DIR;
+
 /**
  * Setup for the evaluate command.
  */
@@ -22,10 +24,8 @@ public class EvaluateSetup implements CommandSetup {
 
     @Override
     public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException, ParserException {
-
         FileWithResultsData[][] inputFiles = SetupUtilities.resolveInputFilesWithRespectToInputtedVersions(options);
-        Path userDir = Path.of(System.getProperty("user.dir"));
-        ResultPrinter printer = SetupUtilities.resolvePrinterForEvaluateCommand(options, userDir.resolve(SetupUtilities.PERFEVAL_DIR));
+        ResultPrinter printer = SetupUtilities.resolvePrinterForEvaluateCommand(options, USER_DIR.resolve(SetupUtilities.PERFEVAL_DIR));
         StatisticTest statisticTest = SetupUtilities.resolveStatisticTest(options, config);
         PerformanceEvaluator evaluator = new PerformanceEvaluator(config.getMaxCIWidth(),
                 config.getTolerance(), config.getMinTestCount(), config.getMaxTestCount(), statisticTest);

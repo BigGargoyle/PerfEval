@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.USER_DIR;
+
 /**
  * Parser for command line arguments.
  */
@@ -60,8 +62,7 @@ public class Parser {
             throw new ParserException("Help printed.", ExitCode.OK);
         }
 
-        Path userDir = Path.of(System.getProperty("user.dir"));
-        Path iniFilePath = userDir.resolve(SetupUtilities.PERFEVAL_DIR).resolve(SetupUtilities.INI_FILE_NAME);
+        Path iniFilePath = USER_DIR.resolve(SetupUtilities.PERFEVAL_DIR).resolve(SetupUtilities.INI_FILE_NAME);
         PerfEvalConfig config;
         try {
             config = InitCommand.getConfig(iniFilePath);

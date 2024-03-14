@@ -8,6 +8,7 @@ import joptsimple.OptionSet;
 import java.nio.file.Path;
 
 import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.PERFEVAL_DIR;
+import static cz.cuni.mff.d3s.perfeval.command.SetupUtilities.USER_DIR;
 
 /**
  * Setup for the list-results command.
@@ -27,7 +28,7 @@ public class ListResultsSetup implements CommandSetup{
 
     @Override
     public Command setup(OptionSet options, PerfEvalConfig config) throws DatabaseException, ParserException {
-        Database database = SetupUtilities.constructDatabase(Path.of(System.getProperty("user.dir")).resolve(PERFEVAL_DIR));
+        Database database = SetupUtilities.constructDatabase(USER_DIR.resolve(PERFEVAL_DIR));
         return new ListResultsCommand(database);
     }
 }

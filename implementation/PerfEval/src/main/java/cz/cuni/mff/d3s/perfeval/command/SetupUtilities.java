@@ -35,6 +35,10 @@ import java.util.Date;
  */
 public class SetupUtilities {
     /**
+     * Path to the user directory.
+     */
+    public static final Path USER_DIR = Path.of(System.getProperty("user.dir"));
+    /**
      * Empty string constant.
      */
     private static final String EMPTY_STRING = "";
@@ -253,7 +257,7 @@ public class SetupUtilities {
      */
     private static Date getDateFromDatabase(String versionHash) {
         try {
-            Database database = constructDatabase(Path.of(System.getProperty("user.dir")).resolve(PERFEVAL_DIR));
+            Database database = constructDatabase(USER_DIR.resolve(PERFEVAL_DIR));
             return database.getDateOfVersionHash(versionHash);
         } catch (DatabaseException e) {
             return Date.from(Instant.now());
@@ -283,7 +287,7 @@ public class SetupUtilities {
                 if (options.valueOf(htmlTemplateOption).charAt(0) == '/') {
                     return new HTMLPrinter(printStream, filter, perfevalDir, Path.of(options.valueOf(htmlTemplateOption)));
                 }
-                return new HTMLPrinter(printStream, filter, perfevalDir, Path.of(System.getProperty("user.dir")).resolve(options.valueOf(htmlTemplateOption)).normalize());
+                return new HTMLPrinter(printStream, filter, perfevalDir, USER_DIR.resolve(options.valueOf(htmlTemplateOption)).normalize());
             }
             return new HTMLPrinter(printStream, filter, perfevalDir);
         }
@@ -301,8 +305,7 @@ public class SetupUtilities {
      * @throws DatabaseException If there is an error with the database.
      */
     static FileWithResultsData[][] resolveInputFilesWithRespectToInputtedVersions(OptionSet options) throws DatabaseException {
-        Path userDir = Path.of(System.getProperty("user.dir"));
-        Database database = constructDatabase(userDir.resolve(PERFEVAL_DIR));
+        Database database = constructDatabase(USER_DIR.resolve(PERFEVAL_DIR));
 
         boolean newVersionSet = options.has(newVersionOption) || options.has(newTagOption);
         boolean oldVersionSet = options.has(oldVersionOption) || options.has(oldTagOption);
