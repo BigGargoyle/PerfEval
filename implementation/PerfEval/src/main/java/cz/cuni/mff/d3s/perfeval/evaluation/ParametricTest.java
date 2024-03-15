@@ -2,6 +2,7 @@ package cz.cuni.mff.d3s.perfeval.evaluation;
 
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class ParametricTest implements StatisticTest {
     double critValue;
@@ -12,6 +13,7 @@ public class ParametricTest implements StatisticTest {
     public double[] calcCIInterval(double[][] sampleSet1, double[][] sampleSet2) {
         double[] samples1 = calcMean(sampleSet1);
         double[] samples2 = calcMean(sampleSet2);
+        /*
         // Calculate degrees of freedom
         if(samples1.length == 1) {
             samples1 = sampleSet1[0];
@@ -53,9 +55,50 @@ public class ParametricTest implements StatisticTest {
 
         // Calculate confidence interval bounds
         double lowerBound = meanDifference - marginOfError;
-        double upperBound = meanDifference + marginOfError;
+        double upperBound = meanDifference + marginOfError;*/
+
+        // Calculate sample statistics
+        DescriptiveStatistics stats1 = new DescriptiveStatistics(samples1);
+        DescriptiveStatistics stats2 = new DescriptiveStatistics(samples2);
+
+        // Sample sizes
+        int n1 = (int) stats1.getN();
+        int n2 = (int) stats2.getN();
+
+        // Sample means
+        double mean1 = stats1.getMean();
+        double mean2 = stats2.getMean();
+
+        // Sample variances
+        double var1 = stats1.getVariance();
+        double var2 = stats2.getVariance();
+
+        // Degrees of freedom
+        double df = welchsDegreesOfFreedom(var1, var2, n1, n2);
+
+        // Significance level (e.g., 95% confidence interval)
+        double alpha = 0.05;
+
+        // Calculate t-critical value
+        TDistribution tDist = new TDistribution(df);
+        double tCritical = tDist.inverseCumulativeProbability(1 - alpha / 2);
+
+        // Calculate margin of error
+        double marginOfError = tCritical * Math.sqrt(var1 / n1 + var2 / n2);
+
+        // Calculate confidence interval bounds
+        double lowerBound = (mean1 - mean2) - marginOfError;
+        double upperBound = (mean1 - mean2) + marginOfError;
+
         return lowerBound <= upperBound ? new double[]{lowerBound, upperBound} : new double[]{upperBound, lowerBound};
         //return new EvaluatorResult(lowerBound, upperBound, Math.abs(pValue) <= critValue);
+    }
+
+    // Degrees of freedom for Welch's t-test
+    private static double welchsDegreesOfFreedom(double var1, double var2, int n1, int n2) {
+        double numerator = Math.pow((var1 / n1 + var2 / n2), 2);
+        double denominator = Math.pow((var1 * var1) / (Math.pow(n1, 2) * (n1 - 1)) + (var2 * var2) / (Math.pow(n2, 2) * (n2 - 1)), 2);
+        return numerator / denominator;
     }
 
     @Override
