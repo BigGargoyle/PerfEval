@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-    <testsuite name="new: ${oldVersion}  old: ${newVersion}" tests="${testCount}" failures="${failureCount}" errors="${errorCount}" skipped="${skipCount}">
+    <testsuite th:attr="name='new: ' + ${oldVersion} + ' old: ' + ${newVersion},
+                             tests=${testCount},
+                             failures=${failureCount},
+                             errors=${errorCount},
+                             skipped=${skipCount}">
         <!-- Thymeleaf loop to generate testcase tags -->
         <th:block th:each="testcase : ${testcases}">
-                <testcase name="${testcase.name}" classname="${testcase.classname}">
-                    <failure message="${testcase.failureMessage}" type="${testcase.failureType}" th:if="${testcase.hasFailure()}">
-                        <text>Performance change: ${testcase.performanceChange}</text>
-                        <text>${testcase.comparisonResultMessage}</text>
-                    </failure>
-                </testcase>
-            </th:block>
+            <testcase th:attr="name=${testcase.name}, classname=${testcase.classname}">
+                <failure th:if="${testcase.hasFailure()}"
+                         th:attr="message=${testcase.failureMessage}, type=${testcase.failureType}">
+                    <text>Performance change: ${testcase.performanceChange}</text>
+                    <text>${testcase.comparisonResultMessage}</text>
+                </failure>
+            </testcase>
         </th:block>
     </testsuite>
 </testsuites>
