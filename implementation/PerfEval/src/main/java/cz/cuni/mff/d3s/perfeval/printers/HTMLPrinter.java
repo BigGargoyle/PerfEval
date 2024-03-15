@@ -147,7 +147,7 @@ public class HTMLPrinter implements ResultPrinter {
             Context context = new Context();
             context.setVariable("oldVersion", resultCollection.getOldVersion());
             context.setVariable("newVersion", resultCollection.getNewVersion());
-            context.setVariable("records", resultCollection.getRecords()); // Assuming a getter method `records()` is available
+            context.setVariable("records", resultCollection.getRecords());
 
             // Process the loaded template with Thymeleaf and return the rendered HTML
             return templateEngine.process(templatePath, context);

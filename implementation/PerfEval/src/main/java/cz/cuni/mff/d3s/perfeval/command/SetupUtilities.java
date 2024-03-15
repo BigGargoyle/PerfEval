@@ -2,11 +2,7 @@ package cz.cuni.mff.d3s.perfeval.command;
 
 import cz.cuni.mff.d3s.perfeval.ExitCode;
 import cz.cuni.mff.d3s.perfeval.Samples;
-import cz.cuni.mff.d3s.perfeval.printers.HTMLPrinter;
-import cz.cuni.mff.d3s.perfeval.printers.JSONPrinter;
-import cz.cuni.mff.d3s.perfeval.printers.MeasurementComparisonRecord;
-import cz.cuni.mff.d3s.perfeval.printers.ResultPrinter;
-import cz.cuni.mff.d3s.perfeval.printers.TablePrinter;
+import cz.cuni.mff.d3s.perfeval.printers.*;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
 import cz.cuni.mff.d3s.perfeval.evaluation.ComparisonResult;
 import cz.cuni.mff.d3s.perfeval.evaluation.NonparametricTest;
@@ -80,6 +76,10 @@ public class SetupUtilities {
      * HTMLPrinter will be used for printing results.
      */
     private static final String HTML_OUTPUT_FLAG = "html-output";
+    /**
+     * JUNITXMLPrinter will be used for printing results.
+     */
+    private static final String JUNIT_XML_OUTPUT_FLAG = "junit-xml-output";
     /**
      * Statistical method of t-Test will be used for evaluation.
      */
@@ -294,6 +294,9 @@ public class SetupUtilities {
         if (options.has(JSON_OUTPUT_FLAG)) {
             return new JSONPrinter(printStream, filter);
         }
+        if (options.has(JUNIT_XML_OUTPUT_FLAG)) {
+            return new JUnitXMLPrinter(printStream, filter);
+        }
         return new TablePrinter(printStream, filter);
     }
 
@@ -470,6 +473,7 @@ public class SetupUtilities {
         // Define flags (options without arguments)
         parser.accepts(JSON_OUTPUT_FLAG, "Enable JSON output");
         parser.accepts(HTML_OUTPUT_FLAG, "Enable HTML output");
+        parser.accepts(JUNIT_XML_OUTPUT_FLAG, "Enable JUnit XML output");
         parser.accepts(FORCE_FLAG, "Force the operation of init");
         parser.accepts(TTEST_FLAG, "Uses t-test instead of bootstrap");
         parser.accepts(HELP_FLAG, "Print help message");
