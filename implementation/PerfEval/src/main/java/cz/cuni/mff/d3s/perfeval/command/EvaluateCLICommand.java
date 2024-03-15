@@ -179,12 +179,12 @@ public class EvaluateCLICommand implements Command {
         List<MeasurementComparisonRecord> resultsOfComparison = new CopyOnWriteArrayList<>();
 
         // Use a traditional for loop to iterate over indices
-        /*
-        for (int i = 0; i < newerMeasurements.size(); i++) {
+
+        /*for (int i = 0; i < newerMeasurements.size(); i++) {
             MeasurementComparisonRecord result = performanceEvaluator.compareSets(olderMeasurements.get(i), newerMeasurements.get(i));
             resultsOfComparison.add(result);
-        }
-        */
+        }*/
+
 
         // Use IntStream to iterate over indices in parallel
         IntStream.range(0, newerMeasurements.size()).parallel().forEach(i -> {
