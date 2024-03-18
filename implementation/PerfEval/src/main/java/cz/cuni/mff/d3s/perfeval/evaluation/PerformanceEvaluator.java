@@ -96,6 +96,7 @@ public class PerformanceEvaluator {
                 if (minSampleCount > maxTestCount) {
                     comparisonResult = ComparisonResult.Bootstrap;
                 } else {
+                    minSampleCount = Math.max(minSampleCount, minTestCount);
                     comparisonResult = ComparisonResult.NotEnoughSamples;
                 }
             }

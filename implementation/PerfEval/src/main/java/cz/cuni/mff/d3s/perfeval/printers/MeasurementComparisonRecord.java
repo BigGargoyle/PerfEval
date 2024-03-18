@@ -34,12 +34,19 @@ public record MeasurementComparisonRecord(
     public String oldAverageToString() {
         return oldSamples.getMetric().circleciValueToString(oldAverage, new double[]{lowerCIBound, upperCIBound});
     }
-
+    private final static int TEN_THOUSAND = 10000;
+    private final static int FIVE = 5;
     public String lowerCIBoundToString() {
+        if(Math.abs(lowerCIBound) > TEN_THOUSAND){
+            return String.format("%." + FIVE + "e", lowerCIBound);
+        }
         return String.format("%+.3f", lowerCIBound);
     }
 
     public String upperCIBoundToString() {
+        if(Math.abs(upperCIBound) > TEN_THOUSAND){
+            return String.format("%." + FIVE + "e", upperCIBound);
+        }
         return String.format("%+.3f", upperCIBound);
     }
 

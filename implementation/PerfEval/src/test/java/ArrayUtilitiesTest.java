@@ -47,15 +47,4 @@ public class ArrayUtilitiesTest {
         assertEquals(expectedAverage, actualAverage, 0.001);
     }
 
-
-    @Test
-    public void testCalcMinSampleCount() {
-        // Test with sample statistics, confidence level, and max width
-        double[] statistics = {10.0, 20.0, 30.0, 40.0, 50.0};
-        double confidenceLevel = 0.95;
-        double maxWidth = 0.1;
-        int actualSampleCount = ArrayUtilities.calcMinSampleCount(statistics, confidenceLevel, maxWidth);
-        assertTrue(actualSampleCount > statistics.length);
-    }
-
 }

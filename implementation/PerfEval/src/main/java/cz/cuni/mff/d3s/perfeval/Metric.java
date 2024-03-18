@@ -40,6 +40,9 @@ public class Metric {
         return String.format(format, value);
     }
 
+
+    private final static int TEN_THOUSAND = 10000;
+    private final static int FIVE = 5;
     public String circleciValueToString(double value, double[] confidenceInterval) {
 
         double diff = confidenceInterval[1] - confidenceInterval[0];
@@ -53,6 +56,9 @@ public class Metric {
         }
 
         String format = "%." + accuracy + "f " + metricType;
+        if(circValue > TEN_THOUSAND) {
+            format = "%." + FIVE + "e " + metricType;
+        }
         return String.format(format, circValue);
     }
 
