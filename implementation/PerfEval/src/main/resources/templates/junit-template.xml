@@ -10,8 +10,8 @@
             <testcase th:attr="name=${testcase.name}, classname=${testcase.classname}">
                 <failure th:if="${testcase.hasFailure()}"
                          th:attr="message=${testcase.failureMessage}, type=${testcase.failureType}">
-                    <text>Performance change: ${testcase.performanceChange}</text>
-                    <text>${testcase.comparisonResultMessage}</text>
+                    <text th:text="'Performance change: ' + ${testcase.performanceChange} + '%'"></text>
+                    <text th:text="${testcase.comparisonResultMessage}"></text>
                 </failure>
             </testcase>
         </th:block>

@@ -7,6 +7,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.List;
 
@@ -142,6 +143,8 @@ public class JUnitXMLPrinter implements ResultPrinter {
                 this.classname = "";
             }
             this.performanceChange = record.performanceChange();
+            DecimalFormat df = new DecimalFormat("0.00");
+            this.performanceChange = Double.parseDouble(df.format(this.performanceChange));
             switch (record.comparisonResult()) {
                 case SameDistribution:
                     this.failureMessage = "";
