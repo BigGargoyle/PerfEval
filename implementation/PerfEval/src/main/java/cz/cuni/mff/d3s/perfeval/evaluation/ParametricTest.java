@@ -77,6 +77,10 @@ public class ParametricTest implements StatisticTest {
         double var1 = stats1.getVariance();
         double var2 = stats2.getVariance();
 
+        if(var1 == 0 && var2 == 0) {
+            return mean1<=mean2 ? new double[]{mean1, mean2} : new double[]{mean2, mean1};
+        }
+
         // Degrees of freedom
         double df = welchsDegreesOfFreedom(var1, var2, n1, n2);
 
