@@ -13,7 +13,6 @@ import java.util.Random;
  * Class for performing hierarchical bootstrap.
  */
 public class HierarchicalBootstrap {
-//TODO: uklidit
     static int DEFAULT_BOOTSTRAP_SAMPLE_COUNT = 1_000;
 
     /**

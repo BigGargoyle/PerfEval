@@ -30,7 +30,7 @@ public class InitCommand implements Command {
     /**
      * String representation of key for maximal confidence interval width in ini file.
      */
-    private static final String MAX_CI_WIDTH_KEY = "statistic.sensitivity";
+    private static final String MAX_CI_WIDTH_KEY = "statistic.accuracy";
     /**
      * String representation of key for maximal time on test in ini file.
      */

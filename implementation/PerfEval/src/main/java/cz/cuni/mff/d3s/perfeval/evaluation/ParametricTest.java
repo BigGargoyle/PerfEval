@@ -102,11 +102,11 @@ public class ParametricTest implements StatisticTest {
     // Degrees of freedom for Welch's t-test
     private static double welchsDegreesOfFreedom(double var1, double var2, int n1, int n2) {
 
-        double sd1 = var1/n1;
-        double sd2 = var2/n2;
+        double varOverN1 = var1/n1;
+        double varOverN2 = var2/n2;
 
-        double numerator = Math.pow(sd1 + sd2, 2);
-        double denominator = sd1/(n1-1) + sd2/(n2-1);
+        double numerator = Math.pow(varOverN1 + varOverN2, 2);
+        double denominator = varOverN1*varOverN1/(n1-1) + varOverN2*varOverN2/(n2-1);
 
         return numerator/denominator;
     }
