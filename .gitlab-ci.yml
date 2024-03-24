@@ -4,23 +4,16 @@ before_script:
   - yum install -y curl zip unzip # Install curl package using yum
   - curl -s "https://get.sdkman.io" | bash
   - source "$HOME/.sdkman/bin/sdkman-init.sh"
-  - sdk install gradle # Install Gradle using SDKMAN
-  - cd implementation
-  - cd PerfEval
 
 stages:
   - build
-  - test
 
 build:
   stage: build
   script:
-    - gradle build # Build the project
-  artifacts:
-    paths:
-      - build/libs/*.jar # Publish the built JAR file as an artifact
-
-test:
-  stage: test
-  script:
-    - gradle test # Run JUnit tests using Gradle
+    - ./measure_old_version.sh > old_measurements.json
+    - ./measure_new_version.sh > new_measurement.json
+    - ./perfeval.sh init --benchmark-parser JMHJSONParser
+    - ./perfeval.sh index-new-result --version 1.0 --path ./old_measurement
+    - ./perfeval.sh index-new-result --version 2.0 --path ./new_measurement
+    - ./perfeval.sh evaluate --t-test --junit-xml-output
