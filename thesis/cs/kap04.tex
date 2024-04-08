@@ -7,20 +7,23 @@ TODO: dodat, až se to bude vědět
 \section{Dostupné příkazy}
 
 Tato část práce se~zabývá jednotlivými příkazy systému PerfEval a jejich parametry.
-V~jednotlivých podkapitolách je vysvětleno k~čemu se daný příkaz používá. V~podkapitolách
+V~jednotlivých podkapitolách je vysvětleno, k~čemu se daný příkaz používá. V~podkapitolách
 se nachází také informace o~volitelných a~povinných parametrech jednotlivých příkazů.
 
 \subsection{Příkaz init}
 
 Příkaz init slouží k~inicializaci systému v~rámci aktuálního pracovního adresáře.
-Systém PerfEval po spuštění hledá v pracovním adresáři složku .performance. Pokud složka
-není nalezena a~nebyl zadán příkaz init, tak končí s~chybou, že systém není inicializovaný.
+Systém PerfEval po~spuštění hledá v~pracovním adresáři složku s~názvem .performance. Pokud složka
+není nalezena a~nebyl zadán příkaz init, končí s~chybou, že systém není inicializovaný.
 
 \subsection*{Povinné argumenty:}
 \begin{itemize}[label=\texttt{\textbf{\textendash}}]
     \item[\texttt{benchmark-parser}] Nastavení parseru, který se bude pro tento projekt používat.
         Jméno parseru je zadávané jako parametr tohoto příznaku.
         Parser se volí podle použitého testovacího frameworku a~výstupního formátu.
+        Jedná se o~jediný paramter konfiguračního souboru, který lze zadat při inicializaci.
+        Důvodem je, že je to jediný konfigurační parametr, jehož hodnotu není možné nastavit nějakým výchozím způsobem.
+        Určuje totiž podobu a~formát vstupních dat, které PerfEval očekává.
 \end{itemize}
 
 \subsection*{Volitelné argumenty:}
@@ -33,7 +36,7 @@ není nalezena a~nebyl zadán příkaz init, tak končí s~chybou, že systém n
 Příkaz index-new-result slouží k~přidání výsledků měření výkonu do~databáze. Databáze
 je pro~každý projekt zvlášť a~je tedy možné na~jednom zařízení systémem PerfEval spravovat více projektů.
 Při přidávání informací o souboru s výsledky je nutné zadat cestu k tomuto souboru.
-Verze ke~které byly výsledky změřeny může být zadaná také, nebo ji systém zkusí odhadnout
+Verze, ke~které byly výsledky změřeny, může být zadaná také, nebo ji systém zkusí určit
 podle git repozitáře.
 
 \subsection*{Povinné argumenty:}
@@ -52,7 +55,7 @@ podle git repozitáře.
 Příkaz index-all-results slouží k~přidání více výsledků měření výkonu do~databáze.
 Při přidávání informací o~souborech s~výsledky je nutné zadat cestu k~adresáři s~těmito výsledky.
 Budou přidány všechny (i~zanořené) soubory v~tomto adresáři.
-Verze ke~které byly výsledky změřeny může být zadaná také, nebo ji systém zkusí odhadnout
+Verze, ke~které byly výsledky změřeny, může být zadaná také, nebo ji systém zkusí odhadnout
 podle git repozitáře.
 
 \subsection*{Povinné argumenty:}
@@ -70,24 +73,25 @@ podle git repozitáře.
 
 Příkaz evaluate porovnává dvě poslední zaznamenané verze, které byly změřeny.
 Verze k~porovnání je možné specifikovat také manuálně pomocí příznaků. Výstupem
-je tabulka, nebo JSON s~výsledky porovnání. V~případě, že alespoň u~jednoho porovnání
+je tabulka nebo JSON s~výsledky porovnání. V~případě, že alespoň u~jednoho porovnání
 došlo ke~zhoršení výkonu, bude selhání signalizováno exit kódem 1.
 
 \subsection*{Volitelné argumenty:}
 \begin{itemize}[label=\texttt{\textbf{\textendash}}]
-    \item[\texttt{new-version}] Parametr udává textovou reprezentaci verze, která se má při porovnání považovat jako novější.
+    \item[\texttt{new-version}] Parametr udává textovou reprezentaci verze, která se má při porovnání považovat za~novější.
     \item[\texttt{new-tag}]     Pouze soubory s~tímto tagem budou použity k~porovnání jako novější.
-    \item[\texttt{old-version}] Parametr udává textovou reprezentaci verze, která se má při porovnání považovat jako starší.
+    \item[\texttt{old-version}] Parametr udává textovou reprezentaci verze, která se má při porovnání považovat za~starší.
     \item[\texttt{old-tag}]     Pouze soubory s~tímto tagem budou použity k~porovnání jako starší.
     \item[\texttt{t-test}]      T-test bude při statistickém porovnání použitý místo bootstrapu.
     \item[\texttt{json-output}] Formát výstupu bude JSON.
-    \item[\texttt{html-output}] Výstup bude ve fromátu HTML stránky.
-    \item[\texttt{html-template}] Při použití příznaku html-output je možné ještě jako argument tohoto příznaku dodat novou HTML šablonu pro vypsání výsledků.
+    \item[\texttt{html-output}] Výstup bude ve formátu HTML stránky.
+    \item[\texttt{html-template}] Při použití příznaku html-output je možné ještě jako argument tohoto příznaku dodat adresu nové HTML šablony pro vypsání výsledků.
+    \item[\texttt{junit-xml-output}] Výstup bude ve formátu JUNIT XML. Tento formát je běžně přijímaný nástrojem Git v~rámci průběžné integrace.
 \end{itemize}
 
 \subsection{Příkaz list-undecided}
 
-Příkaz evaluate porovnává dvě poslední zaznamenané verze, které byly změřeny.
+Příkaz list-undecided porovnává dvě poslední zaznamenané verze, které byly změřeny.
 Verze k~porovnání je možné specifikovat také manuálně pomocí příznaků. Výstupem
 jsou dva sloupce oddělené znakem tabulátoru. V~prvním sloupci je název testovací metody.
 Ve~druhém sloupci je počet měření, které jsou potřeba, aby bylo možné s~dostatečnou
@@ -95,9 +99,9 @@ pravděpodobností říct, že je výkon stejný.
 
 \subsection*{Volitelné argumenty:}
 \begin{itemize}[label=\texttt{\textbf{\textendash}}]
-    \item[\texttt{new-version}] Parametr udává textovou reprezentaci verze, která se má při porovnání považovat jako novější.
+    \item[\texttt{new-version}] Parametr udává textovou reprezentaci verze, která se má při porovnání považovat za~novější.
     \item[\texttt{new-tag}]     Pouze soubory s~tímto tagem budou použity k~porovnání jako novější.
-    \item[\texttt{old-version}] Parametr udává textovou reprezentaci verze, která se má při porovnání považovat jako starší.
+    \item[\texttt{old-version}] Parametr udává textovou reprezentaci verze, která se má při porovnání považovat za~starší.
     \item[\texttt{old-tag}]     Pouze soubory s~tímto tagem budou použity k~porovnání jako starší.
     \item[\texttt{t-test}]      T-test bude při statistickém porovnání použitý místo bootstrapu.
 \end{itemize}
@@ -118,11 +122,13 @@ systému PerfEval.
 
 \subsection*{Hodnoty v konfiguračním souboru}
 \begin{itemize}[label=\texttt{\textbf{\textendash}}]
-    \item[\texttt{critValue}]       Určuje pravděpodobnost chyby I. druhu při testování hypotézy, že výkony verzí jsou stejné.
-    \item[\texttt{maxCIWidth}]      Určuje maximální relativní šířku intervalu spolehlivosti
+    \item[\texttt{falseAlarmProbability}]       Určuje pravděpodobnost chyby I. druhu při testování hypotézy, že výkony verzí jsou stejné.
+    \item[\texttt{accuracy}]      Určuje maximální relativní šířku intervalu spolehlivosti
     \item[\texttt{minTestCount}]    Určuje minimální počet testů (běhů), který bude dodán.
     \item[\texttt{maxTestCount}]    Určuje maximální počet testů (běhů), který je uživatel schopný změřit.
     \item[\texttt{tolerance}]       Určuje maximální pokles výkonu (relativně vůči starší verzi), který nezpůsobí selhání.
-    \item[\texttt{git}]             Určuje jestli projekt podléhá správě verzí pomocí technologie git. Nabývá hodnot TRUE a~FALSE.
+    \item[\texttt{git}]             Určuje, jestli projekt podléhá správě verzí pomocí nástroje git. Nabývá hodnot TRUE a~FALSE.
     \item[\texttt{parserName}]      Jméno parseru, který bude použit při zpracovávání souborů s~výsledky měření.
+    \item[\texttt{highDemandOfRuns}] Určuje, jestli má PerfEval hlásit, že je zapotřebí vyšší počet běhů, než udává maxTestCount. Nabývá hodnot TRUE a~FALSE.
+    \item[\texttt{improvedPerformance}] Určuje, jestli má PerfEval hlásit, že výkon novější verze je lepší.
 \end{itemize}
