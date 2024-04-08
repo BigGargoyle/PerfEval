@@ -5,7 +5,7 @@ pojmenovaná PerfEval. V této kapitole bude krok za krokem ukázáno, jak se sy
 
 \section{Používání systému PerfEval}
 
-V~následujícíh dvou ukázkách bude vysvětleno, jak používat PerfEval. První ukázka bude
+V~následujících dvou ukázkách bude vysvětleno, jak používat PerfEval. První ukázka bude
 cílit na~nastínění, co~nejjednoduššího použití. Druhá část ukáže aplikaci PerfEvalu na~skutečným projektu.
 
 \subsection*{Jednoduché použití PerfEvalu}
@@ -75,7 +75,7 @@ V~této kapitole bude ukázáno, jak systém PerfEval funguje při~svém nasazen
 Pro ukázku byl vybrán projekt Crate \cite{crateDB}. Jedná se~o~databázový projekt
 volně dostupný na platformě GitHub.
 
-Projekt Crate byl vybrán, protože je volně dostupný, a~protože má naimplementované výkonnostní testy.
+Projekt Crate byl vybrán, protože je volně dostupný, a~protože má implementované výkonnostní testy.
 Tyto testy je možné spouštět samostatně přímo z~adresáře projektu a~to~i~pro~starší verze.
 
 Systém PerfEval tedy bude použit pro porovnání vybraných commitů. Cílem tohoto
@@ -88,8 +88,24 @@ Commity pro prezentování práce systému byly vybírány z~období od~21.~dubn
 Byly vybrány ty commity, jejichž commit message obsahuje slovo „performance“ a~jejich sousední commity (pro porovnání).
 Commity byly vybírány z~hlavní větve projektu. Všechny výkonnostní testy byly prováděné na~strojích stejného druhu a~konfigurace.
 
-Z takto vybraných commitů byly dále vabrané jen ty, u~kterých bylo možné projekt bez problémů sestavit. Zároveň bylo také nutné,
+Z takto vybraných commitů byly dále vybrané jen ty, u~kterých bylo možné projekt bez problémů sestavit. Zároveň bylo také nutné,
 aby bylo možné sestavit a~spustit výkonnostní testy. Nakonec tedy bylo vybráno a~naměřeno celkem 16 commitů z~uvedeného období.
 Pro každý z~těchto commitů, který reprezentuje v~doméně systému PerfEval verzi, bylo měření provedeno celkem osmkrát.
+
+\subsection{Porovnatelné commity}
+
+Systém PerfEval porovnává pouze dvě verze jejichž všechny testované metody se shodují. Pokud se tedy mezi dvěma
+verzemi název některé metody změnil, byla přidaná nová metoda nebo byla nějaká metoda odstraněna, tak tyto verze
+PerfEval neporovná.
+
+Proto i ze zvolených 16 commitů nebylo možné porovnat každý s každým. Naměřené commity se tedy rozdělily do tří skupin.
+V těchto skupinách se všechny měřené metody shodují, a tak je možné je vzájemně porovnat. Zároveň se v commitu
+označeném jako HEAD, tedy nejnovější verze, přidala jedna nová metoda, a tak není možné jej porovnávat s žádným jiným commitem.
+
+V první skupině se nachází 3 commity z období od 8. června 2022 do 4. července 2022.
+Ve druhé skupině se nachází 3 commity z období od 28. února 2023 do 7. března 2023.
+V poslední skupině se nachází 9 commitů z období od 29. března 2023 do 11. května 2023.
+U nejnovějšího commitu z 11. května 2023 (čas 15:42:16) je součástí commit message také poznámka o tom,
+že byla přidaná nová testovací metoda v rámci benchmarku JMH.
 
 \subsection{Výsledek práce systému PerfEval}

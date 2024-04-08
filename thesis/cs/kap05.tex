@@ -75,7 +75,7 @@ instanci třídy \lstinline{CommandSetup}. Na~této instanci se zavolá metoda \
 objekt typu \lstinline{Command}, podle definice rozhraní \lstinline{CommandSetup}. Metoda \lstinline{getCommand} je volaná
 z~metody \lstinline{main}, která tvoří hlavní metodu programu.
 
-Třída \lstinline{Parser} předává do~metody \lstinline{setup} objekty \lstinline{OptionSet}, které reprezentují argumetny příkazové řádky,
+Třída \lstinline{Parser} předává do~metody \lstinline{setup} objekty \lstinline{OptionSet}, které reprezentují argumenty příkazové řádky,
 a~\lstinline{PerfEvalConfig}. Třída \lstinline{PerfEvalConfig}
 reprezentuje globální konfiguraci systému PerfEval podle konfiguračního souboru.
 \lstinline{Parser} tedy skrze statické metody této třídy zařídí přečtení konfiguračního souboru
@@ -123,7 +123,7 @@ třídy \lstinline{ListResultsCommand}. Vyrobenou instanci třídy \lstinline{Li
 
 \subsection{Command třídy}
 
-V~této podkapitole je popsaný význam a práce jednotlivých implementací tozhraní Command.
+V~této podkapitole je popsaný význam a práce jednotlivých implementací rozhraní Command.
 Implementace třídy Command musejí mít implementovanou jedinou metodu \lstinline{execute}.
 
 Třída AddFileCommand má~za~úkol přidat nový výsledek měření do~databáze. Vnitřní položky
@@ -165,13 +165,13 @@ Implementace rozhraní mohou při zpracovávání souborů vyhazovat runtime vý
 v~metodě \lstinline{execute} třídy \lstinline{EvaluateCLICommand}. Výjimku je tedy bezpečné vyhazovat.
 
 Aktuálně dostupné implementace rozhraní \lstinline{MeasurementParser} jsou pouze dvě.
-\lstinline{JMHJSONParser}, který umí zprácovavat výstup frameworku JMH ve~formátu JSON, a \lstinline{BenchmarkDotNetJSONParser}, který
-umí zprácovavat výstup frameworku BenchmarkDotNet ve~formátu JSON.
+\lstinline{JMHJSONParser}, který umí zpracovávat výstup frameworku JMH ve~formátu JSON, a \lstinline{BenchmarkDotNetJSONParser}, který
+umí zpracovávat výstup frameworku BenchmarkDotNet ve~formátu JSON.
 
 \subsection{Implementace rozhraní StatisticTest}
 
 Rozhraní \lstinline{StatisticTest} definuje, jaké metody mají mít implementace statistických testů
-pro porovnání dvourozmětných polí typu double. Jedná se o~metodu, která vrací interval spolehlivosti.
+pro porovnání dvourozměrných polí typu double. Jedná se o~metodu, která vrací interval spolehlivosti.
 Interval spolehlivosti je intervalový odhad střední hodnoty pro rozdíl dvou náhodných veličin.
 Dále musí umět vrátit odhad minimálního počtu vzorků, které jsou zapotřebí pro zajištění dostatečně úzkého intervalu.
 
@@ -198,7 +198,7 @@ poměrně univerzální nástroj. Činí ho totiž méně závislým na~použit�
 \subsection{Rozšíření o datový formát}
 
 Vezměme opět scénář našeho programátora z~první kapitoly. Programátor si napsal výkonnostní testy.
-Testy napsal pomocí nástroje, který nepodporuje PerfEval. Nicméně progrmátor ví, že~systém PerfEval
+Testy napsal pomocí nástroje, který nepodporuje PerfEval. Nicméně programátor ví, že~systém PerfEval
 dělá přesně to, co~potřebuje. Jediný problém je tedy ve~vysvětlení svého datového formátu systému.
 
 PerfEval je od~počátku zamýšlen pro rozšíření v~tomto místě. Programátor tedy musí prozkoumat, jak správně zkonstruovat
@@ -206,12 +206,12 @@ třídu \lstinline{Samples}. Třída \lstinline{Samples} obsahuje všechny hodno
 třídy \lstinline{Metric}. Instance třídy \lstinline{Metric} reprezentuje fyzikální jednotku a~příznak jestli vyšší hodnota
 znamená vyšší výkon.
 
-Programátor musí naimplementovat rozhraní \lstinline{MeasurementParser}. V~tomto rozhraní je důležitá metoda
+Programátor musí implementovat rozhraní \lstinline{MeasurementParser}. V~tomto rozhraní je důležitá metoda
 \lstinline{getTestsFromFiles}. Tato metoda na~vstupu přijme všechny soubory s~výsledky měření jedné verze. Výstupem je list objektů
 typů \lstinline{Samples}. Pro každou metodu (test výkonu), který se v~souborech nachází, se v~listu vyskytuje pouze jedna instance
 typu \lstinline{Samples}.
 
-Poslední krok tohoto rozšíření po~naimplementování \lstinline{MeasurementParser}u je jeho registrace. Registrace probíhá tak,
+Poslední krok tohoto rozšíření po~implementování \lstinline{MeasurementParser}u je jeho registrace. Registrace probíhá tak,
 že~se~přidá jeden řádek do~statického konstruktoru třídy \lstinline{ParserFactory}. Na~řádku bude přidání položky do~objektu
 s~názvem \lstinline{registeredParsers}. Tento objekt je typu \lstinline{HashMap} a~přiřazuje k~sobě \lstinline{Supplier}, který vrací \lstinline{MeasurementParser},
 a~název typu \lstinline{String}. Přidávaná položka je tedy \lstinline{String} odpovídající názvu parseru a~reference na~metodu,
@@ -241,12 +241,12 @@ by chtěl při~vyhodnocování zohlednit. Může si tedy naprogramovat vlastní 
 rozhraní \lstinline{StatisticTest}, kde tyto předpoklady zohlední.
 
 Po~naprogramování vlastní implementace rozhraní \lstinline{StatisticTest}, pak jen stačí ve~třídě \lstinline{SetupUtilities}
-změnit chování metody resolve\lstinline{StatisticTest} tak,~aby~rozpoznnávala novou implementaci podle příkazové řádky. Posledním krokem je
+změnit chování metody resolve\lstinline{StatisticTest} tak,~aby~rozpoznávala novou implementaci podle příkazové řádky. Posledním krokem je
 přidání nové značky do~parseru příkazové řádky v~metodě createParser.
 
 \subsection{Rozšíření o možnost výpisu}
 
-Pro vypisování výsledků porovnání slouží rozhraní \lstinline{ResultPrinter}. Pokud by si uživatel chtěl naimplementovat
+Pro vypisování výsledků porovnání slouží rozhraní \lstinline{ResultPrinter}. Pokud by si uživatel chtěl implementovat
 vlastní způsob vypisování, tak stačí implementovat jedinou jeho metodu PrintResults.
 
 Přidání nového \lstinline{ResultPrinter}u je podobné jako rozšíření o~statistický test.
@@ -261,7 +261,7 @@ Při použití přepínače \lstinline{html-output} bude výsledek porovnání u
 Tento soubor je možné otevřít v běžném internetovém prohlížeči. Přepínač je možné doplnit o~argument
 \lstinline{html-template}, kde bude uvedena cesta k nové šabloně. Dodaná šablona bude
 ve formátu, který podporuje šablonový procesor Thymeleaf. Šabloně bude dodaná instance objektu
-\lstinline{MeasurementComparisonResultCollection} jehož struktura je zdokumentovená v~JavaDoc
+\lstinline{MeasurementComparisonResultCollection} jehož struktura je zdokumentovaná v~JavaDoc
 dokumentaci systému PerfEval.
 
 \subsection{Změna použitého databázového systému}

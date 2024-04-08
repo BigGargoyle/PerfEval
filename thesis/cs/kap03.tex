@@ -65,12 +65,12 @@ být problém různé frameworky rozlišit.
 Při rozlišování by se totiž musel podívat do~dat uložených v souboru
 a~na~základě obsahu určit o~jaký formát a~framework se jedná. Správné určení frameworku a~formátu by bylo zásadní pro
 správnou reprezentaci dat. Samotné rozlišování frameworků a~formátu by bylo obtížné, protože soubory s~výsledky
-měření obsahují podobná data a~položky, ale hierarichie struktur ve~kterých jsou uloženy jsou různé.
+měření obsahují podobná data a~položky, ale hierarchie struktur ve~kterých jsou uloženy jsou různé.
 Při následném rozlišování většího množství formátů a~frameworků by tedy systém automatického rozpoznávání
 začal být příliš komplikovaný, aby si zachoval přesnost.
 
 Docházelo by také k~dvojímu čtení souboru z~paměti. První čtení souboru by sloužilo k rozpoznání formátu,
-aby systém zjistil, jak má data ze souboru zpracovávat. Při druhém řtení souboru by již transformoval data
+aby systém zjistil, jak má data ze souboru zpracovávat. Při druhém čtení souboru by již transformoval data
 tak, aby jim rozuměla vyhodnocovací část systému.
 
 PerfEval tedy řeší tento problém tak, že uživatel při inicializaci zadá jméno jednoho z~dostupných parserů.
@@ -103,7 +103,7 @@ které vygeneroval přímo framework pro měření výkonu.
 
 \subsection{Jak přistupovat k naměřeným datům?}
 
-Systém, který provnává výsledky měření, by měl mít nějaké informace o~tom, k~jaké verzi se měření vztahuje, nebo kde
+Systém, který porovnává výsledky měření, by měl mít nějaké informace o~tom, k~jaké verzi se měření vztahuje, nebo kde
 se soubor s~výsledky nachází. Proto bylo při vývoji nutné se zamyslet nad tím, jakými způsoby lze tyto informace získat a~spravovat.
 Systém PerfEval potřebuje o~výsledcích měření vědět, kde jsou uloženy a~ke~které verzi softwaru bylo měření provedeno.
 
@@ -120,7 +120,7 @@ zjistit verzi, protože je nutné projít adresářovou strukturu, což může b
 
 Druhé uvažované řešení bylo vylepšení prvního řešení o~cache a sledování času modifikace adresářů. Verze se totiž dobře určují,
 ale špatně dohledávají. Nicméně by se pravděpodobně používání některých verzí k~porovnání opakovalo častěji než u~jiných.
-Zároveň pokud by nejnovější verze nebyla v cache, tak by se dohledávala na základě nejmladšího datumu změny adresáře
+Zároveň pokud by nejnovější verze nebyla v cache, tak by se dohledávala na základě nejmladšího data změny adresáře
 v~adresáři s~výsledky měření. Cache by byla tvořena posledními několika desítkami záznamů s~cestou k~výsledkům měření a~verzí.
 
 Toto řešení má ale podobné nevýhody jako první. V~případě, že se verze porovnává poprvé, tak záznamy o~ní jistě nejsou v~cache
@@ -128,7 +128,7 @@ a~musí se prohledat adresářová struktura. Pokud je poslední úprava cache s
 s~výsledky měření, tak je nutné tuto část adresářové struktury projít. V~procházené části adresářové struktury je vždy nutné prozkoumat
 zdali se jedná o~soubor verze, která je v cache, a~tak by se do ní měl přidat záznam o~tomto souboru. Popsaná práce s~cache měla
 za~následek poslední uvažované řešení, kde již nezáleží na tom, kde jsou uložené výsledky měření. Jediné, co budeme předpokládat, je,
-že uživatel soubory s~výsledky měření něpřesouvá.
+že uživatel soubory s~výsledky měření nepřesouvá.
 
 Poslední uvažované řešení je strukturované ukládání metadat o~výsledcích měření. Využije se databáze o~jedné tabulce, kde
 je uvedena cesta k~výsledku měření a~verze ke které byl výsledek změřen. Uživatel do~systému nahlásí, že má nový výsledek
@@ -142,7 +142,7 @@ Toto řešení poskytuje jak rychlé vkládání nových výsledků, tak rychlé
 Při volbě formátu v~jakém se budou výsledky výkonnostních testů prezentovat je nutné se zamyslet nad tím, kdo je bude číst a~zpracovávat.
 Výsledky vyhodnocení bude zpracovávat zejména člověk a~průběžná integrace v~rámci verzovacího nástroje Git.
 
-Pro člověka je čitelný formát zpracovaných dat tabulka s udáji o~tom, který test prošel a~který ne.
+Pro člověka je čitelný formát zpracovaných dat tabulka s udaji o~tom, který test prošel a~který ne.
 Jeden z~výstupních formátu systému PerfEval je takováto tabulka na příkazové řádce.
 
 \section{Architektura systému PerfEval}
@@ -155,7 +155,7 @@ průběh vyhodnocování testů výkonu.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.92\textwidth]{../img/perfeval_evaluate.png}
-    \caption{Objektový návrh časti PerfEvalu pro porovnávání výsledků měření}
+    \caption{Objektový návrh části PerfEvalu pro porovnávání výsledků měření}
 \end{figure}
 
 Po~zpracování příkazové řádky dostane instance EvaluateCLICommand informace
@@ -174,7 +174,7 @@ Následně se tyto dvě instance porovnají pomocí metody compareSets na~tříd
 PerformanceEvaluator k~porovnání dvou instancí Samples využívá implementace rozhraní StatisticTest. Konkrétně
 tato implementace rozhoduje o~tom, jaký statistický test se při porovnávání vzorků použije.
 
-Statistický test, který implememtuje rozhraní StatisticTest, musí mít metody calcCIInterval a~calcMinSampleCount.
+Statistický test, který implementuje rozhraní StatisticTest, musí mít metody calcCIInterval a~calcMinSampleCount.
 Metoda calcCIInterval vrací intervalový odhad rozdílu náhodných veličin, které jsou reprezentovány konkrétními
 naměřenými vzorky.
 
@@ -202,14 +202,14 @@ v~kořenovém adresáři Git repozitáře. Rozpoznávání probíhá tak, že se
 
 Inicializace probíhá tak, že se zjistí přítomnost .git souboru. Z~příkazové řádky se zjistí jaký parser (implementace
 třídy MeasurementParser) pro~naměřené hodnoty se bude používat. Vyrobí výchozí konfigurace. Do~výchozí konfigurace
-se dodají informace o~git repozitáři a~o~parseru. Nakonec se vyrobí složka se v adresáři, kde uživatel program spustil
+se dodají informace o~git repositáři a~o~parseru. Nakonec se vyrobí složka se v adresáři, kde uživatel program spustil
 vyrobí složka .performance a~v~ní soubory .gitignore a~config.ini. Soubor config.ini obsahuje konfiguraci systému PerfEval
 pro~jeden projekt jehož výkon mezi verzemi se bude porovnávat.
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[height=0.5\textheight]{../img/perfeval_init.png}
-    \caption{Objektový návrh časti PerfEvalu pro inicializaci}
+    \caption{Objektový návrh části PerfEvalu pro inicializaci}
 \end{figure}
 
 Z~obrázku je patrné, že třída InitCommand úzce spolupracuje s~třídou PerfEvalConfig. Třída PerfEvalConfig reprezentuje
@@ -225,7 +225,7 @@ přidány všechny soubory a~to i~soubory zanořené ve~vnitřních adresáříc
 \begin{figure}[!ht]
     \centering
     \includegraphics[height=0.5\textheight]{../img/perfeval_h2db.png}
-    \caption{Objektový návrh časti PerfEvalu pro přidávání výsledků měření}
+    \caption{Objektový návrh části PerfEvalu pro přidávání výsledků měření}
 \end{figure}
 
 Na obrázku je vidět, že za~oběma příkazy pro přidávání výsledků měření stojí jedna implementace rozhraní Database.

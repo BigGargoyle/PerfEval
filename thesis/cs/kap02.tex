@@ -24,7 +24,7 @@ jako se očekává při selhání unit testů.
 \section{Měření výkonu}
 
 Před začátkem vývoje PerfEvalu bylo nutné zamyslet nad tím, jak můžou výsledky měření výkonu softwaru vypadat.
-V následujících odstavcích budou zmoňovány jednotlivé poznatky o výsledcích měření výkonu.
+V následujících odstavcích budou zmiňovány jednotlivé poznatky o výsledcích měření výkonu.
 Tyto poznatky vedly k tomu, jak se PerfEval chová a jakou má architekturu.
 
 \bigskip
@@ -81,7 +81,7 @@ překlad, a~kdy už se měří plně přeložený kód.
 
 \subsection{Výstup měření JMH}
 
-JMH je framework pro měření výkonu, který umožňuje pomocí anotací definovat výkonostní testy
+JMH je framework pro měření výkonu, který umožňuje pomocí anotací definovat výkonnostní testy
 pro programy v~jazyce Java. Z~průzkumu \cite[]{unitTestingPerformanceSurvey} vyplývá, že se jedná o~nejpoužívanější framework
 pro měření výkonu pro projekty vyvíjené v jazyce Java.
 
@@ -134,7 +134,7 @@ je součástí konfigurace systému PerfEval.
 \subsection{Welchův dvouvýběrový t-test}
 
 Welchův dvouvýběrový t-test se používá jako statistika při testování hypotéz.
-Tato statitistika předpokládá, že náhodné veličiny jsou nezávislé a jejich rozdělení
+Tato statistika předpokládá, že náhodné veličiny jsou nezávislé a jejich rozdělení
 se blíží normálnímu rozdělení. Nezávislost náhodných veličin je dána vlastnostmi
 experimentu \cite[]{twosampletests} a její zajištění je mimo doménu řešeného problému. PerfEval
 tedy v~případě použití možnosti t-test možnou závislost zanedbává.
@@ -147,10 +147,10 @@ průměry jednotlivých běhů, tak se podle CLV bude rozdělení těchto prům�
 
 
 Interval spolehlivosti pro Welchův t-test se spočítá podle následujícího algoritmu. V~algoritmu jsou
-použité funkce, které odkazují na skutečně použité knihovní funkce. Fukce mean počítá střední hodnotu
+použité funkce, které odkazují na skutečně použité knihovní funkce. Funkce mean počítá střední hodnotu
 sady hodnot. Funkce var počítá rozptyl sady hodnot. TDistribution je třída, která reprezentuje T-rozdělení
 pro statistický test a~parametr konstruktoru je počet stupňů volnosti. Vzorec pro stupně volnosti je dostupný na~Wikipedii
-Welchova t-testu \cite[]{enwiki:1184251732}. Vstupními paramtery jsou vzorky náhodných veličin a parametr $\alpha$ (critValue.)
+Welchova t-testu \cite[]{enwiki:1184251732}. Vstupními parametry jsou vzorky náhodných veličin a parametr $\alpha$ (critValue.)
 
 \begin{algorithm}[!ht]
     \caption{WelchCI}
