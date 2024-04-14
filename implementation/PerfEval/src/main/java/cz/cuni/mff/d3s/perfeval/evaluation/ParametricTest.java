@@ -19,43 +19,6 @@ public class ParametricTest implements StatisticTest {
         if(samples2.length == 1) {
             samples2 = sampleSet2[0];
         }
-        /*
-        // Calculate degrees of freedom
-
-        int df = Math.min(samples1.length - 1, samples2.length - 1);
-
-        if(df <= 0) {
-            if(samples1.length == 1 || samples2.length == 1) {
-                return samples1[0]<=samples2[0] ? new double[]{samples1[0], samples2[0]} : new double[]{samples2[0], samples1[0]};
-            }
-            //throw new IllegalArgumentException("Samples are too small to perform the test.");
-        }
-
-        // Calculate critical value for the desired confidence level
-        TDistribution tDistribution = new TDistribution(df);
-
-        //  there should be critValue, because it is the probability of the value being in the confidence interval
-        //  p-quantile is the tighter than (1-p)-quantile
-        double inverseCumulativeProbability = tDistribution.inverseCumulativeProbability(critValue);
-
-        // Calculate mean difference
-        //double meanDifference = calculateMeanDifference(samples1, samples2);
-        double meanDifference = StatUtils.mean(samples1) - StatUtils.mean(samples2);
-
-        // Calculate pooled variance (assuming equal variances for simplicity)
-        //double pooledVar = calculatePooledVariance(samples1, samples2);
-        double pooledVar = ((samples1.length - 1) * StatUtils.variance(samples1) + (samples2.length - 1)
-                * StatUtils.variance(samples2)) / (samples1.length + samples2.length - 2);
-
-        // Calculate standard error
-        double stdError = Math.sqrt((pooledVar / samples1.length) + (pooledVar / samples2.length));
-
-        // Calculate margin of error using critical value and standard error
-        double marginOfError = inverseCumulativeProbability * stdError;
-
-        // Calculate confidence interval bounds
-        double lowerBound = meanDifference - marginOfError;
-        double upperBound = meanDifference + marginOfError;*/
 
         // Calculate sample statistics
         DescriptiveStatistics stats1 = new DescriptiveStatistics(samples1);

@@ -83,7 +83,7 @@ public class PerformanceEvaluator {
             comparisonResult = ComparisonResult.DifferentDistribution;
         } else {
             //relative width of the confidence interval ((upperBound - lowerBound) / mean)
-            double ciWidth = Math.abs((ciInterval[1] - ciInterval[0]) / (oldAvg + newAvg) / 2);
+            double ciWidth = Math.abs(2 * (ciInterval[1] - ciInterval[0]) / (oldAvg + newAvg));
             //if the confidence interval is smaller than maxCIWidth, we can say that the performance is the same
             if (ciWidth <= maxCIWidth) {
                 comparisonResult = ComparisonResult.SameDistribution;

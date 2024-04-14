@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.perfeval;
 
+import java.lang.*;
 import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.command.Parser;
 import cz.cuni.mff.d3s.perfeval.command.ParserException;

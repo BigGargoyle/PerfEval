@@ -9,6 +9,8 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import java.util.Random;
 
+import static org.apache.commons.math3.stat.StatUtils.mean;
+
 /**
  * Class for performing hierarchical bootstrap.
  */
@@ -48,12 +50,20 @@ public class HierarchicalBootstrap {
     private static double[] createBootstrapSample(double[][] sampleSet1, double[][] sampleSet2, int bootstrapSampleCount) {
         double[] result = new double[bootstrapSampleCount];
         Random random = new Random();
+        int n = sampleSet1.length;
+        int m = sampleSet2.length;
         //create bootstrapSampleCount of bootstrap samples
         for (int i = 0; i < bootstrapSampleCount; i++) {
             //create bootstrap sample of sampleSet1 and sampleSet2
-            double sample1 = calcBoostrapValue(sampleSet1, bootstrapSampleCount, random);
-            double sample2 = calcBoostrapValue(sampleSet2, bootstrapSampleCount, random);
-            result[i] = sample1 - sample2;
+            double[] sample1 = new double[n];
+            for (int j = 0; j < n; j++) {
+                sample1[j] = calcBoostrapValue(sampleSet1, 1, random);
+            }
+            double[] sample2 = new double[m];
+            for (int k = 0; k < m; k++) {
+                sample2[k] = calcBoostrapValue(sampleSet2, 1, random);
+            }
+            result[i] = mean(sample1) - mean(sample2);
         }
         return result;
     }
@@ -67,7 +77,7 @@ public class HierarchicalBootstrap {
             //then calculate mean of bootstrapped dataset of that array
             result[i] = createBootstrapOf1DArray(sampleSet[random.nextInt(0, sampleSet.length)], bootstrapSampleCount, random);
         }
-        return StatUtils.mean(result);
+        return mean(result);
     }
 
     private static double createBootstrapOf1DArray(double[] sampleSet, int bootstrapSampleCount, Random random) {
@@ -75,9 +85,9 @@ public class HierarchicalBootstrap {
         for (int i = 0; i < bootstrapSampleCount; i++) {
             //create bootstrapped dataset
             double[] bootstrappedDataset = createBootstrappedDataset(sampleSet, random);
-            result[i] = StatUtils.mean(bootstrappedDataset);
+            result[i] = mean(bootstrappedDataset);
         }
-        return StatUtils.mean(result);
+        return mean(result);
     }
 
     private static double[] createBootstrappedDataset(double[] sampleSet, Random random) {
@@ -121,7 +131,7 @@ public class HierarchicalBootstrap {
             double[] bootstrapSample = createBootstrapSample(set, random, bootstrapSampleCount);
             double[] bootstrapInterval = calcCIInterval(bootstrapSample, confidenceLevel);
             assert bootstrapInterval.length == 2;
-            double y = (bootstrapInterval[1] - bootstrapInterval[0])/StatUtils.mean(bootstrapSample);
+            double y = (bootstrapInterval[1] - bootstrapInterval[0])/ mean(bootstrapSample);
             functionPoints[x-1] = new double[]{x, y};
         }
         return functionPoints;
