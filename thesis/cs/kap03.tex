@@ -2,7 +2,15 @@
 
 \section{Popis systému}
 
-Systém PerfEval je konzolová aplikace, jejíž činnost je ovládaná příkazy a~parametry na~příkazové řádce.
+S rozborem problematiky ve druhé kapitole je možné začít řešit programátorův
+problém s vyhodnocováním výkonu popsaný ve scénáři z první kapitoly.
+V důsledku toho je cílem vytvořit systém, který umožní porovnávat výsledky
+měření výkonu, a který bude možné používat v rámci průběžné integrace.
+
+Když už jsou známy požadavky na aplikaci, tak je možné ji začít navrhovat.
+V této kapitole jsou popsané úvahy a rozhodnuté, které byly v průběhu vývoje
+provedeny. Tyto úvahy a rozhodnutí vedly k tomu, že vyvinutý systém PerfEval je konzolová aplikace,
+jejíž činnost je ovládaná příkazy a~parametry na~příkazové řádce.
 Příkazy umožňují inicializovat systém, přidávat nové výsledky měření a~vyhodnocovat mezi sebou výsledky
 měření dvou verzí.
 
@@ -142,7 +150,7 @@ Toto řešení poskytuje jak rychlé vkládání nových výsledků, tak rychlé
 Při volbě formátu v~jakém se budou výsledky výkonnostních testů prezentovat je nutné se zamyslet nad tím, kdo je bude číst a~zpracovávat.
 Výsledky vyhodnocení bude zpracovávat zejména člověk a~průběžná integrace v~rámci verzovacího nástroje Git.
 
-Pro člověka je čitelný formát zpracovaných dat tabulka s udaji o~tom, který test prošel a~který ne.
+Pro člověka je čitelný formát zpracovaných dat tabulka s údaji o~tom, který test prošel a~který ne.
 Jeden z~výstupních formátu systému PerfEval je takováto tabulka na příkazové řádce.
 
 \section{Architektura systému PerfEval}
