@@ -157,51 +157,38 @@ Jeden z~výstupních formátu systému PerfEval je takováto tabulka na příkaz
 
 \subsection{Průběh vyhodnocování}
 
-Na následujícím obrázku je k~vidění architektura části systému kolem třídy EvaluateCLICommand, která zajišťuje
-průběh vyhodnocování testů výkonu.
+Samotné vyhodnocování jakožto porovnání dvou výsledků měření jedné sady testů výkonu je proces, který lze rozdělit do~několika kroků.
+Zpracování dat uložených v souborech s výsledky měření až po vypsání výsledků vyhodnocení probíhá následujícím způsobem:
+
+\begin{enumerate}
+    \item Načtení a naparsování výsledků měření ze~souborů.
+    \item Pomocí statistického testu porovnat dvě sady naměřených dat.
+    \item Výsledek porovnání vypsat uživateli.
+\end{enumerate}
+
+Třída \lstinline|EvaluateCLICommand| zastřešuje celý tento proces vyhodnocování.
+Pro první krok použije parser výsledků měření, který je zvolen uživatelem při inicializaci systému,
+poté je tato volba načtena z~konfiguračního souboru. Tento parser umí naparsovat výsledky měření
+z~jednoho formátu a~frameworku. Výsledkem parsování jsou dvě instance třídy \lstinline|Samples|,
+jejíž struktuře další třídy rozumí.
+
+Druhý krok je porovnání dvou instancí třídy \lstinline|Samples| pomocí statistického testu.
+Implementace statistického testu je dodaná při konstrukci třídy hlavní vyhodnocovací třídy \lstinline|EvaluateCLICommand|.
+Výsledkem porovnání je instance třídy \lstinline|MeasurementComparisonResultCollection|, která obsahuje výsledky porovnání.
+
+PerfEval umí vypisovat výsledky v~několika běžných formátech. O~výpis v~různých formátech se starají implementace rozhraní
+\lstinline|ResultPrinter|. Výsledky vyhodnocení jsou tedy předány instanci třídy \lstinline|ResultPrinter|, která
+umí výsledky vyhodnocení z~kolekce \lstinline|MeasurementComparisonResultCollection| vypsat.
+
+Nakonec se jen podle voleb z~konfiguračního souboru nastaví exit kód programu a~ukončí se vyhodnocování.
+
+Následující obrázek znázorňuje objektový návrh tříd, které se podílejí na~vyhodnocování výsledků měření.
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.92\textwidth]{../img/perfeval_evaluate.png}
     \caption{Objektový návrh části PerfEvalu pro porovnávání výsledků měření}
 \end{figure}
-
-Po~zpracování příkazové řádky dostane instance EvaluateCLICommand informace
-o~souborech se kterými bude pracovat. Při~konstrukci dostane správné implementace ResultPrinter,
-MeasurementParser a~instanci třídy PerformanceEvaluator se správnou instancí StatisticTest.
-
-Hlavní funkcionalitu pro~vyhodnocování poskytuje třída EvaluateCLICommand. Celý úkol vyhodnocování výkonu
-byl rozdělen do~tří oddělených kroků.
-
-Jako první dojde k~naparsování výsledků měření dvou porovnávaných verzí. Parsování probíhá pomocí
-implementace rozhraní MeasurementParser, který umí naparsovat potřebný formát výsledků měření, které
-se budou porovnávat. Výsledkem parsování vzniknou dvě instance třídy Samples, která reprezentuje vzorky
-výsledků měření.
-
-Následně se tyto dvě instance porovnají pomocí metody compareSets na~třídě PerformanceEvaluator. Instance třídy
-PerformanceEvaluator k~porovnání dvou instancí Samples využívá implementace rozhraní StatisticTest. Konkrétně
-tato implementace rozhoduje o~tom, jaký statistický test se při porovnávání vzorků použije.
-
-Statistický test, který implementuje rozhraní StatisticTest, musí mít metody calcCIInterval a~calcMinSampleCount.
-Metoda calcCIInterval vrací intervalový odhad rozdílu náhodných veličin, které jsou reprezentovány konkrétními
-naměřenými vzorky.
-
-Pokud tento interval neobsahuje nulu, pak lze s~požadovanou přesností a~pravděpodobností usuzovat,
-že rozdělení náhodných veličin jsou různá. Pokud jsou rozdělení různá, pak se jako kladný výsledek testu připouští
-zlepšení výkonu, nebo pokud je nový průměr v dané toleranci.
-
-Pokud interval obsahuje nulu, tak je vyhodnocení výsledku testu výkonu složitější. Pokud je interval spolehlivosti
-dostatečně úzký, tak považujeme rozdělení náhodných veličin za stejná a~test výkonu dopadl kladně. Pokud interval
-spolehlivosti není dostatečně úzký, tak test výkonu neprošel. Následně se pomocí metody calcMinSampleCount určí
-kolik měření by bylo potřeba, aby byl interval spolehlivosti dostatečně úzký. Spočtený počet vzorků s~informací o~tom,
-zdali je, nebo není možné je změřit, bude přidán k~výsledkům porovnávání.
-
-Posledním krokem při vyhodnocování je zavolání metody printResults na~implementaci rozhraní ResultPrinter. Tato metoda
-vypíše instanci MeasurementComparisonResultCollection, která reprezentuje všechny výsledky jednotlivých testů výkonu.
-Po~vypsání výsledků požadovaným způsobem dle dodané implementace ResultPrinter se nastaví správný exit kód. V~případě,
-že všechny testy dopadly kladně, pak bude exit kód 0. V~případě, že alespoň v~jednom případě došlo ke~zhoršení, pak bude
-exit kód 1. V~případě, že dojde k~nějaké výjimce, tak exit kód bude větší než 100. Touto výjimkou může být například
-neexistence některého ze~souborů s~naměřenými výsledky v~důsledku jeho smazání, nebo přesunutí.
 
 \subsection{Inicializace systému PerfEval}
 
