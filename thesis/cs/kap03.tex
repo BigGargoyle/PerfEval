@@ -20,7 +20,7 @@ Nejdůležitější rozhodnutí, která byla v~průběhu vývoje provedena, jsou
 
 \subsection{Spouštění testů systémem PerfEval}
 V~počátku vývoje bylo nutné se~rozhodnout, jakým způsobem bude systém přijímat a~zpracovávat výsledky testů.
-V~úvahu přicházela varianta, že~uživatel provede měření výkonu sám, a~druhá varianta, že~uživatel systému
+V~úvahu přicházela varianta, že~uživatel provede měření výkonu sám. Druhá varianta byla, že~uživatel systému
 vysvětlí, jakým způsobem se~testování výkonu spouští. Pokud by byla zvolena varianta, kdy PerfEval spouští testy
 sám, tak by bylo nutné nalézt dostatečně univerzální způsob spouštění testů.
 
@@ -29,35 +29,42 @@ měření provádět sám, tak by téměř určitě nebyl schopen pracovat s~gra
 spouštět programy s~parametry na~příkazové řádce.
 
 Dále by bylo nutné vysvětlit, jak vypadá výstup spouštěných testů. Když pomineme formát, tak je nutné zjistit,
-kam program, který provádí měření výsledky ukládá. Benchmarkovací systém BenchmarkDotNet například vypisuje
+kam program, který provádí měření, výsledky ukládá. Benchmarkovací systém BenchmarkDotNet například vypisuje
 výsledky měření v podobě tabulky na standardní výstup a~zároveň ukládá strojově čitelné výsledky do~speciálního
 k~tomu určeného adresáře.
 
-Nakonec by to vypadalo tak, že při inicializaci systému uživatel zadá, jak spustit test výkonu a~kam se uloží výsledek.
-Tímto způsobem by došlo k~tomu, že~PerfEval by začal určovat, jak mají vypadat programy, jejichž výstupy přijímá.
-Na druhou stranu použití stávajícího řešení tyto nevýhody nemá. Jediné, co~musí uživatel zajistit, je, že~jeho
-způsob měření zvládne uložit výsledek do~souboru, který PerfEval umí zpracovat.
+Pokud by PerfEval využíval této varianty, tak by uživatel při inicializaci systému musel zadat, jak spustit testy,
+a kam se uloží výsledek. Tímto způsobem by došlo k~tomu, že PerfEval by začal určovat, jak mají vypadat programy,
+jejichž výstupy přijímá.
 
-Stávající řešení je tedy složitější v tom, že~uživatel musí testování výkonu spouštět sám. Poté, co~spustí testování
-výkonu a~dostane soubor s~výsledky, jej přidá do databáze výsledků systému PerfEval a~poté spustí PerfEval s~příkazem evaluate
-pro porovnání výsledků testování výkonu. Kdyby se použila varianta s~tím, že si PerfEval spouští testy sám, tak
-by uživatel testování a~porovnání výkonu zvládl jedním spuštěním aplikace.
+Přijaté řešení byla druhá zmiňovaná varianta. Uživatel tedy spouští testy sám a~PerfEval pouze porovnává výsledky.
+Při inicializaci uživatel pouze vybere vhodný parser. Zvolený parser umí zpracovat příslušný formát dat z~benchmarkovacího frameworku,
+který uživatel používá.
+
+Vybrané řešení tedy od uživatele požaduje krok navíc. Nicméně dává uživateli mnohem větší prostor pro to, jak
+spouští testy a~kam ukládá výsledky. O tom, že existují výsledky měření dané verze, a kde se nachází, uživatel
+pouze informuje PerfEval. Systém tak ani do budoucna neklade žádné nároky na to, jak má uživatel testy spouštět,
+ani kde se mají výsledky ukládat.
 
 \subsection{Použité statistické metody}
-Pro porovnání dvou výsledků měření se používají statistické metody. Statistické metody se používají ke zjištění,
-jestli výsledky měření považované za~náhodné veličiny mají stejné rozdělení, popřípadě jestli je vzorků dostatečné množství.
+Pro porovnání dvou výsledků měření se používají statistické metody. Statistické metody se používají k zjištění,
+jestli výsledky měření považované za~náhodné veličiny mají stejnou střední hodnotu a~jestli je vzorků dostatečné množství.
 V~systému PerfEval jsou implementovány statistické metody bootstrap a~t-test.
 
-Pomocí bootstrapu dochází k~iluzi, že vzorků je mnohem více, než je jich ve skutečnosti změřeno. Protože měření vzorků
-je samo o~sobě dlouhotrvající proces, tak se použití této statistické metody vyplatí. Bootstrap má ale tu nevýhodu, že jeho výpočet
-může oproti prostému zkoumání vzorků trvat delší dobu.
+Bootstrap je oproti t-testu výhodnější, protože není vyžadován předpoklad normálního rozdělení dat.
+Je implementovaný pomocí algoritmů popsaných ve druhé kapitole. Nevýhodou oproti t-testu je, že
+výpočet je pomalejší. Výpočet je pomalý, protože dochází k velkému množství náhodných výběrů ze sady dat.
 
-t-test je tedy možné zvolit namísto bootstrapu kvůli tomu, že je rychlejší. Oproti náhodnému vybírání vzorků z~dvoudimenzionální sady
+T-test je tedy možné zvolit namísto bootstrapu kvůli tomu, že je rychlejší. Oproti náhodnému vybírání vzorků z~dvoudimenzionální sady
 dat, kterým vzorky odpovídají, dochází k~pouhému dosazení hodnot do vzorce.
 
-Uživatel by se tedy při volbě testu měl rozhodovat na základě toho kolik má změřených vzorků a~kolik má času na porovnání
-výsledků měření. Pokud má uživatel naměřených vzorků málo a větší množství času k vyhodnocení doporučuje se použít bootstrap.
+Uživatel by se tedy při volbě testu měl rozhodovat na~základě toho kolik má času na~porovnání
+výsledků měření. Pokud má uživatel větší množství času k~vyhodnocení doporučuje se~použít bootstrap.
 Pokud má uživatel větší množství vzorků a~málo času je pro něho lepší použít t-test.
+
+Pokud bude naměřených vzorků pro statistické porovnání příliš málo, tak ani jeden z~testů nebude schopen
+vrátit významný výsledek. V obou případech je tedy nutné také vyhodnocovat, zda je množství vzorků dostatečné.
+Pokud množství vzorků není dostatečné, pak je nutné o tom uživatele informovat.
 
 \subsection{Rozpoznání formátu výsledků měření}
 
@@ -155,6 +162,9 @@ Jeden z~výstupních formátu systému PerfEval je takováto tabulka na příkaz
 
 \section{Architektura systému PerfEval}
 
+Tato kapitola se věnuje popisu konkrétní architektury systému PerfEval.
+Popisuje jakým způsobem jsou jednotlivé části systému navrženy a~jak spolu vzájemně interagují.
+
 \subsection{Průběh vyhodnocování}
 
 Samotné vyhodnocování jakožto porovnání dvou výsledků měření jedné sady testů výkonu je proces, který lze rozdělit do~několika kroků.
@@ -165,6 +175,14 @@ Zpracování dat uložených v souborech s výsledky měření až po vypsání 
     \item Pomocí statistického testu porovnat dvě sady naměřených dat.
     \item Výsledek porovnání vypsat uživateli.
 \end{enumerate}
+
+Následující obrázek znázorňuje objektový návrh tříd, které se podílejí na~vyhodnocování výsledků měření.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.92\textwidth]{../img/perfeval_evaluate.png}
+    \caption{Objektový návrh části PerfEvalu pro porovnávání výsledků měření}
+\end{figure}
 
 Třída \lstinline|EvaluateCLICommand| zastřešuje celý tento proces vyhodnocování.
 Pro první krok použije parser výsledků měření, který je zvolen uživatelem při inicializaci systému,
@@ -182,19 +200,17 @@ umí výsledky vyhodnocení z~kolekce \lstinline|MeasurementComparisonResultColl
 
 Nakonec se jen podle voleb z~konfiguračního souboru nastaví exit kód programu a~ukončí se vyhodnocování.
 
-Následující obrázek znázorňuje objektový návrh tříd, které se podílejí na~vyhodnocování výsledků měření.
-
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.92\textwidth]{../img/perfeval_evaluate.png}
-    \caption{Objektový návrh části PerfEvalu pro porovnávání výsledků měření}
-\end{figure}
-
 \subsection{Inicializace systému PerfEval}
 
 Před použitím systému PerfEval k~vyhodnocování je nutné jej inicializovat.
 Účelem inicializace je vytvoření konfiguračního souboru a~databáze pro~ukládání informací o~výsledcích měření.
 Tyto soubory jsou potřebné pro fungování systému PerfEval v~rámci vybraného projektu.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[height=0.47\textheight]{../img/perfeval_init.png}
+    \caption{Objektový návrh části PerfEvalu pro inicializaci}
+\end{figure}
 
 Kroky inicializace jsou následující:
 \begin{enumerate}
@@ -214,11 +230,6 @@ Hlavní třídou je třída \lstinline|InitCommand|, která provádí výše zm�
 Protože třída inicializace se provádí pomocí příkazu \texttt{init}, tak je třída \lstinline|InitCommand| implementací rozhraní \lstinline|Command|.
 Třída \lstinline|PerfEvalConfig| reprezentuje obsah konfiguračního souboru.
 
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[height=0.5\textheight]{../img/perfeval_init.png}
-    \caption{Objektový návrh části PerfEvalu pro inicializaci}
-\end{figure}
 
 \subsection{Přidávání nových výsledků testů}
 
