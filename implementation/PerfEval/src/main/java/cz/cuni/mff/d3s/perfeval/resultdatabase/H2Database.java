@@ -6,7 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,37 +24,37 @@ import org.h2.jdbcx.JdbcDataSource;
  */
 public class H2Database implements Database {
     /**
-     * JDBCDataSource that represents metadata about database connection
+     * JDBCDataSource that represents metadata about database connection.
      */
     private final JdbcDataSource dataSource;
     /**
-     * path to the database file
+     * Path to the database file.
      */
     private final Path pathToDBFile;
     //this is the path to which are relative paths of inserted files computed to
     //private final Path pathRelativesTo=Path.of("");
     /**
-     * username for accessing the database
+     * Username for accessing the database.
      */
     private static final String DB_USER = "sa";
     /**
-     * password for accessing the database
+     * Password for accessing the database.
      */
     private static final String DB_PASSWORD = "sa";
     /**
-     * prefix of the database URL
+     * Prefix of the database URL.
      */
     private static final String DB_PREFIX = "jdbc:h2:";
 
     /**
-     * Creates new PerfEval database with the given path
+     * Creates new PerfEval database with the given path.
      * @param path              path to the database file
      * @return                  instance of Database with usage of H2 database and JDBC
      * @throws SQLException     SQLException could be thrown if file cannot be created or there is another error with access to H2 database
      */
     public static Database getDBFromFilePath(Path path) throws SQLException {
         JdbcDataSource dataSource = new JdbcDataSource();
-        dataSource.setURL(DB_PREFIX+path.toString());
+        dataSource.setURL(DB_PREFIX + path.toString());
         dataSource.setUser(DB_USER);
         dataSource.setPassword(DB_PASSWORD);
         Connection connection = dataSource.getConnection();
@@ -67,7 +71,7 @@ public class H2Database implements Database {
     }
 
     /**
-     * method used just for testing, drops database table
+     * method used just for testing, drops database table.
      * @throws SQLException throws SQLException if table cannot be dropped
      */
     public void dropTable() throws SQLException {
@@ -77,11 +81,11 @@ public class H2Database implements Database {
     }
 
     /**
-     * initializes private members
+     * Initializes private members.
      * @param dataSource    JDBCDataSource that represents metadata about database connection
      * @param originPath    path to db file, used for adding relative paths to that file to database
      */
-    public H2Database(JdbcDataSource dataSource, Path originPath) {
+    private H2Database(JdbcDataSource dataSource, Path originPath) {
         this.dataSource = dataSource;
         this.pathToDBFile = originPath;
     }
@@ -96,7 +100,7 @@ public class H2Database implements Database {
     public ProjectVersion[] getLastNVersions(int n) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
             //db query for getting info about newest N versions
-            String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata ORDER BY dateOfCommit DESC LIMIT ?";
+            String query = "SELECT DISTINCT version, dateOfCommit, tag FROM ResultMetadata ORDER BY dateOfCommit DESC LIMIT ?";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, n);
@@ -139,7 +143,7 @@ public class H2Database implements Database {
                     List<FileWithResultsData> results = new ArrayList<>();
 
                     while (resultSet.next()) {
-                        String path =pathToDBFile.resolve(resultSet.getString("path")).toAbsolutePath().toString();
+                        String path = pathToDBFile.resolve(resultSet.getString("path")).toAbsolutePath().toString();
                         Date dateOfCreation = resultSet.getTimestamp("dateOfCreation");
                         String versionHash = resultSet.getString("version");
                         String tag = resultSet.getString("tag");
@@ -167,17 +171,18 @@ public class H2Database implements Database {
     public FileWithResultsData[] getResultsOfVersion(ProjectVersion version) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
 
-            if(version.commitVersionHash()==null) throw new DatabaseException("No versionHash provided", null, ExitCode.databaseError);
+            if (version.commitVersionHash() == null) {
+                throw new DatabaseException("No versionHash provided", null, ExitCode.databaseError);
+            }
             String whereClause = generatePatternWhereClause(version);
-            String query = "SELECT path, dateOfCreation, tag, dateOfCommit FROM ResultMetadata "+whereClause;
-
+            String query = "SELECT path, dateOfCreation, tag, dateOfCommit FROM ResultMetadata " + whereClause;
             try (PreparedStatement preparedStatement = generateStatementFromVersionPatternQuery(connection, query, version)) {
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     List<FileWithResultsData> results = new ArrayList<>();
 
                     while (resultSet.next()) {
-                        String path = pathToDBFile.resolve(resultSet.getString("path")).toAbsolutePath().toString();
+                        String path = pathToDBFile.resolve(resultSet.getString("path")).toAbsolutePath().normalize().toString();
                         Date dateOfCreation = resultSet.getTimestamp("dateOfCreation");
                         String tag = resultSet.getString("tag");
                         Date dateOfCommit = resultSet.getTimestamp("dateOfCommit");
@@ -199,15 +204,26 @@ public class H2Database implements Database {
      * @param pattern   non-null values of this FileVersionCharacteristic instance are wanted
      * @return          String representation of SQL WHERE clause
      */
-    private String generatePatternWhereClause(ProjectVersion pattern){
+    private String generatePatternWhereClause(ProjectVersion pattern) {
         StringBuilder whereClauseBuilder = new StringBuilder("WHERE ");
-        if(pattern.commitVersionHash()!=null) whereClauseBuilder.append("version = ?");
-        if(pattern.commitVersionHash()!=null && pattern.dateOfCommit()!=null) whereClauseBuilder.append(" AND ");
-        if(pattern.dateOfCommit()!=null) whereClauseBuilder.append("dateOfCommit = ?");
-        if(pattern.dateOfCommit()!=null && pattern.tag()!=null) whereClauseBuilder.append(" AND ");
-        else if (pattern.commitVersionHash()!=null && pattern.tag()!= null) whereClauseBuilder.append(" AND ");
-        if(pattern.tag()!=null) whereClauseBuilder.append("tag = ?");
-
+        if (pattern.commitVersionHash() != null) {
+            whereClauseBuilder.append("version = ?");
+        }
+        if (pattern.commitVersionHash() != null && pattern.dateOfCommit() != null) {
+            whereClauseBuilder.append(" AND ");
+        }
+        if (pattern.dateOfCommit() != null) {
+            whereClauseBuilder.append("dateOfCommit = ?");
+        }
+        if (pattern.dateOfCommit() != null && pattern.tag() != null) {
+            whereClauseBuilder.append(" AND ");
+        } else if (pattern.commitVersionHash() != null && pattern.tag() != null) {
+            whereClauseBuilder.append(" AND ");
+        }
+        if (pattern.tag() != null) {
+            //tag is case-insensitive
+            whereClauseBuilder.append("tag ~* ?");
+        }
         return whereClauseBuilder.toString();
     }
 
@@ -222,9 +238,15 @@ public class H2Database implements Database {
     private PreparedStatement generateStatementFromVersionPatternQuery(Connection connection, String query, ProjectVersion pattern) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         int index = 0;
-        if(pattern.commitVersionHash()!=null) preparedStatement.setString(++index, pattern.commitVersionHash());
-        if(pattern.dateOfCommit()!=null) preparedStatement.setTimestamp(++index, new Timestamp(pattern.dateOfCommit().getTime()));
-        if(pattern.tag()!=null) preparedStatement.setString(++index, pattern.tag());
+        if (pattern.commitVersionHash() != null) {
+            preparedStatement.setString(++index, pattern.commitVersionHash());
+        }
+        if (pattern.dateOfCommit() != null) {
+            preparedStatement.setTimestamp(++index, new Timestamp(pattern.dateOfCommit().getTime()));
+        }
+        if (pattern.tag() != null) {
+            preparedStatement.setString(++index, pattern.tag());
+        }
         return preparedStatement;
     }
 
@@ -243,7 +265,7 @@ public class H2Database implements Database {
             Date creationDate = new Date(fileAttributes.creationTime().toMillis());
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
-                preparedStatement.setString(1, pathToDBFile.relativize(filePath).toString());
+                preparedStatement.setString(1, pathToDBFile.relativize(filePath.toAbsolutePath()).toString());
                 preparedStatement.setTimestamp(2, new Timestamp(creationDate.getTime())); // Current date for dateOfCreation
                 preparedStatement.setTimestamp(3, new Timestamp(version.dateOfCommit().getTime()));
                 preparedStatement.setString(4, version.commitVersionHash());
@@ -251,8 +273,10 @@ public class H2Database implements Database {
 
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException | IOException e) {
-            throw new DatabaseException("Error adding file to the database: " + e.getMessage(), e, ExitCode.databaseError);
+        } catch (SQLException e) {
+            throw new DatabaseException("Error adding file to the database: " + e.getMessage(), ExitCode.databaseError);
+        } catch (IOException e) {
+            throw new DatabaseException("File does not exists: " + filePath.toString(), ExitCode.databaseError);
         }
     }
 
@@ -296,7 +320,7 @@ public class H2Database implements Database {
     public ProjectVersion findOlderNeighbourVersion(ProjectVersion version) throws DatabaseException {
         try (Connection connection = dataSource.getConnection()) {
             String innerQuery = "SELECT dateOfCommit FROM ResultMetadata WHERE version = ? ORDER BY dateOfCommit DESC LIMIT 1";
-            String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata WHERE dateOfCommit < ("+innerQuery+") ORDER BY dateOfCommit DESC";
+            String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata WHERE dateOfCommit < (" + innerQuery + ") ORDER BY dateOfCommit DESC";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, version.commitVersionHash());
@@ -312,7 +336,7 @@ public class H2Database implements Database {
                 }
             }
             // If no older neighbor version is found, return null
-            return null;
+            throw new DatabaseException("No older neighbor version found of version "+version.commitVersionHash(), ExitCode.databaseError);
         } catch (SQLException e) {
             throw new DatabaseException("Error finding older neighbor version: " + e.getMessage(), e, ExitCode.databaseError);
         }
@@ -326,9 +350,9 @@ public class H2Database implements Database {
      */
     @Override
     public ProjectVersion findNewerNeighbourVersion(ProjectVersion version) throws DatabaseException {
-        try (Connection connection = dataSource.getConnection()){
+        try (Connection connection = dataSource.getConnection()) {
             String innerQuery = "SELECT dateOfCommit FROM ResultMetadata WHERE version = ? ORDER BY dateOfCommit DESC LIMIT 1";
-            String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata WHERE dateOfCommit > ("+innerQuery+") ORDER BY dateOfCommit ASC LIMIT 1";
+            String query = "SELECT version, dateOfCommit, tag FROM ResultMetadata WHERE dateOfCommit > (" + innerQuery + ") ORDER BY dateOfCommit ASC LIMIT 1";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, version.commitVersionHash());
@@ -344,7 +368,7 @@ public class H2Database implements Database {
                 }
             }
             // If no newer neighbor version is found, return null
-            return null;
+            throw new DatabaseException("No newer neighbor version found of version "+version.commitVersionHash(), ExitCode.databaseError);
         } catch (SQLException e) {
             throw new DatabaseException("Error finding newer neighbor version: " + e.getMessage(), e, ExitCode.databaseError);
         }
@@ -361,7 +385,7 @@ public class H2Database implements Database {
         try (Connection connection = dataSource.getConnection()) {
 
             String whereClause = generatePatternWhereClause(pattern);
-            String query = "SELECT version, dateOfCommit, tag, dateOfCommit FROM ResultMetadata "+whereClause;
+            String query = "SELECT version, dateOfCommit, tag, dateOfCommit FROM ResultMetadata " + whereClause;
 
             try (PreparedStatement preparedStatement = generateStatementFromVersionPatternQuery(connection, query, pattern)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -426,7 +450,7 @@ public class H2Database implements Database {
      */
     @Override
     public ProjectVersion findClosestVersionToDate(Date date) throws DatabaseException {
-        try (Connection connection = dataSource.getConnection()){
+        try (Connection connection = dataSource.getConnection()) {
             //query for first newer and first older version -> then will be searched the closer one from both
             String query = """
                     SELECT *
@@ -456,11 +480,13 @@ public class H2Database implements Database {
                         String versionHash = resultSet.getString("version");
                         Date commitDate = resultSet.getTimestamp("dateOfCommit");
                         String tag = resultSet.getString("tag");
-                        if(!resultSet.next())
+                        if (!resultSet.next()) {
                             return new ProjectVersion(commitDate, versionHash, tag);
+                        }
                         Date newerCommitDate = resultSet.getTimestamp("dateOfCommit");
-                        if(Math.abs(newerCommitDate.getTime() - date.getTime()) > Math.abs(commitDate.getTime()-date.getTime()))
+                        if (Math.abs(newerCommitDate.getTime() - date.getTime()) > Math.abs(commitDate.getTime() - date.getTime())) {
                             return new ProjectVersion(commitDate, versionHash, tag);
+                        }
                         versionHash = resultSet.getString("version");
                         tag = resultSet.getString("tag");
                         return new ProjectVersion(commitDate, versionHash, tag);
@@ -472,6 +498,49 @@ public class H2Database implements Database {
             return null;
         } catch (SQLException e) {
             throw new DatabaseException("Error finding closest version to a date: " + e.getMessage(), e, ExitCode.databaseError);
+        }
+    }
+
+    @Override
+    public FileWithResultsData[] getAllResults() throws DatabaseException{
+        try(Connection connection = dataSource.getConnection()){
+            String query = "SELECT path, dateOfCreation, version, tag, dateOfCommit FROM ResultMetadata";
+            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+                try(ResultSet resultSet = preparedStatement.executeQuery()){
+                    List<FileWithResultsData> results = new ArrayList<>();
+                    while(resultSet.next()){
+                        String path = pathToDBFile.resolve(resultSet.getString("path")).toAbsolutePath().toString();
+                        Date dateOfCreation = resultSet.getTimestamp("dateOfCreation");
+                        String versionHash = resultSet.getString("version");
+                        String tag = resultSet.getString("tag");
+                        Date dateOfCommit = resultSet.getTimestamp("dateOfCommit");
+
+                        FileWithResultsData resultData = new FileWithResultsData(path, dateOfCreation, new ProjectVersion(dateOfCommit, versionHash, tag));
+                        results.add(resultData);
+                    }
+                    return results.toArray(new FileWithResultsData[0]);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Error retrieving all results: " + e.getMessage(), e, ExitCode.databaseError);
+        }
+    }
+
+    @Override
+    public Date getDateOfVersionHash(String versionHash) throws DatabaseException {
+        try(Connection connection = dataSource.getConnection()){
+            String query = "SELECT dateOfCommit FROM ResultMetadata WHERE version = ?";
+            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+                preparedStatement.setString(1, versionHash);
+                try(ResultSet resultSet = preparedStatement.executeQuery()){
+                    if (resultSet.next()){
+                        return resultSet.getTimestamp(1);
+                    }
+                    throw new DatabaseException("Error unknown version.", ExitCode.OK);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Error retrieving all results: " + e.getMessage(), e, ExitCode.databaseError);
         }
     }
 }

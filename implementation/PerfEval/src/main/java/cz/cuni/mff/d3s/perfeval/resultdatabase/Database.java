@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.util.Date;
 
 /**
- * Interface defining behaviour of the benchmark test results database
+ * Interface defining behaviour of the benchmark test result database.
  */
 public interface Database {
     /**
@@ -89,4 +89,8 @@ public interface Database {
      * @throws DatabaseException if there is a problem with the database
      */
     ProjectVersion findClosestVersionToDate(Date date) throws DatabaseException;
+
+    FileWithResultsData[] getAllResults() throws DatabaseException;
+
+    Date getDateOfVersionHash(String versionHash) throws DatabaseException;
 }

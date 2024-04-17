@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.perfeval;
 
+import java.lang.*;
 import cz.cuni.mff.d3s.perfeval.command.Command;
 import cz.cuni.mff.d3s.perfeval.command.Parser;
 import cz.cuni.mff.d3s.perfeval.command.ParserException;
@@ -26,9 +27,11 @@ public class Main {
             e.exitCode.exit();
         }
         try {
-            if (command == null) exitCode = ExitCode.invalidArguments;
-            else exitCode = command.execute();
-
+            if (command == null) {
+                exitCode = ExitCode.invalidArguments;
+            } else {
+                exitCode = command.execute();
+            }
         } catch (PerfEvalCommandFailedException e) {
             System.err.println(e.getMessage()); //NOPMD - suppressed SystemPrintln - only used for error messages, there is no other way to print them
             exitCode = e.exitCode;

@@ -1,7 +1,5 @@
-import cz.cuni.mff.d3s.perfeval.performancecomparators.ArrayUtilities;
+import cz.cuni.mff.d3s.perfeval.evaluation.ArrayUtilities;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,17 +45,6 @@ public class ArrayUtilitiesTest {
         double expectedAverage = expectedSum / (rowCount * colCount);
         double actualAverage = ArrayUtilities.calculateHierarchicAverage(matrix);
         assertEquals(expectedAverage, actualAverage, 0.001);
-    }
-
-
-    @Test
-    public void testCalcMinSampleCount() {
-        // Test with sample statistics, confidence level, and max width
-        double[] statistics = {10.0, 20.0, 30.0, 40.0, 50.0};
-        double confidenceLevel = 0.95;
-        double maxWidth = 0.1;
-        int actualSampleCount = ArrayUtilities.calcMinSampleCount(statistics, confidenceLevel, maxWidth);
-        assertTrue(actualSampleCount > statistics.length);
     }
 
 }

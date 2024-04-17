@@ -1,0 +1,34 @@
+\chapter*{Úvod}
+\addcontentsline{toc}{chapter}{Úvod}
+
+Po~více než dvacet let pomáhají unit testy udržovat kvalitu kódu v~průběhu vývoje
+softwaru. Za~tuto dobu bylo vyvinuto mnoho knihoven pro~implementaci a~spouštění
+unit testů. Verzovací nástroje jako GitLab nebo GitHub umožňují v~rámci vývoje
+software verzovat, spouštět unit testy a~reagovat na~jejich případná selhání.
+
+Psaní výkonnostních testů, které by pomáhaly udržovat kvalitu kódu stejně jako unit testy,
+již tak běžné není. Práce s~frameworky pro měření výkonu totiž není tak jednoduchá,
+jako používání knihoven pro psaní unit testů. Průběžné udržování výkonnosti by však mohlo
+pomáhat udržovat kvalitu kódu obdobným způsobem jako unit testy.
+
+Některé frameworky pro~vyhodnocování výkonu softwaru jsou podobné frameworkům pro psaní unit testů.
+Frameworky jako JMH nebo BenchmarkDotNet pomáhají implementovat výkonnostní testy.
+Vyhodnocování naměřených výsledků dnes obvykle zahrnuje i~jejich ruční zhodnocení.
+Vyhodnocování výkonu totiž vyžaduje porovnat naměřený výkon s~nějakou další referenční hodnotou.
+Měřící frameworky tyto referenční hodnoty nemají a~ani je nikde získat nemohou,
+protože měří pouze jednu verzi softwaru. Nemohou tedy dělat zmíněné celkové vyhodnocení.
+
+Vyhodnocování výkonnostních testů je složitější problém než vyhodnocování unit testů.
+Unit testy testují korektnost. Ta se prokáže tak, že~na~každý zadaný vstup program vrátí očekávaný výstup. Při vyhodnocování
+výkonu se~změří sada dat o~běhu programu. Tato data ale sama o~sobě nemají požadovanou
+vypovídající hodnotu a je nutné je zkoumat v kontextu.
+
+Výsledkem této práce je nástroj nazvaný PerfEval. PerfEval je konzolová aplikace
+napsaná v~programovacím jazyce Java. PerfEval umí vyhodnocovat výsledky
+výkonnostních testů. Způsob a~průběh vyhodnocování je řízený pomocí argumentů příkazové řádky.
+
+PerfEval je schopen automatického hlášení výsledků výkonnostních testů. Umí porovnávat
+výsledky měření výkonu dvou verzí softwaru mezi sebou. PerfEval je také vhodný pro
+skriptování, protože o~výsledcích informuje nejen výpisem na~standardní výstup, ale
+také exit kódem. Nástroj podporuje zpracování výstupů frameworků BenchmarkDotNet a~JMH ve~formátu JSON,
+ale je rozšiřitelný i~pro~zpracování jiných frameworků nebo formátů.

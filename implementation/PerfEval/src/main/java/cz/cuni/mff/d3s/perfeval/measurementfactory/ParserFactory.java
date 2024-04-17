@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * Factory for creating parsers and getting their names
+ * Factory for creating parsers and getting their names.
  */
 public class ParserFactory {
     /**
-     * Map of registered parsers
+     * Map of registered parsers.
      */
     private static final Map<String, Supplier<MeasurementParser>> registeredParsers = new HashMap<>();
 
@@ -26,7 +26,7 @@ public class ParserFactory {
     }
 
     /**
-     * Returns list of possible names of parsers
+     * Returns list of possible names of parsers.
      *
      * @return list of possible names of parsers
      */
@@ -34,7 +34,17 @@ public class ParserFactory {
         return new ArrayList<>(registeredParsers.keySet());
     }
 
+    /**
+     * Returns parser with given name.
+     *
+     * @param value name of parser
+     * @return parser with given name
+     */
     public static MeasurementParser getParser(String value) {
+        if (!registeredParsers.containsKey(value)) {
+            //parser was not registered
+            return null;
+        }
         return registeredParsers.get(value).get();
     }
 }

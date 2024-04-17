@@ -8,11 +8,20 @@ public enum ExitCode {
      * Exit code for successful execution of command.
      */
     OK(0),
-    //TODO: change to 1
     /**
      * Exit code for unsuccessful execution due to performance get worse.
      */
-    atLeastOneWorseResult(0),
+    atLeastOneWorseResult(1),
+
+    /**
+     * Exit code for unsuccessful execution due to high demand of run.
+     */
+    highRunDemand(2),
+
+    /**
+     * Exit code for unsuccessful execution due to improved performance.
+     */
+    improvedPerformance(3),
     /**
      * Exit code for unsuccessful execution due to invalid arguments.
      */
@@ -22,15 +31,22 @@ public enum ExitCode {
      */
     notInitialized(102),
     /**
+     * Exit code for unsuccessful execution due to already initialized PerfEval.
+     */
+    alreadyInitialized(103),
+    /**
      * Exit code for unsuccessful execution due to failed evaluation.
      */
-    evaluationFailed(103),
+    evaluationFailed(104),
     /**
      * Exit code for unsuccessful execution due to database error.
      */
-    databaseError(104),
+    databaseError(105),
 
-    parserError(105);
+    /**
+     * Exit code for unsuccessful execution due to parser error.
+     */
+    parserError(106);
     /**
      * Integer value of the exit code.
      */

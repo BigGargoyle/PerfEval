@@ -1,9 +1,11 @@
-package cz.cuni.mff.d3s.perfeval;
+package cz.cuni.mff.d3s.perfeval.command;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 
@@ -16,6 +18,16 @@ import java.util.Date;
  * Class containing utilities for working with git.
  */
 public class GitUtilities {
+
+    /**
+     * Name of the git file.
+     */
+    private static final String GIT_FILE_NAME = ".git";
+    /**
+     * Prefix for tags.
+     */
+    private static final String TAGS_PREFIX = "refs/tags/";
+
     /**
      * Checks if the repository is clean.
      *
@@ -41,12 +53,13 @@ public class GitUtilities {
      * @throws IOException If the repository is not found.
      */
     public static RevCommit getLastCommit(Path pathToRepo) throws IOException {
-        try (Git git = Git.open(new File(pathToRepo.toString()))) {
+        Path pathToGitFile = pathToRepo.resolve(GIT_FILE_NAME);
+        try (Git git = Git.open(new File(pathToGitFile.toString()))) {
             Ref head = git.getRepository().exactRef("HEAD");
             ObjectId objectId = head.getObjectId();
-
-            if (objectId == null)
+            if (objectId == null) {
                 return null;
+            }
             return new RevWalk(git.getRepository()).parseCommit(objectId);
 
         } catch (Exception e) {
@@ -58,24 +71,33 @@ public class GitUtilities {
      * Gets the last commit tag of the repository.
      *
      * @param pathToRepo Path to the repository.
+     * @param version    Version of the repository.
      * @return Last commit tag of the repository.
      * @throws IOException If the repository is not found.
      */
     public static String getLastCommitTag(Path pathToRepo, String version) throws IOException {
-        try (Git git = Git.open(new File(pathToRepo.toString()))) {
-            ObjectId objectId = git.getRepository().resolve(version);
+        Path pathToGitFile = pathToRepo.resolve(GIT_FILE_NAME);
+        try (Git git = Git.open(new File(pathToGitFile.toString()))) {
+            Repository repository = git.getRepository();
+            ObjectId commitId = repository.resolve(version);
+            if (commitId == null) {
+                return ""; // Commit not found
+            }
 
-            if (objectId == null)
-                return null;
+            // Get all refs (tags and branches)
+            Iterable<Ref> refs = git.tagList().call();
+            for (Ref ref : refs) {
+                ObjectId objectId = ref.getObjectId();
+                if (objectId.equals(commitId)) {
+                    return ref.getName().replace(TAGS_PREFIX, "");
+                }
+            }
 
-            Ref tagRef = git.getRepository().getRefDatabase().peel(git.getRepository().getRefDatabase().findRef(objectId.getName()));
-            if (tagRef != null)
-                return tagRef.getName();
-            else
-                return "";
-
-        } catch (Exception e) {
-            throw new IOException("No git file founded.", e);
+            return ""; // No tag found for the commit
+        } catch (IOException e) {
+            throw new IOException("No git file found.", e);
+        } catch (GitAPIException e) {
+            throw new IOException("Error while getting tags.", e);
         }
     }
 
@@ -87,11 +109,13 @@ public class GitUtilities {
      * @return Date of the commit.
      */
     public static Date getCommitDate(Path pathToRepo, String commitHash) {
-        try (Git git = Git.open(new File(pathToRepo.toString()))) {
+        Path pathToGitFile = pathToRepo.resolve(GIT_FILE_NAME);
+        try (Git git = Git.open(new File(pathToGitFile.toString()))) {
             ObjectId objectId = git.getRepository().resolve(commitHash);
 
-            if (objectId == null)
+            if (objectId == null) {
                 return null;
+            }
 
             RevCommit commit = new RevWalk(git.getRepository()).parseCommit(objectId);
             return commit.getAuthorIdent().getWhen();
@@ -100,5 +124,4 @@ public class GitUtilities {
             return null;
         }
     }
-
 }

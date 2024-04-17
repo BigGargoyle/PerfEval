@@ -23,7 +23,7 @@ public interface MeasurementParser {
      * @return list of Samples objects
      * @throws MeasurementParserException if there is an error during parsing
      */
-    default List<Samples> getTestsFromFile(String fileName){
+    default List<Samples> getTestsFromFile(String fileName) {
         return getTestsFromFiles(new String[]{fileName});
     }
 

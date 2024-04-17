@@ -10,7 +10,7 @@ public class DatabaseException extends Exception {
     /**
      * Message of the exception.
      */
-    final String message;
+    private final String message;
     /**
      * Exit code of the exception.
      */
@@ -29,11 +29,25 @@ public class DatabaseException extends Exception {
         this.initCause(cause);
     }
 
+    public DatabaseException(String msg, ExitCode exitCode) {
+        this.exitCode = exitCode;
+        this.message = msg;
+    }
+
+    /**
+     * @return message of the exception
+     */
     @Override
     public String toString() {
-        if (getCause() != null)
+        if (getCause() != null) {
             return getCause().toString() + System.lineSeparator() + message;
-        else
-            return System.lineSeparator() + message;
+        } else {
+            return message;
+        }
+    }
+
+    @Override
+    public String getMessage() {
+        return this.toString();
     }
 }

@@ -4,8 +4,8 @@ plugins {
     id 'checkstyle'
 }
 
-group = 'org.example'
-version = '1.0-SNAPSHOT'
+group = 'cz.cuni.mff.d3s.perfeval'
+version = ''
 
 repositories {
     mavenCentral()
@@ -26,19 +26,27 @@ dependencies {
     implementation 'org.openl.jgit:org.eclipse.jgit:6.3.0.202209071007-openl-2'
     implementation 'net.sf.jopt-simple:jopt-simple:6.0-alpha-3'
     implementation 'org.apache.commons:commons-configuration2:2.9.0'
+    implementation 'commons-beanutils:commons-beanutils:1.9.4'
     implementation 'org.atteo.moonshine:h2:1.2'
     implementation 'hibernate:hibernate:3.1rc2'
     implementation 'org.hibernate:hibernate:3.6.0.Beta2'
     implementation 'org.hibernate:hibernate-core:6.3.0.CR1'
     implementation 'org.hibernate:hibernate-entitymanager:6.0.0.Alpha7'
+    implementation 'org.thymeleaf:thymeleaf:3.1.1.RELEASE'
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // SLF4J API
+    implementation 'org.slf4j:slf4j-api:1.7.32' // Use the latest version
+
+    // Logback Classic (Logging Implementation)
+    implementation 'ch.qos.logback:logback-classic:1.4.12' // Use the latest version
 }
 
 jar {
     duplicatesStrategy = 'exclude'
     manifest {
-        attributes 'Main-Class': 'org.example.Main'
+        attributes 'Main-Class': 'cz.cuni.mff.d3s.perfeval.Main'
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

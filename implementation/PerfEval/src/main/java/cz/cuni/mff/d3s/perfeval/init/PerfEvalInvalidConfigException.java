@@ -1,13 +1,23 @@
 package cz.cuni.mff.d3s.perfeval.init;
 
 /**
- * Exception thrown when config file has invalid data
+ * Exception thrown when config file has invalid data.
  */
 public class PerfEvalInvalidConfigException extends Exception {
+
+    private final String message;
+
+    public PerfEvalInvalidConfigException() {
+        this.message = "Config file has invalid data.";
+    }
+
     /**
-     * Message of exception
+     * Constructor for PerfEvalInvalidConfigException.
      */
-    static String message = "Config file has invalid data.";
+    public PerfEvalInvalidConfigException(String message) {
+        this.message = message;
+    }
+
 
     @Override
     public String toString() {
