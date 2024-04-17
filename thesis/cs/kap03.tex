@@ -222,9 +222,9 @@ Třída \lstinline|PerfEvalConfig| reprezentuje obsah konfiguračního souboru.
 
 \subsection{Přidávání nových výsledků testů}
 
-Uživatel musí každý výsledek měření výkonu zaznamenat do~systému PerfEval. Pokud výsledek měření zaznamenán, nebude s~ním
-PerfEval vůbec pracovat. Přidávat je možné soubory samostatně, nebo z~adresáře. Při~přidávání souborů z~adresáře budou
-přidány všechny soubory a~to i~soubory zanořené ve~vnitřních adresářích zadaného adresáře.
+Uživatel musí každý výsledek měření výkonu zaznamenat do~systému PerfEval. Pokud výsledek měření nebude zaznamenán, tak s~ním
+PerfEval nebude vůbec pracovat. Přidávat je možné soubory samostatně, nebo z~adresáře. Při~přidávání souborů z~adresáře budou
+přidány všechny soubory, a~to i~soubory zanořené ve~vnitřních adresářích zadaného adresáře.
 
 \begin{figure}[!ht]
     \centering
@@ -237,6 +237,6 @@ Jediná existující implementace tohoto rozhraní využívá technologie H2 dat
 vést si databázi lokálně v~rámci souboru a~pokládat na ní klasické SQL dotazy.
 
 Implementace rozhraní Database pomocí technologie H2 je třída H2Database. V~rámci databáze pro jeden projekt, který
-PerfEval spravuje jsou lokální soubory pro H2 databázi uloženy v adresáři .performance. Databáze pro správu dat o~výsledcích
+PerfEval spravuje, jsou lokální soubory H2 databáze uloženy v adresáři .performance. Databáze pro správu dat o~výsledcích
 měření má jen jednu tabulku. V~této tabulce jsou informace o~cestě k~souboru a~informace o~verzi.
 
