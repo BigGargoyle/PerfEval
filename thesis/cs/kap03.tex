@@ -205,24 +205,33 @@ neexistence některého ze~souborů s~naměřenými výsledky v~důsledku jeho s
 
 \subsection{Inicializace systému PerfEval}
 
-Před použitím systému PerfEval k~vyhodnocování je nutné jej inicializovat. Inicializace umí rozpoznat zdali se nachází
-v~kořenovém adresáři Git repozitáře. Rozpoznávání probíhá tak, že se hledá soubor s názvem .git.
+Před použitím systému PerfEval k~vyhodnocování je nutné jej inicializovat.
+Účelem inicializace je vytvoření konfiguračního souboru a~databáze pro~ukládání informací o~výsledcích měření.
+Tyto soubory jsou potřebné pro fungování systému PerfEval v~rámci vybraného projektu.
 
-Inicializace probíhá tak, že se zjistí přítomnost .git souboru. Z~příkazové řádky se zjistí jaký parser (implementace
-třídy MeasurementParser) pro~naměřené hodnoty se bude používat. Vyrobí výchozí konfigurace. Do~výchozí konfigurace
-se dodají informace o~git repositáři a~o~parseru. Nakonec se vyrobí složka se v adresáři, kde uživatel program spustil
-vyrobí složka .performance a~v~ní soubory .gitignore a~config.ini. Soubor config.ini obsahuje konfiguraci systému PerfEval
-pro~jeden projekt jehož výkon mezi verzemi se bude porovnávat.
+Kroky inicializace jsou následující:
+\begin{enumerate}
+    \item Zjištění zdali adresář podléhá správě verzí systému Git
+    \item Vytvoření adresáře .performance
+    \item Vytvoření konfiguračního souboru config.ini s výchozími hodnotami
+    \item Vytvoření databáze pro ukládání výsledků měření
+\end{enumerate}
+
+Při každém spouštění dalšího příkazu systému PerfEval je pak načtena konfigurace z~konfiguračního souboru.
+Při vyhodnocování výkonu se načítají výsledky měření společně s~metadaty o~verzi, ke~které se měření vztahuje.
+Tato metadata jsou uložena ve~zmíněné databázi.
+
+Pomocí těchto kroků je systém PerfEval inicializován pro~další použití.
+Na~následujícím obrázku je vidět objektový návrh části systému PerfEval, která se~stará o~inicializaci systému.
+Hlavní třídou je třída \lstinline|InitCommand|, která provádí výše zmíněné kroky inicializace v~rámci metody \lstinline|execute|.
+Protože třída inicializace se provádí pomocí příkazu \texttt{init}, tak je třída \lstinline|InitCommand| implementací rozhraní \lstinline|Command|.
+Třída \lstinline|PerfEvalConfig| reprezentuje obsah konfiguračního souboru.
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[height=0.5\textheight]{../img/perfeval_init.png}
     \caption{Objektový návrh části PerfEvalu pro inicializaci}
 \end{figure}
-
-Z~obrázku je patrné, že třída InitCommand úzce spolupracuje s~třídou PerfEvalConfig. Třída PerfEvalConfig reprezentuje
-obsah souboru config.ini. Provedení metody execute na~třídě InitCommand provede inicializaci systému PerfEval výše
-zmíněným způsobem.
 
 \subsection{Přidávání nových výsledků testů}
 
