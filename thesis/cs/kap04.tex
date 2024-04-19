@@ -2,13 +2,24 @@
 
 \section{Instalace}
 
-Instalace systému PerfEval probíhá pomocí nástroje gradle. V adresáři se zdrojovým kódem se nachází
-spustitelný soubor \texttt{gradlew}, který je určen pro kompilaci a sestavení PerfEvalu v systémech Linux.
-Pro kompilaci a sestavení v systémech Windows je určený spustitelný soubor \texttt{gradlew.bat}.
+Instalace systému PerfEval probíhá pomocí nástroje gradle. V~adresáři se zdrojovým kódem se nachází
+spustitelný soubor \texttt{gradlew}, který je určen pro kompilaci a~sestavení PerfEvalu v~systémech Linux.
+Pro kompilaci a~sestavení v~systémech Windows je určený spustitelný soubor \texttt{gradlew.bat}.
 
-Po kompilaci a sestavení pomocí zmíněných souborů vznikne soubor typu JAR v podadresáři \texttt{build/libs}.
+\begin{itemize}
+    \item Instalace v systému Linux: \lstinline|./gradlew build|
+    \item Instalace v systému Windows: \lstinline|gradlew.bat build|
+\end{itemize}
+
+Po kompilaci a~sestavení pomocí zmíněných souborů vznikne soubor typu JAR v podadresáři \texttt{build/libs}.
 Soubor je možné spustit pomocí příkazu \texttt{java -jar PerfEval.jar}, nebo pomocí připravených skriptů
-\texttt{perfeval.sh} pro systémy Linux a \texttt{perfeval.bat} pro systémy Windows.
+\texttt{perfeval.sh} pro systémy Linux a \texttt{perfeval.bat} pro systémy Windows. Tyto skripty se nachází
+taktéž v adresáři se zdrojovým kódem.
+
+\begin{itemize}
+    \item Spuštění v systému Linux: \lstinline|./perfeval.sh|
+    \item Spuštění v systému Windows: \lstinline|perfeval.bat|
+\end{itemize}
 
 \section{Dostupné příkazy}
 
@@ -41,7 +52,7 @@ není nalezena a~nebyl zadán příkaz init, končí s~chybou, že systém není
 
 Příkaz index-new-result slouží k~přidání výsledků měření výkonu do~databáze. Databáze
 je pro~každý projekt zvlášť a~je tedy možné na~jednom zařízení systémem PerfEval spravovat více projektů.
-Při přidávání informací o souboru s výsledky je nutné zadat cestu k tomuto souboru.
+Při přidávání informací o~souboru s~výsledky je nutné zadat cestu k tomuto souboru.
 Verze, ke~které byly výsledky změřeny, může být zadaná také, nebo ji systém zkusí určit
 podle git repozitáře.
 
@@ -120,7 +131,7 @@ přehled o~souborech v~databázi PerfEvalu.
 
 \section{Konfigurační soubor}
 
-Po spuštění systému PerfEval s~příkazem init dojde k~vytvoření složky .performance
+Po spuštění systému PerfEval s~příkazem \texttt{init} dojde k~vytvoření složky .performance
 v~pracovním adresáři. Ve~vytvořené složce bude konfigurační soubor config.ini.
 Tento soubor obsahuje nastavení spojené s~používáním systému PerfEval při~vyhodnocování
 výkonu jednoho projektu. Změnou hodnot v~konfiguračním souboru je možné omezeně změnit chování

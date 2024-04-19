@@ -2,7 +2,7 @@
 
 \section{Automatické vyhodnocování}
 Ve scénáři z minulé kapitoly byl zmíněn problém programátora s~testováním výkonu. Programátor má unit
-testy, které testují korektnost jeho softwaru. Umí je efektivně spouštět s~každou změnou
+testy, které testují korektnost jeho softwaru. Umí je efektivně spouštět s~každou novou verzí
 pomocí průběžné integrace. Chtěl by, aby mohl podobně efektivně testovat i~výkon svého softwaru.
 
 S~testováním výkonu je ale problém. Když se spustí měření výkonu, tak výsledkem je pouhá
@@ -17,15 +17,15 @@ pomocí statistických metod, které si s~tímto šumem poradí.
 
 Vyvinutý systém PerfEval řeší programátorův problém. Jedná se o~nástroj, který může
 zakomponovat do~své průběžné integrace tak, aby byl pokles výkonu hlášen. Nástroj
-při~spuštění průběžné integrace porovná dvě poslední verze a~případně oznámí zhoršení výkonu.
+při~spuštění průběžné integrace porovná dvě poslední nebo zadané verze a~případně oznámí zhoršení výkonu.
 Na~základě tohoto hlášení může celá průběžná integrace hlásit varování nebo zprávu o~chybě, což je obdobné chování,
 jako se očekává při selhání unit testů.
 
 \section{Měření výkonu}
 
 Před začátkem vývoje PerfEvalu bylo nutné zamyslet nad tím, jak můžou výsledky měření výkonu softwaru vypadat.
-V následujících odstavcích budou zmiňovány jednotlivé poznatky o výsledcích měření výkonu.
-Tyto poznatky vedly k tomu, jak se PerfEval chová a jakou má architekturu.
+V následujících odstavcích budou zmiňovány jednotlivé poznatky o~výsledcích měření výkonu.
+Tyto poznatky vedly k~tomu, jak se PerfEval chová a~jakou má architekturu.
 
 \bigskip
 \noindent\textbf{Měřené veličiny.} Testovací frameworky umožňují měřit mnoho různých fyzikálních veličin. Patří mezi ně například
@@ -148,7 +148,7 @@ průměry jednotlivých běhů, tak se podle CLV bude rozdělení těchto prům�
 
 Interval spolehlivosti pro Welchův t-test se spočítá podle následujícího algoritmu. V~algoritmu jsou
 použité funkce, které odkazují na skutečně použité knihovní funkce. Funkce mean počítá střední hodnotu
-sady hodnot. Funkce var počítá rozptyl sady hodnot. TDistribution je třída, která reprezentuje T-rozdělení
+sady hodnot. Funkce \texttt{var} počítá rozptyl sady hodnot. \lstinline{TDistribution} je třída, která reprezentuje T-rozdělení
 pro statistický test a~parametr konstruktoru je počet stupňů volnosti. Vzorec pro stupně volnosti je dostupný na~Wikipedii
 Welchova t-testu \cite[]{enwiki:1184251732}. Vstupními parametry jsou vzorky náhodných veličin a parametr $\alpha$ (critValue.)
 
@@ -275,7 +275,7 @@ V případě, že je interval dostatečně úzký, prohlásíme, že nulová hyp
 V případě, že interval není dostatečně úzký, prohlásíme, že vzorků není dost.
 
 PerfEval tedy v~konečném důsledku rozlišuje tři základní výsledky porovnání výkonu verzí.
-Test končí s~kladným výsledkem, pokud platí nulová hypotéze dle kritérií výše. Test
+Test končí s~kladným výsledkem, pokud platí nulová hypotéza dle kritérií výše. Test
 končí s~kladným výsledkem také když je nulová hypotéza vyvrácena, ale výkon novější verze je lepší.
 V~ostatních případech test neprojde. Další dva možné výsledky testu tedy budou značit selhání.
 Druhý výsledek testu značí, že~nulová hypotéza neplatí, a~zároveň, že~došlo ke~zhoršení výkonu.

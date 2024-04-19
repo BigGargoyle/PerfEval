@@ -6,16 +6,16 @@ více způsoby, ale cílem testů je vždy otestovat některý z~důležitých k
 atributů, jako je například korektnost nebo výkon.
 
 Pro testování korektnosti se obvykle používají unit testy. Jedná se většinou o~krátké testovací
-funkce, které kontrolují, jestli se testovaný kód chová požadovaným způsobem. Zjišťují tedy ,jestli
+funkce, které kontrolují, jestli se testovaný kód chová požadovaným způsobem. Zjišťují tedy, jestli
 kód na zadaný vstup vrátí očekávaný výstup. Ke~kódu, který není aktuálně vyvíjen, se obvykle nemění
-ani unit testy.  Proto když se mění části kódu kolem již takto hotové části, tak unit testy stále průběžně sledují
+ani unit testy. Když se mění části kódu kolem již takto hotové části, tak unit testy stále průběžně sledují
 korektnost tohoto již hotového kódu. Zdali je kód korektní se pomocí unit testů zjistí velmi jednoduše.
-Kód je korektní, pokud vrátil očekávaný výstup a pokrytí kódu unit testy je dostatečné.
+Kód je korektní, pokud vrátil očekávaný výstup a~pokrytí kódu unit testy je dostatečné.
 
 Testování výkonu obvykle probíhá tak, že se použije nějaký vhodný měřící framework.
 Obvyklé frameworky pro měření výkonu mají vlastní pravidla, jak se mají označit metody, které
 se mají měřit. Tyto frameworky umožňují měřit výkon softwaru podle různých metrik. Mezi tyto metriky
-se řadí čas, propustnost a~například spotřeba paměti. Výsledky měření frameworky umí obvykle zaznamenat jak do~strojově
+se řadí čas, propustnost a~například spotřeba paměti. Výsledky měření umí frameworky obvykle zaznamenat jak do~strojově
 čitelného formátu, tak do formátu čitelného pro člověka. Výsledek měření je ale pouze sada čísel, kde
 jsou ke~jménům testovaných metod přiřazeny naměřené hodnoty.
 
@@ -51,6 +51,8 @@ kroky při nahrávání nových verzí do~větve nebo při spojování větví. 
 skriptu při některé ze zmíněných událostí. V rámci průběžné integrace je možné testovat software pomocí unit testů
 i~benchmarků pro měření výkonu. Dále je možné použít jakékoli jiné příkazy příkazové řádky.
 Do průběžné integrace je tedy možné jednoduše zapojit téměř jakoukoli konzolovou aplikaci.
+Při selhání skriptu, když skončí s nenulovým exit kódem, je možné změny neintegrovat.
+Tímto způsobem je možné zamezit integraci chybného kódu.
 
 \section{Scénář}
 
@@ -58,7 +60,7 @@ Programátor se rozhodne naprogramovat si své vlastní softwarové dílo. Z~toh
 časem přestane být malý projekt. Vznikne mu potřeba udržovat kvalitu kódu.
 Vytvoří si tedy unit testy s~dostatečným pokrytím, aby byl schopen udržovat korektnost napsaného kódu.
 Začne používat nějaký verzovací nástroj, například Git, a vytvoří si skript pro průběžnou integraci.
-V~rámci této průběžné integrace bude pomocí unit testů s~každou novou verzí udržovat průběžná korektnost.
+V~rámci této průběžné integrace se bude pomocí unit testů s~každou novou verzí udržovat průběžná korektnost.
 
 Dalším z~aspektů kvality kódu, které by chtěl udržovat je výkon. Programátor s~využitím nějakého frameworku pro~měření výkonu začne měřit výkon svého kódu.
 Měření výkonu se trochu podobá unit testům. U~měřících frameworků jako je BenchmarkDotNET nebo JMH se vytvoří specializované měřící metody,
@@ -67,7 +69,7 @@ Tyto měřící metody, ale změří pouze číslo a~jednotku, která nevypovíd
 Pokud chce programátor výkon udržovat potřebuje vyhodnotit právě tuto změnu.
 
 Programátor tedy musí vzít výsledky měření aktuální verze a výsledky měření referenční verze vůči které chce
-změnu výkonu vyhodnocovat a sám výsledky porovnat. Porovnání výsledků měření nemusí být možné pouhým Pohledem
+změnu výkonu vyhodnocovat a sám výsledky porovnat. Porovnání výsledků měření nemusí být možné pouhým pohledem
 na sady číselných dat. Pravděpodobně si budou hodnoty hodnoty obou sad podobné. Obzvlášť pokud změna bude příliš málo výrazná.
 Proto by musel programátor nejprve číselná data nějakým způsobem sám zpracovat. Ze zpracovaných dat by pak pro každou měřenou metodu
 kódu musel vyhodnotit zda-li došlo k výrazné změně výkonu, které by se měl dále věnovat.

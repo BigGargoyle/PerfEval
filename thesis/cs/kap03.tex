@@ -2,12 +2,12 @@
 
 \section{Popis systému}
 
-S rozborem problematiky ve druhé kapitole je možné začít řešit programátorův
-problém s vyhodnocováním výkonu popsaný ve scénáři z první kapitoly.
-V důsledku toho je cílem vytvořit systém, který umožní porovnávat výsledky
-měření výkonu, a který bude možné používat v rámci průběžné integrace.
+S podrobnější znalostí problematiky rozebranou ve~druhé kapitole je možné začít řešit programátorův
+problém s~vyhodnocováním výkonu popsaný ve~scénáři z~první kapitoly.
+V~důsledku toho je cílem vytvořit systém, který umožní porovnávat výsledky
+měření výkonu a~který bude možné používat v~rámci průběžné integrace.
 
-Když už jsou známy požadavky na aplikaci, tak je možné ji začít navrhovat.
+Když už jsou známy požadavky na aplikaci, tak je možné začít ji navrhovat.
 V této kapitole jsou popsané úvahy a rozhodnuté, které byly v průběhu vývoje
 provedeny. Tyto úvahy a rozhodnutí vedly k tomu, že vyvinutý systém PerfEval je konzolová aplikace,
 jejíž činnost je ovládaná příkazy a~parametry na~příkazové řádce.
@@ -15,7 +15,7 @@ Příkazy umožňují inicializovat systém, přidávat nové výsledky měřen�
 měření dvou verzí.
 
 \section{Rozbor alternativ v řešení}
-Při~vývoji systému PerfEval došlo k~několika rozhodnutím, které výrazně ovlivnily jeho fungování a~architekturu.
+Při~vývoji systému PerfEval došlo k~několika rozhodnutím, která výrazně ovlivnila jeho fungování a~architekturu.
 Nejdůležitější rozhodnutí, která byla v~průběhu vývoje provedena, jsou v~následujících částech podrobně vysvětlena.
 
 \subsection{Spouštění testů systémem PerfEval}
@@ -33,7 +33,7 @@ kam program, který provádí měření, výsledky ukládá. Benchmarkovací sys
 výsledky měření v podobě tabulky na standardní výstup a~zároveň ukládá strojově čitelné výsledky do~speciálního
 k~tomu určeného adresáře.
 
-Pokud by PerfEval využíval této varianty, tak by uživatel při inicializaci systému musel zadat, jak spustit testy,
+Pokud by PerfEval využíval této varianty, tak by uživatel při inicializaci systému musel zadat, jak spustit testy
 a kam se uloží výsledek. Tímto způsobem by došlo k~tomu, že PerfEval by začal určovat, jak mají vypadat programy,
 jejichž výstupy přijímá.
 
@@ -59,8 +59,8 @@ T-test je tedy možné zvolit namísto bootstrapu kvůli tomu, že je rychlejš�
 dat, kterým vzorky odpovídají, dochází k~pouhému dosazení hodnot do vzorce.
 
 Uživatel by se tedy při volbě testu měl rozhodovat na~základě toho kolik má času na~porovnání
-výsledků měření. Pokud má uživatel větší množství času k~vyhodnocení doporučuje se~použít bootstrap.
-Pokud má uživatel větší množství vzorků a~málo času je pro něho lepší použít t-test.
+výsledků měření. Pokud má uživatel větší množství času k~vyhodnocení, doporučuje se~použít bootstrap.
+Pokud má uživatel větší množství vzorků a~málo času, je pro něho lepší použít t-test.
 
 Pokud bude naměřených vzorků pro statistické porovnání příliš málo, tak ani jeden z~testů nebude schopen
 vrátit významný výsledek. V obou případech je tedy nutné také vyhodnocovat, zda je množství vzorků dostatečné.
@@ -71,7 +71,7 @@ Pokud množství vzorků není dostatečné, pak je nutné o tom uživatele info
 Systém, který porovnává výsledky měření výkonu, by měl mít informace o~tom v~jakém formátu jsou data uložena
 a~který benchmarkovací framework je vytvořil. Podle použitého frameworku a~formátu je totiž možné výsledky
 měření zpracovat pomocí programu a~transformovat data o~měření tak, aby jim systém rozuměl.
-Problém je tedy jak se systém dozví o~tomto formátu a~o~použitém frameworku.
+Problém je tedy v tom, jak se systém dozví o~tomto formátu a~o~použitém frameworku.
 
 Nejpříjemnější řešení pro uživatele by bylo, že by systém sám přišel na to, který framework a~formát je použitý.
 Uživatel by totiž nemusel vědět pomocí jakého frameworku a~v~jakém formátu data ukládá. Pro systém by však mohl
@@ -89,8 +89,8 @@ aby systém zjistil, jak má data ze souboru zpracovávat. Při druhém čtení 
 tak, aby jim rozuměla vyhodnocovací část systému.
 
 PerfEval tedy řeší tento problém tak, že uživatel při inicializaci zadá jméno jednoho z~dostupných parserů.
-Předpokládá se tedy, že pokud uživatel používá výkonnostní testy, tak framework a~výstupní formát je shodný.
-Pokud má PerfEval parser pro tento framework a formát dat parser, pak je schopný vyhodnocovat výsledky měření.
+Předpokládá se tedy, že pokud uživatel používá výkonnostní testy, tak framework a~výstupní formát je shodný s~těmi které zvolený parser rozpoznává.
+Pokud má PerfEval parser pro tento framework a~formát dat parser, pak je schopný vyhodnocovat výsledky měření.
 V~opačném případě si tento parser může uživatel doimplementovat.
 
 Tento přístup umožňuje snazší implementaci nových parserů. Není totiž nutné k těmto parserům implementovat
@@ -106,11 +106,11 @@ data ihned po tom, co se systém dozví o~jejich existenci, nebo až těsně př
 
 Pokud by se data zpracovávala hned po tom, co se o nich systém dozví, tak to nutně neznamená,
 že již má proběhnout vyhodnocování. Je tedy nutné zvolit nějaký formát do kterého zpracovaná data
-uložit. Při vyhodnocení by se pak data z tohoto formátu musela opět zpracovat. Tento způsob
+uložit. Při vyhodnocení by se pak data z~tohoto formátu musela opět zpracovat. Tento způsob
 zpracování dat by měl význam pouze v~případě, že by první předzpracování vedlo k~velkému
-zrychlení druhého zpracování. Zároveň by toto řešení vedlo k dvojímu ukládání dat, protože
-by někde byl uložený původní výsledek měření v původním formátu, a také soubor se předzpracovanými
-výsledky měření, který by obsahoval data se stejným významem.
+zrychlení druhého zpracování. Zároveň by toto řešení vedlo k~dvojímu ukládání dat, protože
+by někde byl uložený původní výsledek měření v původním formátu, a~také soubor se~předzpracovanými
+výsledky měření, který by obsahoval data se~stejným významem.
 
 Výše zmíněné nevýhody vedly k tomu, že systém zpracovává data z~původního formátu těsně před
 vyhodnocováním. Podle zvoleného parseru se tedy data naparsují těsně před vyhodnocením ze~souborů,
@@ -122,21 +122,21 @@ Systém, který porovnává výsledky měření, by měl mít nějaké informace
 se soubor s~výsledky nachází. Proto bylo při vývoji nutné se zamyslet nad tím, jakými způsoby lze tyto informace získat a~spravovat.
 Systém PerfEval potřebuje o~výsledcích měření vědět, kde jsou uloženy a~ke~které verzi softwaru bylo měření provedeno.
 
-První zvažovaná varianta byla, že by existovala složka, do~které by uživatel vkládal výsledky měření do~adresáře určeného
-systémem PerfEval, nebo do~adresáře zadaného při inicializaci systému. Po~každém měření by tedy uživatel výsledek pouze
+První zvažovaná varianta byla, že by existovala složka, do~které by uživatel vkládal výsledky měření. Tento adresář by byl určený
+systémem PerfEval, nebo by byla zadaná cesta k~němu při inicializaci systému. Po~každém měření by tedy uživatel výsledek pouze
 vložil do~správné složky a~o~nic víc by se nemusel starat.
 
-Toto řešení má několik nevýhod. Omezuje uživatele v~tom, jak musí výsledky testů ukládat. Dále by se špatně určovalo, ke~
-které verzi bylo měření provedeno, protože toto se ve~výsledcích měření běžnými frameworky neudává. Pravděpodobně by proto
+Toto řešení má několik nevýhod. Omezuje uživatele v~tom, jak musí výsledky testů ukládat. Dále by se špatně určovalo,
+ke~které verzi bylo měření provedeno, protože toto se ve~výsledcích měření běžnými frameworky neudává. Pravděpodobně by proto
 vznikla hierarchie v tomto adresáři a~uživatel by například pomocí pojmenovávání složek určoval, ke~které verzi se měření vztahuje.
 
 Celkově tedy tento způsob poskytuje jednoduché zjištění, kde se výsledek testu nachází. Je to pevně dané. Není ale možné jednoduše
 zjistit verzi, protože je nutné projít adresářovou strukturu, což může být při velkém množství dat pomalé.
 
-Druhé uvažované řešení bylo vylepšení prvního řešení o~cache a sledování času modifikace adresářů. Verze se totiž dobře určují,
-ale špatně dohledávají. Nicméně by se pravděpodobně používání některých verzí k~porovnání opakovalo častěji než u~jiných.
-Zároveň pokud by nejnovější verze nebyla v cache, tak by se dohledávala na základě nejmladšího data změny adresáře
-v~adresáři s~výsledky měření. Cache by byla tvořena posledními několika desítkami záznamů s~cestou k~výsledkům měření a~verzí.
+Druhé uvažované řešení bylo vylepšení prvního řešení o~cache a sledování času modifikace adresářů. Verze se totiž dobře určují při vkládání,
+ale špatně dohledávají. Pravděpodobně by se používání některých verzí k~porovnání opakovalo častěji než u~jiných.
+Zároveň pokud by nejnovější verze nebyla v cache, tak by se dohledávala postupným průchodem na základě nejmladšího data změny adresáře
+v~adresáři s~výsledky měření. Cache by byla tvořena posledními několika desítkami naposledy použitých záznamů s~cestou k~výsledkům měření a~verzí.
 
 Toto řešení má ale podobné nevýhody jako první. V~případě, že se verze porovnává poprvé, tak záznamy o~ní jistě nejsou v~cache
 a~musí se prohledat adresářová struktura. Pokud je poslední úprava cache starší než nejnovější úprava nějakého podadresáře v~adresáři
@@ -158,7 +158,13 @@ Při volbě formátu v~jakém se budou výsledky výkonnostních testů prezento
 Výsledky vyhodnocení bude zpracovávat zejména člověk a~průběžná integrace v~rámci verzovacího nástroje Git.
 
 Pro člověka je čitelný formát zpracovaných dat tabulka s údaji o~tom, který test prošel a~který ne.
-Jeden z~výstupních formátu systému PerfEval je takováto tabulka na příkazové řádce.
+Jeden z~výstupních formátu systému PerfEval je takováto tabulka na příkazové řádce. Druhý formát s daty čitelnými pro člověka je
+tabulka na HTML stránce, kterou PerfEval umí vygenerovat. Výstup v~HTML formátu je výhodný, protože je možné
+soubor s~výsledky otevřít v~internetovém prohlížeči, který je dnes dostupný téměř na každém zařízení.
+
+Strojem čitelný formát je XML soubor. XML má formát shodný s JUNIT XML formátem, který je běžně používaný v~průběžné integraci
+při hlášení výsledků unit testů. Druhým zvoleným formátem je JSON, který je dnes běžně používaný pro serializaci dat v~různých
+programovacích jazycích. Umožňuje tak snadnou integraci s dalšími programy.
 
 \section{Architektura systému PerfEval}
 
