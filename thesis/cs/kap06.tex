@@ -69,6 +69,51 @@ příkaz measure provede měření verze zadané jako první argument a~výslede
 
 \end{lstlisting}
 
+\section*{Použití PerfEvalu v průběžné integraci}
+
+Systém PerfEval je možné po vzoru unit testů používat při průběžné integraci.
+V příkladu níže je uvedeno, jak může vypadat soubor \texttt{.gitlab-ci.yml} pro GitLab CI.
+Uvedený vzor ilustruje, jak dodat výsledky měření do~systému PerfEval a~jak následně
+spustit vyhodnocení výsledků měření dvou verzí.
+
+Skripty \texttt{measure\_old\_version.sh} a~\texttt{measure\_new\_version.sh} v uvedeném příkladu
+simulují měření výkonu, tak že přečtou výsledky z~předem připravených souborů. Tyto připravené soubory
+jsou výsledky měření, které byly získány spuštěním výkonnostních testů projektu Crate \cite{crateDB}.
+
+Výsledek porovnání je zde uložen do souboru \texttt{junit-report.xml}. Tento soubor je ve formátu JUNIT XML.
+Tento formát je běžně přijímaný nástrojem Git v rámci průběžné integrace.
+\bigskip
+\bigskip
+
+\begin{lstlisting}
+    image: openjdk:21-jdk
+
+    stages:
+        - test
+
+    variables:
+        JUNIT_REPORT_PATH: junit-report.xml
+
+    build:
+        stage: test
+        script:
+            - bash measure_old_version.sh >old_measurement.json
+            - bash measure_new_version.sh >new_measurement.json
+            - bash perfeval.sh init --benchmark-parser JMHJSONParser
+            - bash perfeval.sh index-new-result --version 1.0 --path ./old_measurement.json
+            - bash perfeval.sh index-new-result --version 2.0 --path ./new_measurement.json
+            - bash perfeval.sh evaluate --t-test --junit-xml-output > $JUNIT_REPORT_PATH
+
+        artifacts:
+            when: always
+            paths:
+            - $JUNIT_REPORT_PATH
+            reports:
+            junit: $JUNIT_REPORT_PATH
+            expire_in: 1 week
+
+\end{lstlisting}
+
 \section{Nasazení systému v praxi}
 
 V~této kapitole bude ukázáno, jak systém PerfEval funguje při~svém nasazení.
