@@ -184,7 +184,7 @@ public class EvaluateCLICommand implements Command {
      * Filters common measurements from two lists of measurements.
      * @param measurements1 list of measurements to be filtered
      * @param measurements2 list of measurements for filtering
-     * @return
+     * @return list of common measurements
      */
     private static List<Samples> filterCommonMeasurements(List<Samples> measurements1, List<Samples> measurements2) {
         return measurements1.stream()
@@ -197,7 +197,7 @@ public class EvaluateCLICommand implements Command {
      * Filters unique measurements from two lists of measurements.
      * @param measurements1 list of measurements to be filtered
      * @param measurements2 list of measurements for filtering
-     * @return
+     * @return list of unique measurements
      */
     private static List<Samples> filterUniqueMeasurements(List<Samples> measurements1, List<Samples> measurements2) {
         return measurements1.stream()
