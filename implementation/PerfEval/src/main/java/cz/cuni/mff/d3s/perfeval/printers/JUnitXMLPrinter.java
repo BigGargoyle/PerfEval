@@ -163,7 +163,7 @@ public class JUnitXMLPrinter implements ResultPrinter {
                     this.comparisonResultMessage = "There are not enough runs. (" + record.minSampleCount() + " runs needed)";
                     this.failure = true;
                     break;
-                case Bootstrap:
+                case UnableToMeasureEnoughSamples:
                     this.failureMessage = "";
                     this.comparisonResultMessage = "Impossible to measure enough runs. (" + record.minSampleCount() + " runs needed)";
                     this.failure = false;

@@ -4,7 +4,6 @@ import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math3.fitting.SimpleCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
-import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import java.util.Random;
@@ -41,7 +40,7 @@ public class HierarchicalBootstrap {
     }
 
     /**
-     * Creates bootstrap sample from two sets of samples (difference of two random samples)
+     * Creates bootstrap sample from two sets of samples (difference of two random samples).
      *
      * @param sampleSet1 first set of samples
      * @param sampleSet2 second set of samples
@@ -68,6 +67,13 @@ public class HierarchicalBootstrap {
         return result;
     }
 
+    /**
+     * Calculates bootstrap value for given sample set.
+     * @param sampleSet sample set
+     * @param bootstrapSampleCount count of bootstrap samples
+     * @param random random generator
+     * @return bootstrap value for given sample set
+     */
     private static double calcBoostrapValue(double[][] sampleSet, int bootstrapSampleCount, Random random) {
         double[] result = new double[sampleSet.length];
         //create bootstrapSampleCount of bootstrap samples
@@ -80,6 +86,13 @@ public class HierarchicalBootstrap {
         return mean(result);
     }
 
+    /**
+     * Creates bootstrap of 1D array.
+     * @param sampleSet sample set
+     * @param bootstrapSampleCount count of bootstrap samples
+     * @param random random generator
+     * @return bootstrapped dataset
+     */
     private static double createBootstrapOf1DArray(double[] sampleSet, int bootstrapSampleCount, Random random) {
         double[] result = new double[bootstrapSampleCount];
         for (int i = 0; i < bootstrapSampleCount; i++) {
@@ -90,6 +103,12 @@ public class HierarchicalBootstrap {
         return mean(result);
     }
 
+    /**
+     * Creates bootstrapped dataset.
+     * @param sampleSet sample set
+     * @param random random generator
+     * @return bootstrapped dataset
+     */
     private static double[] createBootstrappedDataset(double[] sampleSet, Random random) {
         double[] result = new double[sampleSet.length];
         for (int i = 0; i < sampleSet.length; i++) {
@@ -100,7 +119,7 @@ public class HierarchicalBootstrap {
 
 
     /**
-     * Calculates confidence interval for given data and confidence level
+     * Calculates confidence interval for given data and confidence level.
      *
      * @param data            data
      * @param confidenceLevel confidence level
@@ -114,6 +133,14 @@ public class HierarchicalBootstrap {
         return lowerBound <= upperBound ? new double[]{lowerBound, upperBound} : new double[]{upperBound, lowerBound};
     }
 
+    /**
+     * Calculates minimum sample count for given data, confidence level and maximum confidence interval width.
+     * @param sampleSet set of samples
+     * @param confidenceLevel confidence level
+     * @param maxCIWidth maximum confidence interval width
+     * @param bootstrapSampleCount count of bootstrap samples
+     * @return minimum sample count for given data, confidence level and maximum confidence interval width
+     */
     public static int getMinSampleCount(double[][] sampleSet, double confidenceLevel, double maxCIWidth, int bootstrapSampleCount) {
         double[][] functionPoints = calcFunctionPoints(sampleSet, confidenceLevel, bootstrapSampleCount);
         // y = a * 1 / sqrt(x) + b
@@ -121,6 +148,13 @@ public class HierarchicalBootstrap {
         return calcMinSampleCountFromFunction(abParameters, maxCIWidth);
     }
 
+    /**
+     * Calculates function points for given data.
+     * @param sampleSet set of samples
+     * @param confidenceLevel confidence level
+     * @param bootstrapSampleCount count of bootstrap samples
+     * @return function points for given data
+     */
     private static double[][] calcFunctionPoints(double[][] sampleSet, double confidenceLevel, int bootstrapSampleCount) {
         int pointsCount = sampleSet.length;
         double[][] functionPoints = new double[pointsCount][];
@@ -131,12 +165,19 @@ public class HierarchicalBootstrap {
             double[] bootstrapSample = createBootstrapSample(set, random, bootstrapSampleCount);
             double[] bootstrapInterval = calcCIInterval(bootstrapSample, confidenceLevel);
             assert bootstrapInterval.length == 2;
-            double y = (bootstrapInterval[1] - bootstrapInterval[0])/ mean(bootstrapSample);
-            functionPoints[x-1] = new double[]{x, y};
+            double y = (bootstrapInterval[1] - bootstrapInterval[0]) / mean(bootstrapSample);
+            functionPoints[x - 1] = new double[]{x, y};
         }
         return functionPoints;
     }
 
+    /**
+     * Creates bootstrap sample from given set of samples.
+     * @param sampleSet set of samples
+     * @param random random generator
+     * @param bootstrapSampleCount count of bootstrap samples
+     * @return bootstrap sample
+     */
     private static double[] createBootstrapSample(double[][] sampleSet, Random random, int bootstrapSampleCount) {
         double[] result = new double[bootstrapSampleCount];
         //create bootstrapSampleCount of bootstrap samples
@@ -148,6 +189,12 @@ public class HierarchicalBootstrap {
         return result;
     }
 
+    /**
+     * Calculates minimum sample count for given function parameters and maximum confidence interval width.
+     * @param abParameters function parameters
+     * @param maxCIWidth maximum confidence interval width
+     * @return minimum sample count for given function parameters and maximum confidence interval width
+     */
     public static int calcMinSampleCountFromFunction(double[] abParameters, double maxCIWidth) {
         double a = abParameters[0];
         double b = abParameters[1];
@@ -159,6 +206,12 @@ public class HierarchicalBootstrap {
         return (int) Math.ceil(x);
     }
 
+    /**
+     * Calculates function parameters for given data.
+     * Function: y = a / sqrt(x) + b
+     * @param functionPoints data
+     * @return function parameters for given data
+     */
     public static double[] calcFunctionParameters(double[][] functionPoints) {
         double[] xData = new double[functionPoints.length];
         double[] yData = new double[functionPoints.length];

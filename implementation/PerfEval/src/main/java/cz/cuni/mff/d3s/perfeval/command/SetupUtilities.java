@@ -362,32 +362,29 @@ public class SetupUtilities {
     /**
      * Option for the filter option.
      */
-    static ArgumentAcceptingOptionSpec<String> filterOption;
-    /**
-     * Option for the maximum count of tests.
-     */
-    static ArgumentAcceptingOptionSpec<Integer> maxTestCountOption;
+    private static ArgumentAcceptingOptionSpec<String> filterOption;
+
     /**
      * Option for the bootstrap sample count.
      */
-    static ArgumentAcceptingOptionSpec<Integer> bootstrapSampleCountOption;
+    private static ArgumentAcceptingOptionSpec<Integer> bootstrapSampleCountOption;
     /**
      * Option for the new version.
      */
-    static ArgumentAcceptingOptionSpec<String> newVersionOption;
+    private static ArgumentAcceptingOptionSpec<String> newVersionOption;
     /**
      * Option for the new tag.
      */
-    static ArgumentAcceptingOptionSpec<String> newTagOption;
+    private static ArgumentAcceptingOptionSpec<String> newTagOption;
 
     /**
      * Option for the old version.
      */
-    static ArgumentAcceptingOptionSpec<String> oldVersionOption;
+    private static ArgumentAcceptingOptionSpec<String> oldVersionOption;
     /**
      * Option for the old tag.
      */
-    static ArgumentAcceptingOptionSpec<String> oldTagOption;
+    private static ArgumentAcceptingOptionSpec<String> oldTagOption;
 
     /**
      * Option for the path.
@@ -396,11 +393,11 @@ public class SetupUtilities {
     /**
      * Option for the version. Adding new file to database.
      */
-    static ArgumentAcceptingOptionSpec<String> versionOption;
+    private static ArgumentAcceptingOptionSpec<String> versionOption;
     /**
      * Option for the tag. Adding new file to database.
      */
-    static ArgumentAcceptingOptionSpec<String> tagOption;
+    private static ArgumentAcceptingOptionSpec<String> tagOption;
     /**
      * Option for the benchmark parser.
      */
@@ -409,7 +406,7 @@ public class SetupUtilities {
     /**
      * Option for the HTML template.
      */
-    static ArgumentAcceptingOptionSpec<String> htmlTemplateOption;
+    private static ArgumentAcceptingOptionSpec<String> htmlTemplateOption;
 
     /**
      * Creates parser for parsing command line arguments.
@@ -424,10 +421,10 @@ public class SetupUtilities {
                 .withRequiredArg()
                 .ofType(String.class)
                 .describedAs("Filter option with a parameter");
-        maxTestCountOption = parser.accepts(MAX_TIME_PARAMETER)
+        /*maxTestCountOption = parser.accepts(MAX_TIME_PARAMETER)
                 .withRequiredArg()
                 .ofType(Integer.class)
-                .describedAs("Max count of test that it is possible to do");
+                .describedAs("Max count of test that it is possible to do");*/
         bootstrapSampleCountOption = parser.accepts(BOOTSTRAP_SAMPLE_COUNT_PARAMETER)
                 .withRequiredArg()
                 .ofType(Integer.class)

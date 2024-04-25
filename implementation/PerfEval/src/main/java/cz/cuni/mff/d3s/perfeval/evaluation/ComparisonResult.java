@@ -17,9 +17,17 @@ public enum ComparisonResult {
      */
     NotEnoughSamples(3),
     /**
-     * Bootstrap were used, or it should be used because there are not enough time to measure enough samples.
+     * There will never be enough samples to compare.
      */
-    Bootstrap(4),
+    UnableToMeasureEnoughSamples(4),
+    /**
+     * There are only older samples.
+     */
+    OnlyOlderSamples(5),
+    /**
+     * There are only newer samples.
+     */
+    OnlyNewerSamples(6),
     /**
      * There was an error during comparison.
      */

@@ -135,8 +135,10 @@ public class TablePrinter implements ResultPrinter {
             case DifferentDistribution -> tableRow[RESULT_COLUMN_INDEX] = ("different distribution");
             case NotEnoughSamples -> tableRow[RESULT_COLUMN_INDEX] =
                     ("not enough samples (" + comparisonResult.minSampleCount() + " samples needed)");
-            case Bootstrap ->
+            case UnableToMeasureEnoughSamples ->
                     tableRow[RESULT_COLUMN_INDEX] = ("impossible to measure (" + comparisonResult.minSampleCount() + " samples needed)");
+            case OnlyOlderSamples -> tableRow[RESULT_COLUMN_INDEX] = ("only older samples");
+            case OnlyNewerSamples -> tableRow[RESULT_COLUMN_INDEX] = ("only newer samples");
             default -> tableRow[RESULT_COLUMN_INDEX] = ("NONE???");
         }
 

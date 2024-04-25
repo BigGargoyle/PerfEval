@@ -24,15 +24,15 @@ public class Parser {
     /**
      * Map of commands and their setup.
      */
-    private static final Map<String, Supplier<CommandSetup>> commandPerSetup;
+    private static final Map<String, Supplier<CommandSetup>> COMMAND_PER_SETUP;
     static {
-        commandPerSetup = Map.of(
+        COMMAND_PER_SETUP = Map.of(
                 InitSetup.getCommandName(), InitSetup::new,
                 EvaluateSetup.getCommandName(), EvaluateSetup::new,
                 IndexNewSetup.getCommandName(), IndexNewSetup::new,
                 IndexAllSetup.getCommandName(), IndexAllSetup::new,
                 UndecidedSetup.getCommandName(), UndecidedSetup::new,
-                ListResultsSetup.getCommandName(),ListResultsSetup::new
+                ListResultsSetup.getCommandName(), ListResultsSetup::new
         );
     }
 
@@ -49,12 +49,12 @@ public class Parser {
         try {
             //runtime exception -> unchecked
             options = parser.parse(args);
-        } catch ( joptsimple.OptionException e) {
+        } catch (joptsimple.OptionException e) {
             throw new ParserException("Error while parsing arguments: " + e.getMessage(), ExitCode.invalidArguments);
         }
 
-        if(options.has("h") || options.has(SetupUtilities.HELP_FLAG)) {
-            try{
+        if (options.has("h") || options.has(SetupUtilities.HELP_FLAG)) {
+            try {
                 parser.printHelpOn(System.out);
             } catch (IOException e) {
                 throw new ParserException("Error while printing help: " + e.getMessage(), ExitCode.invalidArguments);
@@ -71,10 +71,10 @@ public class Parser {
         }
         try {
             for (var arg : options.nonOptionArguments()) {
-                if (!commandPerSetup.containsKey(arg.toString())) {
+                if (!COMMAND_PER_SETUP.containsKey(arg.toString())) {
                     continue;
                 }
-                CommandSetup commandSetup = commandPerSetup.get(arg.toString()).get();
+                CommandSetup commandSetup = COMMAND_PER_SETUP.get(arg.toString()).get();
                 if (commandSetup != null) {
                     return commandSetup.setup(options, config);
                 }
@@ -90,7 +90,7 @@ public class Parser {
         }
         throw new ParserException("No command found."
                 + System.lineSeparator() + "Available commands are: "
-                + Arrays.toString(commandPerSetup.keySet().stream().sorted().toArray()),
+                + Arrays.toString(COMMAND_PER_SETUP.keySet().stream().sorted().toArray()),
                 ExitCode.invalidArguments);
     }
 }

@@ -94,7 +94,7 @@ public class PerformanceEvaluator {
                 minSampleCount = statisticTest.calcMinSampleCount(oldSamples.getRawData(), newSamples.getRawData(), maxCIWidth);
                 assert minSampleCount >= Math.min(oldSamples.getRawData().length, newSamples.getRawData().length);
                 if (minSampleCount > maxTestCount) {
-                    comparisonResult = ComparisonResult.Bootstrap;
+                    comparisonResult = ComparisonResult.UnableToMeasureEnoughSamples;
                 } else {
                     minSampleCount = Math.max(minSampleCount, minTestCount);
                     comparisonResult = ComparisonResult.NotEnoughSamples;
@@ -106,7 +106,7 @@ public class PerformanceEvaluator {
                 || performanceChange > 0 // performance is better
                 || Math.abs(performanceChange / ONE_HUNDRED) < tolerance)
                 && comparisonResult!=ComparisonResult.NotEnoughSamples
-                && comparisonResult!=ComparisonResult.Bootstrap); // performance is worse, but within tolerance
+                && comparisonResult!=ComparisonResult.UnableToMeasureEnoughSamples); // performance is worse, but within tolerance
 
 
         return new MeasurementComparisonRecord(oldAvg, newAvg, ciInterval[1], ciInterval[0], performanceChange,
