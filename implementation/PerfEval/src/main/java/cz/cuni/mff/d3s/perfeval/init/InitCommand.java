@@ -236,7 +236,7 @@ public class InitCommand implements Command {
                 throw exception;
             }
         } else if (isPerfevalInitializedInThisDirectory(perfevalDirPath)) {
-            return ExitCode.alreadyInitialized;
+            throw new PerfEvalCommandFailedException("Perfeval is already initialized.",ExitCode.alreadyInitialized);
         }
         try {
             createPerfEvalFiles();
