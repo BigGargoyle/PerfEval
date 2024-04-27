@@ -213,11 +213,15 @@ public class EvaluateCLICommand implements Command {
      */
     private static List<MeasurementComparisonRecord> createComparisonRecords(List<Samples> measurements, ComparisonResult comparisonResult) {
         return measurements.stream().map(
-                measurement -> new MeasurementComparisonRecord(
-                        StatUtils.mean(Arrays.stream(measurement.getRawData()).flatMapToDouble(Arrays::stream).toArray()),
-                        0,0,
+                measurement -> {
+                        double mean = StatUtils.mean(Arrays.stream(measurement.getRawData()).flatMapToDouble(Arrays::stream).toArray());
+                        double oldAverage = comparisonResult == ComparisonResult.OnlyOlderSamples ? mean : 0;
+                        double newAverage = comparisonResult == ComparisonResult.OnlyNewerSamples ? mean : 0;
+                        return new MeasurementComparisonRecord(
+                        oldAverage, newAverage,0,
                         0,0,comparisonResult,
-                        true,-1,measurement,measurement)
+                        true,-1,measurement,measurement);
+                }
         ).toList();
     }
 
