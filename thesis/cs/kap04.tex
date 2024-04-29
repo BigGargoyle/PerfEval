@@ -1,5 +1,25 @@
 \chapter{Uživatelská dokumentace systému PerfEval}
 
+\section{Rychlý start}
+
+V~této kapitole bude v~několika stručných krocích vysvětleno, jak nainstalovat aplikaci PerfEval a~porovnat pomocí
+ní výkonu dvou verzí softwaru. Rychlý start je určen pro uživatele Linuxových distribucí. Na~platformě Windows je
+vhodné využít WSL (Windows Subsystem for Linux) nebo jiný nástroj, který umožní spouštění Linuxových příkazů.
+
+\begin{enumerate}
+    \item V~adresáři se zdrojovým kódem spusťte příkaz \texttt{./gradlew jar}. Tento příkaz zkompiluje a~sestaví aplikaci PerfEval.
+    \item Přejděte do adresáře svého projekt, kde chcete PErfeval používat.
+    \item Zadejte příkaz \texttt{./perfeval.sh init -\--benchmark-parser parser-name}. \newline V~případě, že nevíte jaký parser použít, nezadávejte tento argument
+        a~systém vám nabídne dostupné parsery. Parser vyberte podle použitého testovacího frameworku a~výstupního formátu.
+        Po vybrání parseru zadejte jeho název jako argument parametru \texttt{-\--benchmark-parser}.
+    \item Přidejte výsledky měření referenční verze pomocí příkazu \texttt{./perfeval.sh index-new-result -\--path path-to-results -\--version 1.0}.
+    \item Přidejte výsledky měření nové verze pomocí příkazu \texttt{./perfeval.sh \newline index-new-result -\--path path-to-results -\--version 2.0}.
+    \item Porovnejte výsledky měření pomocí příkazu \texttt{./perfeval.sh evaluate}.
+    \item Na standardní výstup bude vypsána tabulka s~výsledky porovnání verzí 1.0 a~2.0. Pokud došlo k~zhoršení výkonu, bude program ukončen s~nenulovým exit kód.
+    
+\end{enumerate}
+
+
 \section{Instalace}
 
 Instalace systému PerfEval probíhá pomocí nástroje gradle. V~adresáři se zdrojovým kódem se nachází
@@ -7,14 +27,14 @@ spustitelný soubor \texttt{gradlew}, který je určen pro kompilaci a~sestaven�
 Pro kompilaci a~sestavení v~systémech Windows je určený spustitelný soubor \texttt{gradlew.bat}.
 
 \begin{itemize}
-    \item Instalace v systému Linux: \lstinline|./gradlew build|
-    \item Instalace v systému Windows: \lstinline|gradlew.bat build|
+    \item Instalace v systému Linux: \lstinline|./gradlew jar|
+    \item Instalace v systému Windows: \lstinline|gradlew.bat jar|
 \end{itemize}
 
-Po kompilaci a~sestavení pomocí zmíněných souborů vznikne soubor typu JAR v podadresáři \texttt{build/libs}.
+Po kompilaci a~sestavení pomocí zmíněných souborů vznikne soubor typu JAR v~podadresáři \texttt{build/libs}.
 Soubor je možné spustit pomocí příkazu \texttt{java -jar PerfEval.jar}, nebo pomocí připravených skriptů
 \texttt{perfeval.sh} pro systémy Linux a \texttt{perfeval.bat} pro systémy Windows. Tyto skripty se nachází
-taktéž v adresáři se zdrojovým kódem.
+taktéž v~adresáři se zdrojovým kódem.
 
 \begin{itemize}
     \item Spuštění v systému Linux: \lstinline|./perfeval.sh|
@@ -104,6 +124,8 @@ došlo ke~zhoršení výkonu, bude selhání signalizováno exit kódem 1.
     \item[\texttt{html-output}] Výstup bude ve formátu HTML stránky.
     \item[\texttt{html-template}] Při použití příznaku html-output je možné ještě jako argument tohoto příznaku dodat adresu nové HTML šablony pro vypsání výsledků.
     \item[\texttt{junit-xml-output}] Výstup bude ve formátu JUNIT XML. Tento formát je běžně přijímaný nástrojem Git v~rámci průběžné integrace.
+    \item[\texttt{filter}]      Parametr tohoto příznaku umožňuje filtrovat výsledky podle názvu testovací metody.
+                                Možnosti jsou \texttt{test-id}, \texttt{size-of-change}, \texttt{test-result}.
 \end{itemize}
 
 \subsection{Příkaz list-undecided}
@@ -121,6 +143,8 @@ pravděpodobností říct, že je výkon stejný.
     \item[\texttt{old-version}] Parametr udává textovou reprezentaci verze, která se má při porovnání považovat za~starší.
     \item[\texttt{old-tag}]     Pouze soubory s~tímto tagem budou použity k~porovnání jako starší.
     \item[\texttt{t-test}]      T-test bude při statistickém porovnání použitý místo bootstrapu.
+    \item[\texttt{filter}]      Parametr tohoto příznaku umožňuje filtrovat výsledky podle názvu testovací metody.
+                                Možnosti jsou \texttt{test-id}, \texttt{size-of-change}, \texttt{test-result}.
 \end{itemize}
 
 \subsection{Příkaz list-results}

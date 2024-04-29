@@ -8,7 +8,7 @@ pojmenovaná PerfEval. V této kapitole bude krok za krokem ukázáno, jak se sy
 V~následujících dvou ukázkách bude vysvětleno, jak používat PerfEval. První ukázka bude
 cílit na~nastínění, co~nejjednoduššího použití. Druhá část ukáže aplikaci PerfEvalu na~skutečném projektu.
 
-\subsection*{Jednoduché použití PerfEvalu}
+\subsection{Jednoduché použití PerfEvalu}
 
 Následující kód popisuje obvyklou posloupnost příkazů práce se systémem PerfEval.
 Na začátku je nutné jej inicializovat. PerfEval bude inicializován pro použití JMHJSONParseru.
@@ -16,6 +16,7 @@ Následně se přidají výsledky měření několika (alespoň dvou) různých 
 Nakonec program vypíše, jestli výkonnostní testy prošly nebo ne.
 
 \begin{lstlisting}
+    #!/bin/bash
     perfeval init --benchmark-parser JMHJSONParser
     perfeval index-all-results --path tests/old_test --version old_version
     perfeval index-all-results --path tests/new_test --version new_version
@@ -23,7 +24,9 @@ Nakonec program vypíše, jestli výkonnostní testy prošly nebo ne.
     echo "Performance test failed" | exit 1
 \end{lstlisting}
 
-\subsection*{Návrh skriptu pro doměření výsledků}
+\bigskip
+
+\subsection{Návrh skriptu pro doměření výsledků}
 
 Následující kód nastiňuje možnost využití příkazu list-undecided. Výstupem tohoto příkazu
 jsou dva tabulátorem oddělené sloupce. V prvním sloupci jsou názvy metod, pro něž systém
@@ -50,7 +53,7 @@ příkaz measure provede měření verze zadané jako první argument a~výslede
         output=$(perfeval list-undecided --old-version "$1" --new-version "$2")
         if [[ -n "$output" ]]; then
             max=$(echo "$output" | cut -f2 -d$'\t' | sort -n -k | head 1)
-            for ((i=1; i<=$max; i++)); do
+            for ((i=1; i<=max; i++)); do
                 result_file="old_version_$index"
                 measure "$1" "$result_file"
                 perfeval index-new-result --path "$result_file" --version "$1"
@@ -63,13 +66,12 @@ příkaz measure provede měření verze zadané jako první argument a~výslede
         else
             perfeval evaluate --old-version "$1" --new-version "$2"
             exit $?
-            break
         fi
     done
 
 \end{lstlisting}
 
-\section*{Použití PerfEvalu v průběžné integraci}
+\subsection{Použití PerfEvalu v průběžné integraci}
 
 Systém PerfEval je možné po vzoru unit testů používat při průběžné integraci.
 V příkladu níže je uvedeno, jak může vypadat soubor \texttt{.gitlab-ci.yml} pro GitLab CI.
@@ -137,95 +139,63 @@ Z takto vybraných commitů byly dále vybrané jen ty, u~kterých bylo možné 
 aby bylo možné sestavit a~spustit výkonnostní testy. Nakonec tedy bylo vybráno a~naměřeno celkem 16 commitů z~uvedeného období.
 Pro každý z~těchto commitů, který reprezentuje v~doméně systému PerfEval verzi, bylo měření provedeno celkem osmkrát.
 
-\subsection{Porovnatelné commity}
+\subsection{Výsledky porovnávání přímých sousedů}
 
-Systém PerfEval porovnává pouze dvě verze jejichž všechny testované metody se shodují. Pokud se tedy mezi dvěma
-verzemi název některé metody změnil, byla přidaná nová metoda nebo byla nějaká metoda odstraněna, tak tyto verze
-PerfEval neporovná.
+Nástroj PerfEval byl spouštěn pro porovnání výsledků měření z~předchozí podkapitoly. Výsledky byly zaznamenány do~databáze PerfEvalu.
+Ten byl předtím inicializován pro použití JMHJSONParseru. Výsledky byly zaznamenány do~databáze a~následně vyhodnocovány.
+Vyhodnocování probíhalo s~použitím statistické metody bootstrap a~filtrem \texttt{--test-id}, který setřídil výsledky podle
+názvů metod.
 
-Proto i ze zvolených 16 commitů nebylo možné porovnat každý s každým. Naměřené commity se tedy rozdělily do tří skupin.
-V těchto skupinách se všechny měřené metody shodují, a tak je možné je vzájemně porovnat. Zároveň se v commitu
-označeném jako HEAD, tedy nejnovější verze, přidala jedna nová metoda, a tak není možné jej porovnávat s žádným jiným commitem.
+Při vyhodnocování přímých sousedů nedošlo k~zaznamenání žádného zhoršení výkonu. Přímí sousedé byly vybráni tak, že
+se nalezl commit s~commit message, která obsahovala slovo „performance“ a~jejich přímý soused byl commit, který bezprostředně následoval, nebo předcházel tomuto.
+Pokud by tedy PerfEval byl součástí průběžné integrace při~integrování takto vybraných commitů, tak by nebylo zaznamenáno žádné zhoršení výkonu,
+a~tedy by bylo možné pokračovat v~integraci.
 
-V první skupině se nachází 3 commity z období od 8. června 2022 do 4. července 2022.
-Ve druhé skupině se nachází 3 commity z období od 28. února 2023 do 7. března 2023.
-V poslední skupině se nachází 9 commitů z období od 29. března 2023 do 11. května 2023.
-U nejnovějšího commitu z 11. května 2023 (čas 15:42:16) je součástí commit message také poznámka o tom,
-že byla přidaná nová testovací metoda v rámci benchmarku JMH.
+Ani v~jednom z~těchto případů nebylo zaznamenáno ani zlepšení výkonu na~které commit message poukazovaly.
+Je tedy nutné vyřešit otázku jestli PerfEval je schopen vůbec nějaké změny výkonu detekovat.
+Pro tento účel byly porovnány také bezprostředně nesousedící commity. Změny výkonu se totiž mohou kumulovat skrze více commitů.
+Pokles výkonu se tedy nemusí projevit u~commitu, který změnu způsobil, ale až u~commitu, který tuto změnu dostatečně zesiluje.
+Pokud by PerfEval detekoval změny na~větší vzdálenost mezi commity, tak by to znamenalo, že PerfEval je schopen detekovat změny výkonu.
+Dále to znamená, že commit message uvedené u~vyhledaných commitů nereferují na~změnu výkonu provedenou v~daném commitu.
 
-\medskip
+\subsection{Výsledky porovnávání nesousedících commitů}
 
-První skupina commitů:
-\begin{itemize}
-    \item commit 5f0d8a0792f5c6fa2f90f42518b39abb242f21c2 - 8. června 2022
-    \item commit 43a996010438ab8784c19269cab14932e02d3a6a - 4. července 2022
-    \item commit a9ae6e07bfafea8771f559122f5330a89793748b - 4. července 2022
-\end{itemize}
+Protože PerfEval nezaznamenal žádné zhoršení výkonu u~přímých sousedů, tak byly porovnány také přímo nesousedící commity.
+Došlo tedy k~porovnání každého ze 16 commitů (vybraných v~kapitole 6.2.1) s~každým z~těchto 16 commitů, který byl novější.
+Nejstarší commit byl tedy porovnán s~15 novějšími a~nejmladší commit nebyl porovnán s~žádným jiným novějším.
 
-Druhá skupina commitů:
-\begin{itemize}
-    \item commit f626ec8918422ca0cb6ada5aa7fc601bbbfc53fa - 28. února 2023
-    \item commit 03c913ecc91043b1cecdff738dd7bdea07857a9b - 7. března 2023
-    \item commit 270b1bd3db98ccd7e2427c7f5a8137d47477b5a1 - 7. března 2023
-\end{itemize}
+PerfEval porovnává pomocí příkazu \texttt{evaluate} právě dvě verze (novou a~starou).
+Jako nová verze byla volena mladší ze~dvou porovnávaných verzí. Jako stará byla volena
+starší ze~dvou porovnávaných verzí. Celkem tedy bylo na~16 commitech provedeno 120 takových porovnání.
 
-Třetí skupina commitů:
-\begin{itemize}
-    \item commit 4a4848d9b9c47e4b3e5a00fb4ca0e19e2c11828b - 28. března 2023
-    \item commit da83f1eb1d70462d326946a8aa46955e81080f7f - 29. března 2023
-    \item commit 5b73ac03409c41acb51b4efd9f58d68c6bffb6b9 - 11. dubna 2023
-    \item commit 5b6458b20779a1429fa5724c447bbb9b779298e9 - 4. ledna 2023
-    \item commit 50e3ed3a43f7a85d52c6cd96791a4fe76c941ba8 - 12. dubna 2023
-    \item commit 6a2b489d9b5691f9bc517e312c86814d4a4f8b07 - 12. dubna 2023
-    \item commit df0635dec721861d1f9f5fbde4e9e8647bfebc13 - 10. května 2023
-    \item commit 30081686c6e38b3b20817d86a3a38eb652c8625a - 11. května 2023
-    \item commit 5ad19461d9bbdfd812586612f3598ef91fb1d529 - 11. května 2023
-\end{itemize}
-
-\subsection{Výsledek práce systému PerfEval}
-
-Jednotlivé naměřené hodnoty byly pomocí příkazu \lstinline{index-all-result} přidány do databáze systému PerfEval.
-Všechna měření výkonu pro jeden commit byla takto přidána jako výsledek měření jedné verze.
-Následně byly pomocí PerfEvalu porovnány sousední porovnatelné commity.
-
-Při porovnávání naměřených datových sad pro první skupinu commitů bylo zjištěno, že výkonnostní testy prošly.
-Pokud by tedy tyto verze v rámci průběžné integrace byly měřeny a porovnány systémem PerfEval, tak by byly úspěšně integrovány.
-Popis commitu 43a996010438ab8784c19269cab14932e02d3a6a o~významné změně výkonu PerfEval neprokázal.
-
-Porovnáním naměřených datových sad druhé skupiny commitů bylo zjištěno, že výkonnostní testy prošly.
-Pokud by tedy tyto verze v rámci průběžné integrace byly měřeny a porovnány systémem PerfEval, tak by také byly úspěšně integrovány.
-Při porovnání po sobě jdoucích commitů nebyla zjištěna žádná výrazná změna výkonu a to ani zlepšení.
-Při porovnání nejnovějšího a nejstaršího commitu ze skupiny bylo systémem PerfEval zjištěno, že výkon se výkon zlepšil
-v~jedné testovací metodě o~více než 5\,\%.
-Pokud se v konfiguračním nastavil parametr \lstinline{improvedPerformance} na TRUE, tak program skončil s~nenulovým exit kódem.
-PerfEval tedy zjištěné zlepšení nahlásil.
-
-Při porovnávání sousedních verzí ve třetí sadě bylo hlášeno jedno zhoršení výkonu.
-Při srovnání commitu 6a2b489d9b5691f9bc517e312c86814d4a4f8b07 a~commitu df0635dec721861d1f9f5fbde4e9e8647bfebc13
-bylo systémem PerfEval zjištěno a hlášeno zhoršení výkonu. Ve třech testovacích metodách bylo zjištěno zhoršení výkonu
-větší než 5\,\%. Při pohledu na výsledek porovnání je ale také vidět, že se výsledek zlepšil také ve třech testovacích metodách.
-Pokud by byl parametr \lstinline{tolerance} nastaven na hodnotu 0,1, tak by ale PerfEval žádnou chybu nehlásil, protože
-zhoršení výkonu bylo v~těchto třech testovacích metodách vždy menší než 10\,\%.
-
-Metody u kterých nástroj detekuje zhoršení:
-\begin{itemize}
-    \item io.crate.execution.TimePrecisionIncreaseTest.currentTimeMillisNextGen
-    \item io.crate.data.join.\-RowsBatchIteratorBenchmark.measureConsumeHash\linebreak InnerJoin
-    \item io.crate.analyze.PreExecutionBenchmark.measure\_parse\_simple\_select
-\end{itemize}
-
-V konečném důsledku tedy nástroj Perfeval odhalil zlepšení výkonu u tří metod o více než 10\.\% a současně zhoršení u výše zmíněných metod, které jsou
-součástí výkonnostních testů projektu Crate. Při změně nastavení nástroj byl schopen detekovat i samostatné zlepšení.
-Nástroj Crate by tedy bylo možné uplatnit v rámci průběžné integrace projektu.
+Při~těchto porovnáních PerfEval ve~svém výchozím nastavení již byl schopen detekovat zhoršení výkonu.
+Ačkoli všechny vybírané commity měly referovat ke zlepšením výkonu, tak PerfEval ukázal, že
+u~některých výkonnostních testů došlo ke~zhoršení výkonu. Ukazuje se, že čím jsou commity
+vzdálenější od~sebe ve~vývoji softwaru, tím se zvyšuje počet testů, které selhávají.
+Toto pozorování je vidět na~obrázku grafu 6.1. Procentuální neúspěšnost byla spočtena jako
+podíl označených zhoršení výkonu vůči celkovému počtu společných testů, které mají obě verze.
 
 \begin{figure}
     \centering
-    \includegraphics[width=1.5\textwidth, angle=270]{../img/example-table.png}
-    \caption{Výsledek porovnání výkonu metod projektu Crate s tolerancí 0,05}
+    \includegraphics[width=\textwidth]{../img/failure_percentage_graph.png}
+    \caption{Graf počtu testů, které selhaly, vůči vzdálenosti commitů v~čase}
 \end{figure}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=1.5\textwidth, angle=270]{../img/example-table-higher-tolerance.png}
-    \caption{Výsledek porovnání výkonu metod projektu Crate s tolerancí 0,1}
-\end{figure}
+K~tomuto postupnému růstu poměru selhávajících testů dochází, protože se zhoršení výkonu může kumulovat skrze více commitů.
+Pokud se tedy měřená metoda zhoršuje v průběhu času, tak se to projeví až u commitu, který tuto metodu dostatečně zesiluje.
+Po dostatečném zesílení tohoto zhoršení se metoda zhorší natolik, že ji porovnání se~vzdálenou předchozí verzí detekuje, ačkoli
+porovnání s~přímým sousedem by ji nedetekoval.
+
+Ukazuje se tedy, že pomocí PerfEvalu je sice možné detekovat zhoršení výkonu v~rámci průběžné integrace.
+Není ale vhodné jej používat jako blokující faktor při integraci. PerfEval by měl být spíše používán jako nástroj
+pro detekci zhoršení výkonu v~průběhu vývoje. V~případě, že PerfEval detekuje zhoršení výkonu, tak je uživatel
+schopen jednoduše zjistit, kde ke zhoršení došlo. Pokud by PerfEval byl součástí průběžné integrace jako blokující faktor,
+tak by se mohlo stát, že by integrace byla zablokovaná kvůli zhoršení výkonu, který ve~skutečnosti z~větší části způsobil jiný commit.
+
+V~grafu na obrázku 6.1 je vidět, že se zde nachází i~několik neúspěšných testů u~commitů se vzdáleností 1.
+Tato porovnání byla provedena tak, že se z vybraných 16 commitů vždy vybral commit a jeho soused v tomto
+výběru a ne pouze bezprostřední soused. Proto i když bylo výše uvedeno, že PerfEval nezaznamenal žádné zhoršení,
+tak na grafu je vidět, že některé testy selhaly. Tato selhání byla způsobena tím, že se výkonnostní testy
+se ve skutečnosti porovnávaly i~s~commity, které byly vzdáleny o~víc než jeden commit. To je způsobeno tím,
+že výběr commitů byl proveden tak, že byly vybrány commity, které obsahovaly slovo „performance“ v~commit message
+a~jejich sousední commity. Celý tento výběr však nejsou bezprostředně navazující commity.

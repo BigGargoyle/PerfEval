@@ -19,6 +19,8 @@ výjimky obsahují položku \lstinline{exitCode}, na~které metoda \lstinline{ma
 \subsection{Použité návrhové vzory}
 
 Součástí architektury systému PerfEval je několik běžných návrhových vzorů.
+Návrhové vzory z této kapitoly jsou převzaty z~knihy Design Patterns: Elements of Reusable Object-Oriented Software \cite{Patterns}.
+
 Prvním z použitých návrhových vzorů je factory. Factory je použitý
 při práci s~parsery vstupních souborů. Factory třídou podle tohoto návrhového vzoru je
 zde třída \lstinline{ParserFactory}. Tato třída konstruuje parsery podle parametru metody
@@ -126,27 +128,63 @@ třídy \lstinline{ListResultsCommand}. Vyrobenou instanci třídy \lstinline{Li
 V~této podkapitole je popsaný význam a práce jednotlivých implementací rozhraní Command.
 Implementace třídy Command musejí mít implementovanou jedinou metodu \lstinline{execute}.
 
-Třída AddFileCommand má~za~úkol přidat nový výsledek měření do~databáze. Vnitřní položky
-třídy jsou fileToAdd, \lstinline{database} a~version. Metoda \lstinline{execute} tedy volá metodu addFile na dodané implementaci
-databáze. Předávané parametry jsou fileToAdd a~version.
+\subsubsection{AddFileCommands}
+Uživatel musí každý výsledek měření výkonu zaznamenat do~systému PerfEval. Pokud výsledek měření nebude zaznamenán, tak s~ním
+PerfEval nebude vůbec pracovat. Přidávat je možné soubory samostatně, nebo z~adresáře. Při~přidávání souborů z~adresáře budou
+přidány všechny soubory, a~to i~soubory zanořené ve~vnitřních adresářích zadaného adresáře.
 
-Třída \lstinline{AddFilesFromDirCommand} má~za~úkol přidat všechny výsledky měření ve složce do~databáze. Vnitřní položky
-třídy jsou sourceDirPath, \lstinline{database} a~version. Metoda \lstinline{execute} tedy volá metodu addFilesFromDir na~dodané implementaci
-databáze. Předávané parametry jsou sourceDirPath a~version.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[height=0.5\textheight]{../img/perfeval_h2db.png}
+    \caption{Objektový návrh části PerfEvalu pro přidávání výsledků měření}
+\end{figure}
 
+Na obrázku je vidět, že za~oběma příkazy pro přidávání výsledků měření stojí jedna implementace rozhraní Database.
+Jediná existující implementace tohoto rozhraní využívá technologie H2 databáze. Jedná se o~technologii, která umožňuje
+vést si databázi lokálně v~rámci souboru a~pokládat na ní klasické SQL dotazy.
+
+Implementace rozhraní Database pomocí technologie H2 je třída H2Database. V~rámci databáze pro jeden projekt, který
+PerfEval spravuje, jsou lokální soubory H2 databáze uloženy v adresáři .performance. Databáze pro správu dat o~výsledcích
+měření má jen jednu tabulku. V~této tabulce jsou informace o~cestě k~souboru a~informace o~verzi.
+
+\subsubsection{InitCommand}
 %% nutno upravit implementaci -> detail
-Třída \lstinline{InitCommand} má za~úkol v~adresáři, odkud byl PerfEval z~příkazové řádky spuštěn, inicializovat systém PerfEval.
-Inicializace systému PerfEval probíhá v několika krocích. Nejprve se vytvoří adresář .performance. Následně se do~.gitignore
-(v případě neexistence bude vytvořen) souboru doplní ignorace souborů a adresářů systému PerfEval. Nakonec je~z~parametrů
-dodaných při~konstrukci a~z~výchozích parametrů vytvořen konfigurační soubor config.ini. V případě, že systém je
-v~adresáři již inicializovaný a nebyl dodán příznak násilné inicializace, tak systém nebude inicializovaný.
+Před použitím systému PerfEval k~vyhodnocování je nutné jej inicializovat.
+Účelem inicializace je vytvoření konfiguračního souboru a~databáze pro~ukládání informací o~výsledcích měření.
+Tyto soubory jsou potřebné pro fungování systému PerfEval v~rámci vybraného projektu.
 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[height=0.47\textheight]{../img/perfeval_init.png}
+    \caption{Objektový návrh části PerfEvalu pro inicializaci}
+\end{figure}
+\bigskip
+Kroky inicializace jsou následující:
+\begin{enumerate}
+    \item Zjištění zdali adresář podléhá správě verzí systému Git
+    \item Vytvoření adresáře .performance
+    \item Vytvoření konfiguračního souboru config.ini s výchozími hodnotami
+    \item Vytvoření databáze pro ukládání výsledků měření
+\end{enumerate}
+
+Při každém spouštění dalšího příkazu systému PerfEval je pak načtena konfigurace z~konfiguračního souboru.
+Při vyhodnocování výkonu se načítají výsledky měření společně s~metadaty o~verzi, ke~které se měření vztahuje.
+Tato metadata jsou uložena ve~zmíněné databázi.
+
+Pomocí těchto kroků je systém PerfEval inicializován pro~další použití.
+Na~obrázku 5.5 je vidět objektový návrh části systému PerfEval, která se~stará o~inicializaci systému.
+Hlavní třídou je třída \lstinline|InitCommand|, která provádí výše zmíněné kroky inicializace v~rámci metody \lstinline|execute|.
+Protože třída inicializace se provádí pomocí příkazu \texttt{init}, tak je třída \lstinline|InitCommand| implementací rozhraní \lstinline|Command|.
+Třída \lstinline|PerfEvalConfig| reprezentuje obsah konfiguračního souboru.
+
+
+\subsubsection{EvaluateCLICommand}
 Třída \lstinline{EvaluateCLICommand} má za~úkol porovnat výsledky měření výkonu dvou různých verzí.
 Soubory s~výsledky dvou verzí a~parser k~nim jsou dodané při~konstrukci. Při~konstrukci
 je dodaná implementace rozhraní \lstinline{StatisticTest}. Zmíněná instance slouží ke~statistickému
 porovnání výsledků měření. Při~konstrukci je dále dodaná implementace rozhraní \lstinline{ResultPrinter}.
 Implementace tohoto rozhraní rozhoduje o tom, jakým způsobem budou prezentovány výsledky porovnání.
-Třída v rámci volání metody \lstinline{execute} nechá naparsovat soubory s výsledky měření do objektů typu \lstinline{Samples}.
+Třída v rámci volání metody \lstinline{execute} nechá naparsovat soubory s~výsledky měření do~objektů typu \lstinline{Samples}.
 Seznamy těchto objektů nechá porovnat pomocí statistického testu. Výsledkem je objekt MeasurementComparisonResultCollection.
 Tento objekt je nakonec pomocí dodané implementace rozhraní \lstinline{ResultPrinter} prezentováno uživateli.
 

@@ -1,32 +1,41 @@
-\chapter*{Závěr}
-\addcontentsline{toc}{chapter}{Závěr}
+\chapter{Závěr}
+%\addcontentsline{toc}{chapter}{Závěr}
 
 Tato práce se snaží navázat na využívání unit testů při vývoji softwaru.
 Nástroj PerfEval, který byl vytvořen, má za úkol poskytnout vývojářům možnost
 psát výkonnostní testy obdobně jako unit testy.
 
 V první kapitole bylo vysvětleno, co je průběžná integrace. Dále byl popsán scénář programátora, který
-ji využívá pro udržování korektnosti svého kódu, a jak by ji chtěl využít i pro udržování výkonu.
-Programátor měl napsané výkonnostní testy pomocí benchmarkovacího frameworku a potřeboval je vyhodnocovat.
-Neměl ale žádný nástroj, který by uměl výsledky měření porovnat a vyhodnotit změnu výkonu.
+ji využívá pro udržování korektnosti svého kódu, a~jak by ji chtěl využít i~pro udržování výkonu.
+Programátor měl napsané výkonnostní testy pomocí benchmarkovacího frameworku a~potřeboval je vyhodnocovat.
+Neměl ale žádný nástroj, který by uměl výsledky měření porovnat a~vyhodnotit změnu výkonu.
 
 Druhá kapitola se věnuje analýze problematiky kolem vyhodnocování výkonu softwaru. Je zde popsáno jak vypadají výstupy benchmarkovacích frameworků
-JMH a BenchmarkDotNET. Dále jsou popsány statistické metody, které se následně v nástroji využívají k porovnání
+JMH a BenchmarkDotNET. Dále jsou popsány statistické metody, které se následně v~nástroji využívají k~porovnání
 výsledků měření.
 
-Ve třetí kapitole je vysvětleno několik důležitých rozhodnutí, které byly provedeny před a v průběhu vývoje nástroje PerfEval.
-Zároveň byla nastíněna architektura nástroje a jakým způsobem se používá.
+Ve třetí kapitole je vysvětleno několik důležitých rozhodnutí, které byly provedeny před a~v~průběhu vývoje nástroje PerfEval.
+Zároveň byla nastíněna architektura nástroje a~jakým způsobem se používá.
 
 Uživatelská dokumentace ukazuje jaké příkazy má uživatel k~dispozici včetně jejich argumentů.
-V~této kapitole se také uživatel dozví jak nástroj instalovat a používat včetně toho, jak jej konfigurovat.
+V~této kapitole se také uživatel dozví jak nástroj instalovat a~používat včetně toho, jak jej konfigurovat.
 
 Programátorská dokumentace obsahuje detailní popis struktury kódu. Je zde popsáno jaké byly využité návrhové vzory
-a jak spolu jednotlivé třídy vzájemně interagují.
+a~jak spolu jednotlivé třídy vzájemně interagují.
 
-Výsledkem práce je nástroj PerfEval jehož způsob použití včetně nasazení v rámci existujícího projektu je demonstrováno
-v poslední kapitole. Nástroj byl nasazen v rámci projektu Crate a byl použit k analýze výkonnostních testů verzí, které byly
-označené, jako verze se změnou výkonem.
+Výsledkem práce je nástroj PerfEval jehož způsob použití včetně nasazení v~rámci existujícího projektu je demonstrováno
+v~poslední kapitole. Nástroj byl nasazen v~rámci projektu Crate a~byl použit k~analýze výkonnostních testů verzí, které byly
+označené, jako verze se změnou výkonu.
 
-Nástroj změnu výkonu detekoval a označil ji jako významnou. Zároveň byl nástroj schopen detekovat také zlepšení výkonu.
-Nástroj PerfEval byl tedy úspěšně nasazen v rámci projektu Crate a splnil tak očekávání, která na něj byla kladena.
-Nástroj Perfeval tedy může být používán v rámci průběžné integrace spolu s unit testy a dalšími nástroji pro udržování kvality kódu.
+Ukázalo se, že vyvinutý nástroj PerfEval je schopen detekovat změny výkonu. Při použití v~rámci
+průběžné integrace je vhodné dodávat verzi, která bude považovaná za~referenční. Tato verze by měla
+mít výkon, který chce uživatel udržet. V~případě, že se výkon změní, tak PerfEval uživatele upozorní.
+Zároveň tento nástroj splňuje požadavek, že se má připodobnit k~používání unit testů.
+
+Tento nástroj tedy řeší původní programátorův problém chybějícího nástroje pro vyhodnocování výkonu.
+Dodáním řádku do svého měřícího skriptu programátor předá informace o~výsledcích měření nástroji PerfEval.
+Následně programátor jedním příkazem vyhodnotí změnu mezi požadovanými verzemi.
+
+Do~budoucna by bylo možné nástroj rozšířit například o~vyhodnocování výkonu na bázi skóre.
+Optimalizace výkonu totiž obvykle bývá taková, že zlepšením výkonu jednoho testu se zhorší výkon jiného.
+Proto by se jednotlivým testům mohlo přiřazovat skóre, které by bylo závislé na změně výkonu a~na tom, jak moc je test důležitý.
