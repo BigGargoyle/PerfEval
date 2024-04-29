@@ -1,3 +1,4 @@
+
 package cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet;
 
 import java.util.LinkedHashMap;
@@ -33,7 +34,7 @@ public class Measurement {
     @JsonProperty("Nanoseconds")
     private Integer nanoseconds;
     @JsonIgnore
-    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
+    private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
     @JsonProperty("IterationMode")
     public String getIterationMode() {

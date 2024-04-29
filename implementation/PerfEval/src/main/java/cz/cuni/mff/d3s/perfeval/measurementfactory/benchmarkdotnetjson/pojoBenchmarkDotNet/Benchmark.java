@@ -1,3 +1,4 @@
+
 package cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet;
 
 import java.util.LinkedHashMap;
@@ -20,8 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "Parameters",
     "FullName",
     "HardwareIntrinsics",
-    "Statistics",
-    "Measurements"
+    "Statistics"
 })
 public class Benchmark {
 

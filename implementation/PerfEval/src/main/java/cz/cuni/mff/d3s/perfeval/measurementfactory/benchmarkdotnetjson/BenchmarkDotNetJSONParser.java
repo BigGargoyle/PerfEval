@@ -57,16 +57,20 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
     }
 
     private Map<String, Samples> getTestsFromFiles(Stream<String> fileNames) {
-        //Map<String, Samples> samplesPerTestName = new HashMap<>();
-        //generating File objects from file names
-        return fileNames.map(this::mapStringToFile)
-                //parsing JSON files to POJOs
-                .map(this::mapFileToBenchmarkDotNetJSONRoot)
-                //mapping POJOs to Stream of Benchmarks
-                .flatMap(this::mapBenchmarkDotNetJSONRootToBenchmark)
-                //mapping Benchmarks to Stream of Samples
-                .map(this::mapBenchmarkToSamples)
-                .collect(collectToMap());
+        try {
+            //Map<String, Samples> samplesPerTestName = new HashMap<>();
+            //generating File objects from file names
+            return fileNames.map(this::mapStringToFile)
+                    //parsing JSON files to POJOs
+                    .map(this::mapFileToBenchmarkDotNetJSONRoot)
+                    //mapping POJOs to Stream of Benchmarks
+                    .flatMap(this::mapBenchmarkDotNetJSONRootToBenchmark)
+                    //mapping Benchmarks to Stream of Samples
+                    .map(this::mapBenchmarkToSamples)
+                    .collect(collectToMap());
+        } catch (Exception e) {
+            throw new MeasurementParserException("BenchmarkDotNetJSONParser, error while processing files", e);
+        }
     }
 
     private File mapStringToFile(String fileName) {
@@ -93,8 +97,9 @@ public class BenchmarkDotNetJSONParser implements MeasurementParser {
         // Create a stream of Measurements filtered by iteration mode and stage
         double[] nanosecondsArray = benchmark.getMeasurements().stream()
                 .filter(measurement ->
-                        measurement.getIterationMode().equals(testedIterationMode)
-                                && measurement.getIterationStage().equals(testedIterationStage))
+                        measurement.getIterationMode().equals(testedIterationMode))
+                .filter(measurement ->
+                                measurement.getIterationStage().equals(testedIterationStage))
                 .mapToDouble(Measurement::getNanoseconds)
                 .toArray();
 

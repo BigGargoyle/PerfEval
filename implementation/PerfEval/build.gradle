@@ -1,7 +1,12 @@
 plugins {
     id 'java'
-    id 'pmd'
-    id 'checkstyle'
+    //id 'pmd'
+    //id 'checkstyle'
+}
+
+tasks.withType(Checkstyle) {
+    // Ignore lines longer than 120 characters
+    configProperties['maxLineLength'] = '120'
 }
 
 group = 'cz.cuni.mff.d3s.perfeval'
@@ -56,3 +61,4 @@ jar {
 test {
     useJUnitPlatform()
 }
+

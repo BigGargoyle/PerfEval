@@ -1,3 +1,4 @@
+
 package cz.cuni.mff.d3s.perfeval.measurementfactory.benchmarkdotnetjson.pojoBenchmarkDotNet;
 
 import java.util.LinkedHashMap;
