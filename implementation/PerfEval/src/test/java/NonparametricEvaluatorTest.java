@@ -62,34 +62,6 @@ public class NonparametricEvaluatorTest {
         assertTrue(result.testVerdict());
     }
 
-   /* @Test
-    public void newSamplesAreSameAsOld(){
-        NonparametricTest evaluator = new NonparametricTest(0.05, 1000);
-        PerformanceEvaluator comparator = new PerformanceEvaluator(0.1, 0.1, 0, maxTestCount, evaluator);
-
-        Samples oldSamples = new Samples(new Metric("", true), "name1");
-        // bad data, too large variance
-        //oldSamples.addSample(new double[]{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0});
-
-        oldSamples.addSample(new double[]{1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0});
-        oldSamples.addSample(new double[]{1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0});
-
-        Samples newSamples = new Samples(new Metric("", true), "name1");
-        newSamples.addSample(new double[]{1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0});
-        newSamples.addSample(new double[]{1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0});
-
-        MeasurementComparisonRecord result = comparator.compareSets(oldSamples, newSamples);
-        assertTrue(result.testVerdict() || result.comparisonResult() == ComparisonResult.NotEnoughSamples);
-        if(result.comparisonResult()==ComparisonResult.NotEnoughSamples){
-            for(int i = 0; i<result.minSampleCount();i++){
-                oldSamples.addSample(new double[]{1.0, 2.0, 3.0, 1.0, 2.0, 3.0});
-                newSamples.addSample(new double[]{1.0, 2.0, 3.0, 1.0, 2.0, 3.0});
-            }
-            result = comparator.compareSets(oldSamples, newSamples);
-            assertTrue(result.testVerdict());
-        }
-    }*/
-
     @Test
     public void newSamplesAreWorseButInTolerance(){
         NonparametricTest evaluator = new NonparametricTest(0.05, 1000);

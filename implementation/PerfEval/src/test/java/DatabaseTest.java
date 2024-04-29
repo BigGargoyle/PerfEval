@@ -53,26 +53,12 @@ public class DatabaseTest {
         assertEquals(0, olderVersion.commitVersionHash().compareTo("version4"));
     }
 
-   /* @Test
-    void findOlderVersionNoOlderVersionTest() throws DatabaseException {
-        ProjectVersion version = new ProjectVersion(null, "version9", null);
-        ProjectVersion olderVersion = database.findOlderNeighbourVersion(version);
-        assertNull(olderVersion);
-    }*/
-
     @Test
     void findNewerVersionTest() throws DatabaseException {
         ProjectVersion version = new ProjectVersion(Date.from(Instant.now()), "version3", null);
         ProjectVersion olderVersion = database.findNewerNeighbourVersion(version);
         assertEquals(0, olderVersion.commitVersionHash().compareTo("version2"));
     }
-
-   /* @Test
-    void findNewerVersionNoNewerVersionTest() throws DatabaseException {
-        ProjectVersion version = new ProjectVersion(Date.from(Instant.now()), "version0", null);
-        ProjectVersion olderVersion = database.findNewerNeighbourVersion(version);
-        assertNull(olderVersion);
-    }*/
 
     @Test
     void findVersionsOfPattern() throws DatabaseException {

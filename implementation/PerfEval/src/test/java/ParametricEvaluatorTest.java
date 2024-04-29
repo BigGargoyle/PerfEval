@@ -11,23 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ParametricEvaluatorTest {
     static final int maxTestCount = 1000;
-    /*@Test
-    public void newSamplesAreBetter() {
-        ParametricTest evaluator = new ParametricTest(0.05);
-        PerformanceEvaluator comparator = new PerformanceEvaluator(0.1, 0.1, 0, maxTestCount, evaluator);
-
-        Samples oldSamples = new Samples(new Metric("", true), "name1");
-        oldSamples.addSample(new double[]{1.0, 2.0, 3.0});
-        oldSamples.addSample(new double[]{4.0, 5.0, 6.0});
-
-        Samples newSamples = new Samples(new Metric("", true), "name1");
-        newSamples.addSample(new double[]{7.0, 8.0, 9.0});
-        newSamples.addSample(new double[]{10.0, 11.0, 12.0});
-
-        MeasurementComparisonRecord result = comparator.compareSets(oldSamples, newSamples);
-        assertTrue(result.testVerdict() || result.comparisonResult() == ComparisonResult.NotEnoughSamples);
-
-    }*/
 
     @Test
     public void oldSamplesAreBetter(){
@@ -45,23 +28,6 @@ public class ParametricEvaluatorTest {
         MeasurementComparisonRecord result = comparator.compareSets(oldSamples, newSamples);
         assertFalse(result.testVerdict());
     }
-   /* @Test
-    public void newSamplesAreBetterHigherIsWorse(){
-        ParametricTest evaluator = new ParametricTest(0.05);
-        PerformanceEvaluator comparator = new PerformanceEvaluator(0.1, 0.1, 0, maxTestCount, evaluator);
-
-        Samples newSamples = new Samples(new Metric("", false), "name1");
-        newSamples.addSample(new double[]{1.0, 2.0, 3.0});
-        newSamples.addSample(new double[]{4.0, 5.0, 6.0});
-
-        Samples oldSamples = new Samples(new Metric("", false), "name1");
-        oldSamples.addSample(new double[]{7.0, 8.0, 9.0});
-        oldSamples.addSample(new double[]{10.0, 11.0, 12.0});
-
-        MeasurementComparisonRecord result = comparator.compareSets(oldSamples, newSamples);
-        //!!! not enough samples
-        assertTrue(result.testVerdict() || result.comparisonResult() == ComparisonResult.NotEnoughSamples);
-    }*/
 
     @Test
     public void newSamplesAreSameAsOld(){
@@ -88,21 +54,4 @@ public class ParametricEvaluatorTest {
 
         assertTrue(result.testVerdict());
     }
-
-    /*@Test
-    public void newSamplesAreWorseButInTolerance(){
-        ParametricTest evaluator = new ParametricTest(0.05);
-        PerformanceEvaluator comparator = new PerformanceEvaluator(0.1, 0.5, 0, maxTestCount, evaluator);
-
-        Samples oldSamples = new Samples(new Metric("", true), "name1");
-        oldSamples.addSample(new double[]{7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0});
-        oldSamples.addSample(new double[]{10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0});
-
-        Samples newSamples = new Samples(new Metric("", true), "name1");
-        newSamples.addSample(new double[]{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0});
-        newSamples.addSample(new double[]{4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0});
-
-        MeasurementComparisonRecord result = comparator.compareSets(oldSamples, newSamples);
-        assertTrue(result.testVerdict() || result.comparisonResult() == ComparisonResult.NotEnoughSamples);
-    }*/
 }
