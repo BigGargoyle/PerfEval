@@ -460,22 +460,35 @@ Zpracování dat uložených v souborech s výsledky měření až po vypsání 
     \caption{Objektový návrh části PerfEvalu pro porovnávání výsledků měření}
 \end{figure}
 
-Obrázek 3.1 znázorňuje třídy, které se podílejí na~vyhodnocování výsledků měření.
-Třída \lstinline|EvaluateCLICommand| je hlavní třídou, která zastřešuje celý proces vyhodnocování.
-Tato třída využívá implementace rozhraní \lstinline|ResultParser|, \lstinline|StatisticalTest| a~\lstinline|ResultPrinter|.
-Implementace těchto rozhraní jsou předány při konstrukci třídy \lstinline|EvaluateCLICommand|.
-Celé vyhodnocování je tedy postaveno na rozhraních a~jejich implementacích, které jsou zvýrazněny na obrázku 3.1.
+Obrázek 3.1 ukazuje rozdělení architektury vyhodnocovací části systému PerfEval do~čtyř logických celků.
+Jedná se o logické celky, které se starají o~jednotlivé kroky vyhodnocování výsledků měření.
 
-Implementace rozhraní \lstinline|ResultParser| slouží k~naparsování výsledků měření z~jednoho formátu a~frameworku.
-Starají se tedy o~první krok vyhodnocování. Implementace rozhraní \lstinline|StatisticalTest| slouží k~porovnání dvou instancí třídy \lstinline|Samples|.
-Tuto implementaci využívá třída \lstinline|PerformanceEvaluator| spolu s~nastavením z~konfiguračního souboru
-pro vyhodnocení výsledků měření. Implementace rozhraní \lstinline|ResultPrinter| slouží k~vypsání výsledků vyhodnocení.
+Na obrázku je vidět část systému kolem rozhraní \lstinline|MeasurementParser|, která se stará o~parsování výsledků měření.
+Implementace tohoto rozhraní se stará o~načtení a~zpracování výsledků měření ze~vstupních souborů.
+Produkují tak objekty, které reprezentují výsledky měření a~kterým rozumí zbytek systému.
+Jednotlivé implementace tohoto rozhraní jsou závislé na~formátu výstupu frameworku, který byl použit pro měření výkonu.
+Na základě konfigurace systému PerfEval vybere \lstinline|ParserFactory| správnou implementaci \lstinline|MeasurementParser|.
 
-Po vypsání výsledků porovnání se jen podle voleb z~konfiguračního souboru nastaví exit kód programu a~ukončí se vyhodnocování.
+Obrázek dále znázorňuje třídu \lstinline|PerformanceEvaluator|, která se stará o~porovnání dvou instancí třídy \lstinline|Samples|.
+Porovnání obstarává implementace rozhraní \lstinline|StatisticTest|. Volba implementace je dána parametry příkazové řádky.
+
+Výsledky porovnání jsou následně vypsány uživateli pomocí implementace rozhraní \lstinline|ResultPrinter|.
+Zvolená implementace tohoto rozhraní určuje formát výstupu, ve kterém jsou výsledky porovnání vypsány.
+Volba implementace je dána parametry příkazové řádky.
+
+Poslední částí, která je na obrázku 3.1 znázorněna, je hlavní třída celého vyhodnocování \lstinline|EvaluateCLICommand|.
+Tato třída je implementací rozhraní \lstinline|Command|. Metoda \lstinline|execute| této třídy
+provádí vyhodnocování podle popsaných kroků. Způsob provádění jednotlivých kroků je dané
+dodanými implementacemi rozhraní \lstinline|MeasurementParser|, \lstinline|StatisticTest| a~\lstinline|ResultPrinter|.
+Tyto implementace jsou předány při konstrukci třídy \lstinline|EvaluateCLICommand|.
+
+Po vypsání výsledků porovnání se podle voleb z~konfiguračního souboru již jen nastaví exit kód programu a~ukončí se vyhodnocování.
 Konfigurační soubor určuje jestli se mimo zhoršení výkonu hlásí také zlepšení výkonu a~nemožnost doměření dostatečného množství vzorků.
 
 Samotná architektura systému je tedy postavena na rozhraních, které obklopují třídu \lstinline|EvaluateCLICommand|.
 Pomocí nových implementací těchto rozhraní je možné systém rozšiřovat o~nové možnosti zpracování výsledků měření.
-Architektura dále umožňuje snadné rozšíření o~nové formáty vstupu i~výstupu. Systém byl navržen tak, aby byl dostatečně
-flexibilní v~případě, že by bylo potřeba přidat nebo změnit nějaký implementační detail.
+Architektura dále umožňuje snadné rozšíření o~nové formáty vstupu i~výstupu. Systém byl navržen tak, aby bylo
+jednoduché změnit způsob provádění jednotlivých kroků vyhodnocování. Změna kroků samotných by vyžadovala
+větší zásah do~architektury systému a~byla by složitá.
+
 
