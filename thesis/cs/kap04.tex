@@ -7,13 +7,13 @@ ní výkonu dvou verzí softwaru. Rychlý start je určen pro uživatele Linuxov
 vhodné využít WSL (Windows Subsystem for Linux) nebo jiný nástroj, který umožní spouštění Linuxových příkazů.
 
 \begin{enumerate}
-    \item V~adresáři se zdrojovým kódem spusťte příkaz \texttt{./gradlew jar}. Tento příkaz zkompiluje a~sestaví aplikaci PerfEval.
-    \item Přejděte do adresáře svého projekt, kde chcete PErfeval používat.
+    \item V~adresáři se zdrojovým kódem spusťte příkaz \texttt{./gradlew build}. Tento příkaz zkompiluje a~sestaví aplikaci PerfEval.
+    \item Přejděte do adresáře svého projekt, kde chcete PerfEval používat.
     \item Zadejte příkaz \texttt{./perfeval.sh init -\--benchmark-parser parser-name}. \newline V~případě, že nevíte jaký parser použít, nezadávejte tento argument
         a~systém vám nabídne dostupné parsery. Parser vyberte podle použitého testovacího frameworku a~výstupního formátu.
         Po vybrání parseru zadejte jeho název jako argument parametru \texttt{-\--benchmark-parser}.
-    \item Přidejte výsledky měření referenční verze pomocí příkazu \texttt{./perfeval.sh index-new-result -\--path path-to-results -\--version 1.0}.
-    \item Přidejte výsledky měření nové verze pomocí příkazu \texttt{./perfeval.sh \newline index-new-result -\--path path-to-results -\--version 2.0}.
+    \item Přidejte výsledky měření referenční verze pomocí příkazu \texttt{./perfeval.sh index-new-result -\--path path-to-result-file -\--version 1.0}.
+    \item Přidejte výsledky měření nové verze pomocí příkazu \texttt{./perfeval.sh \newline index-new-result -\--path path-to-result-file -\--version 2.0}.
     \item Porovnejte výsledky měření pomocí příkazu \texttt{./perfeval.sh evaluate}.
     \item Na standardní výstup bude vypsána tabulka s~výsledky porovnání verzí 1.0 a~2.0. Pokud došlo k~zhoršení výkonu, bude program ukončen s~nenulovým exit kód.
     

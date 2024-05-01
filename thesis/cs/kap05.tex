@@ -24,7 +24,7 @@ Návrhové vzory z této kapitoly jsou převzaty z~knihy Design Patterns: Elemen
 Prvním z použitých návrhových vzorů je factory. Factory je použitý
 při práci s~parsery vstupních souborů. Factory třídou podle tohoto návrhového vzoru je
 zde třída \lstinline{ParserFactory}. Tato třída konstruuje parsery podle parametru metody
-\lstinline{getParser}.
+\lstinline{getParser}. Využití vzoru factory je znázorněno na~obrázku 5.1.
 
 \begin{figure}[!ht]
     \centering
@@ -36,6 +36,7 @@ zde třída \lstinline{ParserFactory}. Tato třída konstruuje parsery podle par
 Druhým použitým návrhovým vzorem je builder. Jednotlivé builder třídy
 jsou implementacemi rozhraní \lstinline{CommandSetup}. Tyto builder třídy v~rámci
 systému PerfEval v~rámci metody setup konstruují objekt typu \lstinline{Command}.
+Využití vzoru builder je znázorněno na~obrázku 5.2.
 
 \begin{figure}[!ht]
     \centering
@@ -46,7 +47,7 @@ systému PerfEval v~rámci metody setup konstruují objekt typu \lstinline{Comma
 Dalším použitým návrhovým vzorem je strategy. Tento návrhový vzor je využitý při
 volbě statistického testu, který se bude používat pro vyhodnocení, a pro volbu toho,
 jakou podobu výstupu má program vyrobit. Na obrázku s~příkladem tříd jsou vidět
-jednotlivé strategie pro volbu formy výstupu.
+jednotlivé strategie pro volbu formy výstupu. Využití vzoru strategy je znázorněno na~obrázku 5.3.
 
 \begin{figure}[!ht]
     \centering
@@ -58,7 +59,7 @@ Posledním použitým návrhovým vzorem je návrhový vzor command. Protože je
 konzolová aplikace ovládaná pomocí příkazů, tak je příhodné jej použít. Na~obrázku
 jsou vidět dostupné implementace rozhraní \lstinline{Command}. Pro každý z~příkazů
 systému PerfEvalu se zkonstruuje nějaká jeho implementace a~na ní se zavolá její metoda
-\lstinline{execute}.
+\lstinline{execute}. Využití vzoru command je znázorněno na~obrázku 5.4.
 
 \begin{figure}[!ht]
     \centering
@@ -172,7 +173,7 @@ Při vyhodnocování výkonu se načítají výsledky měření společně s~met
 Tato metadata jsou uložena ve~zmíněné databázi.
 
 Pomocí těchto kroků je systém PerfEval inicializován pro~další použití.
-Na~obrázku 5.5 je vidět objektový návrh části systému PerfEval, která se~stará o~inicializaci systému.
+Na~obrázku 5.6 je vidět objektový návrh části systému PerfEval, která se~stará o~inicializaci systému.
 Hlavní třídou je třída \lstinline|InitCommand|, která provádí výše zmíněné kroky inicializace v~rámci metody \lstinline|execute|.
 Protože třída inicializace se provádí pomocí příkazu \texttt{init}, tak je třída \lstinline|InitCommand| implementací rozhraní \lstinline|Command|.
 Třída \lstinline|PerfEvalConfig| reprezentuje obsah konfiguračního souboru.

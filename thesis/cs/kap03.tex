@@ -442,11 +442,11 @@ programovacích jazycích. Umožňuje tak snadnou integraci s dalšími programy
 
 \section{Architektura systému PerfEval}
 
-Tato kapitola se věnuje popisu konkrétní architektury systému PerfEval.
+Tato kapitola se věnuje popisu architektury systému PerfEval.
 Popisuje jakým způsobem jsou jednotlivé části systému navrženy a~jak spolu vzájemně interagují.
 
-Samotné vyhodnocování jakožto porovnání dvou výsledků měření jedné sady testů výkonu je proces, který lze rozdělit do~několika kroků.
-Zpracování dat uložených v souborech s výsledky měření až po vypsání výsledků vyhodnocení probíhá následujícím způsobem:
+Samotné vyhodnocování, jakožto porovnání dvou výsledků výkonu, je proces, který lze rozdělit do~několika kroků.
+Proces od zpracování dat uložených v~souborech s~výsledky měření až po~vypsání výsledků vyhodnocení probíhá následujícím způsobem:
 
 \begin{enumerate}
     \item Načtení a naparsování výsledků měření ze~souborů.
@@ -473,7 +473,7 @@ Obrázek dále znázorňuje třídu \lstinline|PerformanceEvaluator|, která se 
 Porovnání obstarává implementace rozhraní \lstinline|StatisticTest|. Volba implementace je dána parametry příkazové řádky.
 
 Výsledky porovnání jsou následně vypsány uživateli pomocí implementace rozhraní \lstinline|ResultPrinter|.
-Zvolená implementace tohoto rozhraní určuje formát výstupu, ve kterém jsou výsledky porovnání vypsány.
+Zvolená implementace tohoto rozhraní určuje formát výstupu, ve kterém jsou výsledky porovnání prezentovány uživateli.
 Volba implementace je dána parametry příkazové řádky.
 
 Poslední částí, která je na obrázku 3.1 znázorněna, je hlavní třída celého vyhodnocování \lstinline|EvaluateCLICommand|.
