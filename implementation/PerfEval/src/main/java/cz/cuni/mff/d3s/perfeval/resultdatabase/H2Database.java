@@ -258,6 +258,9 @@ public class H2Database implements Database {
      */
     @Override
     public void addFile(Path filePath, ProjectVersion version) throws DatabaseException {
+        if (!Files.isRegularFile(filePath)) {
+            throw new DatabaseException("Path is not a file", ExitCode.databaseError);
+        }
         try (Connection connection = dataSource.getConnection()) {
             String insertQuery = "INSERT INTO ResultMetadata (path, dateOfCreation, dateOfCommit, version, tag) VALUES (?, ?, ?, ?, ?)";
 
@@ -288,6 +291,9 @@ public class H2Database implements Database {
      */
     @Override
     public void addFilesFromDir(Path dirPath, ProjectVersion version) throws DatabaseException {
+        if (!Files.isDirectory(dirPath)) {
+            throw new DatabaseException("Path is not a directory", ExitCode.databaseError);
+        }
         try {
             Files.walkFileTree(dirPath, new SimpleFileVisitor<>() {
                 @Override
