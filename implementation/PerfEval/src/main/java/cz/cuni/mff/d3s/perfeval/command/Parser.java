@@ -9,6 +9,7 @@ import cz.cuni.mff.d3s.perfeval.init.PerfEvalConfig;
 import cz.cuni.mff.d3s.perfeval.init.PerfEvalInvalidConfigException;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
@@ -76,7 +77,11 @@ public class Parser {
                 }
                 CommandSetup commandSetup = COMMAND_PER_SETUP.get(arg.toString()).get();
                 if (commandSetup != null) {
-                    return commandSetup.setup(options, config);
+                    if (Files.isDirectory(USER_DIR.resolve(SetupUtilities.PERFEVAL_DIR)) || commandSetup instanceof InitSetup)
+                        return commandSetup.setup(options, config);
+                    else
+                        throw new ParserException("PerfEval directory does not exist. Run 'init' command first.",
+                                ExitCode.invalidArguments);
                 }
             }
         } catch (DatabaseException e) {
