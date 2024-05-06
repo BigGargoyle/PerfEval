@@ -1,1 +1,1 @@
-java -jar .\build\libs\PerfEval.jar %*
+java -jar  %~dp0\build\libs\PerfEval.jar %*
