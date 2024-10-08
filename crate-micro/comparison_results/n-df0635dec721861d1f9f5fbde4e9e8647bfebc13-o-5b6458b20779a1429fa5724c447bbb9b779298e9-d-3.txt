@@ -1,0 +1,42 @@
+old version: 5b6458b20779a1429fa5724c447bbb9b779298e9
+new version: df0635dec721861d1f9f5fbde4e9e8647bfebc13
+_____________________________________________________________________________________________________________________________________________________________________________________________
+| Name                                    | NewAverage       | OldAverage       | Change [%]| Lower CI bound| Upper CI bound| Comparison result                          | Comparison verdict|
+|============================================================================================================================================================================================|
+| icaP.measure_parse_ana~lan_simple_select| 14.0 us/op       | 14.0 us/op       | -2.07     | -0.313        | -0.260        | different distribution                     | OK                |
+| icaP.measure_parse_and~yze_simple_select| 10.0 us/op       | 10.0 us/op       | -2.28     | -0.245        | -0.200        | different distribution                     | OK                |
+| icaP.measure_parse_simple_select        | 7.0 us/op        | 7.0 us/op        | -5.75     | -0.434        | -0.401        | different distribution                     | NOT OK            |
+| iccS.measure_Long_parseLong_invalid     | 1.00 us/op       | 1.00 us/op       | +0.75     | +0.008        | +0.013        | different distribution                     | OK                |
+| iccS.measure_Long_parseLong_valid       | 0.000 us/op      | 0.000 us/op      | +14.41    | +0.003        | +0.003        | different distribution                     | OK                |
+| iccS.measure_StringUti~ParseLong_invalid| 0.00000 us/op    | 0.00000 us/op    | +21.34    | +0.001        | +0.001        | different distribution                     | OK                |
+| iccS.measure_StringUti~ryParseLong_valid| 0.000 us/op      | 0.000 us/op      | +19.82    | +0.004        | +0.004        | different distribution                     | OK                |
+| icdjR.measureConsumeBlockNestedLoopJoin | 116 ms/op        | 113 ms/op        | -2.49     | -2.997        | -2.762        | different distribution                     | OK                |
+| icdjR.measureConsumeHashInnerJoin       | 2.0 ms/op        | 2.0 ms/op        | -4.50     | -0.120        | -0.086        | different distribution                     | OK                |
+| icdjR.measureConsumeHa~thHashCollisions | 0.000 ms/op      | 0.000 ms/op      | -0.87     | -0.004        | -0.003        | different distribution                     | OK                |
+| icdjR.measureConsumeNestedLoopJoin      | 81.0 ms/op       | 82.0 ms/op       | +1.97     | +1.576        | +1.602        | different distribution                     | OK                |
+| icdjR.measureConsumeNestedLoopLeftJoin  | 116 ms/op        | 114 ms/op        | -1.57     | -1.975        | -1.676        | different distribution                     | OK                |
+| iceT.currentTimeMillisNextGen           | 0.0000 us/op     | 0.0000 us/op     | -5.58     | -0.002        | -0.002        | different distribution                     | NOT OK            |
+| iceT.currentTimeMillisOriginal          | 0.0000 us/op     | 0.0000 us/op     | +0.17     | +0.000        | +0.000        | different distribution                     | OK                |
+| ice.dml.IndexerBenchmark.measure_index  | 784 us/op        | 772 us/op        | -1.60     | -15.429       | -9.652        | different distribution                     | OK                |
+| iceeaA.measureAggregateCollector        | 227 us/op        | 212 us/op        | -6.70     | -16.697       | -13.798       | different distribution                     | NOT OK            |
+| iceeaG.measureGroupBySumLong            | 628 ms/op        | 633 ms/op        | +0.71     | +3.367        | +5.457        | different distribution                     | OK                |
+| iceeaG.measureGroupingOnLongArray       | 215 ms/op        | 206 ms/op        | -4.14     | -9.025        | -8.754        | different distribution                     | OK                |
+| iceeaG.measureGroupingOnNumericDocValues| 410 ms/op        | 411 ms/op        | +0.17     | -0.368        | +1.807        | same distribution                          | OK                |
+| iceeaG.measureGroupingO~NumericDocValues| 442 ms/op        | 442 ms/op        | +0.01     | -0.854        | +0.930        | same distribution                          | OK                |
+| iceeaG.measureGroupByMinString          | 635 ms/op        | 608 ms/op        | -4.27     | -28.792       | -25.559       | different distribution                     | OK                |
+| iceeccL.measureConsumeL~neBatchIterator | 223 ms/op        | 225 ms/op        | +0.71     | +1.121        | +1.977        | different distribution                     | OK                |
+| iceeccO.measureLoadAndC~neBatchIterator | 7.0 s/op         | 7.0 s/op         | +0.39     | +0.019        | +0.033        | different distribution                     | OK                |
+| iceedmS.measureListSort                 | 551 ms/op        | 554 ms/op        | +0.51     | +2.553        | +3.079        | different distribution                     | OK                |
+| iceedmS.measurePagingIteratorWithRepeat | 17.0 ms/op       | 17.0 ms/op       | -0.04     | -0.017        | +0.001        | same distribution                          | OK                |
+| iceedmS.measurePagingIteratorWithSort   | 546 ms/op        | 548 ms/op        | +0.43     | +2.032        | +2.601        | different distribution                     | OK                |
+| iceedmS.measurePagingIt~orWithoutRepeat | 12.0 ms/op       | 13.0 ms/op       | +12.20    | +1.406        | +1.426        | different distribution                     | OK                |
+| iceerC.measureFileReadingIteratorForCSV | 39 us/op         | 39 us/op         | -0.68     | -0.335        | -0.199        | different distribution                     | OK                |
+| iceerJ.measureFileReadingIteratorForJson| 14.0 us/op       | 14.0 us/op       | -0.87     | -0.167        | -0.071        | different distribution                     | OK                |
+| icejC.benchmarkMemoryMXBeanMethod       | 18 us/op         | 17 us/op         | -5.39     | -6.033        | +4.938        | impossible to measure (1070 samples needed)| NOT OK            |
+| icejC.benchmarkRuntimeMethod            | 2 us/op          | 2 us/op          | -2.78     | -0.641        | +0.651        | impossible to measure (1050 samples needed)| NOT OK            |
+| icoaH.benchmarkHLLAggregationOffHeap    | 544 us/op        | 531 us/op        | -2.38     | -16.915       | -8.805        | different distribution                     | OK                |
+| icoaH.benchmarkHLLAggregationOnHeap     | 504 us/op        | 505 us/op        | +0.17     | -1.111        | +2.870        | same distribution                          | OK                |
+| icoaH.benchmarkHLLPlusPlusMurmur128     | 315 us/op        | 323 us/op        | +2.53     | +6.864        | +9.018        | different distribution                     | OK                |
+| icoaH.benchmarkHLLPlusPlusMurmur64      | 294 us/op        | 298 us/op        | +1.24     | +3.116        | +4.181        | different distribution                     | OK                |
+| icoaI.benchmarkIntervalAggregation      | 669 us/op        | 684 us/op        | +2.28     | +10.459       | +20.858       | different distribution                     | OK                |
+| ict.StringTypeTest.booleanConversion    | 1.74697e+09 ops/s| 1.74690e+09 ops/s| +0.00     | -8.54805e+04  | -4.82047e+04  | different distribution                     | OK                |

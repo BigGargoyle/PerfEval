@@ -1,0 +1,2401 @@
+[
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.types.StringTypeTest.booleanConversion",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 3.297410044820732E8,
+            "scoreError" : 1.9323395964090377E7,
+            "scoreConfidence" : [
+                3.1041760851798284E8,
+                3.4906440044616354E8
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3.1705171528871316E8,
+                "50.0" : 3.171025806646824E8,
+                "90.0" : 3.803976916627672E8,
+                "95.0" : 3.8053718504611707E8,
+                "99.0" : 3.805881490040593E8,
+                "99.9" : 3.805881490040593E8,
+                "99.99" : 3.805881490040593E8,
+                "99.999" : 3.805881490040593E8,
+                "99.9999" : 3.805881490040593E8,
+                "100.0" : 3.805881490040593E8
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    3.171796816350865E8,
+                    3.1705171528871316E8,
+                    3.171191082718826E8,
+                    3.1709966243100214E8,
+                    3.803839733417774E8
+                ],
+                [
+                    3.170973251316961E8,
+                    3.170574667796994E8,
+                    3.170991876870637E8,
+                    3.1709988257602286E8,
+                    3.804182691442519E8
+                ],
+                [
+                    3.170726322614205E8,
+                    3.170860809152568E8,
+                    3.171238689119902E8,
+                    3.170968038385817E8,
+                    3.8013259921693164E8
+                ],
+                [
+                    3.17156885864081E8,
+                    3.1708436290394574E8,
+                    3.171025806646824E8,
+                    3.1713210913673586E8,
+                    3.805881490040593E8
+                ],
+                [
+                    3.170851919528903E8,
+                    3.170910172296392E8,
+                    3.171163092270229E8,
+                    3.171205625192309E8,
+                    3.799296861181651E8
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.analyze.PreExecutionBenchmark.measure_parse_analyze_and_plan_simple_select",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 13.718270911447732,
+            "scoreError" : 0.1261954307527986,
+            "scoreConfidence" : [
+                13.592075480694934,
+                13.84446634220053
+            ],
+            "scorePercentiles" : {
+                "0.0" : 13.450183690295576,
+                "50.0" : 13.76905587965991,
+                "90.0" : 13.956523705272232,
+                "95.0" : 13.984342465202658,
+                "99.0" : 13.98445907281212,
+                "99.9" : 13.98445907281212,
+                "99.99" : 13.98445907281212,
+                "99.999" : 13.98445907281212,
+                "99.9999" : 13.98445907281212,
+                "100.0" : 13.98445907281212
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    13.938159254933336,
+                    13.98407038078058,
+                    13.87504452448708,
+                    13.884891344945606,
+                    13.98445907281212
+                ],
+                [
+                    13.582428998298148,
+                    13.518592954233611,
+                    13.49544218639086,
+                    13.450183690295576,
+                    13.457532430166507
+                ],
+                [
+                    13.815033096133098,
+                    13.811506822108631,
+                    13.761524098905696,
+                    13.76905587965991,
+                    13.800637832504158
+                ],
+                [
+                    13.559933352588144,
+                    13.549039031581058,
+                    13.588986272610038,
+                    13.590687943474462,
+                    13.546181739007945
+                ],
+                [
+                    13.822526049528106,
+                    13.87340566637163,
+                    13.805313740215636,
+                    13.773047659840541,
+                    13.719088764320864
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.analyze.PreExecutionBenchmark.measure_parse_and_analyze_simple_select",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 9.994829337582372,
+            "scoreError" : 0.14414866919578412,
+            "scoreConfidence" : [
+                9.850680668386588,
+                10.138978006778157
+            ],
+            "scorePercentiles" : {
+                "0.0" : 9.628658867571362,
+                "50.0" : 10.03760852261492,
+                "90.0" : 10.23839537235822,
+                "95.0" : 10.242390846759214,
+                "99.0" : 10.242550215500465,
+                "99.9" : 10.242550215500465,
+                "99.99" : 10.242550215500465,
+                "99.999" : 10.242550215500465,
+                "99.9999" : 10.242550215500465,
+                "100.0" : 10.242550215500465
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    10.039369136477946,
+                    10.043516776993389,
+                    10.00723591779388,
+                    10.03760852261492,
+                    9.966834731830419
+                ],
+                [
+                    9.97400455605857,
+                    9.98435294428919,
+                    9.895092945200803,
+                    9.889496666788636,
+                    9.934237982225913
+                ],
+                [
+                    10.242018986362961,
+                    10.242550215500465,
+                    10.196695407988988,
+                    10.23597962968839,
+                    10.165654766213013
+                ],
+                [
+                    10.17707297051951,
+                    10.157013359294222,
+                    10.090634664944552,
+                    10.07251159530064,
+                    10.127128790778784
+                ],
+                [
+                    9.744472308107566,
+                    9.735228079944704,
+                    9.641488606826071,
+                    9.64187501024443,
+                    9.628658867571362
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.analyze.PreExecutionBenchmark.measure_parse_simple_select",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 7.703650749012173,
+            "scoreError" : 0.1549742062280117,
+            "scoreConfidence" : [
+                7.548676542784161,
+                7.858624955240185
+            ],
+            "scorePercentiles" : {
+                "0.0" : 7.396952744419994,
+                "50.0" : 7.7099918853509966,
+                "90.0" : 8.022697909149619,
+                "95.0" : 8.063805346554819,
+                "99.0" : 8.063913797232667,
+                "99.9" : 8.063913797232667,
+                "99.99" : 8.063913797232667,
+                "99.999" : 8.063913797232667,
+                "99.9999" : 8.063913797232667,
+                "100.0" : 8.063913797232667
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    8.063552294973176,
+                    8.063913797232667,
+                    7.991937744599334,
+                    7.995461651933914,
+                    7.989161674441346
+                ],
+                [
+                    7.6402148372862655,
+                    7.628425632575844,
+                    7.572506951459427,
+                    7.569394096261607,
+                    7.56666101798795
+                ],
+                [
+                    7.441228451095146,
+                    7.430913358092835,
+                    7.396952744419994,
+                    7.399441181410746,
+                    7.402184294715212
+                ],
+                [
+                    7.766660191957899,
+                    7.775207426465043,
+                    7.7099918853509966,
+                    7.707385707327149,
+                    7.667545738937616
+                ],
+                [
+                    7.807222553851607,
+                    7.801209038521097,
+                    7.733073095080674,
+                    7.74402496111078,
+                    7.726998398216016
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.data.join.RowsBatchIteratorBenchmark.measureConsumeBlockNestedLoopJoin",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 130.92348860186485,
+            "scoreError" : 0.6913805969183283,
+            "scoreConfidence" : [
+                130.23210800494653,
+                131.61486919878317
+            ],
+            "scorePercentiles" : {
+                "0.0" : 128.78583953846154,
+                "50.0" : 131.33869436363636,
+                "90.0" : 131.56272866753247,
+                "95.0" : 131.59268785714286,
+                "99.0" : 131.59818783116884,
+                "99.9" : 131.59818783116884,
+                "99.99" : 131.59818783116884,
+                "99.999" : 131.59818783116884,
+                "99.9999" : 131.59818783116884,
+                "100.0" : 131.59818783116884
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    131.3015955844156,
+                    131.09018146753246,
+                    131.33869436363636,
+                    131.59818783116884,
+                    131.40990463636365
+                ],
+                [
+                    131.51689361038962,
+                    131.24123602597402,
+                    131.28644163636363,
+                    131.39436212987013,
+                    131.3863098961039
+                ],
+                [
+                    131.5513113896104,
+                    131.38154781818182,
+                    131.43044514285714,
+                    131.57985458441559,
+                    131.40353575324676
+                ],
+                [
+                    129.0485796923077,
+                    129.10726526923077,
+                    128.78583953846154,
+                    129.2556514102564,
+                    129.5156015
+                ],
+                [
+                    131.20400146753246,
+                    131.23309314285714,
+                    131.23441657142857,
+                    131.42632866233765,
+                    131.3659359220779
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.data.join.RowsBatchIteratorBenchmark.measureConsumeHashInnerJoin",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 2.0671728565585337,
+            "scoreError" : 2.839602640100871E-4,
+            "scoreConfidence" : [
+                2.0668888962945235,
+                2.067456816822544
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2.0663917061983472,
+                "50.0" : 2.0671820562215792,
+                "90.0" : 2.0677180317552204,
+                "95.0" : 2.0678896469231094,
+                "99.0" : 2.067943524400331,
+                "99.9" : 2.067943524400331,
+                "99.99" : 2.067943524400331,
+                "99.999" : 2.067943524400331,
+                "99.9999" : 2.067943524400331,
+                "100.0" : 2.067943524400331
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    2.0665875209754083,
+                    2.067238397891691,
+                    2.0669432091341187,
+                    2.066723882620376,
+                    2.0671548666804465
+                ],
+                [
+                    2.067360105828855,
+                    2.067604793467025,
+                    2.0673046194708555,
+                    2.0676874310523052,
+                    2.0674078317486564
+                ],
+                [
+                    2.066906430460839,
+                    2.0671820562215792,
+                    2.067425848491112,
+                    2.0672155336916083,
+                    2.0670312379082265
+                ],
+                [
+                    2.0670954226953286,
+                    2.067943524400331,
+                    2.0674638269588588,
+                    2.066924987600744,
+                    2.0673535844531736
+                ],
+                [
+                    2.0663917061983472,
+                    2.067763932809593,
+                    2.066862404215747,
+                    2.06663101549907,
+                    2.067117243489045
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.data.join.RowsBatchIteratorBenchmark.measureConsumeHashInnerJoinWithHashCollisions",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 0.40555427405991373,
+            "scoreError" : 0.0022904411357760833,
+            "scoreConfidence" : [
+                0.40326383292413764,
+                0.4078447151956898
+            ],
+            "scorePercentiles" : {
+                "0.0" : 0.40113217332531087,
+                "50.0" : 0.4059804427394146,
+                "90.0" : 0.41018701364809773,
+                "95.0" : 0.41034838114153394,
+                "99.0" : 0.4104062036771043,
+                "99.9" : 0.4104062036771043,
+                "99.99" : 0.4104062036771043,
+                "99.999" : 0.4104062036771043,
+                "99.9999" : 0.4104062036771043,
+                "100.0" : 0.4104062036771043
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    0.41021346189186975,
+                    0.4104062036771043,
+                    0.41010591269222885,
+                    0.410169381485583,
+                    0.41007862806528333
+                ],
+                [
+                    0.40603090661415403,
+                    0.40584154389026417,
+                    0.40585551087662336,
+                    0.4059804427394146,
+                    0.405999790751492
+                ],
+                [
+                    0.4012108781544634,
+                    0.4012592276302062,
+                    0.4011967959159111,
+                    0.4012434038037154,
+                    0.40113217332531087
+                ],
+                [
+                    0.40674987195965184,
+                    0.4066163106042124,
+                    0.40659603614555806,
+                    0.40673815455321916,
+                    0.4064701003536154
+                ],
+                [
+                    0.4038710919591293,
+                    0.40369524975779103,
+                    0.40373225127169965,
+                    0.403787120810789,
+                    0.4038764025685554
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.data.join.RowsBatchIteratorBenchmark.measureConsumeNestedLoopJoin",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 101.29491764443355,
+            "scoreError" : 0.22057716441604952,
+            "scoreConfidence" : [
+                101.0743404800175,
+                101.51549480884961
+            ],
+            "scorePercentiles" : {
+                "0.0" : 100.89306554,
+                "50.0" : 101.25800532323233,
+                "90.0" : 101.70393321010101,
+                "95.0" : 102.00046727835498,
+                "99.0" : 102.08679765306123,
+                "99.9" : 102.08679765306123,
+                "99.99" : 102.08679765306123,
+                "99.999" : 102.08679765306123,
+                "99.9999" : 102.08679765306123,
+                "100.0" : 102.08679765306123
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    101.00435028,
+                    100.99157449,
+                    101.03418314141415,
+                    100.89306554,
+                    101.64053552525253
+                ],
+                [
+                    101.25800532323233,
+                    100.93344973,
+                    101.1354036060606,
+                    100.95304664,
+                    101.23843658585858
+                ],
+                [
+                    101.56756793939394,
+                    101.28868254545455,
+                    101.53549370707071,
+                    101.34176497979799,
+                    101.79902973737374
+                ],
+                [
+                    101.12805534343434,
+                    101.12799945454546,
+                    101.03168695959596,
+                    101.17468088888889,
+                    101.44414124242424
+                ],
+                [
+                    101.48914187878788,
+                    101.43406447474747,
+                    101.4981155050505,
+                    101.34366793939394,
+                    102.08679765306123
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.data.join.RowsBatchIteratorBenchmark.measureConsumeNestedLoopLeftJoin",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 113.86613827274276,
+            "scoreError" : 0.5069594982476098,
+            "scoreConfidence" : [
+                113.35917877449515,
+                114.37309777099037
+            ],
+            "scorePercentiles" : {
+                "0.0" : 112.86156235955056,
+                "50.0" : 114.11750807954546,
+                "90.0" : 114.46334709545455,
+                "95.0" : 115.18916012797806,
+                "99.0" : 115.49716251724138,
+                "99.9" : 115.49716251724138,
+                "99.99" : 115.49716251724138,
+                "99.999" : 115.49716251724138,
+                "99.9999" : 115.49716251724138,
+                "100.0" : 115.49716251724138
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    113.56431647191012,
+                    113.30135865168539,
+                    113.27902976404495,
+                    113.40501438202247,
+                    113.41112941573034
+                ],
+                [
+                    114.05801402272728,
+                    114.35227377272727,
+                    114.388559875,
+                    114.47048788636364,
+                    114.22392118181818
+                ],
+                [
+                    114.12756173863636,
+                    114.39810025,
+                    114.45858656818181,
+                    115.49716251724138,
+                    114.30307548863637
+                ],
+                [
+                    112.91217842696629,
+                    112.8736396516854,
+                    112.91257023595506,
+                    112.94260112359551,
+                    112.86156235955056
+                ],
+                [
+                    114.39625282954546,
+                    114.108825625,
+                    114.15978444318182,
+                    114.12994205681818,
+                    114.11750807954546
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.TimePrecisionIncreaseTest.currentTimeMillisNextGen",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "10000 ms",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 4,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 0.035197361309598094,
+            "scoreError" : 0.0019191732989438624,
+            "scoreConfidence" : [
+                0.03327818801065423,
+                0.03711653460854196
+            ],
+            "scorePercentiles" : {
+                "0.0" : 0.03475245586629383,
+                "50.0" : 0.035336949181048585,
+                "90.0" : 0.03536309101000138,
+                "95.0" : 0.03536309101000138,
+                "99.0" : 0.03536309101000138,
+                "99.9" : 0.03536309101000138,
+                "99.99" : 0.03536309101000138,
+                "99.999" : 0.03536309101000138,
+                "99.9999" : 0.03536309101000138,
+                "100.0" : 0.03536309101000138
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    0.03475245586629383,
+                    0.03536309101000138,
+                    0.035347901719122825,
+                    0.03532599664297435
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.TimePrecisionIncreaseTest.currentTimeMillisOriginal",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "10000 ms",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 4,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 0.02194669895155068,
+            "scoreError" : 0.002463339798473724,
+            "scoreConfidence" : [
+                0.019483359153076956,
+                0.024410038750024402
+            ],
+            "scorePercentiles" : {
+                "0.0" : 0.021374894431955366,
+                "50.0" : 0.022136536036161968,
+                "90.0" : 0.022138829301923423,
+                "95.0" : 0.022138829301923423,
+                "99.0" : 0.022138829301923423,
+                "99.9" : 0.022138829301923423,
+                "99.99" : 0.022138829301923423,
+                "99.999" : 0.022138829301923423,
+                "99.9999" : 0.022138829301923423,
+                "100.0" : 0.022138829301923423
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    0.021374894431955366,
+                    0.022136665331501826,
+                    0.022136406740822106,
+                    0.022138829301923423
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.aggregation.AggregateCollectorBenchmark.measureAggregateCollector",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 184.28777675352956,
+            "scoreError" : 8.628744575901024,
+            "scoreConfidence" : [
+                175.65903217762855,
+                192.91652132943057
+            ],
+            "scorePercentiles" : {
+                "0.0" : 166.63980793521188,
+                "50.0" : 181.83939250840984,
+                "90.0" : 196.69483408462023,
+                "95.0" : 196.76719066538553,
+                "99.0" : 196.77344036913874,
+                "99.9" : 196.77344036913874,
+                "99.99" : 196.77344036913874,
+                "99.999" : 196.77344036913874,
+                "99.9999" : 196.77344036913874,
+                "100.0" : 196.77344036913874
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    179.82107717758757,
+                    179.77766001510085,
+                    179.78029130786516,
+                    179.84119001546597,
+                    179.87870974008453
+                ],
+                [
+                    166.8237693218784,
+                    166.64698848506058,
+                    166.63980793521188,
+                    166.6409039176151,
+                    166.66997606706556
+                ],
+                [
+                    196.38724086329805,
+                    196.39046270620582,
+                    196.46185870889158,
+                    196.40778706104172,
+                    196.44547966840844
+                ],
+                [
+                    196.65631812550393,
+                    196.62542159696415,
+                    196.77344036913874,
+                    196.7526080232947,
+                    196.6456049671609
+                ],
+                [
+                    181.67552662367154,
+                    181.89699179656947,
+                    181.83939250840984,
+                    181.83446287979345,
+                    181.88144895695032
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.aggregation.GroupingLongCollectorBenchmark.measureGroupBySumLong",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 576.8121571666668,
+            "scoreError" : 4.254087468229415,
+            "scoreConfidence" : [
+                572.5580696984374,
+                581.0662446348962
+            ],
+            "scorePercentiles" : {
+                "0.0" : 574.0071473333334,
+                "50.0" : 576.7500904444444,
+                "90.0" : 580.2965141722223,
+                "95.0" : 580.4058175555556,
+                "99.0" : 580.4058175555556,
+                "99.9" : 580.4058175555556,
+                "99.99" : 580.4058175555556,
+                "99.999" : 580.4058175555556,
+                "99.9999" : 580.4058175555556,
+                "100.0" : 580.4058175555556
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    580.4058175555556,
+                    579.2086993333334,
+                    579.2182342222222,
+                    579.3127837222222,
+                    579.1449022777778
+                ],
+                [
+                    574.3335646111111,
+                    574.3552786111111,
+                    574.0293674444445,
+                    574.0071473333334,
+                    574.1057765555555
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.aggregation.GroupingLongCollectorBenchmark.measureGroupingOnLongArray",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 193.4671697346154,
+            "scoreError" : 0.38198746012324175,
+            "scoreConfidence" : [
+                193.08518227449215,
+                193.84915719473864
+            ],
+            "scorePercentiles" : {
+                "0.0" : 193.0600256153846,
+                "50.0" : 193.4668741153846,
+                "90.0" : 193.8170853576923,
+                "95.0" : 193.82000363461538,
+                "99.0" : 193.82000363461538,
+                "99.9" : 193.82000363461538,
+                "99.99" : 193.82000363461538,
+                "99.999" : 193.82000363461538,
+                "99.9999" : 193.82000363461538,
+                "100.0" : 193.82000363461538
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    193.7122011153846,
+                    193.4737043846154,
+                    193.7908208653846,
+                    193.82000363461538,
+                    193.50240225
+                ],
+                [
+                    193.3896614423077,
+                    193.2091798846154,
+                    193.46004384615384,
+                    193.0600256153846,
+                    193.2536543076923
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.aggregation.GroupingLongCollectorBenchmark.measureGroupingOnNumericDocValues",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 413.4259033415,
+            "scoreError" : 14.875058087404138,
+            "scoreConfidence" : [
+                398.55084525409586,
+                428.3009614289041
+            ],
+            "scorePercentiles" : {
+                "0.0" : 402.81350752,
+                "50.0" : 414.18272626333334,
+                "90.0" : 423.75577840833336,
+                "95.0" : 423.80844820833335,
+                "99.0" : 423.80844820833335,
+                "99.9" : 423.80844820833335,
+                "99.99" : 423.80844820833335,
+                "99.999" : 423.80844820833335,
+                "99.9999" : 423.80844820833335,
+                "100.0" : 423.80844820833335
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    402.81350752,
+                    403.44661424,
+                    403.4773306,
+                    403.81648032,
+                    407.41059736
+                ],
+                [
+                    423.28175020833334,
+                    422.043348,
+                    423.80844820833335,
+                    423.20610179166664,
+                    420.9548551666667
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.aggregation.GroupingLongCollectorBenchmark.measureGroupingOnSortedNumericDocValues",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 425.16493527499995,
+            "scoreError" : 2.057937550418861,
+            "scoreConfidence" : [
+                423.1069977245811,
+                427.2228728254188
+            ],
+            "scorePercentiles" : {
+                "0.0" : 422.4769235416667,
+                "50.0" : 425.2341366041667,
+                "90.0" : 427.2902344875,
+                "95.0" : 427.37422991666665,
+                "99.0" : 427.37422991666665,
+                "99.9" : 427.37422991666665,
+                "99.99" : 427.37422991666665,
+                "99.999" : 427.37422991666665,
+                "99.9999" : 427.37422991666665,
+                "100.0" : 427.37422991666665
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    427.37422991666665,
+                    424.34469120833336,
+                    425.24389054166664,
+                    426.534275625,
+                    425.84683125
+                ],
+                [
+                    424.20569958333334,
+                    424.640541625,
+                    425.22438266666666,
+                    422.4769235416667,
+                    425.7578867916667
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.aggregation.GroupingStringCollectorBenchmark.measureGroupByMinString",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 600.3549087094934,
+            "scoreError" : 20.54824872863919,
+            "scoreConfidence" : [
+                579.8066599808542,
+                620.9031574381327
+            ],
+            "scorePercentiles" : {
+                "0.0" : 571.9921008888889,
+                "50.0" : 589.3522612352941,
+                "90.0" : 650.71911455,
+                "95.0" : 651.1270709437499,
+                "99.0" : 651.23466675,
+                "99.9" : 651.23466675,
+                "99.99" : 651.23466675,
+                "99.999" : 651.23466675,
+                "99.9999" : 651.23466675,
+                "100.0" : 651.23466675
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    572.5481806111111,
+                    572.2624829444444,
+                    573.1499759444445,
+                    571.9921008888889,
+                    572.1071735555555
+                ],
+                [
+                    602.4291602941177,
+                    601.8072280588235,
+                    601.8734444117647,
+                    601.8910627647059,
+                    602.8664304117647
+                ],
+                [
+                    650.2030490625,
+                    650.3922705625,
+                    651.23466675,
+                    650.8760140625,
+                    650.614514875
+                ],
+                [
+                    586.1569639444444,
+                    586.098358,
+                    587.6366456111111,
+                    587.4265650555556,
+                    588.4844312222223
+                ],
+                [
+                    590.5656592941176,
+                    589.3522612352941,
+                    588.4018365882353,
+                    588.7695420588235,
+                    589.7326995294118
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.collect.collectors.LuceneBatchIteratorBenchmark.measureConsumeLuceneBatchIterator",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 243.9146248335829,
+            "scoreError" : 2.8070912801261603,
+            "scoreConfidence" : [
+                241.10753355345673,
+                246.72171611370908
+            ],
+            "scorePercentiles" : {
+                "0.0" : 237.3679278372093,
+                "50.0" : 246.20434619512196,
+                "90.0" : 247.62444290243903,
+                "95.0" : 247.8708941390244,
+                "99.0" : 247.9600491707317,
+                "99.9" : 247.9600491707317,
+                "99.99" : 247.9600491707317,
+                "99.999" : 247.9600491707317,
+                "99.9999" : 247.9600491707317,
+                "100.0" : 247.9600491707317
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    237.7633575348837,
+                    238.50760973809523,
+                    238.1245477857143,
+                    237.3679278372093,
+                    238.16306316666666
+                ],
+                [
+                    246.2156584390244,
+                    245.33159070731708,
+                    246.39832548780487,
+                    245.83190251219511,
+                    246.771152
+                ],
+                [
+                    246.93283448780488,
+                    246.91482124390245,
+                    246.72715953658536,
+                    247.4831883902439,
+                    247.59882768292684
+                ],
+                [
+                    240.66209154761904,
+                    240.7836566904762,
+                    242.1493630952381,
+                    240.76580773809525,
+                    242.73699307142857
+                ],
+                [
+                    246.3808087317073,
+                    246.42767231707316,
+                    247.9600491707317,
+                    246.20434619512196,
+                    247.6628657317073
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.collect.collectors.OrderedLuceneBatchIteratorBenchmark.measureLoadAndConsumeOrderedLuceneBatchIterator",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 6.827503382380001,
+            "scoreError" : 0.0993767293920817,
+            "scoreConfidence" : [
+                6.728126652987919,
+                6.926880111772082
+            ],
+            "scorePercentiles" : {
+                "0.0" : 6.5639609825,
+                "50.0" : 6.8266887605,
+                "90.0" : 6.997226477,
+                "95.0" : 7.023506422950001,
+                "99.0" : 7.027675149,
+                "99.9" : 7.027675149,
+                "99.99" : 7.027675149,
+                "99.999" : 7.027675149,
+                "99.9999" : 7.027675149,
+                "100.0" : 7.027675149
+            },
+            "scoreUnit" : "s/op",
+            "rawData" : [
+                [
+                    6.955479941,
+                    6.9061893165,
+                    7.027675149,
+                    6.949525001,
+                    6.985721586
+                ],
+                [
+                    6.7991243295,
+                    6.8867984915,
+                    6.749048474,
+                    6.8323036335,
+                    6.8266887605
+                ],
+                [
+                    6.9176497445,
+                    6.955804629,
+                    7.0137793955,
+                    6.986191198,
+                    6.9116589535
+                ],
+                [
+                    6.72076556,
+                    6.5639609825,
+                    6.6203683195,
+                    6.6727042045,
+                    6.662198229
+                ],
+                [
+                    6.7718696025,
+                    6.7511035605,
+                    6.8256059405,
+                    6.705006251,
+                    6.6903633065
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.distribution.merge.SortedPagingIteratorBenchmark.measureListSort",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 496.38801219999993,
+            "scoreError" : 1.7455838378210136,
+            "scoreConfidence" : [
+                494.6424283621789,
+                498.13359603782095
+            ],
+            "scorePercentiles" : {
+                "0.0" : 491.779077,
+                "50.0" : 496.5048419047619,
+                "90.0" : 499.35718925714286,
+                "95.0" : 499.5174520190476,
+                "99.0" : 499.5264664761905,
+                "99.9" : 499.5264664761905,
+                "99.99" : 499.5264664761905,
+                "99.999" : 499.5264664761905,
+                "99.9999" : 499.5264664761905,
+                "100.0" : 499.5264664761905
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    499.2643699047619,
+                    499.11121723809526,
+                    499.5264664761905,
+                    497.075507,
+                    499.0025354761905
+                ],
+                [
+                    495.62210257142857,
+                    495.64224504761904,
+                    497.1160315238095,
+                    494.8415947619048,
+                    495.3276769047619
+                ],
+                [
+                    492.4162947142857,
+                    493.355476,
+                    493.0476090952381,
+                    491.779077,
+                    493.88048904761905
+                ],
+                [
+                    498.77023076190477,
+                    498.02172104761905,
+                    498.8317922857143,
+                    496.3320637142857,
+                    499.4964182857143
+                ],
+                [
+                    496.9130606666667,
+                    497.1391434285714,
+                    496.2372419047619,
+                    494.4450982380952,
+                    496.5048419047619
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.distribution.merge.SortedPagingIteratorBenchmark.measurePagingIteratorWithRepeat",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 19.833016551061174,
+            "scoreError" : 1.2439393784153687,
+            "scoreConfidence" : [
+                18.589077172645805,
+                21.076955929476544
+            ],
+            "scorePercentiles" : {
+                "0.0" : 17.749000420212766,
+                "50.0" : 21.12790729957806,
+                "90.0" : 21.184060247780128,
+                "95.0" : 21.18862250718816,
+                "99.0" : 21.19014866807611,
+                "99.9" : 21.19014866807611,
+                "99.99" : 21.19014866807611,
+                "99.999" : 21.19014866807611,
+                "99.9999" : 21.19014866807611,
+                "100.0" : 21.19014866807611
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    17.869944930357143,
+                    17.853411502673797,
+                    17.861481089285714,
+                    17.8622567125,
+                    17.773855891651866
+                ],
+                [
+                    21.19014866807611,
+                    21.183392769556026,
+                    21.176614298097252,
+                    21.183327192389008,
+                    21.179671966173363
+                ],
+                [
+                    17.863595905357144,
+                    17.8627361125,
+                    17.852666413547237,
+                    17.857565151785714,
+                    17.749000420212766
+                ],
+                [
+                    21.167486321353067,
+                    21.18506146511628,
+                    21.166137405919663,
+                    21.18316262579281,
+                    21.165563803382664
+                ],
+                [
+                    21.124283911392403,
+                    21.133294529535863,
+                    21.128752525316457,
+                    21.124094864978904,
+                    21.12790729957806
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.distribution.merge.SortedPagingIteratorBenchmark.measurePagingIteratorWithSort",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 505.84459595600015,
+            "scoreError" : 2.2293626850345,
+            "scoreConfidence" : [
+                503.61523327096563,
+                508.07395864103466
+            ],
+            "scorePercentiles" : {
+                "0.0" : 501.94843695,
+                "50.0" : 505.56813105,
+                "90.0" : 510.22475972,
+                "95.0" : 510.40760807,
+                "99.0" : 510.4078886,
+                "99.9" : 510.4078886,
+                "99.99" : 510.4078886,
+                "99.999" : 510.4078886,
+                "99.9999" : 510.4078886,
+                "100.0" : 510.4078886
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    506.8926534,
+                    503.40903665,
+                    502.43515435,
+                    504.24690515,
+                    502.5283968
+                ],
+                [
+                    510.4069535,
+                    510.1032972,
+                    508.8721457,
+                    510.4078886,
+                    508.00842875
+                ],
+                [
+                    509.97141085,
+                    508.66567895,
+                    507.69177475,
+                    508.72024115,
+                    507.4961029
+                ],
+                [
+                    503.373663,
+                    502.2404871,
+                    502.46605545,
+                    503.4854867,
+                    501.94843695
+                ],
+                [
+                    505.7357405,
+                    503.1387435,
+                    505.56813105,
+                    505.3655273,
+                    502.93655865
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.distribution.merge.SortedPagingIteratorBenchmark.measurePagingIteratorWithoutRepeat",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 14.02276213238275,
+            "scoreError" : 0.0592972966002599,
+            "scoreConfidence" : [
+                13.96346483578249,
+                14.08205942898301
+            ],
+            "scorePercentiles" : {
+                "0.0" : 13.927820848189414,
+                "50.0" : 14.023728235294117,
+                "90.0" : 14.117324941889985,
+                "95.0" : 14.122149514950635,
+                "99.0" : 14.124171016925247,
+                "99.9" : 14.124171016925247,
+                "99.99" : 14.124171016925247,
+                "99.999" : 14.124171016925247,
+                "99.9999" : 14.124171016925247,
+                "100.0" : 14.124171016925247
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    14.10161477887324,
+                    14.117432677009873,
+                    14.112843922425952,
+                    14.117253118476727,
+                    14.124171016925247
+                ],
+                [
+                    14.106945966149507,
+                    14.103189333802817,
+                    14.099140169014085,
+                    14.103874785915494,
+                    14.105452073342736
+                ],
+                [
+                    13.933951385793872,
+                    13.927820848189414,
+                    13.928180282729805,
+                    13.938923006963789,
+                    13.941582405292479
+                ],
+                [
+                    13.933713335654597,
+                    13.941563284122562,
+                    13.933906311977715,
+                    13.944784883008357,
+                    13.939110834261838
+                ],
+                [
+                    14.027489949509116,
+                    14.023728235294117,
+                    14.026653252454418,
+                    14.013986585434173,
+                    14.021740866946779
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.reader.CsvReaderBenchmark.measureFileReadingIteratorForCSV",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 31.73402700148212,
+            "scoreError" : 0.24443056688646042,
+            "scoreConfidence" : [
+                31.489596434595658,
+                31.97845756836858
+            ],
+            "scorePercentiles" : {
+                "0.0" : 31.159644994438093,
+                "50.0" : 31.637050042867674,
+                "90.0" : 32.10575254590105,
+                "95.0" : 32.31804003816539,
+                "99.0" : 32.40792893693834,
+                "99.9" : 32.40792893693834,
+                "99.99" : 32.40792893693834,
+                "99.999" : 32.40792893693834,
+                "99.9999" : 32.40792893693834,
+                "100.0" : 32.40792893693834
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    31.57944924479027,
+                    31.49294170091486,
+                    31.606423006539252,
+                    31.34684410186323,
+                    31.427229749562386
+                ],
+                [
+                    31.748693370034193,
+                    31.264217782779966,
+                    31.42624302114006,
+                    31.159644994438093,
+                    31.77583168738402
+                ],
+                [
+                    31.554809940929974,
+                    31.486562654282118,
+                    31.453322375290934,
+                    31.596187327014217,
+                    31.637050042867674
+                ],
+                [
+                    32.095562954546914,
+                    32.104054726927174,
+                    32.02592756491552,
+                    31.990054887333496,
+                    32.048212085182755
+                ],
+                [
+                    32.108299274361855,
+                    32.09845169894654,
+                    32.40792893693834,
+                    32.05946159518092,
+                    31.857270312888243
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.engine.reader.JsonReaderBenchmark.measureFileReadingIteratorForJson",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 13.550073887012266,
+            "scoreError" : 0.08820167224835636,
+            "scoreConfidence" : [
+                13.46187221476391,
+                13.638275559260622
+            ],
+            "scorePercentiles" : {
+                "0.0" : 13.33914750442185,
+                "50.0" : 13.565819077269522,
+                "90.0" : 13.682503110020097,
+                "95.0" : 13.753277936514436,
+                "99.0" : 13.783068657543385,
+                "99.9" : 13.783068657543385,
+                "99.99" : 13.783068657543385,
+                "99.999" : 13.783068657543385,
+                "99.9999" : 13.783068657543385,
+                "100.0" : 13.783068657543385
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    13.783068657543385,
+                    13.67631473014944,
+                    13.68166101395779,
+                    13.666697770908241,
+                    13.683766254113559
+                ],
+                [
+                    13.552145687170265,
+                    13.547739386541632,
+                    13.572705267358232,
+                    13.626053718490258,
+                    13.58870422399326
+                ],
+                [
+                    13.56098945379986,
+                    13.570120156053873,
+                    13.573014370854365,
+                    13.558673126385509,
+                    13.540903848158926
+                ],
+                [
+                    13.5493591928482,
+                    13.588064259974889,
+                    13.565819077269522,
+                    13.59091107725511,
+                    13.526040026781004
+                ],
+                [
+                    13.350693593348232,
+                    13.361130145954583,
+                    13.353894321471685,
+                    13.344230310502978,
+                    13.33914750442185
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.jobs.CheckFreeMemoryAlternativeMethodsBenchmark.benchmarkMemoryMXBeanMethod",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 4,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 0.21913060451859206,
+            "scoreError" : 3.603002653465124E-4,
+            "scoreConfidence" : [
+                0.21877030425324556,
+                0.21949090478393857
+            ],
+            "scorePercentiles" : {
+                "0.0" : 0.2190962039754397,
+                "50.0" : 0.21910613944869745,
+                "90.0" : 0.21921393520153362,
+                "95.0" : 0.21921393520153362,
+                "99.0" : 0.21921393520153362,
+                "99.9" : 0.21921393520153362,
+                "99.99" : 0.21921393520153362,
+                "99.999" : 0.21921393520153362,
+                "99.9999" : 0.21921393520153362,
+                "100.0" : 0.21921393520153362
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    0.2191051383071854,
+                    0.21921393520153362,
+                    0.2190962039754397,
+                    0.21910714059020953
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.jobs.CheckFreeMemoryAlternativeMethodsBenchmark.benchmarkRuntimeMethod",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 4,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 0.047841912145505844,
+            "scoreError" : 3.6895691151665175E-5,
+            "scoreConfidence" : [
+                0.04780501645435418,
+                0.04787880783665751
+            ],
+            "scorePercentiles" : {
+                "0.0" : 0.04783652225431758,
+                "50.0" : 0.047841688653417244,
+                "90.0" : 0.04784774902087131,
+                "95.0" : 0.04784774902087131,
+                "99.0" : 0.04784774902087131,
+                "99.9" : 0.04784774902087131,
+                "99.99" : 0.04784774902087131,
+                "99.999" : 0.04784774902087131,
+                "99.9999" : 0.04784774902087131,
+                "100.0" : 0.04784774902087131
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    0.04784584679833,
+                    0.04783652225431758,
+                    0.04784774902087131,
+                    0.04783753050850449
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.operation.aggregation.HyperLogLogDistinctAggregationBenchmark.benchmarkHLLAggregationOffHeap",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 498.75287965072823,
+            "scoreError" : 25.247345332478375,
+            "scoreConfidence" : [
+                473.50553431824983,
+                524.0002249832066
+            ],
+            "scorePercentiles" : {
+                "0.0" : 478.73503690937815,
+                "50.0" : 500.24142031180014,
+                "90.0" : 514.673655768452,
+                "95.0" : 514.6994053010808,
+                "99.0" : 514.6994053010808,
+                "99.9" : 514.6994053010808,
+                "99.99" : 514.6994053010808,
+                "99.999" : 514.6994053010808,
+                "99.9999" : 514.6994053010808,
+                "100.0" : 514.6994053010808
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    486.1977794253488,
+                    485.70091758135015,
+                    485.4764994902665,
+                    479.32116990989266,
+                    478.73503690937815
+                ],
+                [
+                    514.2850611982515,
+                    514.4419099747929,
+                    514.3046632039085,
+                    514.6994053010808,
+                    514.3663535130131
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.operation.aggregation.HyperLogLogDistinctAggregationBenchmark.benchmarkHLLAggregationOnHeap",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 486.9563366963862,
+            "scoreError" : 42.6461798722998,
+            "scoreConfidence" : [
+                444.3101568240864,
+                529.602516568686
+            ],
+            "scorePercentiles" : {
+                "0.0" : 460.8648234480852,
+                "50.0" : 480.600586244234,
+                "90.0" : 538.4138086118626,
+                "95.0" : 541.1748484225337,
+                "99.0" : 541.1748484225337,
+                "99.9" : 541.1748484225337,
+                "99.99" : 541.1748484225337,
+                "99.999" : 541.1748484225337,
+                "99.9999" : 541.1748484225337,
+                "100.0" : 541.1748484225337
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    495.1823233808675,
+                    496.8320362182035,
+                    513.5644503158219,
+                    508.13831458333334,
+                    541.1748484225337
+                ],
+                [
+                    462.9370478659383,
+                    462.4049677717668,
+                    462.445705849711,
+                    466.01884910760054,
+                    460.8648234480852
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.operation.aggregation.HyperLogLogDistinctAggregationBenchmark.benchmarkHLLPlusPlusMurmur128",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 322.0095352540502,
+            "scoreError" : 13.111714024527805,
+            "scoreConfidence" : [
+                308.8978212295224,
+                335.12124927857803
+            ],
+            "scorePercentiles" : {
+                "0.0" : 317.3477535542016,
+                "50.0" : 317.74659539753213,
+                "90.0" : 338.46673222746807,
+                "95.0" : 338.47530810627853,
+                "99.0" : 338.47530810627853,
+                "99.9" : 338.47530810627853,
+                "99.99" : 338.47530810627853,
+                "99.999" : 338.47530810627853,
+                "99.9999" : 338.47530810627853,
+                "100.0" : 338.47530810627853
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    318.74708318990247,
+                    338.47530810627853,
+                    317.3477535542016,
+                    317.4598982254532,
+                    317.50000273041877
+                ],
+                [
+                    318.98483094098884,
+                    338.38954931817415,
+                    317.7278295100718,
+                    317.76536128499254,
+                    317.69773568002034
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.operation.aggregation.HyperLogLogDistinctAggregationBenchmark.benchmarkHLLPlusPlusMurmur64",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 2,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 301.8202937364522,
+            "scoreError" : 1.9259044460137333,
+            "scoreConfidence" : [
+                299.8943892904384,
+                303.74619818246595
+            ],
+            "scorePercentiles" : {
+                "0.0" : 300.7788719020693,
+                "50.0" : 301.0603817736861,
+                "90.0" : 303.8966524630743,
+                "95.0" : 303.90332018476875,
+                "99.0" : 303.90332018476875,
+                "99.9" : 303.90332018476875,
+                "99.99" : 303.90332018476875,
+                "99.999" : 303.90332018476875,
+                "99.9999" : 303.90332018476875,
+                "100.0" : 303.90332018476875
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    303.90332018476875,
+                    302.5997561123215,
+                    300.8161131031164,
+                    300.7788719020693,
+                    300.7932082054984
+                ],
+                [
+                    303.8366429678243,
+                    302.46539854217707,
+                    301.00606901845106,
+                    300.8888627993742,
+                    301.1146945289211
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.jobs.CheckFreeMemoryAlternativeMethodsBenchmark.benchmarkMemoryMXBeanMethod",
+        "mode" : "ss",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 0,
+        "warmupTime" : "single-shot",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 4,
+        "measurementTime" : "single-shot",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 35.017,
+            "scoreError" : 387.1094902707139,
+            "scoreConfidence" : [
+                -352.0924902707139,
+                422.1264902707139
+            ],
+            "scorePercentiles" : {
+                "0.0" : 3.575,
+                "50.0" : 5.822,
+                "90.0" : 124.849,
+                "95.0" : 124.849,
+                "99.0" : 124.849,
+                "99.9" : 124.849,
+                "99.99" : 124.849,
+                "99.999" : 124.849,
+                "99.9999" : 124.849,
+                "100.0" : 124.849
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    124.849,
+                    7.04,
+                    4.604,
+                    3.575
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.33",
+        "benchmark" : "io.crate.execution.jobs.CheckFreeMemoryAlternativeMethodsBenchmark.benchmarkRuntimeMethod",
+        "mode" : "ss",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/root/.gradle/caches/transforms-3/8edf5661dcd8a6609001eae511ef954f/transformed/linux-18.0.1-x64.tar.gz/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "18.0.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "18.0.1+10",
+        "warmupIterations" : 0,
+        "warmupTime" : "single-shot",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 4,
+        "measurementTime" : "single-shot",
+        "measurementBatchSize" : 1,
+        "primaryMetric" : {
+            "score" : 7.65175,
+            "scoreError" : 65.82404680728416,
+            "scoreConfidence" : [
+                -58.17229680728416,
+                73.47579680728415
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1.724,
+                "50.0" : 3.011,
+                "90.0" : 22.861,
+                "95.0" : 22.861,
+                "99.0" : 22.861,
+                "99.9" : 22.861,
+                "99.99" : 22.861,
+                "99.999" : 22.861,
+                "99.9999" : 22.861,
+                "100.0" : 22.861
+            },
+            "scoreUnit" : "us/op",
+            "rawData" : [
+                [
+                    22.861,
+                    3.947,
+                    2.075,
+                    1.724
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+
